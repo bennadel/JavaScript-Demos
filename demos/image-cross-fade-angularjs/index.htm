@@ -1,0 +1,309 @@
+<!doctype html>
+<html ng-app="Demo" ng-controller="AppController">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Cross-Fading Images With AngularJS
+	</title>
+
+	<style type="text/css">
+
+		p.viewport {
+			border-radius: 5px 5px 5px 5px ;
+			box-shadow: 1px 1px 5px #454545 ;
+			height: 400px ;
+			position: relative ;
+			width: 400px ;
+		}
+
+		p.viewport img.fader {
+			border-radius: 5px 5px 5px 5px ;
+			display: none ;
+			height: 400px ;
+			left: 0px ;
+			position: absolute ;
+			top: 0px ;
+			width: 400px ;
+			z-index: 2 ;
+		}
+
+		p.viewport img.fader.show {
+			display: block ;
+			transition: opacity 250ms ease ;
+		}
+
+		p.viewport img.fader.fadeOut {
+			opacity: 0 ;
+		}
+
+		p.viewport img.image {
+			border-radius: 5px 5px 5px 5px ;
+			display: block ;
+			height: 400px ;
+			width: 400px ;
+		}
+
+		p.nav {
+			cursor: default ;
+			text-align: center ;
+			width: 400px ;
+		}
+
+		p.nav a {
+			background-color: #FAFAFA ;
+			border: 1px solid #CCCCCC ;
+			border-radius: 3px 3px 3px 3px ;
+			color: #333333 ;
+			display: inline-block ;
+			padding: 4px 9px 2px 9px ;
+			text-decoration: none ;
+		}
+
+	</style>
+</head>
+<body>
+
+	<h1>
+		Cross-Fading Images With AngularJS
+	</h1>
+
+	<p bn-fade-helper class="viewport">
+
+		<img 
+			ng-src="{{ image.source }}" 
+			title="{{ image.title }}"
+			class="image"
+		/>
+
+	</p>
+
+	<p class="nav">
+		<a ng-click="showImage( 1 )">1</a> -
+		<a ng-click="showImage( 2 )">2</a> -
+		<a ng-click="showImage( 3 )">3</a> -
+		<a ng-click="showImage( 4 )">4</a> -
+		<a ng-click="showImage( 5 )">5</a> -
+		<a ng-click="showImage( 6 )">6</a>
+	</p>
+
+
+	<!-- Load jQuery and AngularJS from the CDN. -->
+	<script
+		type="text/javascript"
+		src="//code.jquery.com/jquery-2.0.0.min.js">
+	</script>
+	<script
+		type="text/javascript"
+		src="//ajax.googleapis.com/ajax/libs/angularjs/1.0.4/angular.min.js">
+	</script>
+	<script type="text/javascript">
+
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I control the root of the application.
+		app.controller(
+			"AppController",
+			function( $scope ) {
+
+				// I am the collection of images to show.
+				$scope.images = [
+					{
+						source: "frances-1.jpg",
+						title: "What are you smirking about?"
+					},
+					{
+						source: "frances-2.jpg",
+						title: "No makeup - no problem."
+					},
+					{
+						source: "frances-3.jpg",
+						title: "Grace and beauty."
+					},
+					{
+						source: "frances-4.jpg",
+						title: "Another smirk."
+					},
+					{
+						source: "frances-5.jpg",
+						title: "What are you looking at?"
+					},
+					{
+						source: "frances-6.jpg",
+						title: "Saddness."
+					}
+				];
+
+				// Default to a random image.
+				$scope.image = getRandomImage();
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I show the image at the given index.
+				$scope.showImage = function( index ) {
+
+					// Use -1 to adjust image for zero-based array.
+					$scope.image = $scope.images[ index - 1 ];
+
+				};
+
+
+				// ---
+				// PRIVATE METHODS.
+				// ---
+
+
+				// I return a random image from the current collection.
+				function getRandomImage() {
+
+					var imageCount = $scope.images.length;
+
+					var index = Math.floor(
+						( Math.random() * imageCount * 2 ) % imageCount
+					);
+
+					return( $scope.images[ index ] );
+
+				}
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I provide a "Fade" overlay for the primary image whenever
+		// the primary image source changes. This allows for a "softer"
+		// transition from image to image.
+		app.directive(
+			"bnFadeHelper",
+			function() {
+
+				// I alter the DOM to add the fader image.
+				function compile( element, attributes, transclude ) {
+
+					element.prepend( "<img class='fader' />" );
+
+					return( link );
+
+				}
+
+
+				// I bind the UI events to the $scope.
+				function link( $scope, element, attributes ) {
+
+					var fader = element.find( "img.fader" );
+					var primary = element.find( "img.image" );
+
+					// Watch for changes in the source of the primary
+					// image. Whenever it changes, we want to show it
+					// fade into the new source.
+					$scope.$watch(
+						"image.source",
+						function( newValue, oldValue ) {
+
+							// If the $watch() is initializing, ignore.
+							if ( newValue === oldValue ) {
+
+								return;
+
+							}
+
+							// If the fader is still fading out, don't
+							// bother changing the source of the fader;
+							// just let the previous image continue to
+							// fade out.
+							if ( isFading() ) {
+
+								return;
+
+							}
+
+							initFade( oldValue );
+
+						}
+					);
+
+
+					// I prepare the fader to show the previous image
+					// while fading out of view.
+					function initFade( fadeSource ) {
+
+						fader
+							.prop( "src", fadeSource )
+							.addClass( "show" )
+						;
+
+						// Don't actually start the fade until the 
+						// primary image has loaded the new source.
+						primary.one( "load", startFade );
+
+					}
+
+
+					// I determine if the fader is currently fading
+					// out of view (that is currently animated).
+					function isFading() {
+
+						return( 
+							fader.hasClass( "show" ) ||
+							fader.hasClass( "fadeOut" )
+						);
+
+					}
+
+
+					// I start the fade-out process.
+					function startFade() {
+
+						// The .width() call is here to ensure that 
+						// the browser repaints before applying the
+						// fade-out class (so as to make sure the
+						// opacity doesn't kick in immediately).
+						fader.width();
+
+						fader.addClass( "fadeOut" );
+
+						setTimeout( teardownFade, 250 );
+
+					}
+
+
+					// I clean up the fader after the fade-out has
+					// completed its animation.
+					function teardownFade() {
+
+						fader.removeClass( "show fadeOut" );
+						
+					}
+
+				}
+
+
+				// Return the directive configuration.
+				return({
+					compile: compile,
+					restrict: "A"
+				});
+
+			}
+		);
+
+
+	</script>
+
+</body>
+</html>
