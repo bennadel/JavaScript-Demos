@@ -9,7 +9,7 @@
 
 	<style type="text/css">
 
-		/* Add "click" styles because newer releases in AngularJS don't seem to add the HREF value. */
+		/* Add "click" styles because newer releases of AngularJS don't seem to add the HREF value. */
 		a[ ng-click ] {
 			cursor: pointer ;
 			text-decoration: underline ;
@@ -141,12 +141,12 @@
 
 					var now = ( new Date() ).getTime();
 
-					// Update the "?v=" value of each photo.
+					// Update all SRC attribute to point to "1.jpg".
 					for ( var i = 0 ; i < $scope.photos.length ; i++ ) {
 
 						var photo = $scope.photos[ i ];
 
-						photo.src = photo.src.replace( /\d+$/, now );
+						photo.src = photo.src.replace( /\d\./i, "1." );
 
 					}
 
@@ -345,6 +345,10 @@
 					// I check the lazy-load images that have yet to 
 					// be rendered. 
 					function checkImages() {
+
+						// Log here so we can see how often this 
+						// gets called during page activity.
+						console.log( "Checking for visible images..." );
 
 						var visible = [];
 						var hidden = [];
