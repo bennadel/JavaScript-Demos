@@ -1,0 +1,413 @@
+<!doctype html>
+<html ng-app="Demo" ng-controller="AppController">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Mixing Static Content With ngSwitch / ngSwitchWhen In AngularJS
+	</title>
+
+	<style type="text/css">
+
+		a[ ng-click ] {
+			cursor: pointer ;
+			text-decoration: underline ;
+		}
+
+		p.static {
+			border: 1px solid #CCCCCC ;
+			color: #999999 ;
+			font-size: 10px ;
+			font-style: italic ;
+			padding: 5px 5px 5px 5px ;
+		}
+
+		p.dynamic {
+			border: 1px solid #FF3399 ;
+			padding: 5px 5px 5px 5px ;
+		}
+
+	</style>
+</head>
+<body>
+
+	<h1>
+		Mixing Static Content With ngSwitch / ngSwitchWhen In AngularJS
+	</h1>
+
+	<p>
+		<a ng-click="showContent( 1 )">One</a> -
+		<a ng-click="showContent( 2 )">Two</a> -
+		<a ng-click="showContent( 3 )">Three</a>
+	</p>
+
+	<h2>
+		Using ngSwitch
+	</h2>
+
+	<div ng-switch="content">
+
+		<p class="static">
+			Before all the case statements.
+		</p>
+
+		<p ng-switch-default class="dynamic">
+			Hello from dynamic content One!
+		</p>
+
+		<p class="static">
+			Mixed in the middle...
+		</p>
+
+		<p ng-switch-when="content-2" class="dynamic">
+			Hello from dynamic content Two!
+		</p>
+
+		<p class="static">
+			Mixed in the middle...
+		</p>
+
+		<p ng-switch-when="content-3" class="dynamic">
+			Hello from dynamic content Three!
+		</p>
+		
+		<p class="static">
+			After all the case statements.
+		</p>
+
+	</div>
+
+	<h2>
+		Using bnSwitch ( aka, My Tweaked Version )
+	</h2>
+
+	<div bn-switch="content">
+
+		<p class="static">
+			Before all the case statements.
+		</p>
+
+		<p bn-switch-default class="dynamic">
+			Hello from dynamic content One!
+		</p>
+
+		<p class="static">
+			Mixed in the middle...
+		</p>
+
+		<p bn-switch-when="content-2" class="dynamic">
+			Hello from dynamic content Two!
+		</p>
+
+		<p class="static">
+			Mixed in the middle...
+		</p>
+
+		<p bn-switch-when="content-3" class="dynamic">
+			Hello from dynamic content Three!
+		</p>
+		
+		<p class="static">
+			After all the case statements.
+		</p>
+
+	</div>
+
+
+
+	<!-- Load scripts. -->
+	<script 
+		type="text/javascript"
+		src="../../vendor/jquery/jquery-2.0.3.min.js">
+	</script>
+	<script
+		type="text/javascript"
+		src="../../vendor/angularjs/angular-1.0.7.min.js">
+	</script>
+	<script type="text/javascript">
+
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I control the root of the application.
+		app.controller(
+			"AppController",
+			function( $scope ) {
+
+				// Default to the first content item.
+				$scope.content = "content-1";
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I show the content item at the given index.
+				$scope.showContent = function( index ) {
+
+					$scope.content = ( "content-" + index );
+
+				};
+				
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I define the switch root.
+		app.directive(
+			"bnSwitch",
+			function() {
+
+				// I am the controller for the switch directive.
+				function Controller( $scope ) {
+
+					// The cases are keyed based on the switch value
+					// and contain an object that as the CASE both the
+					// statement's transclude AND anchoring element.
+					cases = {};
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I add a case statement to the collection.
+					function addCase( value, anchor, transclude ) {
+
+						cases[ "!" + value ] = {
+							anchor: anchor,
+							transclude: transclude,
+							element: null,
+							scope: null
+						};
+
+					}
+
+
+					// I return the case tied to the given value; if 
+					// no value matches, the default case will be 
+					// returned (if it is available).
+					function getCase( value ) {
+
+						return( cases[ "!" + value ] || cases[ "?" ] );
+
+					}
+
+
+					// I define at-most one default case per switch.
+					function setDefaultCase( value, anchor, transclude ) {
+
+						if ( cases.hasOwnProperty( "?" ) ) {
+
+							throw( "DefaultAlreadyExists" );
+
+						}
+
+						cases[ "?" ] = {
+							anchor: anchor,
+							transclude: transclude,
+							element: null,
+							scope: null
+						};
+
+					}
+
+
+					// Return public interface.
+					return({
+						addCase: addCase,
+						getCase: getCase,
+						setDefaultCase: setDefaultCase
+					});
+
+				}
+
+
+				// I bind the UI events to the $scope.
+				function link( $scope, element, attributes, controller ) {
+
+					// Determine which expression to watch - it can be
+					// defined directly on the bn-switch attribute, or 
+					// the "on" attribute.
+					var watchExpression = ( attributes.bnSwitch || attributes.on );
+
+					// These keep track of the currently-active case 
+					// statement. These will be defined within the 
+					// $scope watch.
+					var selectedCase = null;
+					
+					// Watch for changes in the switch statement.
+					$scope.$watch(
+						watchExpression,
+						function ( newValue, oldValue ) {
+					
+							// If we have an active case statment, we 
+							// need to tear it down before we inject
+							// the new case statement.
+							if ( selectedCase ) {
+
+								// Remove the bindings.
+								selectedCase.scope.$destroy();
+								selectedCase.element.remove();
+								
+								// Reset the values.
+								selectedCase.element = null;
+								selectedCase.scope = null;
+
+							}
+
+							// Get the next case statement for the 
+							// new switch-expression.
+							selectedCase = controller.getCase( newValue );
+
+							// If no case matches, don't do anything else.
+							if ( ! selectedCase ) {
+
+								return;
+
+							}
+
+							// If we made it this far, then 
+							selectedCase.scope = $scope.$new();
+
+							selectedCase.transclude(
+								selectedCase.scope,
+								function( caseElement ) {
+
+									// Store the element for later tear-down.
+									selectedCase.element = caseElement;
+
+									// Inject the transcluded / cloned element.
+									selectedCase.anchor.after( caseElement );
+
+								}
+							);
+
+						}
+					);
+
+				}
+
+
+				// Return the directive configuration.
+				return({
+					controller: Controller, 
+					link: link,
+					require: "bnSwitch",
+					restrict: "A"
+				});
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I define the switch case.
+		app.directive(
+			"bnSwitchWhen",
+			function() {
+
+				// I compile the directive template. We need to compile
+				// this directive because we are transcluding the element.
+				// That means that we're going to rip it out of the DOM.
+				// When we inject it back in (after its anchoring comment
+				// node), we'll need to use the transclude function to
+				// clone the template and bind it to a Scope instance. 
+				function compile( element, attributes, transclude ) {
+
+					// I link the UI to the $scope.
+					function link( $scope, element, attributes, switchController ) {
+
+						// Add this case to the switch root controller.
+						switchController.addCase(
+							attributes.bnSwitchWhen,
+							element,
+							transclude
+						);
+
+					}
+
+					return( link );
+
+				}
+
+
+				// Return the directive configuration.
+				return({
+					compile: compile,
+					priority: 500,
+					require: "^bnSwitch",
+					restrict: "A",
+					transclude: "element"
+				});
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I define the default switch case.
+		app.directive(
+			"bnSwitchDefault",
+			function() {
+
+				// I compile the directive template. We need to compile
+				// this directive because we are transcluding the element.
+				// That means that we're going to rip it out of the DOM.
+				// When we inject it back in (after its anchoring comment
+				// node), we'll need to use the transclude function to
+				// clone the template and bind it to a Scope instance. 
+				function compile( element, attributes, transclude ) {
+
+					// I link the UI to the $scope.
+					function link( $scope, element, attributes, switchController ) {
+
+						// Add this case to the switch root controller.
+						switchController.setDefaultCase(
+							attributes.bnSwitchWhen,
+							element,
+							transclude
+						);
+
+					}
+
+					return( link );
+
+				}
+
+
+				// Return the directive configuration.
+				return({
+					compile: compile,
+					priority: 500,
+					require: "^bnSwitch",
+					restrict: "A",
+					transclude: "element"
+				});
+
+			}
+		);
+
+
+	</script>
+
+</body>
+</html>
