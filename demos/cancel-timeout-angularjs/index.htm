@@ -1,0 +1,150 @@
+<!doctype html>
+<html ng-app="Demo" ng-controller="DemoController">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Don't Forget To Cancel $timeout Timers In Your $destroy Events In AngularJS
+	</title>
+</head>
+<body>
+
+	<h1>
+		Don't Forget To Cancel $timeout Timers In Your $destroy Events In AngularJS
+	</h1>
+
+	<p>
+		<a href="#" ng-click="toggle()">Toggle Section</a>
+	</p>
+
+	<div ng-switch="section">
+
+		<p ng-switch-when="happy" bn-directive>
+			Oh sweet!
+		</p>
+
+		<p ng-switch-when="sad" bn-directive>
+			Oh noes!
+		</p>
+
+	</div>
+	
+
+	<!-- Load jQuery and AngularJS. -->
+	<script
+		type="text/javascript"
+		src="../../vendor/jquery/jquery-2.0.3.min.js">
+	</script>
+	<script
+		type="text/javascript"
+		src="../../vendor/angularjs/angular-1.0.7.min.js">
+	</script>
+	<script type="text/javascript">
+
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I control the main demo.
+		app.controller(
+			"DemoController",
+			function( $scope ) {
+
+				$scope.section = "happy";
+
+				// I toggle the section value, to show/hide the
+				// differnet sections in the markup.
+				$scope.toggle = function() {
+
+					if ( $scope.section === "happy" ) {
+
+						$scope.section = "sad";
+
+					} else {
+
+						$scope.section = "happy";
+
+					}
+
+				};
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I'm just a sample directove to demonstrate the clearing 
+		// of a $timeout event in the AngularJS $destroy event.
+		app.directive(
+			"bnDirective",
+			function( $timeout ) {
+
+				// I bind the User Interface events to the $scope.
+				function link( $scope, element, attributes ) {
+
+					// When the timeout is defined, it returns a 
+					// promise object.
+					var timer = $timeout(
+						function() {
+
+							console.log( "Timeout executed", Date.now() );
+
+						},
+						2000
+					);
+
+
+					// Let's bind to the resolve/reject handlers of
+					// the timer promise so that we can make sure our
+					// cancel approach is actually working.
+					timer.then(
+						function() {
+
+							console.log( "Timer resolved!", Date.now() );
+
+						},
+						function() {
+
+							console.log( "Timer rejected!", Date.now() );
+
+						}
+					);
+
+
+					// When the DOM element is removed from the page, 
+					// AngularJS will trigger the $destroy event on 
+					// the scope. This gives us a chance to cancel any
+					// pending timer that we may have.
+					$scope.$on(
+						"$destroy",
+						function( event ) {
+
+							$timeout.cancel( timer );
+
+						}
+					);
+
+				}
+
+				// Return the directive configuration.
+				return({
+					link: link,
+					scope: false
+				});
+
+			}
+		);
+
+
+	</script>
+
+</body>
+</html>
