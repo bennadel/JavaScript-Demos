@@ -1,0 +1,158 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Creating A RequireJS Service For AngularJS
+	</title>
+
+	<style type="text/css">
+
+		a[ ng-click ] {
+			cursor: pointer ;
+			text-decoration: underline ;
+		}
+
+	</style>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		Creating A RequireJS Service For AngularJS
+	</h1>
+
+	<p>
+		<a ng-click="loadData()">Load Remote Data with RequireJS</a>
+	</p>
+
+	<!-- BEGIN: Friends List. -->
+	<ul ng-show="friends.length">
+		
+		<li ng-repeat="friend in friends">
+
+			{{ friend.name }} &mdash; <em>"{{ friend.catchPhrase }}"</em>
+
+		</li>
+
+	</ul>
+	<!-- END: Friends List. -->
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/jquery/jquery-2.0.3.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.0.7.min.js"></script>
+	<script type="text/javascript" src="../../vendor/require/require-2.1.9.min.js"></script>
+	<script type="text/javascript">
+
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I control the root of the application.
+		app.controller(
+			"AppController",
+			function( $scope, require ) {
+
+				// Default to an empty list of friends - this data 
+				// will be loaded from the remote data module using
+				// require.
+				$scope.friends = [];
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I load the remote friends data.
+				$scope.loadData = function() {
+
+					require(
+						[ "friends" ],
+						function( newFriends ) {
+
+							$scope.friends = newFriends;
+
+						}
+					);
+
+				};
+				
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I am the Require service that proxies the global RequireJS
+		// reference and helps it integrate into the AngularJS workflow.
+		app.factory(
+			"require",
+			function( $rootScope ) {
+
+				// Since the callbacks in the RequireJS module will 
+				// take the control-flow outside of the normal 
+				// AngularJS context, we need to create a proxy that
+				// will automatically alert AngularJS to the execution
+				// of the callback. Plus, this gives us an opportunity
+				// to add some error handling.
+				function requireProxy( dependencies, successCallback, errorCallback ) {
+
+					// Make sure the callbacks are defined - this makes
+					// the logic easier down below.
+					successCallback = ( successCallback || angular.noop );
+					errorCallback = ( errorCallback || angular.noop );
+
+					// NOTE: This "require" reference is the core, 
+					// global reference to RequireJS.
+					require(
+						( dependencies || [] ),
+						function successCallbackProxy() {
+
+							var args = arguments;
+
+							$rootScope.$apply(
+								function() {
+
+									successCallback.apply( this, args );
+
+								}
+							);
+
+						},
+						function errorCallbackProxy() {
+
+							var args = arguments;
+
+							$rootScope.$apply(
+								function() {
+
+									errorCallback.apply( this, args );
+
+								}
+							);
+
+						}
+					);
+
+				}
+
+
+				return( requireProxy );
+
+			}
+		);
+
+
+	</script>
+
+</body>
+</html>
