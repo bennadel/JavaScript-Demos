@@ -1,0 +1,295 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Loading AngularJS Components With RequireJS After Application Bootstrap
+	</title>
+
+	<style type="text/css">
+
+		a[ ng-click ] {
+			cursor: pointer ;
+			user-select: none ;
+				-webkit-user-select: none ;
+				-moz-user-select: none ;
+				-ms-user-select: none ;
+				-o-user-select: none ;
+			text-decoration: underline ;
+		}
+
+	</style>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		Loading AngularJS Components With RequireJS After Application Bootstrap
+	</h1>
+
+	<p>
+		<a ng-click="toggleSubview()">Toggle Subviews</a>
+	</p>
+
+	<!--
+		The "Before" subview doesn't need any additional assets; 
+		however, the "After" subview relies on a number of assets
+		that will be loaded after the AngularJS application has been
+		bootstrapped.
+	-->
+	<div ng-switch="subview">
+		
+		<div ng-switch-when="before">
+
+			<p>
+				Before app bootstrap.
+			</p>
+
+		</div>		
+		
+		<div ng-switch-when="after" ng-include=" 'after.htm' ">
+			<!-- To be poprulated with the Lazy module content. -->
+		</div>
+
+	</div>
+
+
+	<!-- Load jQuery and AngularJS. -->
+	<script type="text/javascript" src="../../vendor/jquery/jquery-2.0.3.min.js"></script>
+	<script type="text/javascript" src="../../vendor/require/require-2.1.9.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.0.7.min.js"></script>
+	<script type="text/javascript">
+
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// After the AngularJS has been bootstrapped, you can no longer
+		// use the normal module methods (ex, app.controller) to add
+		// components to the dependency-injection container. Instead, 
+		// you have to use the relevant providers. Since those are only
+		// available during the config() method at initialization time,
+		// we have to keep a reference to them.
+		// --
+		// NOTE: This general idea is based on excellent article by 
+		// Ifeanyi Isitor: http://ify.io/lazy-loading-in-angularjs/
+		app.config(
+			function( $controllerProvider, $provide, $compileProvider ) {
+
+				// Let's keep the older references.
+				app._controller = app.controller;
+				app._service = app.service;
+				app._factory = app.factory;
+				app._value = app.value;
+				app._directive = app.directive;
+
+				// Provider-based controller.
+				app.controller = function( name, constructor ) {
+
+					$controllerProvider.register( name, constructor );
+					return( this );
+
+				};
+				
+				// Provider-based service.
+				app.service = function( name, constructor ) {
+
+					$provide.service( name, constructor );
+					return( this );
+
+				};
+
+				// Provider-based factory.
+				app.factory = function( name, factory ) {
+
+					$provide.factory( name, factory );
+					return( this );
+
+				};
+
+				// Provider-based value.
+				app.value = function( name, value ) {
+
+					$provide.value( name, value );
+					return( this );
+
+				};
+
+				// Provider-based directive.
+				app.directive = function( name, factory ) {
+
+					$compileProvider.directive( name, factory );
+					return( this );
+
+				};
+
+				// NOTE: You can do the same thing with the "filter"
+				// and the "$filterProvider"; but, I don't really use
+				// custom filters.
+
+			}
+		);
+
+	
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I control the root of the application.
+		app.controller(
+			"AppController",
+			function( $scope, withLazyModule ) {
+
+				// I determine which view is rendered.
+				$scope.subview = "before";
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I toggle between the two different subviews.
+				$scope.toggleSubview = function() {
+
+					if ( $scope.subview === "before" ) {
+
+						// Once the "lazy" module has been loaded,
+						// then show the corresponding view.
+						withLazyModule(
+							function() {
+
+								$scope.subview = "after";
+
+							}
+						);
+
+						// The lazy-load of the module returns a 
+						// promise. This is here just to demonstrate
+						// that multiple bindings can listen for the 
+						// resolution or rejection of the lazy module.
+						withLazyModule().then(
+							function() {
+
+								console.log( "Lazy module loaded." );
+
+							}
+						);
+
+					} else {
+
+						$scope.subview = "before";
+
+					}
+
+				}
+				
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I load the "Lazy" module and resolve the returned Promise
+		// when the components and the relevant templates have been 
+		// loaded.
+		app.factory(
+			"withLazyModule",
+			function( $rootScope, $templateCache, $q ) {
+
+				var deferred = $q.defer();
+				var promise = null;
+
+				function loadModule( successCallback, errorCallback ) {
+
+					successCallback = ( successCallback || angular.noop );
+					errorCallback = ( errorCallback || angular.noop );
+
+					// If the module has already been loaded then 
+					// simply bind the handlers to the existing promise.
+					// No need to try and load the files again.
+					if ( promise ) {
+
+						return(
+							promise.then( successCallback, errorCallback )
+						);
+
+					}
+
+					promise = deferred.promise;
+
+					// Wire the callbacks into the deferred outcome.
+					promise.then( successCallback, errorCallback );
+
+					// Load the module templates and components. 
+					// --
+					// The first dependency here is an HTML file which
+					// is loaded using the text! plugin. This will pass
+					// the value through as an HTML string.
+					require(
+						[
+							"../../vendor/require/text!lazy.htm",
+							"lazy.js"
+						],
+						function requrieSuccess( templatesHtml ) {
+
+							// Fill the template cache. The file content
+							// is expected to be a list of top level 
+							// Script tags.
+							$( templatesHtml ).each(
+								function() {
+									
+									var template = $( this );
+									var id = template.attr( "id" );
+									var content = template.html();
+
+									$templateCache.put( id, content );
+
+								}
+							);
+
+							// Module loaded, resolve deferred.
+							$rootScope.$apply(
+								function() {
+
+									deferred.resolve();
+									
+								}
+							);
+							
+						},
+						function requireError( error ) {
+
+							// Module load failed, reject deferred.
+							$rootScope.$apply(
+								function() {
+
+									deferred.reject( error );
+									
+								}
+							);
+
+						}
+					);
+
+					return( promise );
+
+				}
+
+				return( loadModule );
+
+			}
+		);
+
+
+	</script>
+
+</body>
+</html>
