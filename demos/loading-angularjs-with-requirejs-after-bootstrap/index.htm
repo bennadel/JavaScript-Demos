@@ -4,7 +4,7 @@
 	<meta charset="utf-8" />
 
 	<title>
-		Loading AngularJS Components After Application Bootstrap
+		Loading AngularJS Components With RequireJS After Application Bootstrap
 	</title>
 
 	<style type="text/css">
@@ -24,7 +24,7 @@
 <body ng-controller="AppController">
 
 	<h1>
-		Loading AngularJS Components After Application Bootstrap
+		Loading AngularJS Components With RequireJS After Application Bootstrap
 	</h1>
 
 	<p>
@@ -38,20 +38,20 @@
 		bootstrapped.
 	-->
 	<div ng-switch="subview">
-		<div ng-switch-when="before" ng-include=" 'before.htm' "></div>		
-		<div ng-switch-when="after" ng-include=" 'after.htm' "></div>
+		
+		<div ng-switch-when="before">
+
+			<p>
+				Before app bootstrap.
+			</p>
+
+		</div>		
+		
+		<div ng-switch-when="after" ng-include=" 'after.htm' ">
+			<!-- To be poprulated with the Lazy module content. -->
+		</div>
+
 	</div>
-
-
-	<!-- BEGIN: Templates For ngInclude. -->
-	<script type="text/ng-template" id="before.htm">
-
-		<p>
-			Before app bootstrap.
-		</p>
-
-	</script>
-	<!-- END: Templates For ngInclude. -->
 
 
 	<!-- Load jQuery and AngularJS. -->
@@ -80,12 +80,6 @@
 		// Ifeanyi Isitor: http://ify.io/lazy-loading-in-angularjs/
 		app.config(
 			function( $controllerProvider, $provide, $compileProvider ) {
-
-				// Since the "shorthand" methods for component 
-				// definitions are no longer valid, we can just 
-				// override them to use the providers for post-
-				// bootstrap loading.
-				console.log( "Config method executed." );
 
 				// Let's keep the older references.
 				app._controller = app.controller;
@@ -146,53 +140,10 @@
 		// -------------------------------------------------- //
 
 
-		app.run(
-			function( $rootScope, $templateCache, $q ) {
-
-				$rootScope.withLazyModule = function( callback ) {
-
-					require(
-						[
-							"../../vendor/require/text!lazy.htm",
-							"lazy"
-						],
-						function( templates ) {
-
-							$( templates ).each(
-								function() {
-									
-									var template = $( this );
-
-									$templateCache.put( template.attr( "id" ), template.html() );
-
-								}
-							);
-
-							$rootScope.$apply( callback );
-							
-						}
-					);
-
-
-				};
-
-			}
-		);
-
-
-		// -------------------------------------------------- //
-		// -------------------------------------------------- //
-
-
 		// I control the root of the application.
 		app.controller(
 			"AppController",
-			function( $scope ) {
-
-				// Since this Controller will be instantiated once
-				// the application is bootstrapped, let's log it to 
-				// the console so we can see the timing.
-				console.log( "Controller instantiated (after bootstrap)." );
+			function( $scope, withLazyModule ) {
 
 				// I determine which view is rendered.
 				$scope.subview = "before";
@@ -208,10 +159,24 @@
 
 					if ( $scope.subview === "before" ) {
 
-						$scope.withLazyModule(
+						// Once the "lazy" module has been loaded,
+						// then show the corresponding view.
+						withLazyModule(
 							function() {
 
 								$scope.subview = "after";
+
+							}
+						);
+
+						// The lazy-load of the module returns a 
+						// promise. This is here just to demonstrate
+						// that multiple bindings can listen for the 
+						// resolution or rejection of the lazy module.
+						withLazyModule().then(
+							function() {
+
+								console.log( "Lazy module loaded." );
 
 							}
 						);
@@ -224,6 +189,102 @@
 
 				}
 				
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I load the "Lazy" module and resolve the returned Promise
+		// when the components and the relevant templates have been 
+		// loaded.
+		app.factory(
+			"withLazyModule",
+			function( $rootScope, $templateCache, $q ) {
+
+				var deferred = $q.defer();
+				var promise = null;
+
+				function loadModule( successCallback, errorCallback ) {
+
+					successCallback = ( successCallback || angular.noop );
+					errorCallback = ( errorCallback || angular.noop );
+
+					// If the module has already been loaded then 
+					// simply bind the handlers to the existing promise.
+					// No need to try and load the files again.
+					if ( promise ) {
+
+						return(
+							promise.then( successCallback, errorCallback )
+						);
+
+					}
+
+					promise = deferred.promise;
+
+					// Wire the callbacks into the deferred outcome.
+					promise.then( successCallback, errorCallback );
+
+					// Load the module templates and components. 
+					// --
+					// The first dependency here is an HTML file which
+					// is loaded using the text! plugin. This will pass
+					// the value through as an HTML string.
+					require(
+						[
+							"../../vendor/require/text!lazy.htm",
+							"lazy.js"
+						],
+						function requrieSuccess( templatesHtml ) {
+
+							// Fill the template cache. The file content
+							// is expected to be a list of top level 
+							// Script tags.
+							$( templatesHtml ).each(
+								function() {
+									
+									var template = $( this );
+									var id = template.attr( "id" );
+									var content = template.html();
+
+									$templateCache.put( id, content );
+
+								}
+							);
+
+							// Module loaded, resolve deferred.
+							$rootScope.$apply(
+								function() {
+
+									deferred.resolve();
+									
+								}
+							);
+							
+						},
+						function requireError( error ) {
+
+							// Module load failed, reject deferred.
+							$rootScope.$apply(
+								function() {
+
+									deferred.reject( error );
+									
+								}
+							);
+
+						}
+					);
+
+					return( promise );
+
+				}
+
+				return( loadModule );
+
 			}
 		);
 
