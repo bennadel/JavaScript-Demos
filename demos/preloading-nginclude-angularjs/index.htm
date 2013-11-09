@@ -1,0 +1,312 @@
+<!doctype html>
+<html ng-app="Demo" ng-controller="DemoController">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Preloading Data Before Executing ngInclude In AngularJS
+	</title>
+
+	<style type="text/css">
+
+		div[ ng-switch ],
+		div[ ng-switch ] * {
+			border: 1px solid red ;
+			margin: 0px 0px 0px 0px ;
+			padding: 10px 10px 10px 10px ;
+		}
+
+	</style>
+</head>
+<body>
+
+	<h1>
+		Preloading Data Before Executing ngInclude In AngularJS
+	</h1>
+
+	<p>
+		Subview: {{ subview }}
+	</p>
+
+	<!--
+		Each of the Cases in the following switch statement has both
+		an ngInclude and a bnPreload directive. The bnPreload will 
+		defer the ngInclude execution until the given data has been
+		preloaded and made available.
+	-->
+	<div ng-switch="subview">
+
+		<div
+			ng-switch-when="one"
+			bn-preload="oneData"
+			bn-include-log
+			ng-include=" 'one.htm' ">
+		</div>
+
+		<div
+			ng-switch-when="two"
+			bn-preload="twoData"
+			bn-include-log
+			ng-include=" 'two.htm' ">
+		</div>
+
+	</div>
+
+	<p>
+		<a href="#" ng-click="toggleSubview()">Toggle Subview</a>
+	</p>
+	
+
+	<!-- Load jQuery and AngularJS. -->
+	<script type="text/javascript" src="../../vendor/jquery/jquery-2.0.3.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.0.7.min.js"></script>
+	<script type="text/javascript">
+
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I control the main demo.
+		app.controller(
+			"DemoController",
+			function( $scope ) {
+
+				// I determine which subview to render.
+				$scope.subview = "one";
+
+				// I hold the data to render in the subview content
+				// (not show in the local HTML).
+				$scope.data = null;
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I toggle between the subview settings.
+				$scope.toggleSubview = function() {
+
+					if ( $scope.subview === "one" ) {
+
+						$scope.subview = "two";
+
+					} else {
+
+						$scope.subview = "one";
+
+					}
+
+				};
+
+
+				// I set the data (from a child scope).
+				$scope.setData = function( newData ) {
+
+					$scope.data = newData;
+
+				};
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I load data with a simulated remote latency. This is the
+		// data that will be "preloaded" before the ngInclude is 
+		// allowed to execute its linking function.
+		app.service(
+			"preloader",
+			function( $q, $timeout ) {
+
+				this.load = function( target ) {
+
+					if ( target === "oneData" ) {
+
+						var data = "[ First Item Data ]";
+
+					} else {
+
+						var data = "[ Second Item Data ]";
+
+					}
+
+					var deferred = $q.defer();
+
+					// Simulate network latency with deferred resolution.
+					$timeout(
+						function() {
+
+							deferred.resolve( data );
+
+						},
+						( 2 * 1000 )
+					);
+
+					return( deferred.promise );
+
+				}
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I repload the given data before I let the rest of the 
+		// directives 
+		app.directive(
+			"bnPreload",
+			function( preloader ) {
+
+				// Compile the element so that we have access to the
+				// transclude function which will allow us to gain 
+				// access to the target DOM element (in the linking 
+				// phase) after it has been ripped out of the DOM by 
+				// the compilation process.
+				function compile( templateElement, templateAttribute, transclude ) {
+
+					function link( $scope, element, attributes ) {
+
+						// When we are preloading the data, we'll put 
+						// a loading indicator in the DOM. I probably 
+						// wouldn't do this in production (in this 
+						// fashion), but for the demo, it will be nice
+						// to see the feedback.
+						var loadingElement = $( "<div>Preloading...</div>" )
+							.css({
+								color: "#CCCCCC",
+								fontStyle: "italic"
+							})
+						;
+
+						// Once the element is transcluded, we'll have
+						// to keep track of it so we can remove it 
+						// later (when destroyed).
+						// --
+						// NOTE: This is NOT the same element that the
+						// ngSwitch will have reference to.
+						var injectedElement = null;
+
+						// Show the "loading..." element.
+						element.after( loadingElement );
+
+						// Keep track of whether or not the $scope has 
+						// been destroyed while the data was loading.
+						var isDestroyed = false;
+
+						// Preload the "remote" data.
+						preloader.load( attributes.bnPreload ).then(
+							function( preloadedData ) {
+
+								// if the scope / UI has been destoyed,
+								// the ignore the processing.
+								if ( isDestroyed ) {
+
+									return;
+
+								}
+
+								$scope.setData( preloadedData );
+
+								// Once the given data has been 
+								// preloaded, we can transclude and
+								// inject our DOM node. Note that this
+								// DOM node has the ngInclude directive
+								// on it which will now execute.
+								transclude( $scope, function( copy ) {
+
+									loadingElement.remove();
+
+									element.after( injectedElement = copy );
+
+								});
+
+							}
+						);
+
+						// When the scope is destroyed, we have to be
+						// very careful to clean up after ourselves. 
+						// Since the injected element we have a handle
+						// on is DIFFERENT than the element that the 
+						// ngSwitch has a handle on, the ngSwitch-based
+						// destroy will leave our injected element in
+						// the DOM.
+						$scope.$on(
+							"$destroy",
+							function() {
+
+								isDestroyed = true;
+
+								loadingElement.remove();
+
+								// Wrap in $() in case it's still null.
+								$( injectedElement ).remove();
+
+							}
+						);
+
+					}
+
+
+					return( link );
+
+				}
+
+
+				// Return directive configuration.
+				// NOTE: ngSwitchWhen priority is 500.
+				// NOTE: ngInclude priority is 0.
+				return({
+					compile: compile,
+					priority: 250,
+					terminal: true,
+					transclude: "element"
+				});
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// This directive has the same default priority as ngInclude;
+		// as such, it will help us see when the ngInclude directive
+		// is actually 
+		app.directive(
+			"bnIncludeLog",
+			function() {
+
+				// I bind the $scope to the user interface.
+				function link( $scope, element, attribute ) {
+
+					console.log( "Included:", attribute.bnPreload );
+
+				}
+
+
+				// Return directive configuration.
+				return({
+					link: link
+				});
+
+			}
+		);
+
+
+	</script>
+
+</body>
+</html>
