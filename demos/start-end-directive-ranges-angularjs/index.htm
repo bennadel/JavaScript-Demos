@@ -1,0 +1,163 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Using Start/End Directive-Ranges In AngualrJS 1.2
+	</title>
+
+	<style type="text/css">
+
+		div.container {
+			border: 1px solid red ;
+			margin: 16px 0px 16px 0px ;
+			padding: 0px 16px 0px 16px ;
+		}
+
+		p.item {
+			border: 1px solid gold ;
+		}
+
+	</style>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		Using Start/End Directive-Ranges In AngualrJS 1.2
+	</h1>
+
+	<!-- START: Simple Directive Test. -->
+	<p bn-simple-start>
+		Start Simple Directive
+	</p>
+
+	<p>
+		... content...
+	</p>
+
+	<p bn-simple-end>
+		End Simple Directive
+	</p>
+	<!-- END: Simple Directive Test. -->
+
+
+	<!-- START: Simple Directive Test. -->
+	<p bn-complex-start>
+		Start Complex Directive
+	</p>
+
+	<p>
+		... content...
+	</p>
+
+	<p bn-complex-end>
+		End Complex Directive
+	</p>
+	<!-- END: Simple Directive Test. -->
+	
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/jquery/jquery-2.0.3.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.2.min.js"></script>
+	<script type="text/javascript">
+
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I control the root of the application.
+		app.controller(
+			"AppController",
+			function( $scope ) { /* ... */ }
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I simply decorate the elements in the linking phase.
+		app.directive(
+			"bnSimple",
+			function() {
+
+				// I bind the UI to the $scope.
+				function link( $scope, elements, attributes ) {
+
+					console.log( "Simple Element(s):" );
+					console.log( elements );
+
+					elements.addClass( "item" );
+
+				}
+
+
+				// Return the directive configuration.
+				return({
+					link: link
+				});
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I transclude the set of elements in the directive, wrapping
+		// them in a container before injecting them back into the DOM.
+		app.directive(
+			"bnComplex",
+			function() {
+
+				// Since we are transcluding the "element", there will 
+				// be no rendered DOM elements until the template 
+				// element is cloned and transcluded.
+				function compile( tElement, tAttributes, transclude ) {
+
+					// I bind the UI to the $scope.
+					function link( $scope, element, attributes ) {
+
+						transclude(
+							$scope, 
+							function( clonedContents ) {
+
+								clonedContents.addClass( "item" );
+
+								var div = $( "<div />" )
+									.addClass( "container" )
+									.append( clonedContents )
+									.insertAfter( element )
+								;								
+
+							}
+						);
+
+					}
+
+					return( link );
+
+				}
+
+
+				// Return the directive configuration.
+				return({
+					compile: compile,
+					transclude: "element"
+				});
+
+			}
+		);
+
+
+	</script>
+
+</body>
+</html>
