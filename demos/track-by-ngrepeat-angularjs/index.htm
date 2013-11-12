@@ -1,0 +1,183 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Using Track-By With ngRepeat In AngularJS
+	</title>
+
+	<style type="text/css">
+
+		a[ ng-click ] {
+			cursor: pointer ;
+			text-decoration: underline ;
+		}
+
+	</style>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		Using Track-By With ngRepeat In AngularJS
+	</h1>
+
+
+	<h2>
+		Without Track-By
+	</h2>
+
+	<ul>
+		<li 
+			ng-repeat="friend in friendsOne"
+			bn-log-dom-creation="Without">
+
+			{{ friend.id }} &mdash; {{ friend.name }}
+
+		</li>
+	</ul>
+
+
+	<h2>
+		With Track-By
+	</h2>
+
+	<!--
+		This time, we're going to use the same data structure; 
+		however, we're going to use the "track by" syntax to tell 
+		AngularJS how to map the objects to the DOM node. 
+		--
+		NOTE: You can also use a $scope-based function like:
+		... track by identifier( item )
+	-->
+	<ul>
+		<li 
+			ng-repeat="friend in friendsTwo track by friend.id"
+			bn-log-dom-creation="With">
+
+			{{ friend.id }} &mdash; {{ friend.name }}
+
+		</li>
+	</ul>
+
+	<p>
+		<a ng-click="rebuildFriends()">Rebuild Friends</a>
+	</p>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/jquery/jquery-2.0.3.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.2.min.js"></script>
+	<script type="text/javascript">
+
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I control the root of the application.
+		app.controller(
+			"AppController",
+			function( $scope ) {
+
+				// Set up the initial collections.
+				$scope.friendsOne = getFriends();
+				$scope.friendsTwo = getFriends();
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I rebuild the collections, creating completely new
+				// arrays and Friend object instances.
+				$scope.rebuildFriends = function() {
+
+					$scope.friendsOne = getFriends();
+					$scope.friendsTwo = getFriends();
+
+					// Log the friends collection so we can see how 
+					// AngularJS updates the objects.
+					setTimeout(
+						function() {
+
+							console.dir( $scope.friendsOne );
+							console.dir( $scope.friendsTwo );
+
+						},
+						50
+					);
+
+				};
+
+
+				// ---
+				// PRIVATE METHODS.
+				// ---
+
+
+				// I create a new collection of friends.
+				function getFriends() {
+
+					return([
+						{
+							id: 1,
+							name: "Sarah"
+						},
+						{
+							id: 2,
+							name: "Tricia"
+						},
+						{
+							id: 3,
+							name: "Joanna"
+						}
+					]);
+
+				}
+
+				
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I simply log the creation / linking of a DOM node to 
+		// illustrate the way the DOM nodes are created with the 
+		// various tracking approaches.
+		app.directive(
+			"bnLogDomCreation",
+			function() {
+
+				// I bind the UI to the $scope.
+				function link( $scope, element, attributes ) {
+
+					console.log( 
+						attributes.bnLogDomCreation, 
+						$scope.$index 
+					);
+
+				}
+
+
+				// Return the directive configuration.
+				return({
+					link: link
+				});
+
+			}
+		);
+
+
+	</script>
+
+</body>
+</html>
