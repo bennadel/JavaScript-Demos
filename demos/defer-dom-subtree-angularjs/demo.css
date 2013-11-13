@@ -1,0 +1,62 @@
+
+ul.items {
+	list-style-type: none ;
+	margin: 0px 0px 0px 0px ;
+	padding: 0px 0px 0px 0px ;
+}
+
+ul.items li.item {
+	border: 1px solid #CCCCCC ;
+	float: left ;
+	height: 75px ;
+	margin: 0px 10px 10px 0px ;
+	position: relative ;
+	text-align: center ;
+	width: 100px ;
+}
+
+ul.items span.name {
+	display: block ;
+	font-weight: bold ;
+	margin-bottom: 10px ;
+	padding-top: 16px ;
+}
+
+ul.items a.delete {
+	cursor: pointer ;
+	font-size: 12px ;
+	text-decoration: underline ;
+}
+
+ul.items div.deleteConfirmation {
+	background-color: #FFDADA ;
+	bottom: 0px ;
+	left: 0px ;
+	position: absolute ;
+	right: 0px ;
+	top: 0px ;
+}
+
+ul.items div.deleteConfirmation span.confirmation {
+	display: block ;
+	font-weight: bold ;
+	margin-bottom: 7px ;
+	padding-top: 8px ;
+}
+
+ul.items div.deleteConfirmation span.intent {
+	display: block ;
+	font-size: 12px ;
+}
+
+ul.items div.deleteConfirmation span.target {
+	display: block ;
+}
+
+ul.items div.deleteConfirmation a.action {
+	cursor: pointer ;
+	display: inline-block ;
+	font-size: 12px ;
+	margin: 0px 3px 0px 3px ;
+	text-decoration: underline ;
+}
