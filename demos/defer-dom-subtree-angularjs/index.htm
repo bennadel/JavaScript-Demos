@@ -159,10 +159,10 @@
 						// when the user "starts" to click.
 						element.on(
 							"mousedown",
-							"li",
+							"li a.delete",
 							function( event ) {
 
-								var item = $( this );
+								var item = $( this ).closest( "li" );
 								var localScope = item.scope();
 								
 								// Check to see if the item has already
