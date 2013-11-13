@@ -167,7 +167,7 @@
 								
 								// Check to see if the item has already
 								// been injected. If so, ignore click.
-								if ( localScope.__injected ) {
+								if ( localScope.hasOwnProperty( "__injected" ) ) {
 
 									return;
 
