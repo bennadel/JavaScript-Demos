@@ -1,0 +1,105 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Compound Transclusion Prevented In AngularJS 1.2
+	</title>
+
+	<style type="text/css">
+
+		a[ ng-click ] {
+			cursor: pointer ;
+			text-decoration: underline ;
+		}
+
+	</style>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		Compound Transclusion Prevented In AngularJS 1.2
+	</h1>
+
+	<p>
+		Show:
+		<a ng-click="showSubview( 'one' )">One</a> or 
+		<a ng-click="showSubview( 'two' )">Two</a>
+	</p>
+
+	<!-- Render the ngInclude based on the switch. -->
+	<div ng-switch="subview">
+		<div ng-switch-when="one" ng-include=" 'one.htm' "></div>
+		<div ng-switch-when="two" ng-include=" 'two.htm' "></div>
+	</div>
+
+	<p>
+		<a href="./index.htm">Breaking Version</a><br />
+		<a href="./working.htm">Working Version</a><br />
+	</p>
+
+
+	<!-- Template for ngInclude. -->
+	<script type="text/ng-template" id="one.htm">
+
+		<div>
+			Template One
+		</div>
+
+	</script>
+
+
+	<!-- Template for ngInclude. -->
+	<script type="text/ng-template" id="two.htm">
+
+		<div>
+			Template Two
+		</div>
+
+	</script>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/jquery/jquery-2.0.3.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.2.4.min.js"></script>
+	<script type="text/javascript">
+
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I control the root of the application.
+		app.controller(
+			"AppController",
+			function( $scope ) {
+
+				// I determine which subview to render.
+				$scope.subview = "one";
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I show the given subview.
+				$scope.showSubview = function( newSubview ) {
+
+					$scope.subview = newSubview;
+
+				};
+				
+			}
+		);
+
+
+	</script>
+
+</body>
+</html>
