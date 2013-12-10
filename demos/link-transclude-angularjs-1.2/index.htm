@@ -1,0 +1,135 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Transclude Function Passed To Link Function In AngularJS 1.2
+	</title>
+</head>
+<body>
+
+	<h1>
+		Transclude Function Passed To Link Function In AngularJS 1.2
+	</h1>
+
+	<!-- Will demonstrate old-school transclude configuration. -->
+	<p bn-old-transclude>
+		Old Transclude!
+	</p>
+
+	<!-- Will demonstrate new, easier transclude configuration. -->
+	<p bn-new-transclude>
+		New Transclude!
+	</p>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/jquery/jquery-2.0.3.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.2.4.min.js"></script>
+	<script type="text/javascript">
+
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// In the old-school transclude configuration, you NEEDED to 
+		// define the compile() method just to get a reference to the
+		// transclude function. Notice that the compile() isn't 
+		// actually doing anything - it's just there so that the 
+		// "transclude" argument can be defined.
+		app.directive(
+			"bnOldTransclude",
+			function() {
+
+				function compile( tElement, tAttributes, transclude ) {
+
+					// At this point, the "element" is the COMMENT
+					// that has been injected into the DOM as an anchor
+					// for the subsequent transclusion.
+					function link( $scope, element, attributes ) {
+
+						transclude(
+							$scope, 
+							function( clone ) {
+
+								clone.css( "border", "2px solid pink" );
+
+								element.after( clone );
+
+							}
+						);
+
+					}
+
+					return( link );
+
+				}
+
+
+				// Return the directive configuration.
+				return({
+					compile: compile,
+					restrict: "A",
+					transclude: "element"
+				});
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// In the new transclude configuration, you no longer need the
+		// COMPILE function _just_ to define the transclude function;
+		// the transclude function is now passed as an optional 
+		// argument directly to the link() function. 
+		// --
+		// NOTE: I defined the "controller" argument since  the 
+		// transclude function is after it. However, since I am not
+		// actually "require"ing any controllers, I am naming it "null."
+		app.directive(
+			"bnNewTransclude",
+			function() {
+
+				// At this point, the "element" is the COMMENT that 
+				// has been injected into the DOM as an anchor for
+				// the subsequent transclusion.
+				function link( $scope, element, attributes, nullController, transclude ) {
+
+					transclude(
+						$scope, 
+						function( clone ) {
+
+							clone.css( "border", "2px solid gold" );
+							
+							element.after( clone );
+
+						}
+					);
+
+				}
+
+
+				// Return the directive configuration.
+				return({
+					link: link,
+					restrict: "A",
+					transclude: "element"
+				});
+
+			}
+		);
+
+
+	</script>
+
+</body>
+</html>
