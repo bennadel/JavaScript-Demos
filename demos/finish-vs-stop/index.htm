@@ -1,0 +1,106 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Stop() vs. Finish() In jQuery
+	</title>
+
+	<style type="text/css">
+
+		div.box {
+			background-color: #FAFAFA ;
+			border: 1px solid #CCCCCC ;
+			height: 50px ;
+			line-height: 50px ;
+			overflow: hidden ;
+			width: 0px ;
+		}
+
+		form {
+			margin-bottom: 16px ;
+		}
+
+	</style>
+</head>
+<body>
+
+	<h1>
+		Stop() vs. Finish() In jQuery
+	</h1>
+
+	<form action="#">
+		<input type="button" value="Reset" class="reset" />
+		<input type="button" value="Start" class="start" />
+		<input type="button" value="Halt" class="halt" />
+	</form>
+
+	<div class="box box1">
+		Stop()
+	</div>
+
+	<br />
+
+	<div class="box box2">
+		Finish()
+	</div>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/jquery/jquery-2.0.3.min.js"></script>
+	<script type="text/javascript">
+
+		// Cache our DOM elements like good citizens. 
+		var dom = {
+			reset: $( "input.reset" ),
+			start: $( "input.start" ),
+			halt: $( "input.halt" ),
+			box1: $( "div.box1" ),
+			box2: $( "div.box2" )
+		};
+
+		// Reset the demo by quitting all animations and manually
+		// setting the widths.
+		dom.reset.click(
+			function( event ) {
+
+				dom.box1.add( dom.box2 )
+					.stop( true, true )
+					.width( 0 )
+				;
+
+			}
+		);
+
+		// Start animations on both elements. The animations will 
+		// include a slide-out followed by a slide-in of each element.
+		// Meaning, there are two different animations in the queue at
+		// the start of the experiment.
+		dom.start.click(
+			function( event ) {
+
+				dom.box1.add( dom.box2 )
+					.animate( { width: "400px" }, 3000 )
+					.animate( { width: "0px" }, 2000 )
+				;
+
+			}
+		);
+
+		// Stop both animations.
+		dom.halt.click(
+			function( event ) {
+
+				// True ( clear queue, jump to end ).
+				dom.box1.stop( true, true );
+
+				dom.box2.finish();
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
