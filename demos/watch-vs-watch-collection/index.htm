@@ -1,0 +1,219 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Scope $watch() vs. $watchCollection() In AngularJS
+	</title>
+
+	<style type="text/css">
+
+		a[ ng-click ] {
+			cursor: pointer ;
+			text-decoration: underline ;
+		}
+
+	</style>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		Scope $watch() vs. $watchCollection() In AngularJS
+	</h1>
+
+	<p>
+		<a ng-click="changeDeepValue()">Change Deep Value</a>
+		&mdash;
+		<a ng-click="changeShallowValue()">Change Shallow Value</a>
+		&mdash;
+		<a ng-click="rebuild()">Rebuild</a>
+		&mdash;
+		<a ng-click="clear()">Clear</a>
+	</p>
+
+
+	<h2>
+		$watchCollection( collection ) Log
+	</h2>
+
+	<ul>
+		<li ng-repeat="item in watchCollectionLog">
+			{{ item }}
+		</li>
+	</ul>
+
+
+	<h2>
+		$watch( collection ) Log
+	</h2>
+
+	<ul>
+		<li ng-repeat="item in watchLog">
+			{{ item }}
+		</li>
+	</ul>
+
+
+	<h2>
+		$watch( collection, [ Equality = true ] ) Log
+	</h2>
+
+	<ul>
+		<li ng-repeat="item in watchEqualityLog">
+			{{ item }}
+		</li>
+	</ul>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/jquery/jquery-2.0.3.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.2.min.js"></script>
+	<script type="text/javascript">
+
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I control the root of the application.
+		app.controller(
+			"AppController",
+			function( $scope ) {
+
+				// These are the log item to render upon change.
+				$scope.watchCollectionLog = [];
+				$scope.watchLog = [];
+				$scope.watchEqualityLog = [];
+
+				// I am the collection being watched.
+				$scope.collection = [
+					{
+						id: 1,
+						value: 0
+					}
+				];
+
+
+				// Use the relatively new watchCollection().
+				$scope.$watchCollection(
+					"collection",
+					function( newValue, oldValue ) {
+
+						addLogItem( $scope.watchCollectionLog );
+						
+					}
+				);
+
+				// Use the old watch() with default object equality,
+				// which defaults to use object REFERENCE checks.
+				$scope.$watch(
+					"collection",
+					function( newValue, oldValue ) {
+
+						addLogItem( $scope.watchLog );
+
+					}
+				);
+
+				// Use the old watch() method, but turn on deep object
+				// equality, which will compare the deep object tree
+				// for changes.
+				$scope.$watch(
+					"collection",
+					function( newValue, oldValue ) {
+
+						addLogItem( $scope.watchEqualityLog );
+
+					},
+					true // Object equality (not just reference).
+				);
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// Change a deep value in an existing item on in the 
+				// current collection.
+				$scope.changeDeepValue = function() {
+
+					// Add new item to collection.
+					$scope.collection[ 0 ].value = now();
+
+				};
+
+
+				// Add a new item to the collection, causing a change
+				// in the shallow topology of the collection.
+				$scope.changeShallowValue = function() {
+
+					// Add new item to collection.
+					$scope.collection.push({
+						id: ( $scope.collection.length + 1 ),
+						value: now()
+					});
+
+				};
+
+
+				// I clear the log items.
+				$scope.clear = function() {
+
+					$scope.watchCollectionLog = [];
+					$scope.watchLog = [];
+					$scope.watchEqualityLog = [];
+
+				};
+
+
+				// I rebuild the underlying collection, completely
+				// changing the reference.
+				$scope.rebuild = function() {
+
+					$scope.collection = [{
+						id: 1,
+						value: 0
+					}];
+
+				};
+
+
+				// ---
+				// PRIVATE METHODS.
+				// ---
+
+
+				// I add a log item to the beginning of the given log.
+				function addLogItem( log ) {
+
+					var logItem = (
+						"Executed: " + now() + 
+						" ( length: " + $scope.collection.length + " )"
+					);
+
+					log.splice( 0, 0, logItem );
+
+				}
+
+
+				// I return the current UTC milliseconds.
+				function now() {
+
+					return( ( new Date() ).getTime() );
+
+				}
+
+			}
+		);
+
+
+	</script>
+
+</body>
+</html>
