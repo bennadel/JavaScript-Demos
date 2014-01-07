@@ -1,0 +1,93 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Keep Overflow Content Scrolling Unresponsive Until Clicked Using jQuery
+	</title>
+
+	<style type="text/css">
+
+		div.overflowable {
+			border: 2px solid #FF3399 ;
+			height: 150px ;
+			overflow: auto ;
+			padding: 1px 16px 1px 16px ;
+			width: 500px ;
+		}
+
+		div.overflowable.unresponsive {
+			border-color: #CCCCCC ;
+			cursor: pointer ;
+			overflow: hidden ;
+		}
+
+	</style>
+</head>
+<body>
+
+	<h1>
+		Keep Overflow Content Scrolling Unresponsive Until Clicked Using jQuery
+	</h1>
+
+	<p>
+		Here is a long page; but, on the page, we have another 
+		area of content that can be scrolled independently using 
+		CSS overflow.
+	</p>
+
+	<p>
+		<strong>Content You Don't Really Care About</strong>:
+	</p>
+
+	<!-- BEGIN: Overflow Content. -->
+	<div class="overflowable unresponsive">
+
+		<p class="repeatMe">
+			This is the sub-content area - independently scrollable.
+		</p>
+
+	</div>
+	<!-- END: Overflow Content. -->
+
+	<p class="repeatMe">
+		This is part of the main page content.
+	</p>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/jquery/jquery-2.0.3.min.js"></script>
+	<script type="text/javascript">
+
+		// When the content area is clicked, remove the "unresponsive"
+		// class. This will allow the overflow to take on the "auto"
+		// behavior, instead of the "hidden" behavior.
+		$( "div.overflowable" ).click(
+			function( event ) {
+
+				$( this ).toggleClass( "unresponsive" );
+
+			}
+		);
+
+		// Set up the "filler" content to make the page and the 
+		// sub-content scroll-worthy.
+		$( "p.repeatMe" ).each(
+			function() {
+
+				var root = $( this );
+
+				for ( var i = 0 ; i < 20 ; i++ ) {
+
+					root.after( $.clone( this ) );
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
