@@ -1,0 +1,155 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Sanity Check: $index vs. DOM In AngularJS Directives
+	</title>
+
+	<style type="text/css">
+
+		a[ ng-click ] {
+			cursor: pointer ;
+			text-decoration: underline ;
+		}
+
+	</style>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		Sanity Check: $index vs. DOM In AngularJS Directives
+	</h1>
+
+	<form ng-submit="addFriend()">
+
+		<input type="text" ng-model="form.name" />
+		<input type="submit" value="Add Friend" />
+
+	</form>
+
+	<ul>
+		<li
+			ng-repeat="friend in friends" 
+			class="friend">
+
+			<!--
+				As each ngRepeat item is rendered, we're going to 
+				listen for changes on the auto-generated $index value.
+			-->
+			<span bn-index-watch>{{ friend.name }}</span>
+
+			( <a ng-click="removeFriend( friend )">Remove</a> )
+
+		</li>
+	</ul>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/jquery/jquery-2.0.3.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.2.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I control the root of the application.
+		app.controller(
+			"AppController",
+			function( $scope ) {
+
+				// I am the collection of friends being rendered.
+				$scope.friends = [
+					{
+						name: "Sarah"
+					}
+				];
+
+				// I am the form-input collection for ngModel.
+				$scope.form = {
+					name: ""
+				};
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I add a new friend, using the form input.
+				$scope.addFriend = function() {
+
+					$scope.friends.push({
+						name: $scope.form.name
+					});
+
+					$scope.form.name = "";
+
+				};
+
+
+				// I remove the given friend from the collection.
+				$scope.removeFriend = function( friend ) {
+
+					$scope.friends.splice(
+						$scope.friends.indexOf( friend ),
+						1
+					);
+
+				};
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I watch for changes in the $index and compare it to the DOM.
+		app.directive(
+			"bnIndexWatch",
+			function() {
+
+				// I wire the $scope to the DOM.
+				function link( $scope, element, attributes ) {
+
+					$scope.$watch(
+						"$index",
+						function( newValue, oldValue ) {
+
+							// Collection the rendered DOM elments and
+							// the index in the context of the current 
+							// directive / DOM element.
+							// --
+							// NOTE: We are making the index 1-based 
+							// for an easier-to-read comparison.
+							var friendCount = $( "li.friend" ).length;
+							var indexCount = ( newValue + 1 );
+
+							console.log( indexCount, ",", friendCount );
+
+						}
+					);
+
+				}
+
+				// Return directive configuration.
+				return({
+					link: link,
+					restrict: "A"
+				});
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
