@@ -22,6 +22,11 @@
 		Hooking Into The ngRepeat Completion Event In AngularJS
 	</h1>
 
+
+	<h3>
+		Friends
+	</h3>
+
 	<ul>
 		<!-- 
 			When the ngRepeat finishes its first round of rendering, 
@@ -43,6 +48,31 @@
 	</p>
 
 
+	<h3>
+		Enemies
+	</h3>
+
+	<ul>
+		<!-- 
+			When the ngRepeat finishes its first round of rendering, 
+			we're going to invoke the doSomething() callback. 
+		-->
+		<li 
+			ng-repeat="enemy in enemies" 
+			repeat-complete="doSomething( $index )">
+
+			{{ enemy.name }}
+
+		</li>
+	</ul>
+
+	<p>
+		<a ng-click="addEnemy()">Add Enemy</a>
+		-
+		<em>This WILL trigger one more "complete" event</em>.
+	</p>
+
+
 	<!-- Load scripts. -->
 	<script type="text/javascript" src="../../vendor/jquery/jquery-2.0.3.min.js"></script>
 	<script type="text/javascript" src="../../vendor/angularjs/angular-1.2.min.js"></script>
@@ -61,7 +91,6 @@
 			"AppController",
 			function( $scope ) {
 
-
 				// Define the collection of friends to render.
 				$scope.friends = [
 					{
@@ -75,15 +104,29 @@
 					}
 				];
 
+				// Define the collection of enemies to render. This 
+				// collection will start out empty in order to demonstrate
+				// that this approach requires at least ONE element to 
+				// render.
+				$scope.enemies = [];
+
 
 				// ---
 				// PUBLIC METHODS.
 				// ---
 
 
-				// I add a new friend to the collection - this is done 
-				// to demonstrate that as new items are rendered, we 
-				// do NOT re-invoke the complete handler.
+				// I add a new enemty to the collection.
+				$scope.addEnemy = function() {
+
+					$scope.enemies.push({
+						name: "Banana"
+					});
+
+				}
+
+
+				// I add a new friend to the collection.
 				$scope.addFriend = function() {
 
 					$scope.friends.push({
