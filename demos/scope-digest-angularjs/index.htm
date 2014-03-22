@@ -1,0 +1,175 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Using $scope.$digest() As A Performance Optimization In AngularJS
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		Using $scope.$digest() As A Performance Optimization In AngularJS
+	</h1>
+
+	<!-- 
+		Notice that both this P-tag and the next one both use ng-class to see CSS 
+		classes based on the Model; however, the second P uses a child scope (created 
+		by the bn-digest directive).
+	-->
+	<p 
+		ng-mouseenter="setIsHot( true );"
+		ng-mouseleave="setIsHot( false );"
+		class="apply"
+		ng-class="{ hot: isHot }">
+		$apply()
+	</p>
+
+	<p 
+		bn-digest 
+		class="digest" 
+		ng-class="{ hot: localIsHot }">
+		$digest()
+	</p>
+
+	<p class="logging">
+		<em>NOTE: Logging output to console.</em>
+	</p>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/jquery/jquery-2.0.3.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.2.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I control the root of the application.
+		app.controller(
+			"AppController",
+			function( $scope ) {
+
+				// Setting up a watcher to mimic the high number of bindings that most 
+				// applications will have. I will be called on every digest.
+				$scope.$watch(
+					function() {
+
+						console.log( "Top-level digest 1." );
+
+					}
+				);
+
+				// Setting up a watcher to mimic the high number of bindings that most 
+				// applications will have. I will be called on every digest.
+				$scope.$watch(
+					function() {
+
+						console.log( "Top-level digest 2." );
+
+					}
+				);
+
+				// Setting up a watcher to mimic the high number of bindings that most 
+				// applications will have. I will be called on every digest.
+				$scope.$watch(
+					function() {
+
+						console.log( "Top-level digest 3." );
+
+					}
+				);
+
+				// I determine if the target element is "hot" (for display purposes).
+				$scope.isHot = false;
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I set the new isHot property.
+				$scope.setIsHot = function( newIsHot ) {
+
+					$scope.isHot = newIsHot;
+
+				};
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I implement some mouse-interaction behavior without triggering digests at a 
+		// higher level in the $scope chain.
+		app.directive(
+			"bnDigest",
+			function() {
+
+				// I bind the JavaScript events to the scope.
+				function link( $scope, element, attributes ) {
+
+					// I determine if the target element is hot.
+					$scope.localIsHot = false;
+
+					// I activate the element on mouse-enter.
+					element.mouseenter(
+						function() {
+
+							$scope.localIsHot = true;
+
+							// NOTE: By calling the $digest() instead of the more typical
+							// $apply() method, we will only trigger watchers on the local
+							// scope (and its children). We will NOT trigger any watchers
+							// on the parent scope.
+							$scope.$digest();
+
+						}
+					);
+
+					// I deactivate the element on mouse-leave.
+					element.mouseleave(
+						function() {
+
+							$scope.localIsHot = false;
+
+							// NOTE: By calling the $digest() instead of the more typical
+							// $apply() method, we will only trigger watchers on the local
+							// scope (and its children). We will NOT trigger any watchers
+							// on the parent scope.
+							$scope.$digest();
+
+						}
+					);
+
+				}
+
+
+				// NOTE: By setting scope to TRUE, the directive creates a new child scope
+				// that separates it from the parent scope (creating a isolated part of 
+				// the scope chain).
+				return({
+					link: link,
+					restrict: "A",
+					scope: true
+				});
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>

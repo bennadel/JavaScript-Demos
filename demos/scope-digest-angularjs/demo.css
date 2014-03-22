@@ -1,0 +1,31 @@
+
+a[ ng-click ] {
+	cursor: pointer ;
+	text-decoration: underline ;
+}
+
+p.apply,
+p.digest {
+	background-color: #FAFAFA ;
+	border: 3px solid #CCCCCC ;
+	cursor: default ;
+	float: left ;
+	height: 75px ;
+	line-height: 75px ;
+	text-align: center ;
+	width: 200px ;
+}
+
+p.apply {
+	margin-right: 30px ;
+}
+
+p.apply.hot,
+p.digest.hot {
+	background-color: #FFCCCC ;
+	border-color: #FF3399 ;
+}
+
+p.logging {
+	clear: both ;
+}
