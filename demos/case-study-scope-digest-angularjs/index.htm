@@ -1,0 +1,244 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Case Study: Using $scope.$digest() As A Performance Optimization In AngularJS
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		Case Study: Using $scope.$digest() As A Performance Optimization In AngularJS
+	</h1>
+	
+	<!-- 
+		The bnDeferDom directive will strip the div.detail out of the DOM, thereby 
+		preventing AngularJS from having to implement all of the various bindings 
+		contained within the div.detail container (ex. ng-src, ng-bind). 
+	-->
+	<ul bn-defer-dom class="m-friends">
+
+		<!-- 
+			NOTE: I have an ngClick on this ngRepeat to demonstrate that the watchers
+			will normally fire with the native directives (see console.log). 
+		-->
+		<li 
+			ng-repeat="friend in friends" 
+			ng-controller="FriendController"
+			ng-click="noop()"
+			class="friend">
+
+			<div class="teaser">
+				{{ friend.name }}
+			</div>
+
+			<div class="detail">
+
+				<img ng-src="./avatar-{{ friend.avatarID }}.jpg" class="avatar" />
+
+				<div class="name">
+					{{ friend.name }}
+				</div>
+
+				<div class="nickname">
+					a.k.a. {{ friend.nickname }}
+				</div>
+
+			</div>
+		
+		</li>
+
+	</ul>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/jquery/jquery-2.0.3.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.2.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I control the root of the application.
+		app.controller(
+			"AppController",
+			function( $scope ) {
+
+				// Let's build a large number of items since that's where the payoff in 
+				// micro-optimizations can really start to be felt.
+				$scope.friends = buildFriends( 500 );
+
+				// I provide a no-action click-handler.
+				$scope.noop = angular.noop;
+
+
+				// ---
+				// PRIVATE METHODS.
+				// ---
+
+
+				// I return a new friend object.
+				function buildFriend( index ) {
+
+					var localIndex = ( index % 3 );
+
+					if ( localIndex === 0 ) {
+
+						return({
+							avatarID: 1,
+							name: "Sarah",
+							nickname: "Stubs"
+						});
+
+					} else if ( localIndex === 1 ) {
+
+						return({
+							avatarID: 2,
+							name: "Joanna",
+							nickname: "J-Diesel"
+						});
+
+					} else {
+
+						return({
+							avatarID: 3,
+							name: "Tricia",
+							nickname: "Boss"
+						});
+
+					}
+
+				}
+
+
+				// I create a collection of friends with the given size.
+				function buildFriends( size ) {
+
+					var friends = [];
+
+					for ( var i = 1 ; i <= size ; i++ ) {
+
+						friends.push( buildFriend( i ) );
+
+					}
+
+					return( friends );
+
+				}
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// For this demo, we are going to give a Controller instance to each instance of 
+		// the ngRepeat item. This way, each item can bind watchers.
+		app.controller(
+			"FriendController",
+			function( $scope ) {
+
+				// By using a function for the "watch expression", the callback will be
+				// executed in each $digest. Of course, this is the worst-case scenario
+				// and is here only to demonstate the [possible] scope of change.
+				$scope.$watch(
+					function() {
+
+						console.log( "Watcher on $index", $scope.$index );
+
+					}
+				);
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+		
+		// I compile the list and remove the div.detail container before the ngRepeat 
+		// has a chance to compile the repeater. Then, the div.detail container is 
+		// dynamically injected into the DOM just-in-time as the user mouses into the
+		// given ngRepeat instance.
+		app.directive(
+			"bnDeferDom",
+			function( $compile ) {
+
+				// I compile the list before nested directives have a chance to link it.
+				function compile( tElement, tAttributes ) {
+
+					// Find, remove, and compile the div.detail container. 
+					var transclude = $compile( tElement.find( "div.detail" ).remove() );
+
+					// When the user mouses into the list item, dynamically inject the
+					// the div.detail instance.
+					tElement.on(
+						"mouseenter",
+						"li.friend",
+						function( event ) {
+
+							var target = $( this );
+
+							if ( target.is( ".defer-complete" ) ) {
+
+								return;
+
+							}
+
+							target.addClass( "defer-complete" );
+
+							// The ngRepeat directive creates a new child $scope for 
+							// each instance of the LI. Get the local $scope and create
+							// a nested child scope for our div.detail container. We 
+							// are doing this to limit the scope of watchers.
+							var detailScope = target.scope().$new();
+
+							// Clone the div.detail container and append to the list item.
+							transclude(
+								detailScope,
+								function( detail, $scope ) {
+
+									target.append( detail );
+
+								}
+							);
+
+							// Tell AngularJS to bind all the watchers in the newly-
+							// injected DOM. In this case, we are going to use the
+							// $digest() method, instead of the $apply() method since
+							// we don't want to "tell the world" about this change.
+							// Only the local DOM tree needs to know that anything has
+							// actually changed.
+							detailScope.$digest();
+
+						}
+					);
+
+				}
+
+
+				// Return the directive configuration.
+				return({
+					compile: compile,
+					restrict: "A"
+				});
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>

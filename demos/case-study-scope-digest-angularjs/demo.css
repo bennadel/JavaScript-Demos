@@ -1,0 +1,73 @@
+
+ul.m-friends {
+	list-style-type: none ;
+	margin: 0px 0px 0px 0px ;
+	padding: 0px 0px 0px 0px ;
+}
+
+ul.m-friends li.friend {
+	background-color: #F8F8F8 ;
+	border: 1px solid #AAAAAA ;
+	border-radius: 4px 4px 4px 4px ;
+	cursor: default ;
+	float: left ;
+	height: 150px ;
+	margin: 0px 10px 10px 0px ;
+	padding: 0px 0px 0px 0px ;
+	position: relative ;
+	text-align: center ;
+	width: 150px ;
+}
+
+ul.m-friends div.teaser {
+	bottom: 0px ;
+	color: #333333 ;
+	font-size: 22px ;
+	left: 0px ;
+	line-height: 150px ;
+	position: absolute ;
+	right: 0px ;
+	top: 0px ;
+}
+
+ul.m-friends div.detail {
+	background-color: rgba( 255, 255, 255, .85 ) ;
+	border-radius: 3px 3px 3px 3px ;
+	bottom: 0px ;
+	display: none ;
+	left: 0px ;
+	position: absolute ;
+	right: 0px ;
+	top: 0px ;
+}
+
+ul.m-friends img.avatar {
+	border: 3px solid #CCCCCC ;
+	border-radius: 40px 40px 40px 40px ;
+	display: block ;
+	left: 34px ;
+	position: absolute ;
+	top: 10px ;
+}
+
+ul.m-friends div.name {
+	font-size: 23px ;
+	font-weight: bold ;
+	left: 0px ;
+	position: absolute ;
+	right: 0px ;
+	top: 99px ;
+}
+
+ul.m-friends div.nickname {
+	color: #999999 ;
+	font-size: 14px ;
+	left: 0px ;
+	position: absolute ;
+	right: 0px ;
+	top: 128px ;
+}
+
+ul.m-friends li.friend:hover div.detail {
+	display: block ;
+}
