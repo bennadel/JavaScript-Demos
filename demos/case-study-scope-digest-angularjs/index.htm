@@ -16,9 +16,9 @@
 	</h1>
 	
 	<!-- 
-		The bnDeferDom directive will strip the div.detail out of the DOM, thereby 
-		preventing AngularJS from having to implement all of the various bindings 
-		contained within the div.detail container (ex. ng-src, ng-bind). 
+		The bnDeferDom directive will strip the div.detail out of the DOM at compile-
+		time, thereby preventing AngularJS from having to implement all of the various 
+		data bindings contained within the div.detail container (ex. ng-src, ng-bind). 
 	-->
 	<ul bn-defer-dom class="m-friends">
 
@@ -144,7 +144,8 @@
 
 
 		// For this demo, we are going to give a Controller instance to each instance of 
-		// the ngRepeat item. This way, each item can bind watchers.
+		// the ngRepeat item. This way, each item can bind watchers while will help us
+		// demonstrate the point of the deferred bindings.
 		app.controller(
 			"FriendController",
 			function( $scope ) {
@@ -183,7 +184,8 @@
 					var transclude = $compile( tElement.find( "div.detail" ).remove() );
 
 					// When the user mouses into the list item, dynamically inject the
-					// the div.detail instance.
+					// the div.detail instance. Notice that the first part of the function
+					// is just guard statements that prevent it from being injected twice. 
 					tElement.on(
 						"mouseenter",
 						"li.friend",
@@ -215,7 +217,7 @@
 								}
 							);
 
-							// Tell AngularJS to bind all the watchers in the newly-
+							// Tell AngularJS to configure all the watchers in the newly-
 							// injected DOM. In this case, we are going to use the
 							// $digest() method, instead of the $apply() method since
 							// we don't want to "tell the world" about this change.
