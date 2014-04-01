@@ -1,0 +1,117 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Implementing Collections.Shuffle() In JavaScript
+	</title>
+</head>
+<body>
+
+	<h1>
+		Implementing Collections.Shuffle() In JavaScript
+	</h1>
+	
+	<!-- Load scripts. -->
+	<script type="text/javascript">
+
+		// Define our collection object with exposed methods.
+		var collections = (function() {
+
+			// I generate a random integer between the min and max, both of which are
+			// inclusive in the range. If the "min" argument is omitted, the range is 
+			// assumed to be zero-to-max.
+			function randRange( min, max ) {
+
+				// If only one argument, assumed to be Max.
+				if ( arguments.length === 1 ) {
+
+					max = arguments[ 0 ];
+					min = 0;
+
+				}
+
+				var range = ( max - min + 1 );
+
+				var offset = Math.floor( range * Math.random() );
+
+				return( min + offset );
+
+			}
+
+
+			// I shuffle the collection using the given rand-range implementation. If
+			// no implementation is provided, the default implementation is used.
+			// --
+			// NOTE: Uses the Fisher–Yates shuffle algorithm.
+			function shuffle( collection, randRangeImplementation ) {
+
+				// If a rand-range implementation is not provided, use the default.
+				if ( ! randRangeImplementation ) {
+
+					randRangeImplementation = randRange;	
+
+				}
+
+				var length = collection.length;
+				var i = length;
+
+				// Loop backwards through the list, randomly swapping indices.
+				while( --i ) {
+				
+					var j = randRangeImplementation( i );
+
+					if ( i !== j ) {
+
+						swap( collection, i, j );
+
+					}
+
+				}
+
+				return( collection );
+
+			}
+
+
+			// I swap the value at the given indices in the given collection.
+			function swap( collection, i, j ) {
+
+				var tempValue = collection[ i ];
+
+				collection[ i ] = collection[ j ];
+				collection[ j ] = tempValue;
+
+			}
+
+
+			// Return the public API.
+			return({
+				shuffle: shuffle
+			});
+
+		})();
+
+
+		// ------------------------------------------------------- //
+		// ------------------------------------------------------- //
+
+
+		// Let's try it out - build up a collection of numbers, shuffle, then output.
+		var numbers = [];
+
+		for ( var i = 1 ; i < 20 ; i++ ) {
+
+			numbers.push( i );
+
+		}
+
+		collections.shuffle( numbers );
+
+		console.log( numbers.join( ", " ) );
+
+	</script>
+
+</body>
+</html>
