@@ -1,0 +1,180 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Directive Controller And Link Timing In AngularJS
+	</title>
+</head>
+<body>
+
+	<h1>
+		Directive Controller And Link Timing In AngularJS
+	</h1>
+
+	<div bn-outer>
+
+		<p bn-mid>
+
+			<span bn-inner>
+
+				Woot!
+
+			</span>
+
+		</p>
+
+		<p bn-second-mid>
+
+			Woot, indeed!
+
+		</p>
+
+	</div>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/jquery/jquery-2.0.3.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.2.4.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I demonstrate the timing of directive execution.
+		app.directive(
+			"bnOuter",
+			function() {
+
+				function Controller( $scope ) {
+
+					console.log( "Outer - Controller" );
+
+				}
+
+
+				function link( $scope, element, attributes, controller ) {
+
+					console.log( "Outer - Link" );
+
+				}
+
+
+				// Return directive configuration.
+				return({
+					controller: Controller,
+					link: link
+				});
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I demonstrate the timing of directive execution.
+		app.directive(
+			"bnMid",
+			function() {
+
+				function Controller( $scope ) {
+
+					console.log( "Mid - Controller" );
+
+				}
+
+
+				function link( $scope, element, attributes, controller ) {
+
+					console.log( "Mid - Link" );
+
+				}
+
+
+				// Return directive configuration.
+				return({
+					controller: Controller,
+					link: link
+				});
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I demonstrate the timing of directive execution.
+		app.directive(
+			"bnSecondMid",
+			function() {
+
+				function Controller( $scope ) {
+
+					console.log( "Second Mid - Controller" );
+
+				}
+
+
+				function link( $scope, element, attributes, controller ) {
+
+					console.log( "Second Mid - Link" );
+
+				}
+
+
+				// Return directive configuration.
+				return({
+					controller: Controller,
+					link: link
+				});
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I demonstrate the timing of directive execution.
+		app.directive(
+			"bnInner",
+			function() {
+
+				function Controller( $scope ) {
+
+					console.log( "Inner - Controller" );
+
+				}
+
+
+				function link( $scope, element, attributes, controller ) {
+
+					console.log( "Inner - Link" );
+
+				}
+
+
+				// Return directive configuration.
+				return({
+					controller: Controller,
+					link: link
+				});
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
