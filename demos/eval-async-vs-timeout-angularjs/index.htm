@@ -1,0 +1,80 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		$scope.$evalAsync() vs. $timeout() In AngularJS
+	</title>
+</head>
+<body>
+
+	<h1>
+		$scope.$evalAsync() vs. $timeout() In AngularJS
+	</h1>
+
+	<p bn-timing>
+		Check the console!
+	</p>
+	
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/jquery/jquery-2.0.3.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.2.4.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// Test the timing of the $timeout() and $evalAsync() functions.
+		app.directive(
+			"bnTiming",
+			function( $timeout ) {
+
+				// I bind the JavaScript events to the local scope.
+				function link( $scope, element, attributes ) {
+
+					$timeout(
+						function() {
+
+							console.log( "$timeout 1" );
+
+						}
+					);
+
+					$scope.$evalAsync(
+						function( $scope ) {
+
+							console.log( "$evalAsync" );
+
+						}
+					);
+
+					$timeout(
+						function() {
+
+							console.log( "$timeout 2" );
+
+						}
+					);
+
+				}
+
+
+				// Return the directive configuration.
+				return({
+					link: link
+				});
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
