@@ -1,0 +1,87 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Finding Comment Nodes In The DOM Using TreeWalker
+	</title>
+</head>
+<body>
+
+	<h1>
+		Finding Comment Nodes In The DOM Using TreeWalker
+	</h1>
+
+	<!-- Comment 1: In the Body. -->
+
+	<div>
+
+		<!-- Comment 2: In a nested Div. -->
+
+		<div>
+
+			<!-- Comment 3: In a double-nested Div. -->
+
+		</div>
+
+	</div>
+
+	<!-- Comment 4: Back up in that Body. -->
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/jquery/jquery-2.0.3.min.js"></script>
+	<script type="text/javascript">
+
+		if ( ! document.createTreeWalker ) {
+
+			throw( new Error( "Browser does not support createTreeWalker()." ) );
+
+		}
+
+
+		// By default, the TreeWalker will show all of the matching DOM nodes that it
+		// finds. However, we can use an optional "filter" method that will inform the 
+		// DOM traversal.
+		function filter( node ) {
+
+			if ( node.nodeValue === " Load scripts. " ) {
+
+				return( NodeFilter.FILTER_SKIP );
+
+			}
+
+			return( NodeFilter.FILTER_ACCEPT );
+
+		}
+
+		// IE and other browsers differ in how the filter method is passed into the
+		// TreeWalker. Mozilla takes an object with an "acceptNode" key. IE takes the
+		// filter method directly. To work around this difference, we will define the
+		// acceptNode function a property of itself.
+		filter.acceptNode = filter;
+
+		// NOTE: The last argument [] is a deprecated, optional parameter. However, in 
+		// IE, the argument is not optional and therefore must be included.
+		var treeWalker = document.createTreeWalker(
+			document.body,
+			NodeFilter.SHOW_COMMENT,
+			filter,
+			false
+		);
+
+		// For each comment node, add a 
+		while ( treeWalker.nextNode() ) {
+
+			$( "<p></p>" )
+				.text( treeWalker.currentNode.nodeValue )
+				.insertAfter( treeWalker.currentNode )
+			;
+
+		}		
+
+	</script>
+
+</body>
+</html>
