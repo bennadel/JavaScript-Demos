@@ -1,0 +1,124 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Finding Shallow Comment Nodes In The DOM Using TreeWalker
+	</title>
+</head>
+<body>
+
+	<h1>
+		Finding Shallow Comment Nodes In The DOM Using TreeWalker
+	</h1>
+
+	<!-- Comment 1: In the Body. -->
+	
+	<div>
+		
+		<!-- Comment 2: In a nested Div. -->
+
+		<div>
+
+			<!-- Comment 3: In a double-nested Div. -->
+
+		</div>
+		
+	</div>
+
+	<!-- Comment 4: Back up in that Body. -->
+
+
+	<script type="text/javascript" src="../../vendor/jquery/jquery-2.0.3.min.js"></script>
+	<script type="text/javascript">
+
+		if ( ! document.createTreeWalker ) {
+
+			throw( new Error( "Browser does not support createTreeWalker()." ) );
+
+		}
+
+
+		// I find the comment nodes in the given root node.
+		function findComments( rootNode, isDeep ) {
+
+			// I filter the nodes as they encountered by the TreeWalker.
+			function filter( node ) {
+
+				// Always accept comments.
+				if ( node.nodeType === 8 ) {
+
+					return( NodeFilter.FILTER_ACCEPT );
+
+				}
+
+				// If the search is Deep, then simply skip this Element node.
+				if ( isDeep ) {
+
+					return( NodeFilter.FILTER_SKIP );
+
+				}
+
+				// If the search is Shallow, then reject this element node. This will 
+				// skip the current element node AND the entire sub-tree contained 
+				// within this element node.				
+				return( NodeFilter.FILTER_REJECT );					
+
+			}
+
+			// IE and other browsers differ in how the filter method is passed into the
+			// TreeWalker. Mozilla takes an object with an "acceptNode" key. IE takes the
+			// filter method directly. To work around this difference, we will define the
+			// acceptNode function a property of itself.
+			filter.acceptNode = filter;
+
+			// When creating the TreeWalker, we want to look at both the comment nodes 
+			// and the element nodes. Even for a shallow search, we need the element 
+			// nodes in order to provide a way to skip any nested DOM branches.
+			// --
+			// NOTE: The last argument is a deprecated, optional parameter. However, 
+			// in IE, the argument is not optional and therefore must be included.
+			var treeWalker = document.createTreeWalker(
+				rootNode,
+				( NodeFilter.SHOW_COMMENT | NodeFilter.SHOW_ELEMENT ),
+				filter,
+				false
+			);
+
+			var comments = [];
+
+			// Collect the comments.
+			while ( treeWalker.nextNode() ) {
+
+				comments.push( treeWalker.currentNode );
+
+			}	
+
+			return( comments );
+
+		}
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// Find all the comments that are children of the Body tag.
+		var comments = findComments( document.body, false );
+
+		$( comments ).each(
+			function() {
+
+				$( "<p></p>" )
+					.text( this.nodeValue )
+					.insertAfter( this )
+				;
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
