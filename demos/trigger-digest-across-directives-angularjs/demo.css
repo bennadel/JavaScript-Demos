@@ -1,0 +1,45 @@
+
+p.top {
+	background-color: #FAFAFA ;
+	border: 2px solid #CCCCCC ;
+	color: #CCCCCC ;
+	cursor: pointer ;
+	height: 100px ;
+	line-height: 100px ;
+	text-align: center ;
+		-moz-user-select: none ;
+		-webkit-user-select: none ;
+		-ms-user-select: none ;
+	user-select: none ;
+}
+
+p.top em {
+	color: #262626 ;
+	font-style: normal ;
+}
+
+p.left,
+p.right {
+	background-color: #FAFAFA ;
+	border: 2px solid #CCCCCC ;
+	color: #CCCCCC ;
+	cursor: default ;
+	height: 100px ;
+	line-height: 100px ;
+	text-align: center ;
+	width: 47% ;
+}
+
+p.left em,
+p.right em {
+	color: #262626 ;
+	font-style: normal ;
+}
+
+p.left {
+	float: left ;
+}
+
+p.right {
+	float: right ;
+}

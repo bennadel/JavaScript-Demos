@@ -1,0 +1,273 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Triggering $digest Phases In Related Directives In AngularJS
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		Triggering $digest Phases In Related Directives In AngularJS
+	</h1>
+
+	<!-- Controller creates a scope. -->
+	<p ng-controller="TopController" ng-click="incrementCount()" class="top">
+		Click Count: <em>{{ clickCount }}</em>
+	</p>
+
+	<!-- Controller creates a scope. -->
+	<p ng-controller="MouseController" bn-left class="left">
+		X: <em>{{ x }}</em>, 
+		Y: <em>{{ y }}</em>
+	</p>
+
+	<!-- Controller creates a scope. -->
+	<p ng-controller="MouseController" bn-right class="right">
+		X: <em>{{ x }}</em>, 
+		Y: <em>{{ y }}</em>
+	</p>
+	
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/jquery/jquery-2.0.3.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.2.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I control the root of the application.
+		app.controller(
+			"AppController",
+			function( $scope ) {
+
+				// This watch is here just to show us when this $scope is involved in a 
+				// $digest phase of the dirty data lifecycle.
+				$scope.$watch(
+					function() {
+
+						console.log( "App controller $watch." );
+
+					}
+				);
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I control the top box.
+		app.controller(
+			"TopController",
+			function( $scope ) {
+
+				$scope.clickCount = 0;
+
+				// This watch is here just to show us when this $scope is involved in a
+				// $digest phase of the dirty data lifecycle.
+				$scope.$watch(
+					function() {
+
+						console.log( "Top controller $watch.", $scope.clickCount );
+
+					}
+				);
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I increment the click count.
+				$scope.incrementCount = function() {
+
+					$scope.clickCount++;
+
+				};
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I control one of the target boxes.
+		app.controller(
+			"MouseController",
+			function( $scope ) {
+
+				// I hold the coordinates of the current mouse cursor on the page.
+				$scope.x = 0;
+				$scope.y = 0;
+
+
+				// ---
+				// PULIC METHODS.
+				// ---
+
+
+				// I set the new coordinates for the mouse cursor.
+				$scope.setCoordinates = function( newX, newY ) {
+
+					$scope.x = newX;
+					$scope.y = newY;
+
+				};
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I manage the JavaScript events for the Left target box. When the mouse 
+		// coordinates are updated within the left target box, we're going to get the 
+		// Right target box to show the same values. Furthermore, we're going to limit
+		// dirty-data checking to the $scopes LOCAL to the target boxes.
+		app.directive(
+			"bnLeft",
+			function( $rootScope ) {
+
+				// I bind the JavaScript events to the local scope.
+				function link( $scope, element, attributes ) {
+
+					element.mousemove(
+						function( event ) {
+
+							// Get the mouse coordinates.
+							var x = event.pageX;
+							var y = event.pageY;
+
+							// Tell the Controller about the cooridinates of the mouse.
+							// At this point, the Controller will "know" about the 
+							// change; but, "AngularJS" won't know about the change since
+							// this is happening out side of $digest.
+							// --
+							// CAUTION: This method is being invoked outside of Angular's
+							// exception handling. One of the benefits of using the 
+							// $apply() method is that you are inside of AngularJS' error
+							// handling framework.
+							$scope.setCoordinates( x, y );
+
+							// Tell AngularJS about the LOCAL change to the view-model.
+							$scope.$digest();
+
+							// Announce the event so that our other directive can react
+							// accordingly. 
+							// --
+							// NOTE: AngularJS will propagate the event outside of a 
+							// $digest; but, it won't fire any $watch statement until the
+							// next digest.
+							$rootScope.$broadcast( "leftCoordinatesChanged", x, y );
+
+							return;
+
+							// --- !! THIS WILL NOT EXECUTE, JUST HERE FOR FUN !! --- //
+
+							// NOTE: If you didn't want to through the entire scope chain,
+							// you could * theoretically * go through the DOM and 
+							// directly target the other directive's scope. Of course, 
+							// the downside to this is that you have to query the DOM and 
+							// you couple yourself much more tightly to the other 
+							// directive, which you don't really want to do (for a number
+							// of reasons). You're much better off just using an event 
+							// that goes from the root scope, down.
+
+							$( "p[ bn-right ]" )
+								.scope()
+									.$broadcast( "leftCoordinatesChanged", x, y )
+							;
+
+						}
+					);
+
+				}
+
+
+				// Return the directive configuration.
+				return({
+					link: link,
+					restirct: "A"
+				});
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I manage the JavaScript events for the Right target box.
+		app.directive(
+			"bnRight",
+			function() {
+
+				// I bind the JavaScript events to the local scope.
+				function link( $scope, element, attributes ) {
+
+					// Listen for mouse events in the current view.
+					element.mousemove(
+						function( event ) {
+
+							// Tell the Controller about the new coordinates.
+							$scope.setCoordinates( event.pageX, event.pageY );
+
+							// Tell AngularJS about the LOCAL change to the view-model.
+							$scope.$digest();
+
+						}
+					);
+
+
+					// In addition to the local mouse events, we're also going to be 
+					// listening for events that were triggered by the other directive.
+					// When those events come through, we'll treat them like they were
+					// mouse events on the current view.
+					$scope.$on(
+						"leftCoordinatesChanged",
+						function( event, leftX, leftY ) {
+
+							// Tell the Controller about the communicated coordinates.
+							$scope.setCoordinates( leftX, leftY );
+
+							// Tell AngularJS about the LOCAL change to the view-model.
+							$scope.$digest();
+
+						}
+					);
+
+				}
+
+
+				// Return the directive configuration.
+				return({
+					link: link,
+					restirct: "A"
+				});
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
