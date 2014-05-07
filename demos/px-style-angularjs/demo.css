@@ -1,0 +1,27 @@
+
+div.board {
+	background-color: #FAFAFA ;
+	border: 1px solid #CCCCCC ;
+	border-radius: 4px 4px 4px 4px ;
+	cursor: pointer ;
+	height: 200px ;
+	overflow: hidden ;
+	position: relative ;
+	width: 500px ;
+}
+
+div.token {
+	background-color: #FF33CC ;
+	border-radius: 15px 15px 15px 15px ;
+	box-shadow: 0px 1px 1px #CCCCCC ;
+	color: #FFFFFF ;
+	cursor: pointer ;
+	height: 30px ;
+	left: 0px ;
+	line-height: 30px ;
+	margin: -15px 0px 0px -15px ;
+	position: absolute ;
+	text-align: center ;
+	top: 0px ;
+	width: 30px ;
+}

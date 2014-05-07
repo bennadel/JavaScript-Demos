@@ -1,0 +1,220 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Creating A Pixel-Based Version Of ngStyle In AngularJS
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		Creating A Pixel-Based Version Of ngStyle In AngularJS
+	</h1>
+
+	<div bn-board class="board">
+		
+		<!-- 
+			Notice that the bn-px-style object properties do NOT include the "px"
+			unit of measurement - these are implied by the directive. 
+		-->
+		<div 
+			class="token" 
+			bn-px-style="{ left: coordinates.x, top: coordinates.y }">
+
+			:)
+
+		</div>
+
+	</div>
+
+	
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/jquery/jquery-2.1.0.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.2.16.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I control the root of the application.
+		app.controller(
+			"AppController",
+			function( $scope ) {
+
+				// I define the location of the board token.
+				$scope.coordinates = {
+					x: 50,
+					y: 50
+				};
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I update the positional coordiantes of the board token.
+				$scope.setCoordiantes = function setCoordiantes( newX, newY ) {
+
+					$scope.coordinates.x = newX;
+					$scope.coordinates.y = newY;
+
+				};
+				
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I allow the Style attribute of the element to be defined using a dynamic hash.
+		// Each CSS value defined in the given hash will have "px" automatically appended
+		// to the percipitated CSS property.
+		app.directive(
+			"bnPxStyle",
+			function() {
+
+				// I bind the JavaScript events to the scope.
+				function link( $scope, element, attributes ) {
+
+					// Watch the px-style attribute.
+					$scope.$watch( 
+						attributes.bnPxStyle,
+						function watchBnPxStyle( newValue, oldValue ) {
+
+							// When the hash of styles changes, we need to remove any 
+							// CSS properties that are no longer relevant.
+							if ( newValue && ( newValue !== oldValue ) ) {
+
+								clearOldStyles( newValue, oldValue );
+
+							}
+
+							setNewStyles( newValue );
+
+						},
+
+						// NOTE: You have to do a DEEP watch here, otherwise, AngularJS
+						// will fall into an infinite digest cycle (I assume because the
+						// reference to the object keeps changing as it is eval'd).
+						true
+					);
+
+
+					// ---
+					// PRIVATE METHODS.
+					// ---
+
+
+					// I clear the styles that are no longer present in the new styles
+					// collection.
+					function clearOldStyles( newStyles, oldStyles ) {
+
+						for ( var key in oldStyles ) {
+
+							// Make sure the property is missing in the new sytles.
+							if ( oldStyles.hasOwnProperty( key ) && ! newStyles.hasOwnProperty( key ) ) {
+
+								element.css( key, "" );
+
+							}
+
+						}
+
+					}
+
+
+					// I set the new styles on the element. Each CSS property value is
+					// automatically appended with a "px" unit of measurement.
+					function setNewStyles( newStyles ) {
+
+						for ( var key in newStyles ) {
+
+							if ( newStyles.hasOwnProperty( key ) ) {
+
+								element.css( key, ( newStyles[ key ] + "px" ) );
+								
+							}
+
+						}
+
+					}
+
+				}
+
+
+				// Return the directive configuration.
+				return({
+					link: link,
+					restrict: "A"
+				});
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I update the coordinates view-model based on the location of the click on 
+		// the board element.
+		app.directive(
+			"bnBoard",
+			function() {
+
+				// I bind the JavaScript events to the scope.
+				function link( $scope, element, attributes ) {
+
+					// When the user clicks on the board, update the token coordinates
+					// to match the [localized] coordinates of the event.
+					element.click(
+						function handleClick( event ) {
+
+							var globalX = event.pageX;
+							var globalY = event.pageY;
+
+							var boardPosition = element.position();
+
+							// Translate the coordinates to local element.
+							var localX = ( globalX - boardPosition.left - 2 );
+							var localY = ( globalY - boardPosition.top - 2 );
+
+							$scope.$apply(
+								function scopeApply() {
+
+									$scope.setCoordiantes( localX, localY );
+
+								}
+							);
+
+						}
+					);
+
+				}
+
+
+				// Return the directive configuration.
+				return({
+					link: link,
+					restrict: "A"
+				});
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
