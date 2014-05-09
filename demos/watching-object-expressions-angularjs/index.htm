@@ -1,0 +1,79 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Watching Object Literal Expressions In AngularJS
+	</title>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		Watching Object Literal Expressions In AngularJS
+	</h1>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/jquery/jquery-2.1.0.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.2.4.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I control the root of the application.
+		app.controller(
+			"AppController",
+			function( $scope, $parse ) {
+
+				$scope.friend = {
+					id: 4,
+					name: "Heather"
+				};
+
+
+				// When we parse an AngularJS expression, we get back a function that 
+				// will evaluate the given expression in the context of a given $scope.
+				var getter = $parse( "{ name: friend.name }" );
+
+				// Get the result twice.
+				var a = getter( $scope );
+				var b = getter( $scope );
+
+				// Check to see if evaluating the AngularJS expression above returns a
+				// new object each time.
+				// --
+				// HINT: It does (return a new object each time).
+				console.log( "Objects are equal:", ( a === b ) );
+
+
+				// Since a new object is returned each time the Object Expression is 
+				// evaluated by AngularJS, we havd to use DEEP object equality. 
+				// Otherwise, the object reference will be different on EACH $digest 
+				// iteration, which will cause the digest to run forever (or rather, 
+				// to error out).
+				$scope.$watch(
+					"{ name: friend.name }",
+					function( newValue, oldValue ) {
+
+						console.log( "Watch:", newValue.name );
+
+					},
+
+					// Deep object equality.
+					true
+				);
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
