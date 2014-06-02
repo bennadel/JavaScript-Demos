@@ -1,0 +1,14 @@
+
+div.item {
+	border: 2px solid #CCCCCC ; 
+	border-radius: 5px 5px 5px 5px ;
+	float: left ; 
+	margin: 0px 10px 10px 0px ;
+	padding: 7px 7px 7px 7px ;
+}
+
+a[ ng-click ] {
+	color: red ;
+	cursor: pointer ;
+	text-decoration: underline ;
+}

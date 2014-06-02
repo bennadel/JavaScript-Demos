@@ -1,0 +1,143 @@
+<!doctype html>
+<html ng-app="Demo" ng-controller="AppController">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Looking At How scope.$evalAsync() Affects Performance In AngularJS Directives
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body>
+
+	<h1>
+		Looking At How scope.$evalAsync() Affects Performance In AngularJS Directives
+	</h1>
+
+	<h2>
+		Accessing DOM Layout Using scope.$evalSync()
+		&mdash;
+		<a ng-click="rebuild()">Rebuild</a>
+	</h2>
+
+	<div 
+		ng-repeat="item in items" 
+		bn-item
+		class="item">
+
+		ID: {{ item.id }}<br />
+		Coords: {{ x }} , {{ y }}<br />
+
+	</div>
+	
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/jquery/jquery-2.0.3.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.2.16.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I am the main application controller, providing data for the demo.
+		app.controller(
+			"AppController",
+			function( $scope ) {
+
+				// I hold the data being rendered in the ng-repeat.
+				$scope.items = buildItems( 1000 );
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+				
+				// I rebuild the collection, forcing a re-rendering of the ng-repeat.
+				$scope.rebuild = function() {
+
+					$scope.items = buildItems( 1000 );
+
+				};
+
+
+				// ---
+				// PRIVATE METHODS.
+				// ---
+
+
+				// I return an item collection with given length.
+				function buildItems( count ) {
+
+					var items = new Array( count );
+					var now = ( new Date() ).getTime();
+
+					for ( var i = 0 ; i < count ; i++ ) {
+
+						items[ i ] = {
+							id: ( i + now )
+						};
+						
+					}
+
+					return( items );
+
+				}
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I demonstrate how the directive link logic can affect performance.
+		app.directive(
+			"bnItem",
+			function() {
+
+				// I bind the JavaScript events to the local scope.
+				function link( $scope, element, attributes ) {
+
+					$scope.x = 0;
+					$scope.y = 0;
+
+					// By moving the DOM-query logic to an $evalAsync(), it will allow
+					// the ng-repeat loop to finish stamping out the cloned HTML nodes
+					// before the digest lifecycle goes back and starts to query for
+					// the DOM state in a later iteration. This gives the browser a 
+					// chance to bulk-render the DOM.
+					$scope.$evalAsync(
+						function() {
+
+							var position = element.position();
+
+							$scope.x = Math.floor( position.left );
+							$scope.y = Math.floor( position.top );
+							
+						}
+					);
+
+				}
+
+
+				// Return the directive configuration.
+				return({
+					link: link,
+					restrict: "A"
+				});
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
