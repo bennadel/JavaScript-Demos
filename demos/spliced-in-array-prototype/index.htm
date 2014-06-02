@@ -1,0 +1,45 @@
+<!doctype html>
+<html>
+<head>
+	<title>
+		Spliced in Array Prototype To Return Original Array Reference
+	</title>
+</head>
+<body>
+
+	<h1>
+		Spliced in Array Prototype To Return Original Array Reference
+	</h1>
+
+	<script type="text/javascript">
+
+		// This does the same exact thing as .splice(); but, it returns the original 
+		// array reference rather than the collection of items that were deleted.
+		Array.prototype.spliced = function() {
+
+			// Returns the array of values deleted from array.
+			Array.prototype.splice.apply( this, arguments );
+
+			// Return current (mutated) array array reference.
+			return( this );
+
+		};
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// Logs the value, "0.a.b.1.2.3.4.x.y.5"
+		console.log(
+			"0.1.2.3.4.5"
+				.split( "." )
+					.spliced( 1, 0, "a", "b" )
+					.spliced( -1, 0, "x", "y" )
+					.join( "." )
+		);
+
+	</script>
+
+</body>
+</html>
