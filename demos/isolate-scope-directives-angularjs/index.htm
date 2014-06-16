@@ -1,0 +1,254 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Using Isolate Scope In Directives In AngularJS
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		Using Isolate Scope In Directives In AngularJS
+	</h1>
+
+	<p class="actions">
+		<a ng-click="showMessage()">Show Message</a>
+		&nbsp;|&nbsp;
+		<a ng-click="hideMessage()">Hide Message</a>
+	</p>
+	
+	<!-- 
+		When this message shows, we are going to use an "outside" mousedown event 
+		binding to know when to close it. This is a common use-case in popups, modals, 
+		and dropdowns. 
+
+		However, we don't want to indiscriminantly handle the mousedown event; we want
+		to ingore certain DOM elements (like the container) as well as certain conditions
+		(ie, when the handler is disabled by the parent controller).
+		
+		ignoreMousedownIf : Scope property that determins if directive is enabled.
+		ignoreMousedownInside : CSS selectors for "safe" elements.
+	-->
+	<p 
+		ng-if="isShowingMessage" 
+		bn-mousedown-outside="hideMessage()" 
+		ignore-mousedown-if="shouldIgnoreMousedown"
+		ignore-mousedown-inside="p.actions , h1"
+		class="message">
+
+		I'm sorry, I can't hear you over the awesomeness of this message!
+
+		[
+			<span ng-hide="shouldIgnoreMousedown">
+				Enabled &mdash;
+				<a ng-click="disableClickDetection()">Disable click detection</a>
+			</span>
+
+			<span ng-show="shouldIgnoreMousedown">
+				Disabled &mdash;
+				<a ng-click="enableClickDetection()">Enable click detection</a>
+			</span>
+		]
+
+	</p>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/jquery/jquery-2.1.0.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.2.16.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I control the root of the application.
+		app.controller(
+			"AppController",
+			function( $scope ) {
+
+				// I determine whether or not we're showing the demo message.
+				$scope.isShowingMessage = false;
+
+
+				// I determine whether or not we want to actually show the 
+				$scope.shouldIgnoreMousedown = false;
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I disable click detection. The message can only be closed through
+				// explicit calls to teh hideMessage() method.
+				$scope.disableClickDetection = function() {
+
+					$scope.shouldIgnoreMousedown = true;
+
+				};
+
+
+				// I enable click detection. The message can be hidden through mousedown
+				// events located outside of the message.
+				$scope.enableClickDetection = function() {
+
+					$scope.shouldIgnoreMousedown = false;
+
+				};
+
+
+				// I hide the demo message.
+				$scope.hideMessage = function() {
+
+					$scope.isShowingMessage = false;
+
+				};
+
+
+				// I show the demo message.
+				$scope.showMessage = function() {
+
+					$scope.isShowingMessage = true;
+
+				};
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I provide hooks to mouse-down events on the document that take place outside
+		// of the current element.
+		app.directive(
+			"bnMousedownOutside",
+			function( $document ) {
+
+				// I bind JavaScript events to the directive scope.
+				function link( $scope, element, attributes ) {
+
+					// In the isolate-scope configuration, the external scope property,
+					// [ignoreMousedownIf] was mapped to local scope property 
+					// [isDisabled]. However, if the attribute doesn't exist, the local 
+					// scope value will be undefined. As such, we are defining a default
+					// value in the $watch expression.
+					$scope.$watch(
+						"! ( isDisabled || false )",
+						function( newValue, oldValue ) {
+
+							// If enabled, listen for mouse events.
+							if ( newValue ) {
+
+								$document.on( "mousedown", handleMouseDown );
+
+							// If disabled, but previously enabled, remove mouse events.
+							} else if ( oldValue ) {
+
+								$document.off( "mousedown", handleMouseDown );
+
+							}
+
+						}
+					);
+
+					// When the local scope is destroyed, be sure to clean up the event
+					// bindings on the document.
+					$scope.$on( 
+						"$destroy", 
+						function() {
+
+							$document.off( "mousedown", handleMouseDown );
+
+						}
+					);
+
+
+					// I handle the mouse-down events on the document.
+					function handleMouseDown( event ) {
+
+						// Check to see if this event target provides a click context 
+						// that should be ignored.
+						if ( shouldIgnoreEventTarget( $( event.target ) ) ) {
+
+							return( 
+								console.warn( "Ignoring mouse-down event.", ( new Date() ).getTime() ) 
+							);
+
+						}
+
+						// Even though this directive is isolated, we still need to call
+						// $apply() to tell AngularJS that a change has happened. The 
+						// $digest mechanism can still be triggered from an isolated 
+						// scope.
+						$scope.$apply(
+							function() {
+
+								$scope.callback();
+
+							}
+						);
+
+					}
+
+
+					// I detemine if the given mousedown context should be ignored.
+					function shouldIgnoreEventTarget( target ) {
+
+						// If the click is inside the parent, ignore.
+						if ( target.closest( element ).length ) {
+
+							return( true );
+
+						}
+
+						// If the click is inside the "exception" CSS selectors 
+						// (if provided), then ignore.
+						// --
+						// NOTE: Demo assumes that attribute value does not use 
+						// interpolation and therefore will not have to be watched.
+						if ( 
+							$scope.exceptionSelectors && 
+							target.closest( $scope.exceptionSelectors ).length 
+							) {
+
+							return( true );
+
+						}
+
+						// If there is no need to ignore the target at this point, let
+						// the event be processed.
+						return( false );
+
+					}
+
+				}
+
+
+				// Return the directive configuration for scope isolation.
+				return({
+					link: link,
+					scope: {
+						callback: "&bnMousedownOutside",
+						exceptionSelectors: "@ignoreMousedownInside",
+						isDisabled: "=ignoreMousedownIf"
+					}
+				});
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>

@@ -1,0 +1,17 @@
+
+a[ ng-click ] {
+	color: red ;
+	cursor: pointer ;
+	text-decoration: underline ;
+}
+
+p.actions {
+	border: 1px solid #CCCCCC ;
+	padding: 15px 15px 15px 15px ;
+}
+
+p.message {
+	background-color: #FFEEF5 ;
+	border: 2px solid #FF3399 ;
+	padding: 15px 15px 15px 15px ;
+}
