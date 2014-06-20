@@ -1,0 +1,76 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Inspecting Attribute-Normalization Within Directives In AngularJS
+	</title>
+</head>
+<body>
+
+	<h1>
+		Inspecting Attribute-Normalization Within Directives In AngularJS
+	</h1>
+
+	<p 
+		bn-one="Some value."
+		data-bn-two="Some value." 
+		x-bn-three="Some value."
+		bn:four="Some value.">
+		This is my directive!
+	</p>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/jquery/jquery-2.1.0.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.2.16.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// Define each of our directives - they all use the same logic.
+		angular.forEach(
+			[ "bnOne", "bnTwo", "bnThree", "bnFour" ],
+			function( hook ) {
+
+				app.directive(
+					hook,
+					function() {
+
+						function link( $scope, element, attributes ) {
+
+							// The [attributes] collection is keyed on the normalized
+							// value of the directive. But, it contains the $attr 
+							// collection, which maps the normalized value to the actual
+							// attribute notation defined by the developer.
+							console.log( 
+								"%s defined as %c %s ",
+								hook,
+								"background-color: yellow; font-weight: bold ;",
+								attributes.$attr[ hook ]
+							);
+
+						}
+
+						// Return the directive configuration.
+						return({
+							link: link
+						});
+
+					}
+				);
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
