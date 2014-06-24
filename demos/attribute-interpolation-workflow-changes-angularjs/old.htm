@@ -1,0 +1,87 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Looking At Attribute Interpolation Workflow In AngularJS 1.0.8
+	</title>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		Looking At Attribute Interpolation Workflow In AngularJS 1.0.8
+	</h1>
+
+	<!-- Here, wer are using a Directive that uses attribute interpolation. -->
+	<p bn-title="My friend is {{ friend }}.">
+		This is a directive.
+	</p>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/jquery/jquery-2.1.0.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.0.8.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I control the root of the application.
+		app.controller(
+			"AppController",
+			function( $scope, $parse ) {
+
+				$scope.friend = "Sarah";
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I am the directive that tests the attribute interpolation to see when the
+		// interpolated value is available to the link function.
+		app.directive(
+			"bnTitle",
+			function() {
+
+				// I bind the JavaScript events to the scope.
+				function link( $scope, element, attributes ) {
+
+					// Check initial value.
+					console.log( "On link load:", attributes.bnTitle );
+
+					// Watch the value over time.
+					attributes.$observe(
+						"bnTitle",
+						function( newValue, oldValue ) {
+
+							console.log( "On observe:", newValue );
+
+						}
+					);
+
+				}
+
+
+				// Return the directive configuration.
+				return({
+					link: link,
+					restrict: "A"
+				});
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
