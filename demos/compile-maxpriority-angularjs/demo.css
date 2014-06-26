@@ -1,0 +1,11 @@
+
+div.friend {
+	border: 2px solid #CCCCCC ;
+	margin: 0px 0px 10px 0px ;
+	padding: 15px 15px 15px 15px ;
+}
+
+div.best {
+	border-color: #FF33CC ;
+	font-weight: bold ;
+}

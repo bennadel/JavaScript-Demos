@@ -1,0 +1,166 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Looking At $compile() And MaxPriority In AngularJS
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		Looking At $compile() And MaxPriority In AngularJS
+	</h1>
+
+	<!-- 
+		The bn-friend directive will dyanmically add other AngularJS directives to
+		this element and then compile them. 
+	-->
+	<div bn-friend="friend" bn-log="Outer div.">
+
+		My 
+		<span ng-show="friend.isBest" bn-log="Inner span.">best</span> 
+		friend is {{ friend.name }}
+
+	</div>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/jquery/jquery-2.1.0.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.2.16.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I control the root of the application.
+		app.controller(
+			"AppController",
+			function( $scope ) {
+
+				$scope.friend = {
+					name: "Kim",
+					isBest: true
+				};
+				
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I log to the console during the linking function so we can see when things
+		// are being executed (and how many times they are being executed).
+		app.directive(
+			"bnLog",
+			function() {
+
+				// I bind the JavaScript events to the scope.
+				function link( $scope, element, attributes ) {
+
+					var now = ( new Date() ).getTime();
+
+					console.log( "Log [", attributes.bnLog, "]", now );
+
+					// Logging scope so you can see how scope is affected.
+					console.log( $scope );
+					
+				}
+
+
+				// Return the directive configuration.
+				return({
+					link: link,
+					priority: 1010,
+					restrict: "A"
+				});
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I dynamically add new directives to the current element.
+		app.directive(
+			"bnFriend",
+			function( $compile ) {
+
+				// I augment the template element DOM structure before linking.
+				function compile( tElement, tAttributes ) {
+
+					// Add a static HTML attribute.
+					tElement.attr( "class", "friend" );
+
+					// Add the ng-class directive. Notice that we have to pass-through 
+					// the reference to the actual friend since we don't know what it 
+					// will actually be called.
+					tElement.attr( 
+						"ng-class", 
+						( "{ best: " + tAttributes.bnFriend + ".isBest }" )
+					);
+
+
+					// At this point, the ng-class directive WILL NOT be automatically
+					// compiled. As such, we need to explicitly compile the element,
+					// starting at the max-priority of the current directive. This will
+					// compile all directives on this element, lower than 1500, AND all
+					// the content of the element (regardless of priority).
+					// --
+					// NOTE: This is why we need to use TERMINAL in our directive 
+					// configuration - if we didn't then lower-priority directives on the
+					// element would actually be compiled and linked twice.
+					var sublink = $compile( tElement, null, 1500 );
+
+
+					// I bind the JavaScript events to the scope.
+					function link( $scope, element, attributes ) {
+
+						// Link the compiled directives that we dynamically added to the
+						// current element. This will also link any directives that were
+						// already on the element, but were at a lower priority. 
+						// --
+						// NOTE: We probably we want to do this after the transclude() 
+						// since a directive is supposed to be able to rely on the DOM
+						// of its child content.
+						sublink( $scope );
+
+					}
+
+
+					return( link );
+
+				}
+
+
+				// Return the directive configuration.
+				// --
+				// NOTE: We have to TERMINAL in our configuration otherwise lower-
+				// priority directives on the same element would compile twice (due to 
+				// our explicit call to $compeil()).
+				return({
+					compile: compile,
+					priority: 1500,
+					restrict: "A",
+					terminal: true
+				});
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
