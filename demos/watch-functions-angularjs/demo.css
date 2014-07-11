@@ -1,0 +1,11 @@
+
+a[ ng-click ] {
+	color: red ;
+	cursor: pointer ;
+	text-decoration: underline ;
+}
+
+a.best {
+	background-color: yellow ;
+	font-weight: 800 ;
+}
