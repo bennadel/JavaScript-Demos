@@ -1,0 +1,8 @@
+
+a[ ng-click ] {
+	color: red ;
+	cursor: pointer ;
+	text-decoration: underline ;
+		-moz-user-select: none ;
+	user-select: none ;
+}

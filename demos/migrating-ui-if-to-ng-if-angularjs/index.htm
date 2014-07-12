@@ -1,0 +1,149 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Migrating From ui-if To ng-if In AngularJS
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		Migrating From ui-if To ng-if In AngularJS
+	</h1>
+
+	<p>
+		Clicks:
+		<a ng-click="incrementCount( 1 )">Increment</a>
+		&mdash;
+		<a ng-click="incrementCount( -1 )">Decrement</a>
+	</p>
+
+	<!-- Conditionally include element with UI-IF (Angular-UI). -->
+	<p ui-if="clickCount" bn-log="ui-if : {{ clickCount }}">
+		You've clicked me {{ clickCount }} time(s)!
+	</p>
+
+	<!-- Conditionally include element with NG-IF (AngularJS). -->
+	<p ng-if="clickCount" bn-log="ng-if : {{ clickCount }}">
+		You've clicked me {{ clickCount }} time(s)!
+	</p>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/jquery/jquery-2.1.0.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.2.19.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I control the root of the application.
+		app.controller(
+			"AppController",
+			function( $scope, $interpolate ) {
+
+				$scope.clickCount = 0;
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I increment the click count by the given delta.
+				$scope.incrementCount = function( increment ) {
+
+					$scope.clickCount += ( increment || 1 );
+
+				};
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I log out the value of the directive attirbute with a timestamp. This is 
+		// here to track when the DOM is being linked.
+		app.directive(
+			"bnLog",
+			function() {
+
+				// I bind the JavaScript events to the scope.
+				function link( $scope, element, attributes ) {
+
+					console.log( "Linked", attributes.bnLog );
+
+				}
+
+
+				// Return the directive configuration.
+				return({
+					link: link,
+					restrict: "A"
+				});
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// Define "ui-if" for our application.
+		// --
+		// NOTE: This was taken from the old Angular-UI source code v0.2.1.
+		app.directive(
+			"uiIf",
+			function() {
+				return {
+					transclude: 'element',
+					priority: 1000,
+					terminal: true,
+					restrict: 'A',
+					compile: function (element, attr, linker) {
+						return function (scope, iterStartElement, attr) {
+							iterStartElement[0].doNotMove = true;
+							var expression = attr.uiIf;
+							var lastElement;
+							var lastScope;
+							scope.$watch(expression, function (newValue) {
+								if (lastElement) {
+									lastElement.remove();
+									lastElement = null;
+								}
+								if (lastScope) {
+									lastScope.$destroy();
+									lastScope = null;
+								}
+								if (newValue) {
+									lastScope = scope.$new();
+									linker(lastScope, function (clone) {
+										lastElement = clone;
+										iterStartElement.after(clone);
+									});
+								}
+								iterStartElement.parent().trigger("$childrenChanged");
+							});
+						};
+					}
+				};
+			}
+		);
+
+	</script>
+
+</body>
+</html>
