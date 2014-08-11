@@ -1,0 +1,141 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Looking At Nested Event Timing And DOM Structure In AngularJS
+	</title>
+
+	<style type="text/css">
+
+		a[ ng-click ] {
+			cursor: pointer ;
+			text-decoration: underline ;
+		}
+
+	</style>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		Looking At Nested Event Timing And DOM Structure In AngularJS
+	</h1>
+
+	<!-- Only show nested controllers if ngIf expression is truthy. -->
+	<div ng-if="isShowingSubtree">
+
+		<div ng-controller="OuterController">
+
+			<div ng-controller="InnerController">
+
+				<a ng-click="triggerEvent()">Trigger Event</a>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/jquery/jquery-2.1.0.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.2.19.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I control the root of the application.
+		app.controller(
+			"AppController",
+			function( $scope ) {
+
+				$scope.isShowingSubtree = true;
+
+				// When the app controller sees the custom event, we want to hide the 
+				// sub-tree that contains the other controllers.
+				$scope.$on(
+					"customEvent",
+					function( event ) {
+
+						console.log( "App Controller: customEvent" );
+
+						// Destroy the sub-tree!
+						$scope.isShowingSubtree = false;
+
+					}
+				);
+				
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I am a nested controller.
+		app.controller(
+			"OuterController",
+			function( $scope ) {
+
+				// Log out event so wee can understand timing.
+				$scope.$on(
+					"customEvent",
+					function( event ) {
+
+						console.log( "Outer Controller: customEvent" );
+
+					}
+				);
+				
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I am the most nested controller.
+		app.controller(
+			"InnerController",
+			function( $scope, $rootScope ) {
+
+				// Log out event so wee can understand timing.
+				$scope.$on(
+					"customEvent",
+					function( event ) {
+
+						console.log( "Inner Controller: customEvent" );
+
+					}
+				);
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// Broadcast event from the top-down. Each controller is listening 
+				// for this event type.
+				$scope.triggerEvent = function() {
+
+					$rootScope.$broadcast( "customEvent" );
+
+				};
+				
+			}
+		);
+
+	</script>
+
+</body>
+</html>
