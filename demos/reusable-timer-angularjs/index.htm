@@ -1,0 +1,230 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Creating A Reusable Timer In AngularJS
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		Creating A Reusable Timer In AngularJS
+	</h1>
+
+	<p>
+		<a ng-click="handleClick()">Click me</a> to star the timer!
+	</p>
+
+	<p ng-if="logExecutedAt">
+		Executed: {{ logExecutedAt.getTime() }}
+	</p>
+
+	
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/jquery/jquery-2.1.0.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.2.22.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I control the root of the application.
+		app.controller(
+			"AppController",
+			function( $scope, timer ) {
+
+				// I am a timer that will invoke the given callback once the timer has 
+				// finished. The timer can be reset at any time.
+				// --
+				// NOTE: Is a thin wrapper around $timeout() which will trigger a $digest
+				// when the callback is invoked.
+				var logClickTimer = timer( logClick, timer.TWO_SECONDS );
+
+				$scope.logExecutedAt = null;
+
+				// When the current scope is destroyed, we want to make sure to stop 
+				// the current timer (if it's still running). And, give it a chance to
+				// clean up its own internal memory structures.
+				$scope.$on(
+					"$destroy",
+					function() {
+
+						logClickTimer.teardown();
+
+					}
+				);
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I handle the click event. Instead of logging the click right away, 
+				// we're going to throttle the click through a timer.
+				$scope.handleClick = function() {
+
+					$scope.logExecutedAt = null;
+
+					logClickTimer.restart();
+
+				};
+
+
+				// ---
+				// PRIVATE METHODS.
+				// ---
+
+
+				// I log the fact that the click happened at this point in time.
+				function logClick() {
+
+					$scope.logExecutedAt = new Date();
+
+				}
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I create timers that wrap the $timeout and provide easy ways to cancel and 
+		// reset the timer.
+		app.factory(
+			"timer",
+			function( $timeout ) {
+
+				// I provide a simple wrapper around the core $timeout that allows for 
+				// the timer to be easily reset.
+				function Timer( callback, duration, invokeApply ) {
+
+					// Store properties.
+					this._callback = callback;
+					this._duration = ( duration || 0 );
+					this._invokeApply = ( invokeApply !== false );
+					
+					// I hold the $timeout promise. This will only be non-null when the 
+					// timer is actively counting down to callback invocation.
+					this._timer = null;
+
+				}
+
+				// Define the instance methods.
+				Timer.prototype = {
+
+					// Set constructor to help with instanceof operations.
+					constructor: Timer,
+
+
+					// I determine if the timer is currently counting down.
+					isActive: function() {
+
+						return( !! this._timer );
+
+					},
+
+
+					// I stop (if it is running) and then start the timer again.
+					restart: function() {
+
+						this.stop();
+						this.start();
+
+					},
+
+
+					// I start the timer, which will invoke the callback upon timeout.
+					start: function() {
+
+						var self = this;
+
+						// NOTE: Instead of passing the callback directly to the timeout, 
+						// we're going to wrap it in an anonymous function so we can set
+						// the enable flag. We need to do this approach, rather than 
+						// binding to the .then() event since the .then() will initiate a
+						// digest, which the user may not want.
+						this._timer = $timeout( 
+							function handleTimeoutResolve() {
+
+								try {
+									self._callback.call( null );
+								} finally {
+									self = self._timer = null;
+								}
+
+							},
+							this._duration,
+							this._invokeApply
+						);
+
+					},
+
+
+					// I stop the current timer, if it is running, which will prevent the
+					// callback from being invoked.
+					stop: function() {
+
+						$timeout.cancel( this._timer );
+
+						this._timer = false;
+
+					},
+
+
+					// I clean up the internal object references to help garbage 
+					// collection (hopefully).
+					teardown: function() {
+
+						this.stop();
+						this._callback = null;
+						this._duration = null;
+						this._invokeApply = null;
+						this._timer = null;
+
+					}
+
+				};
+
+
+				// Create a factory that will call the constructor. This will simplify 
+				// the calling context.
+				function timerFactory( callback, duration, invokeApply ) {
+
+					return( new Timer( callback, duration, invokeApply ) );
+
+				}
+
+				// Store the actual constructor as a factory property so that it is still
+				// accessible if anyone wants to use it directly.
+				timerFactory.Timer = Timer;
+
+				// Set up some time-based constants to help readability of code.
+				timerFactory.ONE_SECOND = ( 1 * 1000 );
+				timerFactory.TWO_SECONDS = ( 2 * 1000 );
+				timerFactory.THREE_SECONDS = ( 3 * 1000 );
+				timerFactory.FOUR_SECONDS = ( 4 * 1000 );
+				timerFactory.FIVE_SECONDS = ( 5 * 1000 );
+
+
+				// Return the factory.
+				return( timerFactory );
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
