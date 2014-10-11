@@ -55,6 +55,8 @@ with.
 * [Lazy Loading Images With AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/lazy-src-angularjs/)
 * [Cross-Fading Images With AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/image-cross-fade-angularjs/)
 
+Want more JavaScript goodness? Check out the [JavaScript blog entries][javascript-blog] on my website.
+
 [1]: http://www.bennadel.com
 [2]: https://plus.google.com/108976367067760160494?rel=author
-[demos]: http://bennadel.github.io/JavaScript-Demos
+[javascript-blog]: http://www.bennadel.com/blog/tags/6-javascript-dhtml-blog-entries.htm
