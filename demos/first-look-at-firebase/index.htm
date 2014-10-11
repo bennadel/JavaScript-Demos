@@ -588,7 +588,7 @@
 								// success callback will execute ASYNCHRONOUSLY. I believe 
 								// this is because the event relates to the local cache 
 								// while the callback is for the data synchronization? 
-								collectionResource.child( id ).set(
+								collectionResource.child( nextAvailableID ).set(
 									friend,
 									function handleSynchronizationComplete( error ) {
 
