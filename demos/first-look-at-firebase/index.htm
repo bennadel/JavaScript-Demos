@@ -1,0 +1,810 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		My First Look At Firebase In AngularJS
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		My First Look At Firebase In AngularJS
+	</h1>
+
+
+	<!-- Show this if we're looking at the list of friends. -->
+	<!-- BEGIN: List. -->
+	<div 
+		ng-if="! id" 
+		ng-controller="ListController"
+		ng-hide="isLoading">
+
+		<h2>
+			Friends
+		</h2>
+
+		<form ng-submit="submitFriend()">
+
+			<input type="text" ng-model="form.name" size="30" />
+
+			<input type="submit" value="Add Friend" />
+
+		</form>
+
+		<!-- If we have friends. -->
+		<ul ng-if="friends.length">
+			<li ng-repeat="friend in friends">
+
+				<a ng-click="viewFriend( friend.id )">{{ friend.name }}</a>
+
+			</li>
+		</ul>
+
+		<!-- Else-if we do not have friends. -->
+		<p ng-if="! friends.length">
+			<em>You have not added any friends; this saddens me.</em>
+		</p>
+
+	</div>
+	<!-- END: List. -->
+
+
+	<!-- Show this if we're looking at a given friend's detail. -->
+	<!-- BEGIN: Detail. -->
+	<div 
+		ng-if="id"
+		ng-controller="DetailController"
+		ng-hide="isLoading">
+
+		<h2>
+			Detail
+		</h2>
+
+		<h3>
+			{{ friend.name }} &mdash; <em>( ID: {{ friend.id }} )</em>
+		</h3>
+
+		<p>
+			Favorite number: {{ friend.favoriteNumber }}
+		</p>
+
+		<p>
+			Added, with love, on {{ friend.createdAtLabel }}
+		</p>
+
+		<hr />
+
+		<p>
+			&laquo; <a ng-click="viewList()">Back to List</a>
+		</p>
+
+		<br />
+
+		<p>
+			<a ng-click="deleteFriend()">Delete {{ friend.name }}</a>
+		</p>
+
+	</div>
+	<!-- END: Detail. -->
+	
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/jquery/jquery-2.1.0.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.2.22.min.js"></script>
+	<script type="text/javascript" src="../../vendor/firebase/firebase-1.1.0.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I control the root of the application.
+		app.controller(
+			"AppController",
+			function( $scope, friendService ) {
+
+				// I hold the unique ID of the friend that has been selected. The 
+				// selection of an ID will indicate the use of the Detail page, as
+				// opposed to the list page. We're using this since we're not using a
+				// full-fledged "route" approach for this simple demo.
+				$scope.id = null;
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I switch the Detail view for the given friend ID.
+				$scope.viewFriend = function( newID ) {
+
+					$scope.id = newID;
+
+				};
+
+
+				// I switch to the list view (of all the friends).
+				$scope.viewList = function() {
+
+					$scope.id = null;
+
+				};
+				
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I control the list of friends.
+		app.controller(
+			"ListController",
+			function( $scope, friendService ) {
+
+				// I hold the model data for the form inputs.
+				$scope.form = {};
+
+				// I determine if the data is currently being loaded from the 
+				// remote resource.
+				$scope.isLoading = false;
+
+				// I hold the collection of friends.
+				$scope.friends = [];
+
+				// Since we want to try to keep our view synchronized, update the current
+				// view whenever friends are added by other clients.
+				// --
+				// NOTE: These events will also be triggered by actions taken by _this_ 
+				// client; as such, we need to take special care to not accidentally 
+				// duplicate our local response to said events.
+				$scope.$on(
+					"friendAdded",
+					function( event, friend ) {
+
+						if ( $scope.isLoading ) {
+
+							return;
+
+						}
+
+						addFriendToList( friend );
+
+					}
+				);
+
+				// Since we want to try to keep our view synchronized, update the current
+				// view whenever friends are removed by other clients.
+				// --
+				// NOTE: These events will also be triggered by actions taken by _this_ 
+				// client; as such, we need to take special care to not accidentally 
+				// duplicate our local response to said events.
+				$scope.$on(
+					"friendRemoved",
+					function( event, friend ) {
+
+						if ( $scope.isLoading ) {
+
+							return;
+
+						}
+
+						removeFriendFromList( friend );
+
+					}
+				);
+
+				// Initialize the data, pulling from the remote resource.
+				loadRemoteData();
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I save a new friend to the repository.
+				$scope.submitFriend = function() {
+
+					// Ignore empty form submissions.
+					if ( ! $scope.form.name ) {
+
+						return;
+
+					}
+
+					// To make the demo a bit more interesting, generate a favorite 
+					// number (in lieu of any meaningful form data).
+					var name = $scope.form.name;
+					var favoriteNumber = Math.floor( 100 * Math.random() );
+
+					friendService.addFriend( name, favoriteNumber )
+						.then(
+							function handleAddFriendResolve( friend ) {
+
+								addFriendToList( friend );				
+
+							},
+							function handleAddFriendReject( error ) {
+
+								alert( "Oops! We couldn't save your friend." );
+
+							}
+						)
+					;
+
+					// Clear form data.
+					$scope.form.name = "";
+
+				};
+
+
+				// ---
+				// PRIVATE METHODS.
+				// ---
+
+
+				// I add the given friend to the list, ensuring not to add the same 
+				// friend twice. 
+				function addFriendToList( friend ) {
+
+					// Due to the order of events, we cannot be sure that our "save" 
+					// request will actually resolve before our "add" event is triggered;
+					// as such, we will quickly run into handlers being invoked in 
+					// unexpected ways. To avoid list item duplication, we have to check
+					// the state of the list before adding the new entity.
+					if ( isAlreadyInList( friend ) ) {
+
+						return;
+
+					}
+
+					$scope.friends.push( friend );
+
+					sortFriends( $scope.friends );
+
+				}
+
+
+				// I apply the remote data to the local scope.
+				function applyRemoteData( friends ) {
+
+					$scope.friends = sortFriends( friends );
+
+				}
+
+
+				// I check to see if the given friend is already represented in the list,
+				// as determined by unique IDs.
+				function isAlreadyInList( friend ) {
+					
+					for ( var i = 0 ; i < $scope.friends.length ; i++ ) {
+
+						if ( $scope.friends[ i ].id === friend.id ) {
+							
+							return( true );
+
+						}
+
+					}
+
+					return( false );
+
+				}
+
+
+				// I load the remote data and then apply it to the local scope.
+				function loadRemoteData() {
+
+					$scope.isLoading = true;
+
+					friendService.getFriends()
+						.then(
+							function handleGetFriendsResolve( friends ) {
+
+								$scope.isLoading = false;
+
+								applyRemoteData( friends );
+
+							}
+						)
+					;
+
+				}
+
+
+				// I remove the given friend from the list, as determined by unique IDs.
+				function removeFriendFromList( friend ) {
+
+					for ( var i = 0 ; i < $scope.friends.length ; i++ ) {
+
+						if ( $scope.friends[ i ].id === friend.id ) {
+							
+							return( $scope.friends.splice( i, 1 ) );
+
+						}
+
+					}
+
+				}
+
+
+				// I sort the given collection of friends based on case-insensitive name.
+				// The collection is sorted in-place and a reference to the collection is 
+				// returned for convenience.
+				function sortFriends( friends ) {
+
+					friends.sort(
+						function comparisonOperator( a, b ) {
+
+							return(
+								( a.name.toLowerCase() <= b.name.toLowerCase() )
+									? -1 
+									: 1
+							);
+
+						}
+					);
+
+					return( friends );
+
+				}
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I control the friend detail.
+		app.controller(
+			"DetailController",
+			function( $scope, friendService ) {
+
+				// I determine if the data is currently being loaded from the 
+				// remote resource.
+				$scope.isLoading = false;
+
+				// I hold the friend being viewed.
+				$scope.friend = null;
+
+				// Initialize the data, pulling from the remote resource.
+				loadRemoteData();
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I delete the current friend from the friend repository.
+				$scope.deleteFriend = function() {
+
+					if ( $scope.isLoading ) {
+
+						return;
+
+					}
+
+					// Delete the friend.
+					friendService.deleteFriend( $scope.friend.id )
+						.then(
+							null,
+							function handleDeleteFriendReject( error ) {
+
+								alert( "Oops! For some reason, we couldn't delete your friend." );
+
+							}
+						)
+					;
+
+					// No need to wait for the request to be confirmed. We're going to
+					// assume the "happy path" in the vast majority of cases and just 
+					// go back to the list, assuming the delete worked.
+					$scope.viewList();
+
+				};
+
+
+				// ---
+				// PRIVATE METHODS.
+				// ---
+
+
+				// I apply the remote data to the local scope.
+				function applyRemoteData( friend ) {
+
+					$scope.friend = augmentFriend( friend );
+
+				}
+
+
+				// I augment the friend for use in the local view model.
+				function augmentFriend( friend ) {
+
+					friend.createdAtLabel = new Date( friend.createdAt ).toString();
+
+					return( friend );
+
+				}
+
+
+				// I load the remote data and then apply it to the local scope.
+				// --
+				// NOTE: The friend ID is being inherited from the top level controller.
+				function loadRemoteData() {
+
+					$scope.isLoading = true;
+
+					friendService.getFriend( $scope.id )
+						.then(
+							function handleGetFriendResolve( friend ) {
+
+								$scope.isLoading = false;
+
+								applyRemoteData( friend );
+
+							}
+						)
+					;
+
+				}
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I am the repository for friends (currently implemented with Firebase). But, 
+		// all public methods return a Promise so as to not let the Firebase 
+		// implementation and the mixed-synchronicity "leak" outside of the service 
+		// layer. All promises will be resolved or rejected asynchronously (in relation
+		// to the calling context), thanks to $q.
+		app.service(
+			"friendService",
+			function( $q, $rootScope, firebase ) {
+
+				// NOTE: This is my "developer" Firebase, so there is no security 
+				// being applied to it.
+				var root = "https://popping-torch-33.firebaseio.com/2014-10-09/";
+
+				// I hold the firebase reference to the collection of friends.
+				// --
+				// NOTE: Once this reference is established, the data will start to sync
+				// down to the local cache immediately (from what I can see, though it 
+				// may only synchronize when events are added?).
+				var collectionResource = firebase( root + "friends" );
+
+				// I hold the firebase reference to the primary key that will mimic our
+				// auto-incrementing primary-key value. This will be updated using a 
+				// cross-client transaction (below).
+				var pkeyResource = firebase( root + "friends-pkey" );
+
+				// When a friend is added to the collection, announce the event to the 
+				// application (using scope inheritance for pub/sub).
+				collectionResource.on(
+					"child_added", 
+					function handleChildAdded( snapshot ) {
+						
+						// We can't simply turn around and broadcast this event inside 
+						// an $apply() for two reasons, due to the way Firebase works:
+						// 
+						// 1) It would end up triggering a digest for EACH update in the
+						// initial data for the local cache. When you get the resource,
+						// it triggers "child_added" for each item as the data is 
+						// synchronized, which would trigger an unfortunate and 
+						// unnecessary number of digests.
+						//
+						// 2) We can't trigger an $apply() since we may already be inside
+						// a digest. Due to the sometimes ASYCHNRONOUS, sometimes 
+						// SYNCHRONOUS nature of the way Firebase announces events, we 
+						// have to use an async evaluation in order to normalize the 
+						// approach and not raise digest errors
+						// --
+						// NOTE: Thankfully, this will only trigger one digest for the 
+						// initial data Get, not N-digests for N-friends.
+						$rootScope.$evalAsync(
+							function handleEvalAsync() {
+								
+								$rootScope.$broadcast( "friendAdded", snapshot.val() );
+
+							}
+						);
+
+					}
+				);
+
+				// When a friend is removed from the collection, announce the event to 
+				// the application (using scope inheritance for pub/sub).
+				collectionResource.on(
+					"child_removed",
+					function handleChildRemoved( snapshot ) {
+
+						// NOTE: We have to use evalAsync. See "child_added" above.
+						$rootScope.$evalAsync(
+							function handleEvalAsync() {
+
+								$rootScope.$broadcast( "friendRemoved", snapshot.val() );
+
+							}
+						);
+
+					}
+				);
+
+				// Return the public API.
+				return({
+					addFriend: addFriend,
+					deleteFriend: deleteFriend,
+					getFriend: getFriend,
+					getFriends: getFriends
+				});
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I add a friend with the given name and favorite number. Returns a 
+				// promise that will resolve to the newly created friend object.
+				function addFriend( name, favoriteNumber ) {
+
+					// Get the next primary key (enforced uniqueness via transaction),
+					// before saving the friend.
+					var promise = getNextPrimaryKey()
+						.then(
+							function handlePrimaryKeyResolve( nextAvailableID ) {
+
+								var friend = {
+									id: nextAvailableID,
+									name: name,
+									favoriteNumber: favoriteNumber,
+									createdAt: ( new Date() ).getTime()
+								};
+
+								var deferred = $q.defer();
+
+								// Save the friend to the path at the recently transacted
+								// ID. This way, we are using our own "auto-incrementing" 
+								// value instead of the Firebase UUID.
+								// --
+								// NOTE: The interesting part here is that the 
+								// "child_added" event will execute SYNCHRONOUSLY but the
+								// success callback will execute ASYNCHRONOUSLY. I believe 
+								// this is because the event relates to the local cache 
+								// while the callback is for the data synchronization? 
+								collectionResource.child( id ).set(
+									friend,
+									function handleSynchronizationComplete( error ) {
+
+										if ( error ) {
+
+											deferred.reject( error );
+
+										} else {
+
+											deferred.resolve( friend );
+
+										}
+
+									}
+								);
+
+								return( deferred.promise );
+
+							}
+						)
+					;
+
+					return( promise );
+
+				}
+
+
+				// I delete the friend with the given ID. Returns a promise.
+				function deleteFriend( id ) {
+
+					var deferred = $q.defer();
+
+					// NOTE: This will trigger the "child_removed" event. Now, unlike
+					// the "child_added" event, this will trigger when working in the 
+					// browser's offline mode, even if the data synchronization callback 
+					// does not complete. That said, if you are working in online mode, 
+					// then the "child_removed" event will be triggered SYNCHRONOUSLY 
+					// while the data synchronization callback will be invoked 
+					// ASYNCHRONOUSLY.
+					collectionResource.child( id ).remove(
+						function handleSynchronizationComplete( error ) {
+
+							if ( error ) {
+
+								deferred.reject( error );
+
+							} else {
+
+								deferred.resolve();
+								
+							}
+
+						}
+					);
+
+					return( deferred.promise );
+
+				}
+
+
+				// I get the friend with the given ID. Returns a promise.
+				function getFriend( id ) {
+
+					var deferred = $q.defer();
+
+					// Get the friend with the given ID (as it translates to a path in 
+					// the parent resource). Unlike the SET/REMOVE methods, the success
+					// callback may be invoked SYNCHRONOUSLY. If the data is available in
+					// the local cache, then it will be invoked immediately. If, however,
+					// the data is not in the local cache, the callback will be invoked
+					// ASYNCHRONOUSLY when the resource has been synchronized.
+					collectionResource.child( id ).once(
+						"value",
+						function handleSuccess( snapshot ) {
+
+							deferred.resolve( snapshot.val() );
+
+						},
+						function handleError( error ) {
+
+							// Client does not have permission to read this data.
+							deferred.reject( error );
+
+						}
+					);
+
+					return( deferred.promise );
+
+				}
+
+
+				// I get all the friends in the collection. Returns a promise.
+				function getFriends() { 
+
+					var deferred = $q.defer();
+
+					// Get all the children in the resource. As with the getFriend() 
+					// method above, the success callback may be invoked ASYNCHRONOUSLY
+					// or SYNCRHONOUSLY, depending on the state of local cache.
+					collectionResource.once(
+						"value",
+						function handleSuccess( snapshots ) {
+
+							var friends = [];
+
+							snapshots.forEach(
+								function handleIteration( snapshot ) {
+
+									friends.push( snapshot.val() );
+
+								}
+							);
+
+							deferred.resolve( friends );
+
+						},
+						function handleError( error ) {
+
+							deferred.reject( error );
+
+						}
+					);
+
+					return( deferred.promise );
+
+				}
+
+
+				// ---
+				// PRIVATE METHODS.
+				// ---
+
+
+				// I get the next unique ID in the resource. This acts as our auto-
+				// incrementing primary key that we're used to seeing in a relational 
+				// database backend.
+				function getNextPrimaryKey() {
+
+					var deferred = $q.defer();
+
+					// Get the next available incremented value. Because the transaction
+					// has to ensure an uncompromised value, the success handler will 
+					// always have to be invoked asynchronously (my theory).
+					// --
+					// NOTE: The "update" method may be invoked several times before the
+					// complete handler is called.
+					pkeyResource.transaction(
+						function handleUpdate( currentValue ) {
+
+							return( ( currentValue || 0 ) + 1 );
+
+						},
+						function handleComplete( error, isCommitted, snapshot ) {
+
+							// The transaction has two ways of failing - error and failure
+							// to commit. Failure to commit won't really be a problem in 
+							// this scenario since our update method never returns an 
+							// undefined value. But, leaving the logic in here since I am
+							// still learning about Firebase.
+							var transactionAborted = ! isCommitted;
+
+							if ( error || transactionAborted ) {	
+
+								deferred.reject( error || "Could not increment primary key." );
+
+							} else {
+
+								deferred.resolve( snapshot.val() );
+
+							}
+
+						}
+					);
+
+					return( deferred.promise );
+
+				}
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// Define our Firebase gateway so that we can inject it into other services
+		// for synchonization with remote data stores.
+		app.factory(
+			"firebase",
+			function( $window ) {
+
+				// Create our factory which will create a new instance of the Firebase
+				// reference for the given path.
+				function firebase( resourcePath ) {
+
+					return( new firebase.Firebase( resourcePath ) )
+					
+				}
+
+				// Keep a reference to the original object in case we need to reference
+				// it later (ex, in the factory method).
+				firebase.Firebase = $window.Firebase;
+
+				// Delete from the global scope to make sure no one cheats in our 
+				// separation of concerns. The "angular way" is to not use the global 
+				// scope and to inject all needed dependencies.
+				delete( $window.Firebase );
+
+				// Return our factory method.
+				return( firebase );
+				
+			}
+		);
+
+	</script>
+
+</body>
+</html>
