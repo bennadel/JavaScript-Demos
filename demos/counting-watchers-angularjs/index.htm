@@ -1,0 +1,269 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Counting The Number Of Watchers In AngularJS
+	</title>
+
+	<style type="text/css">
+
+		a[ ng-click ] {
+			cursor: pointer ;
+			text-decoration: underline ;
+		}
+
+		.even {
+			background-color: #FAFAFA ;
+		}
+
+	</style>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		Counting The Number Of Watchers In AngularJS
+	</h1>
+
+	<form ng-submit="submitFriend()">
+
+		<input type="text" ng-model="form.name" size="30" />
+		<input type="submit" value="Add Friend" />
+
+	</form>
+
+	<ul>
+		<!--
+			Notice that in my ngRepeat template, I have a number of AngularJS bindings
+			for attribute interpolation, class definition, element visibility, and text
+			output. Obviously, not all of these make sense in this context; but, they are
+			here to show you how fast watch-bindings can add up!!!
+		-->
+		<li 
+			ng-repeat="friend in friends track by friend.id"
+			title="Added on {{ friend.createdAt.toDateString() }}"
+			ng-class="{ even: $even, odd: $odd }">
+
+			{{ friend.name }} ( {{ friend.id }} )
+			
+			<em ng-show="$even">
+				( even row )
+			</em>
+			<em ng-show="$odd">
+				( odd row )
+			</em>
+
+		</li>
+	</ul>
+
+	<p>
+		<strong>Watch Count:</strong> {{ watchCount }}
+	</p>
+
+	<!-- 
+		To make this exploration a bit more impactful, I've created a Bookmarklet so 
+		you can get the number $watch() bindings on any AngularJS application. 
+	-->
+	<p>
+		<em>
+			Get as Bookmarklet:
+			<a bn-bookmarklet="bookmarklet">$watch count</a>
+			&mdash;
+			Anything over 2,000 is considered bad for performance.
+		</em>
+	</p>
+
+	
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/jquery/jquery-2.1.0.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.2.22.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I control the root of the application.
+		app.controller(
+			"AppController",
+			function( $scope, getWatchCount ) {
+
+				// I hold the form data for ngModel.
+				$scope.form = {
+					name: ""
+				};
+
+				// I hold the current collection of friends (rendered in ngRepeat).
+				$scope.friends = [];
+
+				// I hold the current count of watchers in the current page. This extends
+				// beyond the current scope, and will hold the count for all scopes on 
+				// the entire page.
+				$scope.watchCount = 0;
+
+				// I hold the bookmarkletized version of the function to provide a take-
+				// away feature that can be used on any AngularJS page.
+				$scope.bookmarklet = getWatchCount.bookmarklet;
+
+
+				// Every time the digest runs, it's possible that we'll change the number
+				// of $watch() bindings on the current page. 
+				$scope.$watch(
+					function watchCountExpression() {
+
+						return( getWatchCount() );
+
+					},
+					function handleWatchCountChange( newValue ) {
+
+						$scope.watchCount = newValue;
+
+					}
+				);
+
+				// Pre-populate some friends.
+				addFriend( "Tricia" );
+				addFriend( "Joanna" );
+				addFriend( "Kit" );
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I create a new friend based on the form data and add it to the 
+				// current collection (which will alter the state of the ngRepeat).
+				$scope.submitFriend = function() {
+
+					// Ignore empty form submissions.
+					if ( ! $scope.form.name ) {
+
+						return;
+
+					}
+
+					addFriend( $scope.form.name );
+
+					$scope.form.name = "";
+
+				};
+
+
+				// ---
+				// PRIVATE METHODS.
+				// ---
+
+
+				// I add the given friend to the collection.
+				function addFriend( name ) {
+
+					$scope.friends.push({
+						id: ( $scope.friends.length + 1 ),
+						name: name,
+						createdAt: new Date()
+					});
+
+				}
+				
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I get a rough estimate of the number of watchers on the page. This assumes 
+		// that the entire page is inside the same AngularJS application. 
+		app.factory(
+			"getWatchCount",
+			function() {
+
+				// I return the count of watchers on the current page.
+				function getWatchCount() {
+
+					var total = 0;
+
+					// AngularJS denotes new scopes in the HTML markup by appending the
+					// class "ng-scope" to appropriate elements. As such, rather than 
+					// attempting to navigate the hierarchical Scope tree, we can simply
+					// query the DOM for the individual scopes. Then, we can pluck the 
+					// watcher-count from each scope.
+					// --
+					// NOTE: Ordinarily, it would be a HUGE SIN for an AngularJS service
+					// to access the DOM (Document Object Model). But, in this case,
+					// we're not really building a true AngularJS service, so we can 
+					// break the rules a bit.
+					angular.element( ".ng-scope" ).each(
+						function ngScopeIterator() {
+
+							// Get the scope associated with this element node.
+							var scope = $( this ).scope();
+
+							// The $$watchers value starts out as NULL. 
+							total += scope.$$watchers
+								? scope.$$watchers.length
+								: 0
+							;
+
+						}
+					);
+					
+					return( total );
+
+				}
+
+				// For convenience, let's serialize the above method and convert it to 
+				// a bookmarklet that can easily be run on ANY AngularJS page. 
+				getWatchCount.bookmarklet = ( 
+					"javascript:alert('Watchers:'+(" + 
+					getWatchCount.toString()
+						.replace( /\/\/.*/g, " " )
+						.replace( /\s+/g, " " ) +
+					")());void(0);" 
+				);
+
+				return( getWatchCount );
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I turn the given scope value into an HREF attribute. This gets around the
+		// automatic sanitization that AngularJS is doing to prevent malicious scripts
+		// from being executed.
+		app.directive(
+			"bnBookmarklet",
+			function() {
+
+				// I bind the UI events to the current scope.
+				function link( $scope, element, attributes ) {
+
+					element.attr( "href", $scope.$eval( attributes.bnBookmarklet ) );
+
+				}
+
+
+				// Return the directive configuration.
+				return({
+					link: link,
+					restrict: "A"
+				});
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>

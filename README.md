@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Counting The Number Of Watchers In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/counting-watchers-angularjs/)
 * [My First Look At Firebase In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/first-look-at-firebase/)
 * [Creating A Reusable Timer In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/reusable-timer-angularjs/)
 * [Looking At Nested Event Timing And DOM Structure In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/nested-event-timing-angularjs/)
