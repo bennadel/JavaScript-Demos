@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Firebase References Don't Store Unique Event Bindings](http://bennadel.github.io/JavaScript-Demos/demos/firebase-reference-event-bindings/)
 * [Checking To See If Firebase Syncs Data Without Bound Event Handlers](http://bennadel.github.io/JavaScript-Demos/demos/firebase-syncing-activity/)
 * [Counting The Number Of Watchers In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/counting-watchers-angularjs/)
 * [My First Look At Firebase In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/first-look-at-firebase/)
