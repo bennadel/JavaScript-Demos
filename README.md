@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Checking To See If Firebase Syncs Data Without Bound Event Handlers](http://bennadel.github.io/JavaScript-Demos/demos/firebase-syncing-activity/)
 * [Counting The Number Of Watchers In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/counting-watchers-angularjs/)
 * [My First Look At Firebase In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/first-look-at-firebase/)
 * [Creating A Reusable Timer In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/reusable-timer-angularjs/)

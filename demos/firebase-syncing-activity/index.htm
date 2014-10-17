@@ -1,0 +1,183 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Checking To See If Firebase Syncs Data Without Bound Event Handlers
+	</title>
+
+	<style type="text/css">
+
+		a[ ng-click ] {
+			cursor: pointer ;
+			text-decoration: underline ;
+		}
+
+	</style>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		Checking To See If Firebase Syncs Data Without Bound Event Handlers
+	</h1>
+
+	<p ng-switch="isWatchingEvents">
+		<a ng-switch-when="true" ng-click="stopWatchingEvents()">Stop Watching Events</a>
+		<a ng-switch-when="false" ng-click="startWatchingEvents()">Start Watching Events</a>
+	</p>
+
+	<p ng-if="isWatchingEvents">
+		<strong>Ok, look at the WebSockets frames in Chrome dev tools</strong>.
+	</p>
+	
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/jquery/jquery-2.1.0.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.2.22.min.js"></script>
+	<script type="text/javascript" src="../../vendor/firebase/firebase-1.1.0.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I control the root of the application.
+		app.controller(
+			"AppController",
+			function( $scope, firebase, $http ) {
+
+				// NOTE: This is my "developer" Firebase, so there is no security 
+				// being applied to it.
+				var root = "https://popping-torch-33.firebaseio.com/2014-10-16/";
+
+				// Get a reference to the counter - just a simple value that we're going 
+				// to be incrementing for the demo.
+				var counterResource = firebase( root + "counter" );
+
+				// I indicate whether or not we are currently watching the "value" event 
+				// on the Firebase resource. 
+				$scope.isWatchingEvents = false;
+
+				// We're going to start updating the remote Firebase counter value before 
+				// we even start listening for events. This will run on an interval so 
+				// that we can see how the WebSocket activity changes as we bind / unbind
+				// event handlers.
+				startUpdatingCounterValueUsingREST();
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I bind to the "value" event on the Firebase resource.
+				$scope.startWatchingEvents = function() {
+
+					$scope.isWatchingEvents = true;
+
+					counterResource.on( "value", handleValueEvent );
+
+				};
+
+
+				// I remove the "value" event binding from the Firebase resource.
+				$scope.stopWatchingEvents = function() {
+
+					$scope.isWatchingEvents = false;
+
+					counterResource.off( "value", handleValueEvent );
+
+				};
+
+
+				// ---
+				// PRIVATE METHODS.
+				// ---
+
+
+				// I handle the "value" event snapshot return value.
+				function handleValueEvent( snapshot ) {
+
+					console.log( "Value:", snapshot.val() );
+
+				}
+
+
+				// I start altering the count using the RESTful API. I'm using REST here
+				// to make sure that our WebSockets Frame activity is only capturing the 
+				// Syncing events and NOT the POST/PUT events.
+				function startUpdatingCounterValueUsingREST() {
+
+					var maxRequests = 50;
+					var currentValue = 0;
+
+					var timer = setInterval(
+						function handleInterval() {
+
+							// NOTE: We are using "PUT" to replace the value. If we tried
+							// using "POST", it would try to treat "counter" as a 
+							// collection and append the value to it as a new child.
+							$http({
+								method: "put",
+								url: ( counterResource.toString() + ".json" ),
+								data: ++currentValue
+							});
+
+							if ( currentValue >= maxRequests ) {
+
+								clearInterval( timer );
+
+							}
+
+						},
+						( 1.5 * 1000 )
+					);
+
+				}
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// Define our Firebase gateway so that we can inject it into other services
+		// for synchronization with remote data stores.
+		app.factory(
+			"firebase",
+			function( $window ) {
+
+				// Create our factory which will create a new instance of the Firebase
+				// reference for the given path.
+				function firebase( resourcePath ) {
+
+					return( new firebase.Firebase( resourcePath ) )
+					
+				}
+
+				// Keep a reference to the original object in case we need to reference
+				// it later (ex, in the factory method).
+				firebase.Firebase = $window.Firebase;
+
+				// Delete from the global scope to make sure no one cheats in our 
+				// separation of concerns. The "angular way" is to not use the global 
+				// scope and to inject all needed dependencies.
+				delete( $window.Firebase );
+
+				// Return our factory method.
+				return( firebase );
+				
+			}
+		);
+
+	</script>
+
+</body>
+</html>
