@@ -42,12 +42,6 @@
 
 			Then, for each item, we are "switching" the rendering template based on the 
 			"isInvitation" flag that was injected into each item.
-
-			NOTE: Because ngRepeat uses "tranclude:element", it means that this entire LI
-			element will only need to be compiled once, which is good for performance. 
-			But, each ngSwitchWhen element will still need to be linked each time the LI
-			element is cloned and linked to a new child scope, which is not quite as 
-			awesome, but still not so bad. 
 		-->
 		<li 
 			ng-repeat="person in people track by person.uid"
