@@ -1,0 +1,186 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Mixing Data And Templates Using A Single ng-repeat In AngularJS
+	</title>
+
+	<style type="text/css">
+
+		a[ ng-click ] {
+			cursor: pointer ;
+			text-decoration: underline ;
+		}
+
+		.invitation {
+			color: #AAAAAA ;
+			font-style: italic ;
+		}
+
+	</style>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		Mixing Data And Templates Using A Single ng-repeat In AngularJS
+	</h1>
+
+	<h2>
+		Your Team &mdash;
+		{{ users.length }} users and 
+		{{ invitations.length }} outstanding invitations.
+	</h2>
+
+	<ul>
+		<!--
+			When we use the ngRepeat directive, notice that we are tracking the DOM/object
+			relationship using the UID that was derived during the list merge. This allows
+			us to make sure we don't destroy and re-build DOM elements when we start to 
+			introduce Cached vs. Live data. 
+
+			Then, for each item, we are "switching" the rendering template based on the 
+			"isInvitation" flag that was injected into each item.
+		-->
+		<li 
+			ng-repeat="person in people track by person.uid"
+			ng-switch="person.isInvitation">
+
+			<!-- BEGIN: Template for Invitation. -->
+			<div ng-switch-when="true" class="invitation">
+
+				{{ person.email }} 
+				( <a ng-click>Resend</a> or <a ng-click>Cancel</a> invitation )
+
+			</div>
+			<!-- END: Template for Invitation. -->
+
+			<!-- BEGIN: Template for User. -->
+			<div ng-switch-when="false" class="user">
+
+				{{ person.name }} &mdash; {{ person.email }}
+
+			</div>	
+			<!-- END: Template for User. -->
+
+		</li>
+	</ul>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/jquery/jquery-2.1.0.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.2.22.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I control the root of the application.
+		app.controller(
+			"AppController",
+			function( $scope ) {
+
+				// Let's generate a large collection of invitations and users in such a
+				// way that they mix together nicely (rather than one group after the 
+				// other). We need to have a large group since we are looking at 
+				// performance, which typically becomes more obvious at larger sizes.
+				$scope.invitations = [];
+				$scope.users = [];
+
+				// Build each set programmatically.
+				for ( var i = 1 ; i < 1000 ; i++ ) {
+
+					$scope.invitations.push({
+						id: i,
+						email: ( "ben+" + i + "@bennadel.com" )
+					});
+
+					$scope.users.push({
+						id: i,
+						name: ( "ben+" + i ),
+						email: ( "ben+" + i + "@bennadel.com" )
+					});
+
+				}
+
+				// I hold the co-mingled collection of active users and pending 
+				// invitations. Since this list is the aggregate of two different and
+				// unique sets of data, this collection has its own unique identifier
+				// - uid - injected into each item.
+				$scope.people = buildPeople( $scope.invitations, $scope.users );
+
+
+				// ---
+				// PRIVATE METHODS.
+				// ---	
+
+
+				// I merge the given invitations and users collections into a single 
+				// collection with unique ID (generated from the collection type and 
+				// the ids of each item).
+				function buildPeople( invitations, users ) {
+
+					var people = sortPeople( invitations.concat( users ) );
+
+					for ( var i = 0 ; i < people.length ; i++ ) {
+
+						var person = people[ i ];
+
+						// I determine if the given item is an invitation or a user.
+						person.isInvitation = ! person.hasOwnProperty( "name" );
+
+						// I build the unique ID for the item in the merged collection.
+						person.uid = ( ( person.isInvitation ? "invitation-" : "user-" ) + person.id );
+
+					}
+
+					return( people );
+
+				}
+				
+
+				// I sort the collection based on either name or email. Since I am 
+				// sorting a mixed-collection, I am expecting not all elements to have 
+				// a name; BUT, I am expecting all elements to have an email.
+				function sortPeople( people ) {
+
+					people.sort(
+						function comparisonOperator( a, b ) {
+
+							var nameA = ( a.name || a.email ).toLowerCase();
+							var nameB = ( b.name || b.email ).toLowerCase();
+
+							if ( nameA < nameB ) {
+
+								return( -1 );
+
+							} else if ( nameA > nameB ) {
+
+								return( 1 );
+
+							} else {
+
+								return( 0 );
+
+							}
+							
+						}
+					);
+
+					return( people );
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>

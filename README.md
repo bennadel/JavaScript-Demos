@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Creating An Optimized Switch Directive For Use With ngRepeat In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/ng-repeat-switch-angularjs/)
 * [Mixing Data And Templates Using A Single ng-repeat In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/mixed-templates-ng-repat-angularjs/)
 * [Firebase References Don't Store Unique Event Bindings](http://bennadel.github.io/JavaScript-Demos/demos/firebase-reference-event-bindings/)
 * [Checking To See If Firebase Syncs Data Without Bound Event Handlers](http://bennadel.github.io/JavaScript-Demos/demos/firebase-syncing-activity/)
