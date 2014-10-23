@@ -1,0 +1,39 @@
+
+ul.friends {
+	list-style-type: none ;
+	margin: 0px 0px 0px 0px ;
+	padding: 0px 0px 0px 0px ;
+}
+
+li.friend {
+	background-color: #FAFAFA ;
+	border: 1px solid #CCCCCC ;
+	border-radius: 3px 3px 3px 3px ;
+	height: 150px ;
+	float: left ;
+	margin: 0px 10px 10px 0px ;
+	width: 150px ;
+}
+
+div.bio {
+	padding-top: 11px ;
+	text-align: center ;
+}
+
+div.bio img {
+	border: 7px solid #CCCCCC ;
+	border-radius: 60px 60px 60px 60px ;
+	height: 60px ;
+	margin: 0px auto 10px auto ;
+	width: 60px ;
+}
+
+div.bio div.name {
+	font-size: 16px ;
+	font-weight: 800 ;
+	margin: 0px 0px 5px 0px ;
+}
+
+div.bio div.nickname {
+	font-size: 12px ;
+}

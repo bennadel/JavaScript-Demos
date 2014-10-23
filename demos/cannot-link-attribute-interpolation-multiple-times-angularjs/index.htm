@@ -1,0 +1,164 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		You Cannot Link Attribute Interpolation Multiple Times In AngularJS
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		You Cannot Link Attribute Interpolation Multiple Times In AngularJS
+	</h1>
+
+	<ul class="friends">
+		<li 
+			ng-repeat="friend in friends" 
+			bn-friend
+			class="friend">
+
+			<!-- WE WILL BE COMPILING THIS LATER ON IN THE DIRECTIVE BELOW. -
+			<div title="{{ friend.name }}" class="bio">
+				<img ng-src="./avatar-{{ friend.avatarID }}.jpg" />
+				<div class="name">{{ friend.name }}</div>
+				<div class="nickname">{{ friend.nickname }}</div>
+			</div>
+			-->
+
+		</li>
+	</ul>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/jquery/jquery-2.1.0.min.js"></script>
+	<script type="text/javascript" src="./angular-1.2.26.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I control the root of the application.
+		app.controller(
+			"AppController",
+			function( $scope ) {
+
+				// Notice that each friend has a different avatarID - this will be used,
+				// in conjunction with attribute interpolation (ngSrc), to render a 
+				// unique avatar image for each friend in the ngRepat.
+				$scope.friends = [
+					{
+						avatarID: 1,
+						name: "Sarah",
+						nickname: "Stubs"
+					},
+					{
+						avatarID: 2,
+						name: "Joanna",
+						nickname: "J-Diesel"
+					},
+					{
+						avatarID: 3,
+						name: "Tricia",
+						nickname: "Boss"
+					}
+				];
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I attempt to compile a template once and then re-link it in various contexts
+		// depending on the user's mouse interactions.
+		// --
+		// CAUTION: THIS APPROACH DOES NOT WORK - THIS DEMO IS TO LOOK AT WHY IT 
+		// DOESN'T WORK BASED ON HOW THE ATTRIBUTE INTERPOLATION IS RE-COMPILED DURING
+		// EACH PRE-LINKING PHASE.
+		app.directive(
+			"bnFriend",
+			function( $compile ) {
+
+				// Compile the template that we want to inject in each context.
+				var templateLinker = $compile(
+					"<div title='{{ friend.name }}' class='bio'>" +
+						"<img ng-src='./avatar-{{ friend.avatarID }}.jpg' />" +
+						"<div class='name'>{{ friend.name }}</div>" +
+						"<div class='nickname'>{{ friend.nickname }}</div>" +
+					"</div>"
+				);
+
+				// I will keep track of the element as it is injected into each context.
+				// Note that it will only be in a single context at a time since we are 
+				// NOT cloning it - simply moving it and re-linking it.
+				var template = null;
+
+				// I hold the scope that gets created a linked to the above template. We
+				// have to create a new scope for the template so that we have something
+				// we can $destroy() when we unlink it.
+				var templateScope = null;
+
+
+				// I link the JavaScript events to the scope. 
+				function link( $scope, element, attributes ) {
+
+					// When the user mouses-into the ngRepeat item, we're going to re-
+					// link the above template and inject it into the current ngRepeat
+					// context.
+					element.on(
+						"mouseenter",
+						function handleMouseEnterEvent( event ) {
+
+							// If this is not the first time we've linked this template, 
+							// destroy the previous context.
+							if ( templateScope ) {
+
+								templateScope.$destroy();
+
+							}
+
+							// Link the template to a NEW, child scope.
+							// --
+							// CAUTION: THIS DOES NOT WORK AS EXPECTED WITH ATTRIBUTE
+							// INTERPOLATION.
+							template = templateLinker( templateScope = $scope.$new() );
+
+							// Inject the template - this automatically removes it from
+							// the previous DOM context since we're not cloning it - we're
+							// just moving it around.
+							element.append( template );
+
+							// Make sure all the watchers fire on the DOM tree we just 
+							// injected.
+							templateScope.$digest();
+
+						}
+					)
+
+				}
+
+
+				// Return the directive configuration.
+				return({
+					link: link,
+					restrict: "A"
+				});
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
