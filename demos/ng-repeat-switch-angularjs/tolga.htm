@@ -33,41 +33,44 @@
 		{{ invitations.length }} outstanding invitations.
 	</h2>
 
-	<ul>
-		<!--
-			When we use the ngRepeat directive, notice that we are tracking the DOM/object
-			relationship using the UID that was derived during the list merge. This allows
-			us to make sure we don't destroy and re-build DOM elements when we start to 
-			introduce Cached vs. Live data. 
+	<p>
+		<a ng-click="toggleList()">Toggle list</a> <em>To explore memory leaks</em>.
+	</p>
 
-			Then, for each item, we are "switching" the rendering template based on the 
-			"isInvitation" flag that was injected into each item. Note, however, that we 
-			are NOT using the core ngSwitch directive - we are replacing it with a custom
-			directive that will pre-compile the "case" templates once and then simply 
-			clone / link them during the ngRepeat rendering.
-		-->
-		<li 
-			ng-repeat="person in people track by person.uid"
-			bn-repeat-switch="person.isInvitation">
+	<!-- UI-IF to explore memory deallocation. -->
+	<ul ng-if="isShowingList">
 
-			<!-- BEGIN: Template for Invitation. -->
-			<div bn-repeat-switch-when="true" class="invitation">
+		<!-- Nested NG-REPEAT to explore multiple linking phases. -->
+		<li ng-repeat="people in collections">
 
-				{{ person.email }} 
-				( <a ng-click>Resend</a> or <a ng-click>Cancel</a> invitation )
+			<ul>
+				<li 
+					ng-repeat="person in people track by person.uid"
+					bn-repeat-switch="person.isInvitation">
 
-			</div>
-			<!-- END: Template for Invitation. -->
+					<!-- BEGIN: Template for Invitation. -->
+					<div bn-repeat-switch-when="true" class="invitation">
 
-			<!-- BEGIN: Template for User. -->
-			<div bn-repeat-switch-when="false" class="user">
+						{{ person.email }} 
+						( <a ng-click>Resend</a> or <a ng-click>Cancel</a> invitation )
 
-				{{ person.name }} &mdash; {{ person.email }}
+					</div>
+					<!-- END: Template for Invitation. -->
 
-			</div>	
-			<!-- END: Template for User. -->
+					<!-- BEGIN: Template for User. -->
+					<div bn-repeat-switch-when="false" class="user">
+
+						{{ person.name }} &mdash; {{ person.email }}
+
+					</div>	
+					<!-- END: Template for User. -->
+
+				</li>
+			</ul>
 
 		</li>
+		<!-- END: Outer NG-REPEAT. -->
+
 	</ul>
 
 
@@ -87,24 +90,21 @@
 		// I control the root of the application.
 		app.controller(
 			"AppController",
-			function( $scope ) {
+			function( $scope, $timeout ) {
 
-				// Let's generate a large collection of invitations and users in such a
-				// way that they mix together nicely (rather than one group after the 
-				// other). We need to have a large group since we are looking at 
-				// performance, which typically becomes more obvious at larger sizes.
-				$scope.invitations = [];
-				$scope.users = [];
+				// Create the first set of lists for the outer ng-repeat directive.
+				$scope.invitationsA = [];
+				$scope.usersA = [];
 
 				// Build each set programmatically.
-				for ( var i = 1 ; i < 1000 ; i++ ) {
+				for ( var i = 1 ; i <= 3 ; i++ ) {
 
-					$scope.invitations.push({
+					$scope.invitationsA.push({
 						id: i,
 						email: ( "ben+" + i + "@bennadel.com" )
 					});
 
-					$scope.users.push({
+					$scope.usersA.push({
 						id: i,
 						name: ( "ben+" + i ),
 						email: ( "ben+" + i + "@bennadel.com" )
@@ -112,11 +112,52 @@
 
 				}
 
-				// I hold the co-mingled collection of active users and pending 
-				// invitations. Since this list is the aggregate of two different and
-				// unique sets of data, this collection has its own unique identifier
-				// - uid - injected into each item.
-				$scope.people = buildPeople( $scope.invitations, $scope.users );
+
+				// Create the second set of lists for the outer ng-repeat directive.
+				$scope.invitationsB = [];
+				$scope.usersB = [];
+
+				// Build each set programmatically.
+				for ( var i = 4 ; i <= 6 ; i++ ) {
+
+					$scope.invitationsB.push({
+						id: i,
+						email: ( "kim+" + i + "@bennadel.com" )
+					});
+
+					$scope.usersB.push({
+						id: i,
+						name: ( "kim+" + i ),
+						email: ( "kim+" + i + "@bennadel.com" )
+					});
+
+				}
+
+
+				// Create the outer collection of mixed-type lists.
+				$scope.collections = [ 
+					buildPeople( $scope.invitationsA, $scope.usersA ),
+					buildPeople( $scope.invitationsB, $scope.usersB )
+				];
+
+
+				// I determine if the outer list is being shown. This is here to see 
+				// if removing the list is able to properly deallocate the compiled
+				// DOM node references.
+				$scope.isShowingList = true;
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---	
+
+
+				// I toggle the visibility of the outer list.
+				$scope.toggleList = function() {
+
+					$scope.isShowingList = ! $scope.isShowingList;
+
+				};
 
 
 				// ---
