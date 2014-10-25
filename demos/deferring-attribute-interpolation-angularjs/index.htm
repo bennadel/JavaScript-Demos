@@ -1,0 +1,301 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Deferring Attribute Interpolation In AngularJS For Better Performance
+	</title>
+
+	<style type="text/css">
+
+		ul {
+			list-style-type: none ;
+			margin: 0px 0px 0px 0px ;
+			padding: 0px 0px 0px 0px ;
+		}
+
+		li {
+			background-color: #FAFAFA ;
+			border: 1px solid #CCCCCC ;
+			line-height: 20px ;
+			margin: 0px 0px 3px 0px ;
+			padding: 5px 5px 5px 5px ;
+		}
+
+		li:hover {
+			background-color: #FFF0F0 ;
+		}
+
+	</style>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		Deferring Attribute Interpolation In AngularJS For Better Performance
+	</h1>
+
+	<ul>
+		<!--
+			Notice that we are using interpolation in two different places in the 
+			following ngRepeat directive: TITLE attribute and HREF attribute.
+		-->
+		<li 
+			ng-repeat="friend in friends track by friend.id"
+			bn-title="My friend, {{ friend.nickname }}">
+
+			<a bn-href="#/friend-{{ friend.id }}">{{ friend.id }} - {{ friend.name }}</a>
+
+		</li>
+	</ul>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/jquery/jquery-2.1.0.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.2.22.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I control the root of the application.
+		app.controller(
+			"AppController",
+			function( $scope ) {
+
+				// I contain the list of friends being rendered by the ngRepeat.
+				$scope.friends = buildFriends( 100 );
+				
+
+				// ---
+				// PRIVATE METHODS.
+				// ---	
+
+
+				// I return a new friend object.
+				function buildFriend( index ) {
+
+					var localIndex = ( index % 3 );
+
+					if ( localIndex === 0 ) {
+
+						return({
+							id: index,
+							name: "Sarah",
+							nickname: "Stubs"
+						});
+
+					} else if ( localIndex === 1 ) {
+
+						return({
+							id: index,
+							name: "Joanna",
+							nickname: "J-Diesel"
+						});
+
+					} else {
+
+						return({
+							id: index,
+							name: "Tricia",
+							nickname: "Boss"
+						});
+
+					}
+
+				}
+
+
+				// I create a collection of friends with the given size.
+				function buildFriends( size ) {
+
+					var friends = [];
+
+					for ( var i = 1 ; i <= size ; i++ ) {
+
+						friends.push( buildFriend( i ) );
+
+					}
+
+					return( friends );
+
+				}
+				
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I provide an interpolated Title attribute that uses just-in-time interpolation
+		// rather than a watcher that has to be checked during each digest.
+		app.directive(
+			"bnTitle",
+			function( $interpolate ) {
+
+				// When we compile the directive, we have to remove the pre-interpolation
+				// value so that the watcher will not be created during the pre-linking
+				// phase of the native AngularJS attribute-interpolation directive.
+				function compile( tElement, tAttributes ) {
+
+					// Compute the interpolation function for the non-interpolated 
+					// attribute value.
+					var interpolation = $interpolate( tAttributes.bnTitle );
+
+					// Clear the value so the attribute-interpolation directive won't 
+					// bind a watcher.
+					// --
+					// NOTE: At this point, the interpolation method has already been 
+					// computed twice - once by AngularJS and once by us (above). It will
+					// actually be computed one more time during the pre-linking phase of 
+					// the attribute-interpolation directive. However, at that point, the
+					// value (which we are clearing below), will not contain any 
+					// interpolation markers ({{}}), and therefore will not cause any 
+					// watchers to be bound. At that point, further interpolation is our
+					// responsibility.
+					tAttributes.$set( "bnTitle", null );
+				
+					// CAUTION: You CANNOT use this notation (ie, using jQuery to change
+					// the attribute) at this point - it will not stop the interpolation
+					// binding from taking place. The reason being (as best I can tell) 
+					// is that the AngularJS "Attributes" collection has already been 
+					// determined and is subsequently used to access the attribute value
+					// in the pre-linking phased of the interpolation directive.
+					// --
+					// tElement.attr( "bnTitle", "" );
+
+					
+					// I link the JavaScript events to the current scope.
+					function link( scope, element, attributes ) {
+
+						// Since the "title" is a visual element, we don't need it to 
+						// exist until the user begins to interact with the current 
+						// element. As such, we can defer interpolation until the user
+						// actually mouses into the current element, at which point the
+						// native behavior of the browser is to show the title.
+						element.on(
+							"mouseenter",
+							function handleMouseEnterEvent( event ) {
+
+								// Get the just-in-time value of the interpolation 
+								// function in the context of the current scope. 
+								// --
+								// NOTE: We do NOT have to trigger a DIGEST since no 
+								// change to the view-model has taken place. These 
+								// changes are isolated to the DOM. AngularJS doesn't
+								// need to know about them.
+								element.attr( "title", interpolation( scope ) );
+
+							}
+						);
+
+					}
+
+
+					// Return the linking function.
+					return( link );
+
+				}
+
+				// Return the directive configuration.
+				return({
+					compile: compile,
+					restrict: "A"
+				});
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I provide an interpolated Href attribute that uses just-in-time interpolation
+		// rather than a watcher that has to be checked during each digest. The HREF is 
+		// calculated on "focus" of the link element.
+		app.directive(
+			"bnHref",
+			function( $interpolate ) {
+
+				// When we compile the directive, we have to remove the pre-interpolation
+				// value so that the watcher will not be created during the pre-linking
+				// phase of the native AngularJS attribute-interpolation directive.
+				function compile( tElement, tAttributes ) {
+
+					// Compute the interpolation function.
+					var interpolation = $interpolate( tAttributes.bnHref );
+
+					// Clear the attribute since we no longer need it once we have the 
+					// computed interpolation function.
+					tAttributes.$set( "bnHref", null );
+
+					// Set up an empty href so that the link CSS styles will take place.
+					tElement.attr( "href", "" );
+
+					
+					// I link the JavaScript events to the current scope.
+					function link( scope, element, attributes ) {
+
+						// Since the link behavior is activated based on element 
+						// interaction, we can defer interpolation until the user
+						// focuses the element (either with mouse or keyboard).
+						element.on(
+							"focus",
+							function handleFocusEvent( event ) {
+
+								element.attr( "href", interpolation( scope ) );
+
+							}
+						);
+
+					}
+
+
+					// Return the linking function.
+					return( link );
+
+				}
+
+				// Return the directive configuration.
+				return({
+					compile: compile,
+					restrict: "A"
+				});
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

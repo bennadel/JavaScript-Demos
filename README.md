@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Deferring Attribute Interpolation In AngularJS For Better Performance](http://bennadel.github.io/JavaScript-Demos/demos/deferring-attribute-interpolation-angularjs/)
 * [You Cannot Link Attribute Interpolation Multiple Times In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/cannot-link-attribute-interpolation-multiple-times-angularjs/)
 * [Creating An Optimized Switch Directive For Use With ngRepeat In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/ng-repeat-switch-angularjs/)
 * [Mixing Data And Templates Using A Single ng-repeat In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/mixed-templates-ng-repat-angularjs/)
