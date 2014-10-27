@@ -1,0 +1,68 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		A Quick Look At How DOM Structure Affects Text Interpolation Watchers In AngularJS
+	</title>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		A Quick Look At How DOM Structure Affects Text Interpolation Watchers In AngularJS
+	</h1>
+
+	<p>
+		<a href="javascript:alert('Watch%20Count:%20'+getWatchCount());void(0);">Get $watch Count</a>
+	</p>
+
+	<p>
+		My friend, <span class="name">{{ friend.name }}</span>, 
+		loves being a <span class="profession">{{ friend.profession }}</span>. 
+
+		<!--
+			TODO: This is a really misleading variable name - it's not so much 
+			a friendship entity as it is just a duration for a friendship. 
+			Consider renaming.
+		-->
+		I've only known her for {{ friend.friendship }} years; 
+
+		<!-- TODO: Fix another horrible variable name. -->
+		but, she's been doing it for {{ friend.workHistory }} years.
+	</p>
+
+	
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/jquery/jquery-2.1.0.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.2.22.min.js"></script>
+	<script type="text/javascript" src="./get-watch-count.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I control the root of the application.
+		app.controller(
+			"AppController",
+			function( $scope ) {
+
+				$scope.friend = {
+					name: "Tricia",
+					profession: "Stunt-man",
+					friendship: 5,
+					workHistory: 15
+				};
+				
+			}
+		);
+
+	</script>
+
+</body>
+</html>
