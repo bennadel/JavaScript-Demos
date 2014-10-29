@@ -1,0 +1,268 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Always Trigger The $destroy Event Before Removing Elements In AngularJS Directives
+	</title>
+
+	<style type="text/css">
+
+		a[ ng-click ] {
+			cursor: pointer ;
+			text-decoration: underline ;
+		}
+
+	</style>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		Always Trigger The $destroy Event Before Removing Elements In AngularJS Directives
+	</h1>
+
+	<p>
+		<a ng-click="toggleContainer()">Toggle Container</a>
+	</p>
+
+	<p bn-bad-if="isShowingContainer">
+		<span bn-data-test="Bad">This is a bad directive test</span>
+	</p>
+
+	<p bn-good-if="isShowingContainer">
+		<span bn-data-test="Good">This is a good directive test</span>
+	</p>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/jquery/jquery-2.1.0.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.2.22.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I control the root of the application.
+		app.controller(
+			"AppController",
+			function( $scope ) {
+
+				$scope.isShowingContainer = false;
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---	
+
+
+				// I show or hide the container, depending on its current state.
+				$scope.toggleContainer = function() {
+
+					$scope.isShowingContainer = ! $scope.isShowingContainer;
+
+				};
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I define jQuery data and then test to see if it's available in the $destroy 
+		// event of the scope.
+		app.directive(
+			"bnDataTest",
+			function() {
+
+				// Bind the JavaScript behaviors to the local scope.
+				function link( scope, element, attributes ) {
+
+					element.data( "test", "jQuery data is available." );
+					
+					// When the destroy event is triggered, check to see if the above 
+					// data is still available.
+					scope.$on(
+						"$destroy",
+						function handleDestroyEvent() {
+
+							console.log( attributes.bnDataTest, ":", element.data( "test" ) );
+
+						}
+					);
+
+				}
+
+
+				// Return the directive configuration.
+				return({
+					link: link,
+					restrict: "A"
+				});
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I define a "bad" version of ng-if / ui-if. 
+		// --
+		// NOTE: This is, more or less, a copy of the old ui-if directive.
+		app.directive(
+			"bnBadIf",
+			function() {
+
+				// Bind the JavaScript behaviors to the local scope.
+				function link( scope, element, attributes, _, transclude ) {
+
+					// I keep track of the currently-injected element and its defined 
+					// scope. We need the injected element to have its own scope so we
+					// can destroy it when we remove the element.
+					var cloneElement = null;
+					var cloneScope = null;
+
+					// When the model changes, adjust the element existence.
+					scope.$watch(
+						attributes.bnBadIf,
+						function handleWatchChange( newValue, oldValue ) {
+
+							// If we have an existing item, remove it.
+							if ( cloneElement ) {
+
+								// ***************************************************
+								// NOTE: We are removing the element BEFORE we are 
+								// destroying the scope associated with the element.
+								// ***************************************************
+
+								cloneElement.remove();
+								cloneElement = null;
+
+								cloneScope.$destroy();
+								cloneScope = null;
+
+							}
+
+							// If the new value is truthy, inject the element.
+							if ( newValue ) {
+
+								cloneScope = scope.$new();
+
+								cloneElement = transclude(
+									cloneScope,
+									function injectClonedElement( clone ) {
+
+										element.after( clone );
+
+									}
+								);
+
+							}
+
+						}
+					);
+
+				}
+
+
+				// Return the directive configuration.
+				return({
+					link: link,
+					priority: 1000,
+					restrict: "A",
+					terminal: true,
+					transclude: "element"
+				});
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I define a "good" version of ng-if / ui-if. 
+		// --
+		// NOTE: This is, more or less, a copy of the old ui-if directive.
+		app.directive(
+			"bnGoodIf",
+			function() {
+
+				// Bind the JavaScript behaviors to the local scope.
+				function link( scope, element, attributes, _, transclude ) {
+
+					// I keep track of the currently-injected element and its defined 
+					// scope. We need the injected element to have its own scope so we
+					// can destroy it when we remove the element.
+					var cloneElement = null;
+					var cloneScope = null;
+
+					// When the model changes, adjust the element existence.
+					scope.$watch(
+						attributes.bnGoodIf,
+						function handleWatchChange( newValue, oldValue ) {
+
+							// If we have an existing item, remove it.
+							if ( cloneElement ) {
+
+								// ***************************************************
+								// NOTE: We are removing the element AFTER we are 
+								// destroying the scope associated with the element.
+								// ***************************************************
+
+								cloneScope.$destroy();
+								cloneScope = null;
+
+								cloneElement.remove();
+								cloneElement = null;
+
+							}
+
+							// If the new value is truthy, inject the element.
+							if ( newValue ) {
+
+								cloneScope = scope.$new();
+
+								cloneElement = transclude(
+									cloneScope,
+									function injectClonedElement( clone ) {
+
+										element.after( clone );
+
+									}
+								);
+
+							}
+
+						}
+					);
+
+				}
+
+
+				// Return the directive configuration.
+				return({
+					link: link,
+					priority: 1000,
+					restrict: "A",
+					terminal: true,
+					transclude: "element"
+				});
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>

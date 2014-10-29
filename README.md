@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Always Trigger The $destroy Event Before Removing Elements In AngularJS Directives](http://bennadel.github.io/JavaScript-Demos/demos/trigger-destroy-before-removing-element-angularjs/)
 * [A Quick Look At How DOM Structure Affects Text Interpolation Watchers In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/dom-structure-affects-watchers-angularjs/)
 * [Deferring Attribute Interpolation In AngularJS For Better Performance](http://bennadel.github.io/JavaScript-Demos/demos/deferring-attribute-interpolation-angularjs/)
 * [You Cannot Link Attribute Interpolation Multiple Times In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/cannot-link-attribute-interpolation-multiple-times-angularjs/)
