@@ -1,0 +1,391 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Implementing Track-By Using A Directive In AngularJS 1.0.8
+	</title>
+
+	<style type="text/css">
+
+		a[ ng-click ] {
+			cursor: pointer ;
+			text-decoration: underline ;
+		}
+
+		span.size {
+			color: #CCCCCC ;
+			font-style: italic ;
+		}
+
+	</style>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		Implementing Track-By Using A Directive In AngularJS 1.0.8
+	</h1>
+
+	<h2>
+		Without Track-By
+	</h2>
+
+	<ul>
+		<li 
+			ng-repeat="friend in friendsOne"
+			bn-log-dom-creation="Without">
+
+			{{ friend.id }} &mdash; {{ friend.name }} 
+
+			<span class="size">( at size {{ friend.size }} )</span>
+
+		</li>
+	</ul>
+
+	<h2>
+		With Track-By
+	</h2>
+
+	<!--
+		This time, we're going to use the same data structure; however, we're going 
+		to use a trackBy directive that is intended to mimic (or more like be inspired 
+		by) the "track by" syntax provided in AngularJS 1.2+. This will tell AngularJS 
+		how to map the objects to the DOM node.
+	-->
+	<ul>
+		<li 
+			ng-repeat="friend in friendsTwo" track-by="friend.id"
+			bn-log-dom-creation="With">
+
+			{{ friend.id }} &mdash; {{ friend.name }} 
+
+			<span class="size">( at size {{ friend.size }} )</span>
+
+		</li>
+	</ul>
+
+	<p>
+		<a ng-click="rebuildFriends()">Rebuild Friends</a>
+	</p>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/jquery/jquery-2.0.3.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.0.8.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I control the root of the application.
+		app.controller(
+			"AppController",
+			function( $scope ) {
+
+				// The size of the friend-collection will grow every time that it is 
+				// rebuilt so that we can see how new items interact with the rendered
+				// collection and subsequent DOM creation.
+				var size = 3;
+
+				// Set up the initial collections.
+				$scope.friendsOne = getFriends();
+				$scope.friendsTwo = getFriends();
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I rebuild the collections, creating completely new arrays and Friend
+				// object instances. In this way, we can see how AngularJS renders objects
+				// when references change.
+				$scope.rebuildFriends = function() {
+
+					console.warn( "Rebuilding..." );
+
+					size++;
+
+					$scope.friendsOne = getFriends();
+					$scope.friendsTwo = getFriends();
+
+				};
+
+
+				// ---
+				// PRIVATE METHODS.
+				// ---
+
+
+				// I create a new collection of friends.
+				function getFriends() {
+
+					var friends = [
+						{
+							id: 1,
+							name: "Sarah",
+							size: size
+						},
+						{
+							id: 2,
+							name: "Tricia",
+							size: size
+						},
+						{
+							id: 3,
+							name: "Joanna",
+							size: size
+						}
+					];
+
+					while ( friends.length < size ) {
+
+						friends.push({
+							id: ( friends.length + 1 ),
+							name: "New friend",
+							size: size
+						});
+
+					}
+
+					return( friends );
+
+				}
+				
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// The "track by" syntax for the ngRepeat directive was introduced (stable) in 
+		// version 1.2. I attempt to implement a "track by" feature in version of 
+		// AngularJS pre-1.2; specifically, 1.0.8. It's a subset of the syntax, using 
+		// only direct object references, not $id() syntax).
+		app.directive(
+			"trackBy",
+			function( $parse ) {
+
+				// Bind the JavaScript to the local scope.
+				function link( scope, element, attributes ) {
+
+					// Make sure there is an ngRepeat attribute to work with.
+					if ( ! attributes.ngRepeat ) {
+
+						throw( new Error( "ngRepeat directive required." ) );
+
+					}
+
+					// Extract the ITEM in COLLECTION parts of the ngRepeat expression.
+					// --
+					// NOTE: For this demo, I'm only supporting the most basic syntax. 
+					// No method calls, and definitely no FILTERS! But, really, you 
+					// shouldn't be using filters any way - they are bad for performance
+					// and even the AngularJS team has public stated that they are not
+					// meant for production.
+					var parts = attributes.ngRepeat.match( /^\s*(\w+)\s+in\s+([\w.]+)\s*$/i );
+
+					if ( ! parts ) {
+
+						throw( new Error( "trackBy only supports the most basic ITEM in COLLECTION syntax." ) );
+
+					}
+
+					// Create accessors for the item and the collection so that we can
+					// get their values without having to hard-code references.
+					var itemAccessor = $parse( parts[ 1 ] );
+					var collectionAccessor = $parse( parts[ 2 ] );
+
+					// Create an accessor for the track-by value so that we can extract
+					// it from each collection item context.
+					var trackByAccessor = $parse( attributes.trackBy );
+
+					// I map the item identifiers to the generated hashKeys.
+					var hashKeys = {};
+
+					// With each digest, we need to look to see if the collection has 
+					// changed; and if so, track the generated hashKeys.
+					scope.$watch( trackByWatch, handleCollectionChange );
+						
+					// When the scope is destroyed, try to clean up variable references 
+					// to help with proper garbage collection of "closed over" variables.
+					scope.$on(
+						"$destroy",
+						function handleDestroyEvent() {
+
+							// Clear variables.
+							scope = element = attributes = parts = itemAccessor = collectionAccessor = trackByAccessor = hashKeys = null;
+
+							// Clear methods.
+							handleCollectionChange = trackByWatch = updateIdsAfterRenderingNgRepeat = null;
+
+						}
+					);
+
+
+					// ---
+					// PRIVATE METHODS.
+					// ---
+
+
+					// I handle changes in the ngRepeat collection. 
+					function handleCollectionChange( newValue, oldValue ) {
+
+						// If the collection has changed, the change will only be in-
+						// memory so far. We need to give ngRepeat a chance to the link 
+						// the new collection items to the DOM and assign $$hashKey 
+						// values. As such, we'll use $evalAsync() to re-examine the 
+						// collection after the ngRepeat has rendered it.
+						scope.$evalAsync( updateIdsAfterRenderingNgRepeat );
+
+					}
+
+
+					// I execute on every $digest and check to see if any values items
+					// have been added to the ngRepeat collection. If either the length
+					// of the collection changes, or the number of new items (ie, items 
+					// we haven't seen before) changes, the watch-handler will be invoked.
+					function trackByWatch() {
+
+						// As we get and set values, we need to use a temporary "context"
+						// scope for the compiled accessors.
+						var context = {};
+
+						// Keep track of how many new items we encounter in the collection.
+						var newItemCount = 0;
+
+						// Get the collection out of the current scope.
+						var collection = collectionAccessor( scope );
+
+						for ( var i = 0, length = collection.length ; i < length ; i++ ) {
+
+							// If the item already has a hashKey, we've already looked at
+							// it - no need to examine this object any further.
+							if ( collection[ i ].$$hashKey ) {
+								
+								continue;
+
+							}
+
+							// Assign the "item" to the temporary scope so we can
+							// evaluate the track-by value.
+							itemAccessor.assign( context, collection[ i ] );
+
+							// Extract the track-by value from the temporary scope.
+							var itemID = trackByAccessor( context );
+
+							// If we already have a hashKey associated with this unique
+							// identifier, inject it into the new object reference (so 
+							// that AngularJS won't have to rebuild the DOM element).
+							if ( hashKeys[ itemID ] ) {
+
+								collection[ i ].$$hashKey = hashKeys[ itemID ];
+
+							// If we don't have a hashKey associated with this item 
+							// identifier, then this is a new object. Track the change 
+							// so that we can extract generated hashKey in the subsequent
+							// watch-handler.
+							} else {
+
+								newItemCount++;
+
+							}
+
+						}
+
+						return( collection.length + newItemCount );
+
+					}
+
+
+					// After the ngRepeat has rendered the collection, it has injected 
+					// $$hashKey values into the rendered items. This allows it to 
+					// associate each object with a DOM element so that it doesn't have
+					// to rebuild DOM elements unnecessarily. Once this has happened, we
+					// need to map the $$hashKey values to the item identifiers so that
+					// we can manually inject them into the collection if it changes.
+					function updateIdsAfterRenderingNgRepeat() {
+
+						// As we get and set values, we need to use a temporary "context"
+						// scope for the compiled accessors.
+						var context = {};
+
+						// Get the collection out of the current scope.
+						var collection = collectionAccessor( scope );
+
+						for ( var i = 0, length = collection.length ; i < length ; i++ ) {
+
+							// Assign the "item" to the temporary scope so we can
+							// evaluate the track-by value.
+							itemAccessor.assign( context, collection[ i ] );
+
+							// Extract the track-by value from the temporary scope and
+							// the injected $$hashKey from the item that ngRepeat has 
+							// assigned (and associated with a DOM element).
+							var itemID = trackByAccessor( context );
+							var hashKey = collection[ i ].$$hashKey;
+
+							// Map the hashKey for the next "watch" iteration.
+							hashKeys[ itemID ] = hashKey;
+
+						}
+
+					}
+
+				}
+
+
+				// Return the directive configuration.
+				// --
+				// NOTE: This needs to run at a slightly higher priority than the ngRepeat
+				// directive so that it can attach $watch() bindings to the scope before 
+				// the ngRepeat does.
+				return({
+					link: link,
+					priority: 1001,
+					restrict: "A"
+				});
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I simply log the creation / linking of a DOM node to illustrate the way the 
+		// DOM nodes are created with the various tracking approaches.
+		app.directive(
+			"bnLogDomCreation",
+			function() {
+
+				// I bind the UI to the $scope.
+				function link( $scope, element, attributes ) {
+
+					console.log( attributes.bnLogDomCreation, $scope.$index );
+
+				}
+
+
+				// Return the directive configuration.
+				return({
+					link: link,
+					restrict: "A"
+				});
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
