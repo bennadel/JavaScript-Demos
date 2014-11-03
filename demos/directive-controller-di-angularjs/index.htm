@@ -1,0 +1,122 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Directive Controllers Can Use Dependency Injection In AngularJS
+	</title>
+</head>
+<body>
+
+	<h1>
+		Directive Controllers Can Use Dependency Injection In AngularJS
+	</h1>
+
+	<div bn-test-directive>
+		Testing this directive.
+	</div>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/jquery/jquery-2.1.0.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.2.22.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I define a Controller in the dependency injection container. I can be bound
+		// to an HTML element node using either ngController of as a directive controller.
+		app.controller(
+			"my.nameSpace.TestController",
+			function( $scope, $timeout, $q ) {
+
+				console.info( "Controller instantiated" );
+
+				// Use $timeout to show that dependency injection worked.
+				var timer = $timeout( 
+					function handleTimeout() {
+
+						return( "Timer executed" );
+
+					},
+					500
+				);
+
+				// Use $q to show that dependency injection worked.
+				$q.all( [ timer ] ).then(
+					function handleTimerResolve( resolvedValues ) {
+
+						console.log( "Resolution:", resolvedValues[ 0 ] );
+
+					}
+				);
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I bind some JavaScript UI behavior to a given scope. And, in this case, I am 
+		// also binding a Controller to a given UI as well.
+		app.directive(
+			"bnTestDirective",
+			function() {
+
+				// I bind the UI behaviors to the local scope.
+				function link( scope, element, attributes, controller ) {
+
+					console.info( "Directive linked" );
+
+				}
+
+
+				// Return the directive configuration.
+				// --
+				// NOTE: We are providing the Controller name as a value to be pulled out
+				// of the dependency injection container.
+				return({
+					controller: "my.nameSpace.TestController",
+					link: link,
+					require: "bnTestDirective",
+					restrict: "A"
+				});
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

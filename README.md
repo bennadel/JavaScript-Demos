@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Directive Controllers Can Use Dependency Injection In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/directive-controller-di-angularjs/)
 * [Implementing Track-By Using A Directive In AngularJS 1.0.8](http://bennadel.github.io/JavaScript-Demos/demos/track-by-directive-ng-repeat-angularjs/)
 * [Always Trigger The $destroy Event Before Removing Elements In AngularJS Directives](http://bennadel.github.io/JavaScript-Demos/demos/trigger-destroy-before-removing-element-angularjs/)
 * [A Quick Look At How DOM Structure Affects Text Interpolation Watchers In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/dom-structure-affects-watchers-angularjs/)
