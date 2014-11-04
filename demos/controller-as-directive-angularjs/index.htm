@@ -1,0 +1,180 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Implementing Controller-As Using A Directive In AngularJS 1.0.8
+	</title>
+
+	<style type="text/css">
+
+		a[ ng-click ] {
+			color: red ;
+			cursor: pointer ;
+			text-decoration: underline ;
+		}
+
+	</style>
+</head>
+<body>
+
+	<h1>
+		Implementing Controller-As Using A Directive In AngularJS 1.0.8
+	</h1>
+
+	<!-- NOTE: As vm. -->
+	<div ng-controller="AppController" as="vm">
+		
+		<p>
+			<a ng-click="vm.toggleSections()">Toggle Sections</a>
+		</p>
+
+		<div ng-switch="vm.section">
+
+			<!-- NOTE: As vm. -->
+			<p 
+				ng-switch-when="firstSection"
+				ng-controller="FirstController" as="vm">
+
+				{{ vm.title }}
+
+			</p>
+
+			<!-- NOTE: As vm. -->
+			<p 
+				ng-switch-when="secondSection"
+				ng-controller="SecondController" as="vm">
+
+				{{ vm.title }}
+
+			</p>
+
+		</div>
+
+	</div>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/jquery/jquery-2.0.3.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.0.8.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I control the root of the application.
+		app.controller(
+			"AppController",
+			function() {
+
+				// I represent the currently-selected section.
+				this.section = "firstSection";
+
+
+				// I switch the currently-selected section.
+				this.toggleSections = function() {
+
+					this.section = ( this.section === "firstSection" )
+						? "secondSection"
+						: "firstSection"
+					;
+					
+				};
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I simply demonstrate that the "vm" reference works.
+		app.controller(
+			"FirstController",
+			function() {
+
+				this.title = "First controller, for the win!";
+
+			}
+		);
+
+		// I simply demonstrate that the "vm" reference works.
+		app.controller(
+			"SecondController",
+			function() {
+
+				this.title = "Second controller, heck yeah!";
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I attempt to implement (some of) the "controller-as" syntax in AngularJS 
+		// 1.0.8. This treats the related ngController as an item of the "view model" 
+		// in the HTML.
+		// --
+		// CAUTION: This does NOT make the scope unavailable in the view-model; it simply
+		// augments the scope with a circular reference.
+		app.directive(
+			"as",
+			function() {
+
+				// I copy the ngController instance reference into the scope so that it 
+				// can be used to reference the Controller inside the View.
+				function prelink( scope, element, attributes, controller ) {
+
+					scope[ attributes.as ] = controller;
+
+					// Injecting the controller into the scope is likely to create a 
+					// circular object reference: Controller -> Scope -> Controller. As
+					// such, let's take extra care to try to break up the reference in 
+					// order to help with garbage collection.
+					scope.$on(
+						"$destroy",
+						function handleDestroyEvent() {
+
+							scope[ attributes.as ] = null;
+
+							// Also, now that we've created a closure, it may be helpful to 
+							// clear "closed over" variable references.
+							scope = element = attributes = controller = null;
+
+						}
+					);
+
+				}
+
+
+				// Return the directive configuration.
+				// --
+				// NOTE: We are using the "prelink" phase so that the controller reference
+				// is available to the linking the phase of the nested directives.
+				// --
+				// NOTE: ngController runs at priority 500.
+				return({
+					link: {
+						pre: prelink
+					},
+					priority: 499,
+					require: "ngController",
+					restrict: "A"
+				});
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
