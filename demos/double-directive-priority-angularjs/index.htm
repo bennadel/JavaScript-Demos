@@ -1,0 +1,192 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Binding A Single Directive To Multiple Priorities On The Same Element In AngularJS
+	</title>
+
+	<style type="text/css">
+
+		a[ ng-click ] {
+			cursor: pointer ;
+			text-decoration: underline ;
+		}
+
+		li.active {
+			background-color: #FFD0D0 ;
+		}
+
+	</style>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		Binding A Single Directive To Multiple Priorities On The Same Element In AngularJS
+	</h1>
+
+	<ul>
+		<!--
+			The bnFriends directive is going to be defined at two different priorities 
+			that allow the same directive to link both BEFORE and AFTER the ngRepeat 
+			directive does its transclusion. 
+		-->
+		<li 
+			bn-friends
+			ng-repeat="friend in friends">
+
+			{{ friend.name }}
+
+		</li>
+	</ul>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/jquery/jquery-2.1.0.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.2.22.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I control the root of the application.
+		app.controller(
+			"AppController",
+			function( $scope ) {
+
+				$scope.friends = [
+					{
+						id: 1,
+						name: "Sarah"
+					},
+					{
+						id: 2,
+						name: "Tricia"
+					},
+					{
+						id: 3,
+						name: "Joanna"
+					},
+					{
+						id: 4,
+						name: "Kim"
+					}
+				];
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// Typically, we would only define a directive once; however, by defining it
+		// twice, with different configurations, we can actually bind a "single" directive
+		// to two different priorities in the same compilation and linking phase.
+		// --
+		// NOTE: This directive will execute a priority 1001 and 999; since the ngRepeat
+		// directive executes at priority 1000, this directive - bnFriends - will compile
+		// and link on both "sides" of the ngRepeat directive.
+		app
+			.directive(
+				"bnFriends",
+				function( $compile ) {
+
+					// I compile the current element. Since this executes with priority 
+					// 1001, it will be able to compile/alter the element BEFORE ngRepeat
+					// compiles and transcludes it.
+					function compile( tElement, tAttributes ) {
+
+						console.info( "High priority compiling" );
+
+						tElement.text( tElement.text() + " is my good friend!" );
+
+						return( link );
+
+
+						// Because this executes before ngRepeat, it means that we have 
+						// an opportunity to set up a controller that will be available 
+						// to the post-ngRepeat phase.
+						function link( scope, element, attributes, controller ) {
+
+							console.info( "High priority linking" );
+
+							controller.message = "hello world";
+
+						};
+
+					}
+
+
+					// Return the directive configuration.
+					// --
+					// NOTE: This version of the directive, with priority 1001, will 
+					// execute before the ngRepeat directive.
+					return({
+						compile: compile,
+						controller: angular.noop,
+						priority: 1001,
+						restrict: "A"
+					});
+
+				}
+			)
+			.directive(
+				"bnFriends",
+				function() {
+
+					// Since this executes with a lower priority than ngRepeat, it means 
+					// that this version of the directive will link for every node that 
+					// the ngRepeat directive will transclude and link.
+					function link( scope, element, attributes, controller ) {
+
+						console.info( 
+							"Low priority linking [ %d ][ %s ]", 
+							scope.$index,
+							controller.message
+						);
+
+						// Set up some simple mouse-behaviors for testing.
+						element.hover(
+							function handleMouseEnter() {
+
+								element.addClass( "active" );
+
+							},
+							function handleMouseLeave() {
+
+								element.removeClass( "active" );
+
+							}
+						);
+
+					}
+
+
+					// Return the directive configuration. Notice that we are "requiring"
+					// the controller that our other version instantiated and defined.
+					// --
+					// NOTE: This version of the directive, with priority 999, will 
+					// execute after the ngRepeat directive.
+					return({
+						link: link,
+						priority: 999,
+						require: "bnFriends",
+						restrict: "A"
+					});
+
+				}
+			)
+		;
+
+	</script>
+
+</body>
+</html>
