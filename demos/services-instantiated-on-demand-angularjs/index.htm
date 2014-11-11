@@ -108,12 +108,20 @@
 		// of the target service.
 		app.service(
 			"serviceOne",
-			function Constructor() {
+			function Constructor( $window ) {
 
 				console.log( "Service one instantiated." );
 
-				this.doThis = angular.noop;
-				this.doThat = angular.noop;
+				// Hook into the unload event of the app clean up service (ex, persist 
+				// relevant data to localStorage).
+				$window.addEventListener(
+					"unload",
+					function handleOnUnloadEvent( event ) {
+
+						console.warn( "Service ONE hooked into window unload event." );
+
+					}
+				);
 
 			}
 		);
@@ -127,13 +135,22 @@
 		// target service.
 		app.factory(
 			"serviceTwo",
-			function Factory() {
+			function Factory( $window ) {
 
 				console.log( "Service two instantiated." );
 
-				var service = {};
+				// Hook into the unload event of the app clean up service (ex, persist 
+				// relevant data to localStorage).
+				$window.addEventListener(
+					"unload",
+					function handleOnUnloadEvent( event ) {
 
-				return( service );
+						console.warn( "Service TWO hooked into window unload event." );
+
+					}
+				);
+
+				return( {} );
 
 			}
 		);
