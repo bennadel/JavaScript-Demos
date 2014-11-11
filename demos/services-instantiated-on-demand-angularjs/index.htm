@@ -1,0 +1,144 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Services And Factories Are Instantiated On-Demand In AngularJS
+	</title>
+
+	<style type="text/css">
+
+		a[ ng-click ] {
+			cursor: pointer ;
+			text-decoration: underline ;
+		}
+
+	</style>
+</head>
+<body 
+	ng-controller="AppController">
+
+	<h1>
+		Services And Factories Are Instantiated On-Demand In AngularJS
+	</h1>
+
+	<p>
+		<a ng-click="toggleContainer()">Toggle Container</a>
+	</p>
+
+	<div ng-if="isShowingContainer">
+
+		<p ng-controller="SubController">
+			Woot! Check out the logs, yo!
+		</p>
+
+	</div>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/jquery/jquery-2.1.0.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.2.22.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+		// I run when the application is bootstrapped, before any of the other entities
+		// in the module. This is as close to a "main" method as you get in AngularJS.
+		app.run(
+			function initializeApplication( /* serviceOne, serviceTwo */ ) {
+
+				// ... this does nothing but require the injected services to be 
+				// instantiated before other parts of the module run.
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I control the root of the application.
+		app.controller(
+			"AppController",
+			function( $scope, serviceOne ) {
+
+				// I determine the visibility of the sub-container (and its controller).
+				$scope.isShowingContainer = false;
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I toggle the visibility of the sub-container.
+				$scope.toggleContainer = function() {
+
+					$scope.isShowingContainer = ! $scope.isShowingContainer;
+
+				};
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I control the sub-module of the application.
+		app.controller(
+			"SubController",
+			function( $scope, serviceTwo ) {
+
+				// ... just here to demonstrate service instantiation.
+				
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I am invoked using the "new" keyword, treating the definition as a Constructor
+		// of the target service.
+		app.service(
+			"serviceOne",
+			function Constructor() {
+
+				console.log( "Service one instantiated." );
+
+				this.doThis = angular.noop;
+				this.doThat = angular.noop;
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I am invoked as a normal method, treating the definition as a provider of the 
+		// target service.
+		app.factory(
+			"serviceTwo",
+			function Factory() {
+
+				console.log( "Service two instantiated." );
+
+				var service = {};
+
+				return( service );
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
