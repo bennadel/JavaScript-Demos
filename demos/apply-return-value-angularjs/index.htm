@@ -1,0 +1,192 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		scope.$apply() May Return A Value In AngularJS
+	</title>
+
+	<style type="text/css">
+
+		a[ ng-click ] {
+			cursor: pointer ;
+			text-decoration: underline ;
+		}
+
+		div.zone {
+			background-color: #FAFAFA ;
+			border: 2px solid #CCCCCC ;
+			cursor: pointer ;
+			padding: 20px 20px 20px 20px ;
+			text-align: center ;
+		}
+
+		div.zone.active {
+			border-color: #FF00CC ;
+		}
+
+	</style>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		scope.$apply() May Return A Value In AngularJS
+	</h1>
+
+	<div bn-clicker="processClick( x, y )" class="zone">
+		Click me to do stuff.
+	</div>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/jquery/jquery-2.1.0.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.2.26.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I control the root of the application.
+		app.controller(
+			"AppController",
+			function( $scope, $q, $timeout ) {
+
+				$scope.processClick = function( x, y ) {
+
+					var deferred = $q.defer();
+
+					// Mimic some sort of processing latency.
+					$timeout(
+						function handleDeferredResolution() {
+
+							console.info( "Processed click at {%d,%d}", x, y );
+
+							deferred.resolve();
+							x = y = deferred = null;
+
+						},
+						1000,
+						false // No need for apply - no model was changed.
+					);
+
+					return( deferred.promise );
+
+				};
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I handle a clickable area and pass the {x,y} coordinates to the given handler.
+		app.directive(
+			"bnClicker",
+			function( $q ) {
+
+				// I bind the JavaScript events to the local scope.
+				function link( scope, element, attributes ) {
+
+					element.on(
+						"click",
+						function handleClickEvent( event ) {
+
+							var position = element.position();
+
+							// Calculate "local" click coordinates.
+							var coordinates = {
+								x: ( event.pageX - position.left ),
+								y: ( event.pageY - position.top )
+							};
+
+							// Setup the active state.
+							element.addClass( "active" );
+
+							// The processing handler is supposed to return a promise. 
+							// That promise is then being pulled back through the $apply().
+							var promise = scope.$apply(
+								function applyClickToScope() {
+
+									// Pass the return value of the handler back through 
+									// the return value of the $apply() invocation. 
+									// --
+									// CAUTION: If the handler - processClicks() - raises 
+									// an exception, the return value will be undefined.
+									return( scope.processClick( coordinates ) );
+
+								}
+							);
+
+							// When the event has been processed, teardown the active 
+							// state. However, since the promise may not be valid (if the
+							// handler raised an exception), it can be safer to wrap the
+							// "unknown" promise in another promise to normalize it.
+							$q.when( promise ).finally(
+								function handleFinally() {
+
+									element.removeClass( "active" );
+
+								}
+							);
+
+							// Clear closed-over variables.
+							event = position = coordinates = promise = null;
+
+						}
+					);
+
+				}
+
+
+				// Return the directive configuration. In this case, we are binding an
+				// isolate scope method to the directive attribute.
+				return({
+					link: link,
+					restrict: "A",
+					scope: {
+						processClick: "&bnClicker"
+					}
+				});
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
