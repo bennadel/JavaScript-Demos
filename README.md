@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Creating And Extending A Lodash / Underscore Service In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/lodash-service-in-angularjs/)
 * [scope.$apply() May Return A Value In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/apply-return-value-angularjs/)
 * [Services And Factories Are Instantiated On-Demand In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/services-instantiated-on-demand-angularjs/)
 * [Binding A Single Directive To Multiple Priorities On The Same Element In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/double-directive-priority-angularjs/)

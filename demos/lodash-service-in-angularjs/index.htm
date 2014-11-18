@@ -1,0 +1,155 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Creating And Extending A Lodash / Underscore Service In AngularJS
+	</title>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		Creating And Extending A Lodash / Underscore Service In AngularJS
+	</h1>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/jquery/jquery-2.1.0.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.2.22.min.js"></script>
+	<script type="text/javascript" src="../../vendor/lodash/lodash-2.4.1.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I control the root of the application.
+		app.controller(
+			"AppController",
+			function( $scope, _ ) {
+
+				// NOTE: We are injecting _ into this controller using Angular's 
+				// dependency-injection framework.
+
+				// Set up friends collection for demo.
+				var friends = [
+					{
+						id: 1,
+						name: "Sarah",
+						isGoodFriend: true,
+						isBestFriend: false
+					},
+					{
+						id: 2,
+						name: "Tricia",
+						isGoodFriend: false,
+						isBestFriend: false
+					},
+					{
+						id: 3,
+						name: "Kim",
+						isGoodFriend: true,
+						isBestFriend: true
+					},
+					{
+						id: 4,
+						name: "Joanna",
+						isGoodFriend: true,
+						isBestFriend: false
+					}
+				];
+
+
+				// Find the good friends.
+				var goodFriends = _.where( friends, "isGoodFriend" );
+
+				// Of the good friends, find the best friends!
+				var bestFriends = _.where( goodFriends, "isBestFriend" );
+
+				// Log us some interesting stats on friendship.
+				console.info( "Good friends: %s", _.naturalList( _.pluck( goodFriends, "name" ) ) );
+				console.info( "Best friends: %s", _.naturalList( _.pluck( bestFriends, "name" ) ) );
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// Make sure _ is invoked at runtime. This does nothing but force the "_" to 
+		// be loaded after bootstrap. This is done so the "_" factory has a chance to 
+		// "erase" the global reference to the lodash library.
+		app.run(
+			function( _ ) {
+				// ...				
+			}
+		);
+
+		// I provide an injectable (and exteded) version of the underscore / lodash lib.
+		app.factory(
+			"_",
+			function( $window ) {
+
+				// Get a local handle on the global lodash reference.
+				var _ = $window._;
+
+				// OPTIONAL: Sometimes I like to delete the global reference to make sure 
+				// that no one on the team gets lazy and tried to reference the library
+				// without injecting it. It's an easy mistake to make, and one that won't
+				// throw an error (since the core library is globally accessible).
+				// ALSO: See .run() block above.
+				delete( $window._ );
+
+
+				// ---
+				// CUSTOM LODASH METHODS.
+				// ---
+
+
+				// I return the given collection as a natural language list.
+				_.naturalList = function( collection ) {
+
+					if ( collection.length > 2 ) {
+
+						var head = collection.slice( 0, -1 );
+						var tail = collection[ collection.length - 1 ];
+
+						return( head.join( ", " ) + ", and " + tail );
+
+					}
+
+					if ( collection.length === 2 ) {
+
+						return( collection.join( " and " ) );
+
+					}
+
+					if ( collection.length ) {
+
+						return( collection[ 0 ] );
+
+					}
+
+					return( "" );
+
+				};
+
+
+				// Return the [formerly global] reference so that it can be injected
+				// into other aspects of the AngularJS application.
+				return( _ );
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
