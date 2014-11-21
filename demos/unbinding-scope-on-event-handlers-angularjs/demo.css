@@ -1,0 +1,27 @@
+
+div.event-target {
+	background-color: #FAFAFA ;
+	border: 1px solid #CCCCCC ;
+	border-radius: 4px 4px 4px 4px ;
+	color: #CCCCCC ;
+	cursor: pointer ;
+	font-size: 36px ;
+	font-weight: bold ;
+	height: 100px ;
+	line-height: 100px ;
+	text-align: center ;
+	width: 48% ;
+}
+
+div.event-target.active {
+	border-color: #FF33CC ;
+	color: #333333 ;
+}
+
+div.event-target.left {
+	float: left ;
+}
+
+div.event-target.right {
+	float: right ;
+}

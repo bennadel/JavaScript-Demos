@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Unbinding Scope.$on() Event Handlers In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/unbinding-scope-on-event-handlers-angularjs/)
 * [Creating And Extending A Lodash / Underscore Service In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/lodash-service-in-angularjs/)
 * [scope.$apply() May Return A Value In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/apply-return-value-angularjs/)
 * [Services And Factories Are Instantiated On-Demand In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/services-instantiated-on-demand-angularjs/)
