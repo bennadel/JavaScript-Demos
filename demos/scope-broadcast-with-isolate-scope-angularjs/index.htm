@@ -1,0 +1,143 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		How Scope.$broadcast() Interacts With Isolate Scopes In AngularJS
+	</title>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		How Scope.$broadcast() Interacts With Isolate Scopes In AngularJS
+	</h1>
+
+	<div bn-isolate>
+		
+		<p ng-controller="InnerController">
+			Look at the console output.
+		</p>
+
+	</div>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/jquery/jquery-2.1.0.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.2.26.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I control the root of the application.
+		app.controller(
+			"AppController",
+			function( $scope, $interval, $rootScope ) {
+
+				// I keep track of the number of times the ping event is being broadcast
+				// down from the root of the application.
+				$scope.pingCount = 0;
+
+				// Continuously broadcast an event down the scope tree. Note that the 
+				// PingCount is being incremented as part of the broadcast.
+				$interval(
+					function handleInterval() {
+
+						$scope.$broadcast( "ping", ++$scope.pingCount );
+
+					},
+					1000
+				);
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I create an isolate scope directive to investigate how events interact with 
+		// both parent scope and "inner" scope.
+		app.directive(
+			"bnIsolate",
+			function() {
+
+				// I bind the JavaScript events to the local scope.
+				function link( scope, element, attributes ) {
+
+					// I watch for changes to any prototypically inherited pingCount
+					// properties. Since this is an isolate scope, this should be 
+					// Undefined in the local scope.
+					scope.$watch(
+						"pingCount",
+						function handlePingCountChange( newValue, oldValue ) {
+
+							console.log( "PingCount in isolate scope:", newValue );
+
+						}
+					);
+
+					// I listen for ping events from the parent scope chain.
+					scope.$on(
+						"ping",
+						function handlePingEvent( event, pingCount ) {
+
+							console.log( "Ping event in isolate scope:", pingCount );
+
+							// I turn around and broadcast a "received" event.
+							scope.$broadcast( "pingReceivedByIsolate" );
+
+						}
+					);
+
+				}
+
+
+				// Return the directive configuration. In this case we are defining an
+				// isolate scope, but not mapping any input values or functions.
+				return({
+					link: link,
+					restrict: "A",
+					scope: {}
+				});
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I am a controller that is "inside" the isolate scope from an HTML markup 
+		// standpoint, but not from Scope standpoint.
+		app.controller(
+			"InnerController",
+			function( $scope ) {
+
+				// I listen for ping-received events from the isolate scope. However,
+				// since the isolate scope is NOT in the parent-scope chain, this event
+				// should never be handlered here.
+				$scope.$on(
+					"pingReceivedByIsolate",
+					function handleIsolatePingEvent( event ) {
+
+						console.log( "pingReceivedByIsolate in inner controller." );
+
+					}
+				);
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
