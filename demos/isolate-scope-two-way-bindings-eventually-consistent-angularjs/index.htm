@@ -1,0 +1,137 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Isolate-Scope Two-Way Data Binding Is Eventually Consistent In AngularJS
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		Isolate-Scope Two-Way Data Binding Is Eventually Consistent In AngularJS
+	</h1>
+
+	<!--
+		The bnIsolate directive uses two-way data binding to read from and write 
+		to the "counter" scope value in the parent scope. 
+	-->
+	<p bn-isolate="counter">
+
+		<a ng-click="triggerEvent()">Trigger Increment Event</a> &mdash;
+
+		<!-- This is the AppController scope reference. -->
+		Count: {{ counter }}
+
+	</p>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/jquery/jquery-2.1.0.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.2.26.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I control the root of the application.
+		app.controller(
+			"AppController",
+			function( $scope ) {
+
+				// I store the current counter, which is modifiable by both the current 
+				// scope as well as the isolate scope (using two-way data bindings). 
+				$scope.counter = 0;
+
+				// I handle the increment-value event by incrementing the value.
+				$scope.$on( 
+					"IncrementValue", 
+					function handleIncrementValue() {
+
+						$scope.counter++;
+
+						console.log( "Controller [post-increment]:", $scope.counter );
+
+					}
+				);
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I trigger the increment-value event which is being listened to by 
+				// both the current scope as well as the isolate scope (which is using
+				// two-way data binding to mutate the counter as well).
+				$scope.triggerEvent = function() {
+
+					console.info( "Triggering increment event..." );
+
+					$scope.$broadcast( "IncrementValue" );
+
+				};
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I define an isolate scope that consumed a two-way data binding to a counter 
+		// value that is passed-in via directive attributes.
+		app.directive(
+			"bnIsolate",
+			function() {
+
+				// I bind the JavaScript events to the local scope.
+				function link( scope, element, attributes ) {
+
+					// I handle the increment-event by DECREMENTING the local scope value.
+					// Since this value is part of a two-way data-binding, it MAY update
+					// the parent scope value as well... eventually. 
+					scope.$on(
+						"IncrementValue",
+						function handleIncrementValue() {
+
+							console.log( "Isolate [pre-decrement]:", scope.localCounter );
+							
+							scope.localCounter--;
+
+							console.log( "Isolate [post-decrement]:", scope.localCounter );
+
+						}
+					);
+
+				}
+
+
+				// Return the directive configuration; notice that we are setting up an
+				// isolate-scope which expects a counter to be passed in using two-way
+				// data bindings. This allows the directive to both respond to as well as
+				// precipitate changes in the calling scope.
+				return({
+					link: link,
+					restrict: "A",
+					scope: {
+						localCounter: "=bnIsolate"
+					}
+				});
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
