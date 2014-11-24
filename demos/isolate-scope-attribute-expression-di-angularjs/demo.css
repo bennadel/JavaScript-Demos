@@ -1,0 +1,21 @@
+a[ ng-click ] {
+	cursor: pointer ;
+	text-decoration: underline ;
+}
+
+ul.friends {
+	list-style-type: none ;
+	margin: 20px 0px 20px 0px ;
+	padding: 0px 0px 0px 0px ;
+}
+
+li.friend {
+	border: 1px solid #CCCCCC ;
+	cursor: pointer ;
+	margin: 10px 0px 10px 0px ;
+	padding: 10px 10px 10px 10px ;
+}
+
+li.friend:hover {
+	background-color: #FAFAFA ;
+}

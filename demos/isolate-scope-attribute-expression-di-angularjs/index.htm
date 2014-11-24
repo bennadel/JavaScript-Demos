@@ -1,0 +1,180 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Isolate-Scope Attribute Expressions Use Dependency-Injection In AngularJS
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		Isolate-Scope Attribute Expressions Use Dependency-Injection In AngularJS
+	</h1>
+
+	<ul class="friends">
+		<!--
+			When we consume the bnIsolate directive, we are providing a scope-method
+			that the isolate can evaluate on click events. The method arguments are 
+			populated using AngularJS parsing and dependency-injection that uses 
+			argument names to map inputs to existing scope values:
+
+			* friend - taken from local scope.
+			* $index - taken from local scope.
+			* linkedAt - scope override provided by isolate directive.
+
+			NOTE: Both the bn-isolate attributes "work" (when not disabled).
+		-->
+		<li 
+			ng-repeat="friend in friends track by friend.id"
+
+			bn-isolate="logClick( friend, $index, linkedAt, $timeout )"
+			
+			DISABLED-bn-isolate="logClick( { linkedAt: linkedAt, index: $index, friend: friend } )"
+			
+			class="friend">
+
+			{{ friend.id }} &mdash; {{ friend.name }}
+
+		</li>
+	</ul>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/jquery/jquery-2.1.0.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.2.26.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I control the root of the application.
+		app.controller(
+			"AppController",
+			function( $scope ) {
+
+				// I am the list of friends to render.
+				$scope.friends = [
+					{
+						id: 1,
+						name: "Sarah"
+					},
+					{
+						id: 2,
+						name: "Tricia"
+					},
+					{
+						id: 3,
+						name: "Joanna"
+					}
+				];
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I log the click event on the friend in the list. This method can be 
+				// invoked with two different signatures:
+				// --
+				// * logClick( friend, index, linkedAt )
+				// * logClick( { .. named arguments .. } );
+				$scope.logClick = function() {
+
+					// If the input is a hash, unwrap the inputs.
+					if ( arguments.length === 1 ) {
+
+						var friend = arguments[ 0 ].friend;
+						var index = arguments[ 0 ].index;
+						var linkedAt = arguments[ 0 ].linkedAt;
+
+					// If the inputs are isolated, get them from the arguments.
+					} else {
+
+						var friend = arguments[ 0 ];
+						var index = arguments[ 1 ];
+						var linkedAt = arguments[ 2 ];
+						
+					}
+
+					console.info( friend.name, "[ index", index, " ] linked at", linkedAt );
+
+				};
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I create an isolate scope that takes an expression that will be evaluated on
+		// click events. 
+		app.directive(
+			"bnIsolate",
+			function() {
+
+				// I bind the JavaScript events to the local scope.
+				function link( scope, element, attributes ) {
+
+					var linkedAt = ( new Date() ).getTime();
+
+					// When the user clicks, evaluate the click expression.
+					element.click(
+						function handleClick() {
+
+							// Since we're not in an AngularJS context, we have to let
+							// AngularJS know that the view-model may be changing. As
+							// such, we're doing this inside an $apply().
+							scope.$apply(
+								function updateViewModelmousedown() {
+
+									// When we invoke the isolate expression, the method
+									// does not rely on ORDERED parameters; rather, it 
+									// uses dependency-injection that parses the method
+									// for NAMES and matches names to calling-context 
+									// scope references. When we invoke this method, we 
+									// have the opportunity to provide OVERRIDE values 
+									// for the locals. In this case, we're padding in the
+									// linkedAt timestamp.
+									scope.click({
+										linkedAt: linkedAt
+									});
+									
+								}
+							);
+
+						}
+					);
+
+				}
+
+
+				// Return the directive configuration. Notice that we are creating a 
+				// isolate in which we're binding the "click" reference to an isolate
+				// scope attribute that can be evaluated in the calling context.
+				return({
+					link: link,
+					restrict: "A",
+					scope: {
+						click: "&bnIsolate"
+					}
+				});
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>

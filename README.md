@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Isolate-Scope Attribute Expressions Use Dependency-Injection In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/isolate-scope-attribute-expression-di-angularjs/)
 * [Isolate-Scope Two-Way Data Binding Is Eventually Consistent In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/isolate-scope-two-way-bindings-eventually-consistent-angularjs/)
 * [How Scope.$broadcast() Interacts With Isolate Scopes In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/scope-broadcast-with-isolate-scope-angularjs/)
 * [Unbinding Scope.$on() Event Handlers In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/unbinding-scope-on-event-handlers-angularjs/)
