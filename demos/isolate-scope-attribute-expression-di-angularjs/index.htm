@@ -31,7 +31,7 @@
 		<li 
 			ng-repeat="friend in friends track by friend.id"
 
-			bn-isolate="logClick( friend, $index, linkedAt, $timeout )"
+			bn-isolate="logClick( friend, $index, linkedAt )"
 			
 			DISABLED-bn-isolate="logClick( { linkedAt: linkedAt, index: $index, friend: friend } )"
 			
