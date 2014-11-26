@@ -1,0 +1,80 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Breaking Changes In Isolate-Scope Behavior In AngularJS 1.2
+	</title>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		Breaking Changes In Isolate-Scope Behavior In AngularJS 1.2
+	</h1>
+
+	<!--
+		Both the AppController and the bnIsolate directive define a scope 
+		reference for "message". In AngularJS 1.0.8, the message will be taken 
+		from the isolate scope. 
+	-->
+	<p bn-isolate>
+		<strong>AngularJS 1.0.8</strong>: {{ message }}
+	</p>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.0.8.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I control the root of the application.
+		app.controller(
+			"AppController",
+			function( $scope ) {
+
+				$scope.message = "Hello from App Controller.";
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I control the an isolate scope directive.
+		app.directive(
+			"bnIsolate",
+			function() {
+
+				// I bind the JavaScript events to the local scope.
+				function link( scope, element, attributes ) {
+
+					scope.message = "Hello from Isolate Scope.";
+
+				}
+
+
+				// Return the directive configuration. Notice that we are creating an 
+				// isolate scope, but not binding any values or expressions.
+				return({
+					link: link,
+					restrict: "A",
+					scope: {}
+				});
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
