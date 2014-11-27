@@ -1,0 +1,75 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Multiple Isolate-Scopes Cannot Be Applied To The Same Element In AngularJS
+	</title>
+</head>
+<body>
+
+	<h1>
+		Multiple Isolate-Scopes Cannot Be Applied To The Same Element In AngularJS
+	</h1>
+
+	<!-- Both of these directives are isolate-scope directives. -->
+	<p bn-this bn-that>
+		Look at the console output.
+	</p>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/jquery/jquery-2.1.0.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.2.26.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I request an isolate scope directive.
+		app.directive(
+			"bnThis",
+			function() {
+
+				// Return the directive configuration. Notice that we are creating an 
+				// isolate scope, even though we are not binding any expressions.
+				return({
+					link: angular.noop,
+					restrict: "A",
+					scope: {}
+				});
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I request an isolate scope directive.
+		app.directive(
+			"bnThat",
+			function() {
+
+				// Return the directive configuration. Notice that we are creating an 
+				// isolate scope, even though we are not binding any expressions.
+				return({
+					link: angular.noop,
+					restrict: "A",
+					scope: {}
+				});
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>

@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Multiple Isolate-Scopes Cannot Be Applied To The Same Element In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/multiple-isolate-scopes-angularjs/)
 * [Breaking Changes In Isolate-Scope Behavior In AngularJS 1.2](http://bennadel.github.io/JavaScript-Demos/demos/changes-in-isolate-scope-angularjs/)
 * [Isolate-Scope Attribute Expressions Use Dependency-Injection In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/isolate-scope-attribute-expression-di-angularjs/)
 * [Isolate-Scope Two-Way Data Binding Is Eventually Consistent In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/isolate-scope-two-way-bindings-eventually-consistent-angularjs/)
