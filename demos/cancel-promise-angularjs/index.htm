@@ -1,0 +1,208 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Canceling A Promise In AngularJS
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		Canceling A Promise In AngularJS
+	</h1>
+
+	<ul>
+		<li ng-repeat="friend in friends">
+			{{ friend.name }}
+		</li>
+	</ul>
+
+	<p>
+		<a ng-click="reload()">Reload friends</a>
+	</p>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/jquery/jquery-2.1.0.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.2.26.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I control the root of the application.
+		app.controller(
+			"AppController",
+			function( $scope, friendService ) {
+
+				// I contain the list of friends to render.
+				$scope.friends = [];
+
+				// When the scope is destroyed, we want to clean up the controller, 
+				// including canceling any outstanding request to gather friends.
+				$scope.$on(
+					"$destroy",
+					function handleDestroyEvent() {
+
+						friendService.cancel( lastRequest );
+
+					}
+				);
+
+				// Load the list of friends.
+				var lastRequest = loadRemoteData();
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I reload the list of friends.
+				$scope.reload = function() {
+
+					loadRemoteData();
+
+				}
+
+
+				// ---
+				// PRIVATE METHODS.
+				// ---
+
+
+				// I load the remote friend data and return the request promise.
+				function loadRemoteData() {
+
+					// Cancel any pending request for friends.
+					// --
+					// NOTE: This will not error if lastRequest is null or undefined.
+					friendService.cancel( lastRequest );
+
+					// Make the request for friends. It's important that we save this
+					// reference rather than the subsequent .then() result as this is
+					// the one that can be "canceled". The subsequent .then() result
+					// cannot be canceled as it is an entirely different promise.
+					lastRequest = friendService.getFriends();
+
+					lastRequest.then(
+						function handleGetFriendsResolve( friends ) {
+
+							$scope.friends = friends;
+
+						},
+						function handleGetFriendsReject( error ) {
+
+							// The request failed or was CANCELED. 
+							console.warn( "Friends error:" );
+							console.log( error );
+
+						}
+					);
+
+					return( lastRequest );
+
+				}
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I provide access to the Friends repository.
+		app.service(
+			"friendService",
+			function( $http, $q ) {
+
+				// Return the public API.
+				return({
+					cancel: cancel,
+					getFriends: getFriends
+				});
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I cancel the underlying AJAX request associated with the given promise.
+				// If the promise has not yet been resolved, this will cause the promise
+				// to be rejected with status:0.
+				// --
+				// NOTE: This will NOT raise an exception if the promise is invalid or 
+				// already resolved / rejected.
+				function cancel( promise ) {
+
+					// If the promise does not contain a hook into the deferred timeout,
+					// the simply ignore the cancel request.
+					if ( 
+						promise && 
+						promise._httpTimeout &&
+						promise._httpTimeout.resolve
+						) {
+
+						promise._httpTimeout.resolve();
+
+					}
+
+				}
+
+
+				// I get the full list of friends, returns a promise.
+				function getFriends() {
+
+					var httpTimeout = $q.defer();
+
+					// When making the HTTP request, pass in the promise for our deferred
+					// timeout. If the deferred timeout is ever resolved, the underlying
+					// AJAX request will be aborted (if not already).
+					var request = $http({
+						method: "get",
+						url: "./api/index.cfm",
+						timeout: httpTimeout.promise
+					});
+
+					var promise = request.then( unwrapResolve );
+
+					// Store the deferred timeout on the promise so that our .cancel() 
+					// method can access it later, if necessary.
+					promise._httpTimeout = httpTimeout;
+
+					return( promise );
+
+				}
+
+
+				// ---
+				// PRIVATE METHODS.
+				// ---
+
+
+				// I unwrap the AngularJS $http response, extracting the data from the
+				// more robust response object.
+				function unwrapResolve( response ) {
+
+					return( response.data );
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
