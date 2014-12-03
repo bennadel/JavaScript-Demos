@@ -120,8 +120,8 @@
 				// PUB/SUB: As the friends repository is mutated, it will publish events
 				// to the application. As that happens, we want to catch and response to 
 				// those events in order to keep our data synchronized. 
-				$scope.$on( "friendCreated", handleFriendCreated );
-				$scope.$on( "friendDeleted", handleFriendDeleted );
+				var unbindFriendCreated = $scope.$on( "friendCreated", handleFriendCreated );
+				var unbindFriendDeleted = $scope.$on( "friendDeleted", handleFriendDeleted );				
 
 				// Initialize the local data.
 				loadRemoteData();
