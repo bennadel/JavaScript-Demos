@@ -1,0 +1,317 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Using The Scope Tree As A Publish And Subscribe (Pub/Sub) Mechanism In AngularJS
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		Using The Scope Tree As A Publish And Subscribe (Pub/Sub) Mechanism In AngularJS
+	</h1>
+
+	<!-- BEGIN: Form. -->
+	<form 
+		ng-repeat="formInstance in formInstances"
+		ng-controller="FormController"
+		ng-submit="processForm()"
+		class="form">
+
+		<p>
+			<strong>You have {{ friends.length }} friends!</strong>
+		</p>
+
+		<ul ng-if="friends.length">
+			<li ng-repeat="friend in friends">
+				
+				{{ friend.name }} &hellip; <a ng-click="deleteFriend( friend )">delete</a>
+
+			</li>
+		</ul>
+
+		<p>
+			<input type="text" ng-model="form.name" />
+			<input type="submit" value="Add Friend" />
+		</p>
+
+	</form>
+	<!-- END: Form. -->
+
+
+	<!-- BEGIN: Instance Tools. -->
+	<div class="form-actions">
+		<a ng-click="addFormInstance()" class="add">+</a>
+		<a ng-click="removeFormInstance()" class="remove">&ndash;</a>
+	</div>
+	<!-- END: Instance Tools. -->
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/jquery/jquery-2.1.0.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.2.26.min.js"></script>
+	<script type="text/javascript" src="../../vendor/lodash/lodash-2.4.1.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I control the root of the application.
+		app.controller(
+			"AppController",
+			function( $scope ) {
+
+				// I provide the unique indices of the forms; this is done because the
+				// ngRepeat directive can only *sort of* do for-loops.
+				$scope.formInstances = [ 0 ];
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I create a new form instance.
+				$scope.addFormInstance = function() {
+
+					$scope.formInstances.push( $scope.formInstances.length );
+
+				};
+
+
+				// I remove the most recent form instance.
+				$scope.removeFormInstance = function() {
+
+					$scope.formInstances.pop();
+
+				};
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I control the form that shows a list of friends and allows friends to be added
+		// and removed from said list.
+		app.controller(
+			"FormController",
+			function( $scope, friendService, _ ) {
+
+				// I hold the form data for ngModel.
+				$scope.form = {
+					name: ""
+				};
+
+				// I hold the list of friends.
+				$scope.friends = [];
+
+				// PUB/SUB: As the friends repository is mutated, it will publish events
+				// to the application. As that happens, we want to catch and response to 
+				// those events in order to keep our data synchronized. 
+				$scope.$on( "friendCreated", handleFriendCreated );
+				$scope.$on( "friendDeleted", handleFriendDeleted );
+
+				// Initialize the local data.
+				loadRemoteData();
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I delete the given friend from the list.
+				$scope.deleteFriend = function( friend ) {
+
+					friendService.deleteFriend( friend.id );
+
+				};
+
+
+				// I process the form, adding a new friend with the given name.
+				$scope.processForm = function() {
+
+					if ( ! $scope.form.name ) {
+						
+						return;
+
+					}
+
+					friendService.addFriend( $scope.form.name );
+
+					$scope.form.name = "";
+
+				};
+
+
+				// ---
+				// PRIVATE METHODS.
+				// ---
+
+
+				// When a new friend is added to the repository, let's reload the local
+				// data to make sure it is up-to-date.
+				function handleFriendCreated( event, id ) {
+
+					// Log this event so we can confirm that pub/sub event handlers are 
+					// properly unbound as scopes are destroyed.
+					console.info( "friendCreated event on scope", $scope.$id );
+
+					// If we already have this friend locally, then don't bother reloading
+					// the data. This typically means that the friend was added by our 
+					// Controller and this it the "echo" event from our action.
+					if ( _.find( $scope.friends, { id: id } ) ) {
+
+						return;
+
+					}
+
+					loadRemoteData();
+
+				}
+
+
+				// When a friend is removed from the repository, let's remove it from the
+				// local collection to make sure it is up-to-date.
+				function handleFriendDeleted( event, id ) {
+
+					$scope.friends = _.reject( $scope.friends, { id: id } );
+
+				}
+
+
+				// I initialize the local data.
+				function loadRemoteData() {
+
+					$scope.friends = friendService.getFriends();
+
+				}
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I provide access to the Friends repository. As the repository is altered, the
+		// following events will be broadcast on the scope tree:
+		// --
+		// * friendCreated ( event, id )
+		// * freindDeleted ( event, id )
+		// --
+		// CAUTION: For the sake of this demo, I'm keeping all the data local and I'm not
+		// using promises. Normally, I would wrap all data-tier responses in a promise; 
+		// but, in order to keep this demo as simple as possible, I'm foregoing the $q
+		// service and I am just returning raw data.
+		app.service(
+			"friendService",
+			function( $rootScope, _ ) {
+
+				// I am the auto-incrementing ID for the friend instance.
+				var pkey = 0;
+
+				// I hold the collection of friends in the repository.
+				var friends = [];
+
+				addFriend( "Kim" );
+				addFriend( "Tricia" );
+
+				// Return the public API.
+				return({
+					addFriend: addFriend,
+					deleteFriend: deleteFriend,
+					getFriends: getFriends
+				});
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I add a new friend with the given name. Returns the new ID.
+				function addFriend( name ) {
+
+					var nextID = pkey++;
+
+					friends.push({
+						id: nextID,
+						name: name,
+						createdAt: ( new Date() ).getTime()
+					});
+
+					// PUB/SUB: Announce the created event to the application.
+					// --
+					// NOTE: Since we are not using an asynchronous request for data, we 
+					// don't have to trigger a new $digest phase.
+					$rootScope.$broadcast( "friendCreated", nextID );
+
+					return( nextID );
+
+				}
+
+
+				// I delete a friend with the given ID. Returns void.
+				function deleteFriend( id ) {
+
+					friends = _.reject( friends, { id: id } );
+
+					// PUB/SUB: Announce the deleted event to the application.
+					// --
+					// NOTE: Since we are not using an asynchronous request for data, we 
+					// don't have to trigger a new $digest phase.
+					$rootScope.$broadcast( "friendDeleted", id );
+
+				}
+
+
+				// I get all of the fiends in the repository.
+				function getFriends() {
+
+					// Make sure to return a COPY of the data so that we don't break
+					// encapsulation to our LOCAL data store.
+					return( angular.copy( friends ) );
+
+				}
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I expose the Lodash / Underscore library as a service that can be injected
+		// into other services.
+		app.factory(
+			"_",
+			function( $window ) {
+
+				var _ = $window._;
+
+				delete( $window._ )
+
+				return( _ );
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>

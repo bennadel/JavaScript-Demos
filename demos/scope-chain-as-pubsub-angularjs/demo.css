@@ -1,0 +1,56 @@
+
+a[ ng-click ] {
+	color: red ;
+	cursor: pointer ;
+	text-decoration: underline ;
+}
+
+form {
+	border: 1px solid #CCCCCC ;
+	border-radius: 4px 4px 4px 4px ;
+	float: left ;
+	margin: 0px 20px 20px 0px ;
+	min-height: 190px ;
+	padding: 5px 20px 5px 20px ;
+	width: 265px ;
+}
+
+div.form-actions {
+	border: 1px solid #CCCCCC ;
+	border-radius: 4px 4px 4px 4px ;
+	float: left ;
+	font-size: 56px ;
+	height: 200px ;
+	line-height: 200px ;
+	text-align: center ;
+	text-decoration: none ;
+	width: 265px ;
+}
+
+div.form-actions a.add {
+	border-bottom: 1px solid #CCCCCC ;
+	border-radius: 4px 4px 0px 0px ;
+	display: block ;
+	font-size: 56px ;
+	height: 99px ;
+	line-height: 100px ;
+	text-align: center ;
+	text-decoration: none ;
+	width: 265px ;
+}
+
+div.form-actions a.remove {
+	border-radius: 0px 0px 4px 4px ;
+	display: block ;
+	font-size: 56px ;
+	height: 100px ;
+	line-height: 100px ;
+	text-align: center ;
+	text-decoration: none ;
+	width: 265px ;
+}
+
+div.form-actions a.add:hover,
+div.form-actions a.remove:hover {
+	background-color: #FAFAFA ;
+}

@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Using The Scope Tree As A Publish And Subscribe (Pub/Sub) Mechanism In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/scope-chain-as-pubsub-angularjs/)
 * [Canceling A Promise In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/cancel-promise-angularjs/)
 * [Multiple Isolate-Scopes Cannot Be Applied To The Same Element In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/multiple-isolate-scopes-angularjs/)
 * [Breaking Changes In Isolate-Scope Behavior In AngularJS 1.2](http://bennadel.github.io/JavaScript-Demos/demos/changes-in-isolate-scope-angularjs/)
