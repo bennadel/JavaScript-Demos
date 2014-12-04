@@ -1,0 +1,63 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		$q.when() Is The Missing $q.resolve() Method In AngularJS
+	</title>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		$q.when() Is The Missing $q.resolve() Method In AngularJS
+	</h1>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.2.26.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I control the root of the application.
+		app.controller(
+			"AppController",
+			function( $scope, $q ) {
+
+				// The $q.reject() method creates a promise that is immediately rejected
+				// with the given reason. 
+				$q.reject( "meh" ).catch(
+					function handleReject( reason ) {
+
+						console.log( "Rejected with reason:", reason );
+
+					}
+				);
+
+				// The $q.when() method creates a promise that is immediately resolved 
+				// with the given value.
+				// --
+				// NOTE: If the given value is already a promise then it will be properly
+				// chained (and routed) by the resultant promise.
+				$q.when( "woot!" ).then(
+					function handleResolve( value ) {
+
+						console.log( "Resolved with value:", value );
+
+					}
+				);
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
