@@ -1,0 +1,141 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Directive Templates Have A Small Impact On Performance In AngularJS
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		Directive Templates Have A Small Impact On Performance In AngularJS
+	</h1>
+
+	<h2>
+		Duplicating Inline Code
+	</h2>
+
+	<p>
+		<a ng-click="toggleLists()">Toggle Lists</a>
+	</p>
+
+	<div 
+		ng-if="isShowingLists"
+		ng-include=" 'list.htm' ">
+
+		<!-- Content pulled-in as template to simulate real-world architecture. -->
+
+	</div>
+
+
+	<!-- I am the template used to render the main page. -->
+	<script id="list.htm" type="text/ng-template">
+
+		<div class="friends">
+
+			<h2>
+				Friends
+			</h2>
+
+			<ul>
+				<li ng-repeat="friend in friends track by friend.id">
+					
+					{{ friend.id }} &mdash; {{ friend.name }}
+
+				</li>
+			</ul>
+
+		</div>
+
+		<div class="enemies">
+
+			<h2>
+				Enemies
+			</h2>
+
+			<ul>
+				<li ng-repeat="enemy in enemies track by enemy.id">
+					
+					{{ enemy.id }} &mdash; {{ enemy.name }}
+
+				</li>
+			</ul>
+
+		</div>
+
+	</script>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.3.6.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I control the root of the application.
+		app.controller(
+			"AppController",
+			function( $scope ) {
+
+				// I hold the lists being rendered.
+				$scope.friends = buildList( "Sarah", 1000 );
+				$scope.enemies = buildList( "Shane", 1000 );
+
+				// I determine if the lists should be shown.
+				$scope.isShowingLists = false;
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I toggle the rendering of the lists (physically removing them from
+				// the page if they should not be there).
+				$scope.toggleLists = function() {
+
+					$scope.isShowingLists = ! $scope.isShowingLists;
+
+				};
+
+					
+				// ---
+				// PRIVATE METHODS.
+				// ---
+
+
+				// I build a list of people using the given size.
+				function buildList( name, count ) {
+
+					var people = [];
+
+					for ( var i = 1 ; i <= count ; i++ ) {
+
+						people.push({
+							id: i,
+							name: name 
+						});
+
+					}
+
+					return( people );
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
