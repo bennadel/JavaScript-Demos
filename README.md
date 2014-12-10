@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Using ngRepeat With ngInclude Hurts Performance In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/ng-repeat-include-performance-angularjs/)
 * [Directive Templates Have A Small Impact On Performance In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/directive-template-performance-angularjs/)
 * [$q.when() Is The Missing $q.resolve() Method In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/q-when-is-the-missing-q-resolve-angularjs/)
 * [Using The Scope Tree As A Publish And Subscribe (Pub/Sub) Mechanism In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/scope-chain-as-pubsub-angularjs/)
