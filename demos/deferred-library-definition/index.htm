@@ -1,0 +1,70 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Deferred Library Definition For 3rd-party Modules In JavaScript
+	</title>
+</head>
+<body>
+
+	<h1>
+		Deferred Library Definition For 3rd-party Modules In JavaScript
+	</h1>
+
+	<p>
+		<a href="#" class="load">Load library</a>.
+	</p>
+
+	<script type="text/javascript" src="../../vendor/jquery/jquery-2.1.0.min.js"></script>
+	<script type="text/javascript">
+
+		// We need to give our 3rd-party library some sort of hook that the user can 
+		// start consuming before the library is fully loaded. This will simply provide
+		// a log() method that will queue up the requests to be flushed at a later time
+		// when the 3rd-party library is loaded.
+		// --
+		// NOTE: I would NEVER put all the code on one line like this; but, 3rd-party
+		// libraries tend to provide copy / paste code in this nature to make it ?easier?
+		// for the user to integrate.
+		window.logger = []; window.logger.log = function() { this.push( arguments ); };
+				
+		// ---
+		// Now that we have our logger "hook" in place, we can start using it before the 
+		// library is actually loaded. To demonstrate, let's kick off an interval where
+		// we start recording the interval event.
+		// ---
+
+		var intervalCount = 0;
+
+		setInterval(
+			function intervalOperator() {
+
+				console.warn( "Interval", [] );
+
+				logger.log( "Interval Executed", ++intervalCount );
+
+			},
+			1000
+		);
+
+		// ---
+		// We're going to wait to load the 3rd-party library until the user explicitly 
+		// clicks the "load" button. Then, we'll asynchronously load the script and 
+		// inject it into the page. At that point, the real library will "hydrate" the 
+		// transient hook.
+		// ---
+
+		$( "a.load" ).click(
+			function handleClick( event ) {
+
+				return( $.getScript( "./logger.js" ) && false );
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>

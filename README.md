@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Deferred Library Definition For 3rd-party Modules In JavaScript](http://bennadel.github.io/JavaScript-Demos/demos/deferred-library-definition/)
 * [Using ngRepeat With ngInclude Hurts Performance In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/ng-repeat-include-performance-angularjs/)
 * [Directive Templates Have A Small Impact On Performance In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/directive-template-performance-angularjs/)
 * [$q.when() Is The Missing $q.resolve() Method In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/q-when-is-the-missing-q-resolve-angularjs/)
