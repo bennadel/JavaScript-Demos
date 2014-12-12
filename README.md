@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Replacing ngInclude With Component Directives In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/replacing-ng-include-with-components-angularjs/)
 * [Deferred Module Definition For 3rd-party Libraries In JavaScript](http://bennadel.github.io/JavaScript-Demos/demos/deferred-library-definition/)
 * [Using ngRepeat With ngInclude Hurts Performance In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/ng-repeat-include-performance-angularjs/)
 * [Directive Templates Have A Small Impact On Performance In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/directive-template-performance-angularjs/)

@@ -1,0 +1,58 @@
+<!doctype html>
+<html ng-app="Demo" ng-controller="AppController">
+<head>
+	<meta charset="utf-8" />
+
+	<title>{{ windowTitle }}</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body 
+	ng-class="{ primary: ( layout == 'primary' ), secondary: ( layout == 'secondary' ) }"
+	ng-switch="layout">
+
+	<!--
+		Each of these ngSwitchWhen directives will conditionally render a COMPONENT 
+		directive. The component directive will take care of rendering a template and a 
+		controller as well as any other nested components that are relevant.
+	-->
+	<div ng-switch-when="primary" primary-layout>
+		<!-- Content provided by component directive. -->
+	</div>
+	<div ng-switch-when="secondary" secondary-layout>
+		<!-- Content provided by component directive. -->
+	</div>
+
+	<p class="legal">
+		<strong>Note</strong>: This is a new approach for me, so take with grain of salt.
+	</p>
+
+
+	<!-- 
+		CAUTION: Commingling ngSwitchWhen directives next static content has only been
+		available since AngularJS 1.2 (stable). In prior versions, the ngSwitch container
+		is completely emptied when switching rendering templates.
+	
+		Load application scripts.
+	-->
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.3.6.min.js"></script>
+	<script type="text/javascript" src="./app.controller.js"></script>
+
+	<!-- Enemies list component. -->
+	<script type="text/javascript" src="./enemies-list/enemies-list.controller.js"></script>
+	<script type="text/javascript" src="./enemies-list/enemies-list.directive.js"></script>
+
+	<!-- Friends list component. -->
+	<script type="text/javascript" src="./friends-list/friends-list.controller.js"></script>
+	<script type="text/javascript" src="./friends-list/friends-list.directive.js"></script>
+
+	<!-- Primary Layout component. -->
+	<script type="text/javascript" src="./primary-layout/primary-layout.controller.js"></script>
+	<script type="text/javascript" src="./primary-layout/primary-layout.directive.js"></script>
+
+	<!-- Secondary layout component. -->
+	<script type="text/javascript" src="./secondary-layout/secondary-layout.controller.js"></script>
+	<script type="text/javascript" src="./secondary-layout/secondary-layout.directive.js"></script>
+
+</body>
+</html>

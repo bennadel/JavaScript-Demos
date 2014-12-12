@@ -1,0 +1,19 @@
+
+<h2 ng-switch="!! enemies.length">
+	You have {{ enemies.length }} enemies! 
+
+	<!-- 
+		CAUTION: Commingling ngSwitchWhen alongside static data is only available since
+		AngularJS 1.2. Prior to that, the entire ngSwitch container is cleared-out.
+	-->
+	<span ng-switch-when="true">Is no bueno!</span>
+	<span ng-switch-when="false">That's awesome!</span>
+</h2>
+
+<ul>
+	<li ng-repeat="enemy in enemies track by enemy.id">
+
+		{{ enemy.name }}
+
+	</li>
+</ul>

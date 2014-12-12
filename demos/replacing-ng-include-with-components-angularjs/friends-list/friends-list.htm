@@ -1,0 +1,12 @@
+
+<h2>
+	You have {{ friends.length }} friends! That's awesome!
+</h2>
+
+<ul>
+	<li ng-repeat="friend in friends track by friend.id">
+
+		{{ friend.name }}
+
+	</li>
+</ul>

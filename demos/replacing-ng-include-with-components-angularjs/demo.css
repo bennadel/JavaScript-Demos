@@ -1,0 +1,28 @@
+
+body.primary {
+	background-color: #FAFAFA ;
+	color: #333333 ;
+}
+
+body.primary a[ ng-click ] {
+	color: red ;
+	cursor: pointer ;
+	text-decoration: underline ;
+}
+
+
+body.secondary {
+	background-color: #333333 ;
+	color: #F0F0F0 ;
+}
+
+body.secondary a[ ng-click ] {
+	color: gold ;
+	cursor: pointer ;
+	text-decoration: underline ;
+}
+
+p.legal {
+	font-size: 14px ;
+	font-style: italic ;
+}
