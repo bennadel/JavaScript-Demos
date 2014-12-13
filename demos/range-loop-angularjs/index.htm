@@ -110,7 +110,7 @@
 				// Return the directive configuration. Since this directive compiles down
 				// into a ngRepeat directive, we need to compile at 1001 - above the 
 				// ngRpeat priority (1000). Furthermore, we have to use terminal compiling
-				// otherwise, the generated ngRepeat won't compile at all.
+				// otherwise, the content will actually be compiled TWICE.
 				return({
 					compile: compile,
 					priority: 1001,
