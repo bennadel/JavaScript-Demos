@@ -10,7 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
-* [Creating A Range-Loop Directive In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/for-loop-angularjs/)
+* [Creating A Range-Loop Directive In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/range-loop-angularjs/)
 * [Replacing ngInclude With Component Directives In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/replacing-ng-include-with-components-angularjs/)
 * [Deferred Module Definition For 3rd-party Libraries In JavaScript](http://bennadel.github.io/JavaScript-Demos/demos/deferred-library-definition/)
 * [Using ngRepeat With ngInclude Hurts Performance In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/ng-repeat-include-performance-angularjs/)
