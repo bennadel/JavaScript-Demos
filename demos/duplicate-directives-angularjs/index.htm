@@ -47,6 +47,15 @@
 
 						tElement.html( tElement.html().replace( /\./g, "!" ) );
 
+						// Return the linking function.
+						return(
+							function link( scope, element, attributes ) {
+
+								console.log( "Linking 1 for scope", scope.$id );
+
+							}
+						);
+
 					},
 					restrict: "A"
 				});
@@ -69,6 +78,15 @@
 						// You don't get this kind of sweet-ass functionality with jQLite.
 						tElement.wrapInner( "<strong></strong>" );
 
+						// Return the linking function.
+						return(
+							function link( scope, element, attributes ) {
+
+								console.log( "Linking 2 for scope", scope.$id );
+
+							}
+						);
+
 					},
 					restrict: "A"
 				});
@@ -90,6 +108,15 @@
 						// CAUTION: You cannot use .wrapInner() unless you include jQuery.
 						// You don't get this kind of sweet-ass functionality with jQLite.
 						tElement.wrapInner( "<marquee></marquee>" );
+
+						// Return the linking function.
+						return(
+							function link( scope, element, attributes ) {
+
+								console.log( "Linking 3 for scope", scope.$id );
+
+							}
+						);
 
 					},
 					restrict: "A"
