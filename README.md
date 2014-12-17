@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Exposing A Service On The $scope In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/expose-service-on-scope-angularjs/)
 * [Binding A Directive To Multiple Compilation And Linking Functions In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/duplicate-directives-angularjs/)
 * [Creating A Range-Loop Directive In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/range-loop-angularjs/)
 * [Replacing ngInclude With Component Directives In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/replacing-ng-include-with-components-angularjs/)

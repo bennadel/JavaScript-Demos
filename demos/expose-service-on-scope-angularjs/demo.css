@@ -1,0 +1,16 @@
+
+a[ ng-click ] {
+	color: red ;
+	cursor: pointer ;
+	text-decoration: underline ;
+	user-select: none ;
+		-moz-user-select: none ;
+		-webkit-user-select: none ;
+}
+
+div.subview {
+	background-color: #FAFAFA ;
+	border: 1px solid #CCCCCC ;
+	margin: 20px 0px 20px 0px ;
+	padding: 4px 20px 4px 20px ;
+}

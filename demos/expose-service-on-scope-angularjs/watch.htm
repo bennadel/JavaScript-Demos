@@ -1,0 +1,277 @@
+<!doctype html>
+<html ng-app="Demo" ng-controller="AppController" bn-window-teaser>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		{{ title }}
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body>
+
+	<h1>
+		Exposing A Service On The $scope In AngularJS
+	</h1>
+
+	<p>
+		<a ng-click="toggleSubview()">Toggle sub-section</a>
+	</p>
+
+	<div 
+		ng-if="isShowingSubview"
+		ng-controller="SubviewController"
+		class="subview">
+
+		<p>
+			Woot, I'm the subview!
+		</p>
+
+	</div>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.3.6.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I control the root of the application.
+		app.controller(
+			"AppController",
+			function( $scope, windowTitle ) {
+
+				// I determine if the subview is being show.
+				$scope.isShowingSubview = false;
+
+				// Instead of exposing the windowTitle service directly, we'll expose a
+				// calculated value which we'll have to explicitly keep in sync with the
+				// underlying service.
+				$scope.title = null;
+
+				// Check the windowTitle value in EVERY DIGEST to see if it's changed. 
+				// And, if so, update the local view-model.
+				$scope.$watch(
+					function calculateTitleChange() {
+
+						return( windowTitle.title );
+
+					},
+					function handleTitleChange( newValue, oldValue ) {
+
+						$scope.title = newValue;
+
+					}
+				);
+
+				// Set the root page title.
+				windowTitle.push( "My Demo" );
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I show or hide the subview depending on the current state.
+				$scope.toggleSubview = function() {
+
+					$scope.isShowingSubview = ! $scope.isShowingSubview;
+
+				};
+
+			}
+		);
+
+
+		// I control the subview of the application.
+		app.controller(
+			"SubviewController",
+			function( $scope, windowTitle ) {
+
+				// Update the title of the window to reflect the current state.
+				windowTitle.push( "Subview" );
+
+				// Since this view is transient, we'll have to revert the window title 
+				// back to its previous state when the view is destroyed.
+				$scope.$on(
+					"$destroy",
+					function handleDestroyEvent() {
+
+						windowTitle.pop();
+
+						// Clear closed-over variable references.
+						$scope = windowTitle = null;
+
+					}
+				);
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I alter the window title to provide a teaser when the user leaves the tab.
+		app.directive(
+			"bnWindowTeaser",
+			function( $window, windowTitle ) {
+
+				// Return the directive configuration.
+				return({
+					link: link,
+					restrict: "A"
+				});
+
+
+				// I bind the JavaScript events to the scope.
+				function link( $scope ) {
+
+					var win = angular.element( $window )
+						.on( "blur", handleBlurEvent )
+					;
+
+
+					// ---
+					// PRIVATE METHODS.
+					// ---
+
+
+					// When the user blurs the tab, I show the teaser.
+					function handleBlurEvent( event ) {
+
+						// Since we're changing the model, we have to tell AngularJS
+						// about the change.
+						$scope.$apply(
+							function handleApply() {
+
+								windowTitle.push( "Whut?! Don't go!", true );
+								
+							}
+						);
+
+						win.on( "focus", handleFocusEvent );
+
+					}
+
+
+					// When the user focuses the tab, I revert the title back to the 
+					// previous, non-teaser state.
+					function handleFocusEvent( event ) {
+
+						// Since we're changing the model, we have to tell AngularJS
+						// about the change.
+						$scope.$apply(
+							function handleApply() {
+
+								windowTitle.pop();
+
+							}
+						);
+
+						win.off( "focus", handleFocusEvent );
+
+					}
+
+				}
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I model the window title of the current page.
+		app.factory(
+			"windowTitle",
+			function() {
+
+				// I maintain the collection of title segments.
+				var segments = [];
+
+				// I determine if the last item in the segment collection is the only one
+				// that is needed to represent the current window title.
+				var isTerminal = false;
+
+				// Expose public methods and data.
+				var exports = {
+					pop: pop,
+					push: push,
+					title: ""
+				};
+
+				return( exports );
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I remove a title off of the end of the segments.
+				function pop() {
+
+					segments.pop();
+
+					isTerminal = false;
+
+					buildTitle();
+
+				}
+
+
+				// I add a new title to the end of the segments. If the "terminal" 
+				// option is used, the given title will be the only one used to build 
+				// the current window title.
+				function push( newTitle, newIsTerminal ) {
+
+					segments.push( newTitle );
+
+					isTerminal = !! newIsTerminal;
+
+					buildTitle();
+
+				}
+
+
+				// ---
+				// PRIVATE METHODS.
+				// ---
+
+
+				// I compile the title segments down into a single value that represents
+				// the current title of the window.
+				function buildTitle() {
+
+					// For terminal titles, use the last segment only.
+					if ( isTerminal ) {
+
+						exports.title = segments.slice( -1 ).pop();
+
+					// For non-terminal titles, collapse all titles into a single value.
+					} else {
+
+						exports.title = segments.join( " -> " );
+						
+					}
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
