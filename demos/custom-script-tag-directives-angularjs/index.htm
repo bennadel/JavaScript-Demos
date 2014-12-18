@@ -1,0 +1,246 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Creating Custom Script Tag Directives In AngularJS
+	</title>
+</head>
+<body>
+
+	<h1>
+		Creating Custom Script Tag Directives In AngularJS
+	</h1>
+
+
+	<!-- 
+		Here is the core Script element that AngularJS defines so that we can preload
+		the template cache without having to make a subsequent AJAX request. 
+	-->
+	<script type="text/ng-template" id="mod.htm">
+
+		In Mod we trust!
+
+	</script>
+
+	<!--
+		And, here is ANOTHER directive that uses the Script tag element. This only works
+		on Script tags that use type[ text/cfml ] and will compile ColdFusoin markup.
+		--
+		NOTE: It won't really - this is just a proof-of-concept to show you why it's cool
+		that you can define multiple directives for the same Element in AngularJS.
+	--> 
+	<script type="text/cfml">
+
+		<cfloop index="i" from="1" to="8">
+
+			<p>
+				Hello world #i#!
+
+				<cfif ! ( i % 2 )>
+
+					<span ng-include=" 'mod.htm' "></span>
+
+				</cfif>
+			</p>
+
+		</cfloop>
+
+	</script>
+
+	<p ng-if="true">
+		This is after the csript.
+	</p>
+
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.3.6.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I define a Script directive that tries to transpile the ColdFusion content
+		// down into HTML tags and directives that AngularJS can understand.
+		// --
+		// NOTE: This is just a fun proof-of-concept.
+		app.directive(
+			"script",
+			function( $compile ) {
+
+				// Return the directive configuration.
+				return({
+					compile: compile,
+					restruct: "E",
+					terminal: true
+				});
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I compile the script tag contet if the type is "text/cfml".
+				function compile( tElement, tAttributes ) {
+
+					// If this isn't a targeted type, skip it.
+					if ( tAttributes.type !== "text/cfml" ) {
+
+						return;
+
+					}
+
+					// Since the Script tag content isn't compiled (it's just ignored by
+					// the browser since it's not JavaScript code), we're can do our best
+					// to transpile the "CFML code" into AngularJS directives. This is 
+					// just for the proof-of-concept; it makes a lot of assumptions about 
+					// what is acceptable in the output.
+					var html = tElement.html();
+					html = replaceInterpolation( html );
+					html = replaceCfifTags( html );
+					html = replaceCfloopTags( html );
+
+					// Now that we have our transpiled code, compile it (again) so that we
+					// can clone and link the content during the linking phase.
+					var cloneContent = $compile( html );
+
+					// Return the linking function.
+					return( curryLinkFunction( link, [ cloneContent ] ) );
+
+				}
+
+
+				// When we link the Script tag directive, we don't actually want to keep
+				// the Script tag in the output. Instead, we want to entirely replace it 
+				// with compiled content from above.
+				// --
+				// NOTE: The lsat argument is available from the compile() function since
+				// we returned the "curried"(ish) function.
+				function link( scope, element, attributes, _c, _t, cloneContent ) {
+
+					var clone = cloneContent(
+						scope,
+						function applyClone( clone, scope ) {
+
+							// Replace the Script tag with the linked content.
+							element.replaceWith( clone );
+
+						}
+					);
+
+				}
+
+
+				// ---
+				// PRIVATE METHODS.
+				// ---
+
+
+				// I append the given value-array to the end of the natural link-function
+				// arguments. This allows values to be passed from the compile function 
+				// to the link function without requiring the link function to be defined
+				// within the closure of the compile.
+				function curryLinkFunction( link, values ) {
+
+					function curried() {
+
+						return( 
+							link.apply( this, Array.prototype.slice.call( arguments ).concat( values ) )
+						);
+
+					}
+
+					return( curried );
+
+				}
+
+
+				// I replace the CFIF tags with ngIf directives.
+				function replaceCfifTags( content ) {
+
+					content = content.replace(
+						/<(\/)?cfif([^>]+)?>/g,
+						function( tag, isClosing, condition ) {
+
+							if ( isClosing ) {
+
+								return( "</span>" );
+
+							} else {
+
+								return( "<span ng-if=\"" + condition + "\">" );
+
+							}
+
+						}
+					);
+
+					return( content );
+
+				}
+
+
+				// I replace the CFLOOP tags with ngRepeat directives.
+				function replaceCfloopTags( content ) {
+
+					content = content.replace(
+						/<(\/)?cfloop( index="([^"]+)" from="([^"]+)" to="([^"]+)")?>/g,
+						function( tag, isClosing, attributes, index, from, to ) {
+
+							if ( isClosing ) {
+
+								return( "</div>" );
+
+							} else {
+
+								for ( var i = ( from * 1 ), values = [] ; i <= ( to * 1 ) ; i++ ) {
+
+									values.push( i );
+
+								}
+
+								var collection = angular.toJson( values );
+
+								return( "<div ng-repeat=\"" + index + " in " + collection + "\">" );
+
+							}
+
+						}
+					);
+
+					return( content );
+
+				}
+
+
+				// I replace the hash-tags with AngularJS interpolation.
+				function replaceInterpolation( content ) {
+
+					content = content.replace(
+						/#([^#\r\n]+)#/g,
+						function( interpolation, expression ) {
+
+							return( "{{ " + expression + " }}" );
+
+						}
+					);
+
+					return( content );
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>

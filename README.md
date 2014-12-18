@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Creating Custom Script Tag Directives In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/custom-script-tag-directives-angularjs/)
 * [Exposing A Service On The $scope In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/expose-service-on-scope-angularjs/)
 * [Binding A Directive To Multiple Compilation And Linking Functions In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/duplicate-directives-angularjs/)
 * [Creating A Range-Loop Directive In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/range-loop-angularjs/)
