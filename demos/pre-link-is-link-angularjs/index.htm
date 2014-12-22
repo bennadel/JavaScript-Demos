@@ -1,0 +1,94 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		The "Post-Link" Function Is The "Link" Function In AngularJS Directives
+	</title>
+</head>
+<body>
+
+	<h1>
+		The "Post-Link" Function Is The "Link" Function In AngularJS Directives
+	</h1>
+
+	<p 
+		bn-using-post-link
+		bn-using-link
+		bn-using-fn-only>
+
+		Look at the console-output; I am logging the link-functions from within the
+		AngularJS source-code.
+
+	</p>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="./angular-modified-1.3.6.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// This function will be a shared-link function. In one instance, it will be used
+		// as the only link function; in another instance, it will be used as the "post"
+		// link function in a pre/post linking configuration; and in a final instance, it
+		// will be used as the *only* directive configuration.
+		function sharedLinkFunction( scope, element, attributes ) {
+
+			console.log( "Linked, like a boss!" );
+
+		}
+
+
+		// I use the shared-link function as the "post-link" function.
+		app.directive(
+			"bnUsingPostLink",
+			function() {
+
+				return({
+					link: {
+						pre: angular.noop,
+						post: sharedLinkFunction
+					},
+					restrict: "A"
+				});
+
+			}
+		);
+
+
+		// I use the shared-link function as the "link" function.
+		app.directive(
+			"bnUsingLink",
+			function() {
+
+				return({
+					link: sharedLinkFunction,
+					restrict: "A"
+				});
+
+			}
+		);
+
+
+		// I use the shared-link function as the only directive configuration.
+		app.directive(
+			"bnUsingFnOnly",
+			function() {
+
+				return( sharedLinkFunction );
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
