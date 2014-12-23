@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Accidentally Defining A Directive Twice In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/double-script-include-in-angularjs/)
 * [The "Post-Link" Function Is The "Link" Function In AngularJS Directives](http://bennadel.github.io/JavaScript-Demos/demos/pre-link-is-link-angularjs/)
 * [Creating Custom Script Tag Directives In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/custom-script-tag-directives-angularjs/)
 * [Exposing A Service On The $scope In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/expose-service-on-scope-angularjs/)
