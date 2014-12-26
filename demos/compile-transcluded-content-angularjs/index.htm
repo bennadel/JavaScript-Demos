@@ -1,0 +1,168 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Compiling Transcluded Content in AngularJS Directives
+	</title>
+
+	<style type="text/css">
+
+		ul.container {
+			border: 2px solid #CC0000 ;
+			list-style-type: none ;
+			margin: 0px 0px 0px 0px ;
+			padding: 10px 10px 6px 10px ;
+		}
+
+		li.item {
+			border: 1px dotted #CC0000 ;
+			margin: 0px 0px 4px 0px ;
+			padding: 10px 10px 10px 10px ;
+		}
+
+	</style>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		Compiling Transcluded Content in AngularJS Directives
+	</h1>
+
+	<ul bn-thing>
+		<li ng-repeat="friend in friends track by friend.id">
+
+			{{ friend.name }}
+
+		</li>
+	</ul>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/jquery/jquery-2.1.0.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.3.6.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I control the root of the application.
+		app.controller(
+			"AppController",
+			function( $scope ) {
+
+				$scope.friends = [
+					{
+						id: 1,
+						name: "Kim"
+					},
+					{
+						id: 2,
+						name: "Sarah"
+					},
+					{
+						id: 3,
+						name: "Tricia"
+					}
+				];
+				
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I run the directive at a priority that executes pre-transclusion. This gives 
+		// us an opportunity to alter / compile the content before it is transcluded by
+		// the lower-priority hook for the directive.
+		app.directive(
+			"bnThing",
+			function() {
+
+				// Return the directive configuration. Notice that we are running at 
+				// priority 1500.1, which is a higher priority than the next directive 
+				// binding.
+				return({
+					compile: compile,
+					priority: 1500.1,
+					restrict: "A"
+				});
+
+
+				// I compile the pre-transcluded content.
+				function compile( tElement, tAttributes ) {
+
+					tElement.children()
+						.addClass( "item" )
+					;
+
+				}
+
+			}
+		);
+
+
+		// I transclude the directive content BACK INTO the current container (to 
+		// demonstrate the concept). At this point, we no longer have access to the 
+		// transcluded content until it is cloned, which is too late to augment it.
+		app.directive(
+			"bnThing",
+			function() {
+
+				// Return the directive configuration. Notice that we are running at 
+				// priority 1500, which is a lower priority than the previous directive
+				// binding (the one that augmented the transcluded content).
+				return({
+					compile: compile,
+					priority: 1500,
+					restrict: "A",
+					transclude: true
+				});
+
+
+				// I compile the directive. Since we are transcluding the entire element,
+				// we only have access to the "anchor comment" in this context.
+				function compile( tElement, tAttributes ) {
+
+					console.log( "Container at compile (html):", tElement.html() );
+
+					tElement.addClass( "container" );
+
+					return( link );
+
+				}
+
+
+				// I link the directive. Since we can only access the content via the
+				// transclusion function, at this point, the content has already been 
+				// compiled by the time we get the clone.
+				function link( scope, element, attributes, _c, transclude ) {
+
+					console.log( "Container at link (html):", element.html() );
+					
+					// Clone and inject the transcluded content.
+					transclude(
+						function injectLinkedClone( clone ) {
+
+							element.append( clone );
+
+						}
+					);
+					
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
