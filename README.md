@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Passing $q Defer Methods Around In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/passing-defer-methods-angularjs/)
 * [Compiling Transcluded Content in AngularJS Directives](http://bennadel.github.io/JavaScript-Demos/demos/compile-transcluded-content-angularjs/)
 * [Accidentally Defining A Directive Twice In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/double-script-include-in-angularjs/)
 * [The "Post-Link" Function Is The "Link" Function In AngularJS Directives](http://bennadel.github.io/JavaScript-Demos/demos/pre-link-is-link-angularjs/)
