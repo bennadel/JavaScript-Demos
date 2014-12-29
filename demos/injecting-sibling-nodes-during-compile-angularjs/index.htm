@@ -1,0 +1,94 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Injecting Sibling Nodes During The Compile Phase Of AngularJS Directives
+	</title>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		Injecting Sibling Nodes During The Compile Phase Of AngularJS Directives
+	</h1>
+
+	<ul>
+		<li bn-primary>
+			Sarah -- {{ message }}
+		</li>
+		<li bn-primary>
+			Tricia -- {{ message }}
+		</li>
+		<li bn-primary>
+			Kim -- {{ message }}
+		</li>
+	</ul>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/jquery/jquery-2.1.0.min.js"></script>
+	<script type="text/javascript" src="./angular-1.3.6.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I control the root of the application.
+		app.controller(
+			"AppController",
+			function( $scope ) {
+
+				$scope.message = "testing interpolation";
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I alter my sibling DOM tree to see how it affects the compilation process
+		// as AngularJS walks the DOM, applying directives.
+		app.directive(
+			"bnPrimary",
+			function() {
+
+				// Return the directive configuration.
+				return({
+					compile: compile,
+					restrict: "A"
+				});
+
+
+				// I compile the current element, and, in this case, alter the sibling
+				// DOM nodes for experimentation.
+				function compile( tElement, tAttributes ) {
+
+					// Get the current HTML for the node. This will bring in any markup
+					// as well as any {{ interpolation }} syntax.
+					var html = tElement.html();
+
+					// Now, we're going to alter the sibilng node list.
+					tElement.after( "<li>" + html + "</li>" );
+					
+					// Now, we're going to alter the sibilng node list.
+					// --
+					// CAUTION: This will cause AngularJS to compile "forever". 
+					// tElement.before( "<li>" + html + "</li>" );
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
