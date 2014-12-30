@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Using jQuery Instead Of jqLite In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/jquery-angular-element-angularjs/)
 * [Injecting Sibling Nodes During The Compile Phase Of AngularJS Directives](http://bennadel.github.io/JavaScript-Demos/demos/injecting-sibling-nodes-during-compile-angularjs/)
 * [Passing $q Defer Methods Around In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/passing-defer-methods-angularjs/)
 * [Compiling Transcluded Content in AngularJS Directives](http://bennadel.github.io/JavaScript-Demos/demos/compile-transcluded-content-angularjs/)
