@@ -1,0 +1,39 @@
+
+ul {
+	bottom: 0px ;
+	left: 0px ;
+	list-style-type: none ;
+	margin: 0px ;
+	padding: 0px ;
+	position: fixed ;
+	right: 0px ;
+	top: 0px ;
+}
+
+ul li {
+	background-color: #FAFAFA ;
+	border: 1px solid #AAAAAA ;
+	border-radius: 50px 50px 50px 50px ;
+	height: 48px ;
+	margin: 0px ;
+	padding: 0px ;
+	position: absolute ;
+	transition: all 1s ease ;
+		-moz-transition: all 1s ease ;
+		-webkit-transition: all 1s ease ;
+	width: 48px ;
+}
+
+ul li:hover {
+	background-color: #FFEAEA ;
+}
+
+ul li.selected {
+	border-color: #FF00CC ;
+	border-width: 4px 4px 4px 4px ;
+	height: 46px ;
+	margin-left: -20px ;
+	margin-top: -20px ;
+	width: 46px ;
+	z-index: 2 ;
+}
