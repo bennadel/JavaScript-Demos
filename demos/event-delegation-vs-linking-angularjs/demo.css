@@ -1,0 +1,20 @@
+ul.friends {
+	list-style-type: none ;
+	margin: 20px 0px 20px 0px ;
+	padding: 0px 0px 0px 0px ;
+}
+
+ul.friends li.friend {
+	border: 1px solid #CCCCCC ;
+	border-radius: 4px 4px 4px 4px ;
+	float: left ;
+	height: 100px ;
+	line-height: 100px ;
+	margin: 0px 10px 10px 0px ;
+	text-align: center ;
+	width: 100px ;
+}
+
+ul.friends li.friend:hover {
+	background-color: #FAFAFA ;
+}
