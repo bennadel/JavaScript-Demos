@@ -1,0 +1,166 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Link Function And $watch() Callback Timing In AngularJS Directives
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body>
+
+	<h1>
+		Link Function And $watch() Callback Timing In AngularJS Directives
+	</h1>
+
+	<!-- Each of these directives logs its link() function and $watch() callback. -->
+	<div bn-outer>
+		<div bn-middle>
+			<div bn-inner>
+
+				Each one of these directives logs the link() function and the $watch()
+				function execution so you can see how scopes affect the order in which
+				different blocks of code will run.
+
+			</div>
+		</div>
+	</div>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.3.6.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// This flag will determine if the following directives create a new CHILD SCOPE?
+		// Or, if they are all on the same scope. This will change the order in which the
+		// $watch() handlers fire.
+		var createNewChildScope = true;
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I provide a directive that logs its linking and watch functions.
+		app.directive(
+			"bnOuter",
+			function() {
+
+				// Return the directive configuration.
+				return({
+					link: link,
+					restrict: "A",
+					scope: createNewChildScope
+				});
+
+
+				// I bind the JavaScript events to the scope.
+				function link( scope, element, attributes ) {
+
+					console.log( "Link -- Outer" );
+
+					// NOTE: Watch handlers are invoked asynchronously.
+					scope.$watch(
+						"$id",
+						function handleWatchValueChange( newValue, oldValue ) {
+
+							console.log( "$watch() -- Outer:", newValue );
+
+						}
+					);
+
+				}
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I provide a directive that logs its linking and watch functions.
+		app.directive(
+			"bnMiddle",
+			function() {
+
+				// Return the directive configuration.
+				return({
+					link: link,
+					restrict: "A",
+					scope: createNewChildScope
+				});
+
+
+				// I bind the JavaScript events to the scope.
+				function link( scope, element, attributes ) {
+
+					console.log( "Link -- Middle" );
+
+					// NOTE: Watch handlers are invoked asynchronously.
+					scope.$watch(
+						"$id",
+						function handleWatchValueChange( newValue, oldValue ) {
+
+							console.log( "$watch() -- Middle:", newValue );
+
+						}
+					);
+
+				}
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I provide a directive that logs its linking and watch functions.
+		app.directive(
+			"bnInner",
+			function() {
+
+				// Return the directive configuration.
+				return({
+					link: link,
+					restrict: "A",
+					scope: createNewChildScope
+				});
+
+
+				// I bind the JavaScript events to the scope.
+				function link( scope, element, attributes ) {
+
+					console.log( "Link -- Inner" );
+
+					// NOTE: Watch handlers are invoked asynchronously.
+					scope.$watch(
+						"$id",
+						function handleWatchValueChange( newValue, oldValue ) {
+
+							console.log( "$watch() -- Inner:", newValue );
+
+						}
+					);
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>

@@ -1,0 +1,49 @@
+
+div[ bn-outer ],
+div[ bn-middle ],
+div[ bn-inner ] {
+	border: 1px solid red ;
+	padding: 30px 30px 30px 30px ;
+	position: relative ;
+}
+
+div[ bn-outer ]:before,
+div[ bn-middle ]:before,
+div[ bn-inner ]:before {
+	background-color: red ;
+	border-radius: 0px 0px 4px 0px ;
+	color: #F0F0F0 ;
+	content: "" ;
+	font-family: monospace ;
+	font-size: 10px ;
+	left: 0px ;
+	line-height: 15px ;
+	padding: 3px 7px 2px 7px ;
+	position: absolute ;
+	text-transform: uppercase ;
+	top: 0px ;
+}
+
+div[ bn-outer ]:before {
+	content: "Outer" ;
+}
+
+div[ bn-outer ].ng-scope:before {
+	content: "Outer - Scope" ;
+}
+
+div[ bn-middle ]:before {
+	content: "Middle" ;
+}
+
+div[ bn-middle ].ng-scope:before {
+	content: "Middle - Scope" ;
+}
+
+div[ bn-inner ]:before {
+	content: "Inner" ;
+}
+
+div[ bn-inner ].ng-scope:before {
+	content: "Inner - Scope" ;
+}

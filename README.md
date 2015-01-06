@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Link Function And $watch() Callback Timing In AngularJS Directives](http://bennadel.github.io/JavaScript-Demos/demos/link-watch-timeline-angularjs/)
 * [Event Delegation Performance vs. Linking Performance In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/event-delegation-vs-linking-angularjs/)
 * [Creating jqLite Plugins In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/jqlite-plugin-angularjs/)
 * [Using jQuery Instead Of jqLite In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/jquery-angular-element-angularjs/)
