@@ -1,0 +1,55 @@
+form {
+	border: 1px dotted #CCCCCC ;
+	padding: 12px 30px 10px 30px ;
+	position: relative ;
+}
+
+form.ng-dirty {
+	border-color: #CC0000 ;
+}
+
+form.ng-dirty:before {
+	background-color: red ;
+	color: #FFFFFF ;
+	content: "So Dirty!" ;
+	font-family: monospace ;
+	font-size: 11px ;
+	left: 0px ;
+	line-height: 15px ;
+	padding: 3px 7px 3px 7px ;
+	position: absolute ;
+	top: 0px ;
+}
+
+div[ bn-list-toggle ] {
+	background-color: #FAFAFA ;
+	border: 1px solid #CCCCCC ;
+	border-radius: 3px 3px 3px 3px ;
+	cursor: pointer ;
+	margin: 20px 0px 20px 0px ;
+	padding: 20px 20px 20px 20px ;
+	user-select: none ;
+		-moz-user-select: none ;
+		-webkit-user-select: none ;
+}
+
+div[ bn-list-toggle ].ng-dirty {
+	border-color: #FFAAAA ;
+}
+
+div[ bn-list-toggle ]:active {
+	background-color: #F0F0F0 ;
+}
+
+div[ bn-list-toggle ] em {
+	color: #AAAAAA ;
+}
+
+a[ ng-click ] {
+	color: red ;
+	cursor: pointer ;
+	text-decoration: underline ;
+	user-select: none ;
+		-moz-user-select: none ;
+		-webkit-user-select: none ;
+}

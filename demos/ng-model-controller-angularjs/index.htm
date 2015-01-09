@@ -1,0 +1,336 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Experimenting With ngModel And ngModelController In AngularJS
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		Experimenting With ngModel And ngModelController In AngularJS
+	</h1>
+
+	<!-- 
+		We're using the FORM directive in this demo as the ngModel usage will 
+		automatically interact with the FormController to do things like apply an 
+		"ng-dirty" class to the form when our list-toggle directive is consumed by 
+		the user. 
+		--
+		NOTE: By naming the form, an instance of the FormController will automatically
+		be applied to the current Scope using the given name (ie, $scope.myForm).
+	-->
+	<form name="myForm">
+
+		<!--
+			Using this directive to iterate over the given list when clicked, one item 
+			per click. When moving onto the next item, the ngModel value is updated to 
+			reflect the current selection; this will, in turn, interact automatically 
+			with the parent Form directive.
+			--
+			* bnListToggle: The expression used to access the target list.
+			* text: The expression used to render the selected value.
+		-->
+		<div
+			ng-model="selectedFriend"
+			bn-list-toggle="friends"
+			text="( id + '. ' + name )">
+		</div>
+
+		<p>
+			<!-- Using this to alter the view-model externally to the directive. -->
+			<a ng-click="selectFirstFriend()">Select First Friend</a>
+
+			&mdash;
+
+			<!-- Using this to erase a friend selection. -->
+			<a ng-click="selectNullFriend()">Select NULL Friend</a>
+		</p>
+		
+	</form>
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.3.6.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I control the root of the application.
+		app.controller(
+			"AppController",
+			function( $scope ) {
+
+				// I hold the list of friends over which we will be iterating in the
+				// ngModel control.
+				$scope.friends = [
+					{
+						id: 1,
+						name: "Kim"
+					},
+					{
+						id: 2,
+						name: "Sarah"
+					},
+					{
+						id: 3,
+						name: "Joanna"
+					},
+					{
+						id: 4,
+						name: "Tricia"
+					},
+					{
+						id: 5,
+						name: "Anna"
+					}
+				];
+
+				// By default, select the first friend.
+				$scope.selectedFriend = $scope.friends[ 0 ];
+
+				// For debugging purposes, let's observe changes in the selected friend.
+				// This way, we can see when / how the view-model is changed by the two-way
+				// ngModel binding.
+				$scope.$watch(
+					"selectedFriend",
+					function handleModelChange( newValue, oldValue ) {
+
+						// Ignore null values as we can't render them (using .name).
+						if ( ! newValue || ! oldValue ) {
+
+							return( console.info( "Null value change:", newValue ) );
+
+						}
+
+						console.log( "Selected friend changed from [", newValue.name, "-->", oldValue.name, "]." );
+
+					}
+				);
+
+				// Since we are using a named-form, we now have a copy of the 
+				// FormController on the scope. As such, we can watch for changes in the
+				// form state and respond. In this case, we're logging when the form loses
+				// its pristine nature.
+				$scope.$watch(
+					"myForm.$dirty",
+					function handleModelChange( newValue ) {
+
+						if ( newValue ) {
+
+							console.warn( "Form is so dirty." );
+
+						}
+
+					}
+				);
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I select the first friend in the list. This demonstrates that the 
+				// ngModel binding can react to external changes as well as internal
+				// changes triggered by the control.
+				$scope.selectFirstFriend = function() {
+
+					console.info( "Selecting first friend." );
+
+					$scope.selectedFriend = $scope.friends[ 0 ];
+
+				};
+
+
+				// I remove the current friend selection. This demonstrates how the 
+				// control can react to changes in the model that aren't necessarily
+				// accounted for in the list-context.
+				$scope.selectNullFriend = function() {
+
+					console.info( "Selecting NULL friend." );
+
+					$scope.selectedFriend = null;
+
+				};
+
+			}
+		);
+
+	
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I provide an input control that iterates though a list, selecting the current
+		// value (into ngModel). When the user clicks on the control, the next list item
+		// is selected (loops back to index 0 when end of list is reached).
+		app.directive(
+			"bnListToggle",
+			function( $parse ) {
+
+				// Return the directive configuration. Notice that we are requiring the 
+				// ngModel controller to be passed into our linking function.
+				return({
+					link: link,
+					require: "ngModel",
+					restrict: "A"
+				});
+
+
+				// I bind the JavaScript events to the local scope.
+				function link( scope, element, attributes, ngModelController ) {
+
+					// Validate directive attributes.
+					if ( ! attributes.bnListToggle ) {
+
+						throw( new Error( "bnListToggle requires list over which to iterate." ) );
+
+					}
+
+					// Validate directive attributes.
+					if ( ! attributes.text ) {
+
+						throw( new Error( "bnListToggle requires a text expression." ) );
+
+					}
+
+
+					// I provide a method to access the list for the control.
+					var listAccessor = $parse( attributes.bnListToggle );
+
+					// When the value of the control is selected, we need a way to 
+					// render it in the HTML. We'll use the text attribute as an 
+					// expression to evaluate in the context of the selected value.
+					var textAccessor = $parse( attributes.text );
+
+					// When the ngModel directive updates the bi-directionally-bound 
+					// value, our control needs to be notified so that we can update 
+					// the HTML. By providing a $render() method, we can hook into the 
+					// ngModel update.
+					ngModelController.$render = renderCurrentValue;
+
+					// When the use clicks on the toggle, we need to move onto the next
+					// item in the list.
+					element.on(
+						"click",
+						function handleClickEvent( event ) {
+
+							// Since we are changing the View-Model, we have to use 
+							// $apply() in order to let AngularJS know that a change has
+							// occurred.
+							scope.$apply( selectNextValue );
+
+						}
+					);
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I use the current ngModel value to the render the HTML.
+					function renderCurrentValue() {
+
+						// If the current value is empty, clear the control. 
+						// --
+						// NOTE: Each Control can provide its own $isEmpty() override;
+						// however, the default implementation checks for null / undefined
+						// values, which is sufficient for our use-case.
+						if ( ngModelController.$isEmpty( ngModelController.$viewValue ) ) {
+
+							return( element.html( "<em>Nothing selected</em>" ) );
+
+						}
+
+						// If the ngModel has a non-empty value, we can build the HTML for
+						// the control by evaluating the text-accessor in the context of 
+						// the selected value.
+						element.html( textAccessor( ngModelController.$viewValue ) );
+
+					};
+
+
+					// ---
+					// PRIVATE METHODS.
+					// ---
+
+
+					// I get the next list item given the current list item.
+					function getNextListValue( list, currentValue ) {
+
+						// If we have no list, then there is no next item.
+						if ( ! list || ! list.length ) {
+
+							return( null );
+
+						}
+
+						var currentIndex = list.indexOf( currentValue );
+
+						// NOTE: If -1, becomes 0, which is OK.
+						var nextIndex = ( currentIndex + 1 );
+
+						// Check bounds, loop around if necessary.
+						if ( nextIndex >= list.length ) {
+
+							nextIndex = 0;
+
+						}
+
+						return( list[ nextIndex ] );
+
+					}
+
+
+					// I select the next value in the list, based on the current state of
+					// the ngModel binding.
+					function selectNextValue() {
+
+						// Gather the list from the current scope.
+						var list = listAccessor( scope );
+
+						// Get the current ngModel binding.
+						var currentValue = ngModelController.$viewValue;
+
+						// Get the next value. May return NULL if the list is empty.
+						var nextValue = getNextListValue( list, currentValue );
+
+						// Tell the ngModel directive to update the value to reflect the 
+						// next item in the list.
+						// --
+						// NOTE: The AngualrJS documentation suggests passing-in a COPY
+						// of this value (if its an Object) since the ngModel directive 
+						// compares references internally (not deep-copy comparisons). 
+						// However, I believe that is only required in edge-cases; as 
+						// long as we are using direct "view-model" references (as we 
+						// are in this approach), then I see no problem with passing the
+						// reference directly into $setViewValue().
+						ngModelController.$setViewValue( nextValue );
+
+						// Calling $setViewModel() does not implicitly trigger a call to 
+						// $render(). As such, we have to explicitly re-render the newly-
+						// selected value.
+						renderCurrentValue();
+
+					}
+
+				}
+
+			}
+		);
+		
+	</script>
+
+</body>
+</html>
