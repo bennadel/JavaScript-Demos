@@ -1,0 +1,127 @@
+a[ng-click] {
+  color: red ;
+  cursor: pointer ;
+  text-decoration: underline ;
+}
+form {
+  border: 1px solid #CCCCCC ;
+  padding: 10px 20px 10px 20px ;
+  position: relative ;
+}
+form.ng-dirty,
+form.ng-invalid-required {
+  border-color: #FFAAAA ;
+}
+form.ng-dirty:before,
+form.ng-invalid-required:before {
+  background-color: #CC0000 ;
+  color: #FFFFFF ;
+  content: "So dirty!";
+  left: 0px ;
+  font-family: monospace ;
+  font-size: 11px ;
+  padding: 4px 10px 4px 10px ;
+  position: absolute ;
+  top: 0px ;
+}
+form.ng-invalid-required:before {
+  content: "Don't leave me hanging!";
+}
+div.m-dropdown {
+  position: relative ;
+  text-decoration: none ;
+  user-select: none ;
+  -moz-user-select: none ;
+  -webkit-user-select: none ;
+}
+div.m-dropdown div.dropdown-root {
+  background-color: #FFFFFF ;
+  border: 1px solid #CCCCCC ;
+  border-radius: 3px 3px 3px 3px ;
+  cursor: pointer ;
+}
+div.m-dropdown ul.dropdown-options {
+  background-color: #FFFFFF ;
+  border: 1px solid #CCCCCC ;
+  border-radius: 0px 0px 3px 3px ;
+  display: none ;
+  left: 0px ;
+  list-style-type: none ;
+  margin: 0px 0px 0px 0px ;
+  padding: 0px 0px 0px 0px ;
+  position: absolute ;
+  right: 0px ;
+  top: 100% ;
+  z-index: 999999 ;
+}
+div.m-dropdown li.dropdown-option {
+  border-bottom: 1px solid #CCCCCC ;
+  cursor: pointer ;
+  margin: 0px 0px 0px 0px ;
+  padding: 0px 0px 0px 0px ;
+  position: relative ;
+}
+div.m-dropdown li.dropdown-option:last-child {
+  border-bottom-width: 0px ;
+}
+div.m-dropdown div.dropdown-label,
+div.m-dropdown li.dropdown-label {
+  padding: 9px 10px 7px 10px ;
+  position: relative ;
+}
+div.m-dropdown.dropdown-open div.dropdown-root {
+  border-bottom-width: 0px ;
+  border-radius: 3px 3px 0px 0px ;
+}
+div.m-dropdown.dropdown-open ul.dropdown-options {
+  display: block ;
+}
+div.m-dropdown.dropdown-caret div.dropdown-root {
+  padding-right: 30px ;
+}
+div.m-dropdown.dropdown-caret div.dropdown-root:after {
+  border-left: 5px solid transparent ;
+  border-right: 5px solid transparent ;
+  border-top: 5px solid #AAAAAA ;
+  content: "";
+  height: 0px ;
+  margin-top: -2px;
+  position: absolute ;
+  right: 10px ;
+  top: 50% ;
+  width: 0px ;
+}
+div.m-dropdown {
+  margin: 20px 0px 20px 0px ;
+}
+div.m-dropdown div.dropdown-root div.dropdown-label.dropdown-placeholder {
+  color: #999999 ;
+  font-style: italic ;
+}
+div.m-dropdown ul.dropdown-options {
+  box-shadow: 1px 1px 0px #DADADA ;
+}
+div.m-dropdown li.dropdown-option.dropdown-label:hover {
+  background-color: #FAFAFA ;
+}
+div.m-dropdown li.dropdown-option.dropdown-selection {
+  background-color: #FFFFCC ;
+  font-weight: bold ;
+  padding-left: 27px ;
+}
+div.m-dropdown li.dropdown-option.dropdown-selection:before {
+  content: "\00BB";
+  left: 10px ;
+  line-height: 32px ;
+  position: absolute ;
+  top: 0px ;
+}
+div.m-dropdown li.dropdown-option.group.all,
+div.m-dropdown li.dropdown-option.group.none {
+  border-left: 4px solid #CCCCCC ;
+  color: #333333 ;
+}
+div.m-dropdown.ng-invalid-required div.dropdown-root div.dropdown-label {
+  background-color: #FFEEEE ;
+  color: #CC0000 ;
+}

@@ -1,0 +1,546 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Creating An HTML-Based Select Menu In AngularJS Using ngModel And ngModelController
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		Creating An HTML-Based Select Menu In AngularJS Using ngModel And ngModelController
+	</h1>
+
+	<form name="myForm">
+
+		<!--
+			bnDropdown is a Form control that uses ngModel behind the scenes. Like the 
+			Select / ngOptions directives, it binds a View-Model to a list of options;
+			however, these options are defined in the HTML rather than in an array of
+			values. This allows for rich formatting without the loss of directive View-
+			Model references.
+
+			Notice that we are using the following ngModel-related attributes:
+
+			* required - Flags the field as invalid if NULL.
+			* ngChange - evaluates an expression when the View-Model is changed by user.
+
+			The bnDropdown directives expects the content to be UL > LI. It will use the
+			LI elements as the menu options. And, when the user clicks on an option, it
+			will look for a [option] attribute to derive the value. This value is a direct
+			scope reference, NOT a string value.
+
+			So, when you see `option="friend"`, that will be evaluated as `scope.friend`
+			when the user clicks on the given option.
+		-->
+		<div 
+			bn-dropdown="bestFriend" 
+			placeholder="Select your best friend!" 
+			caret="true"
+			required="required"
+			ng-change="logChange( bestFriend )">
+
+			<ul>
+				<!--
+					Include static options. Since these are View-Model references, they 
+					have to be wrapped in quotes, otherwise they will be undefined.
+				-->
+				<li option=" 'all' " class="group all">
+					I love all people!
+				</li>
+				<li option=" 'none' " class="group none">
+					I have no friends :(
+				</li>
+
+				<!--
+					Include dynamic options. Notice that the [option] attribute references
+					the iteration index (friend) of the ngRepeat directive.
+				-->
+				<li
+					ng-repeat="friend in friends track by friend.id"
+					option="friend"
+					class="individual">
+
+					{{ friend.name }} is my best friend!
+
+				</li>
+
+				<!-- Include completely conditional options. -->
+				<li
+					ng-if="showingHiddenOption"
+					option="dog">
+
+					My dog, {{ dog.name }}, is my best friend!
+
+				</li>
+			</ul>
+
+		</div>
+
+		<p>
+			<a ng-click="selectFirstFriend()">Select first friend</a>
+			&mdash;
+			<a ng-click="selectNullFriend()">Select NULL friend</a>
+			&mdash;
+			<a ng-click="toggleHiddenOption()">Toggle hidden option ( {{ showingHiddenOption }} )</a>
+		</p>
+
+	</form>
+
+
+	<!--
+		Load scripts. 
+		--
+		NOTE: I am specifically using jQuery in this demo because it has selectors
+		and event-delegation features that AngularJS does not support out of the box.
+		These are used to track clicks in the menu itself without having to bind click
+		handlers to dynamic elements.
+	-->
+	<script type="text/javascript" src="../../vendor/jquery/jquery-2.1.0.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.3.6.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I control the root of the application.
+		app.controller(
+			"AppController",
+			function( $scope ) {
+
+				// I am the list of friends to select from.
+				$scope.friends = [
+					{
+						id: 1,
+						name: "Kim"
+					},
+					{
+						id: 2,
+						name: "Sarah"
+					},
+					{
+						id: 3,
+						name: "Joanna"
+					},
+					{
+						id: 4,
+						name: "Tricia"
+					},
+					{
+						id: 5,
+						name: "Anna"
+					}
+				];
+
+				// I am the best friend that I can choose when no else is around.
+				$scope.dog = {
+					id: 1,
+					name: "Lucy"
+				};
+
+				// I hold the currently selected option.
+				$scope.bestFriend = $scope.friends[ 1 ];
+
+				// I determine whether or not the Dog shows up in the list of options.
+				$scope.showingHiddenOption = false;
+
+				// For debugging, I watch for changes in the selection.
+				$scope.$watch(
+					"bestFriend",
+					function handleModelChange( newValue, oldValue ) {
+
+						console.log( "Best friend:", newValue );
+
+					}
+				);
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I log changes in the dropdown menu using the ngChange directive, which
+				// hooks into ngModel and the $viewChangeListeners collection of the form
+				// input control.
+				$scope.logChange = function( selection ) {
+
+					console.info( "Ng-change logged:", selection );
+
+				};
+
+
+				// I change the friend selection using an external mutation (ie, not 
+				// triggered by an interaction with the input control itself).
+				$scope.selectFirstFriend = function() {
+
+					$scope.bestFriend = $scope.friends[ 0 ];
+
+				};
+
+
+				// I change the friend selection using an external mutation (ie, not 
+				// triggered by an interaction with the input control itself). By setting
+				// the selection to NULL, we can test the placeholder feature.
+				$scope.selectNullFriend = function() {
+
+					$scope.bestFriend = null;
+
+				};
+
+
+				// I toggle the inclusion of the optional Dog menu option.
+				$scope.toggleHiddenOption = function() {
+
+					$scope.showingHiddenOption = ! $scope.showingHiddenOption;
+
+				};
+
+			}
+		);
+
+	
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// To make the HTML menu easier to use, we're not requiring the user to add the
+		// ngModel directive. Instead, we're going to transform the bnDropdown attribute
+		// into an ngModel attribute. This requires us to compile with the TERMINAL 
+		// setting so that we can get the ngModel directive to compile after we've added
+		// it to the element.
+		app.directive(
+			"bnDropdown",
+			function( $compile ) {
+
+				// Return the directive configuration.
+				// --
+				// NOTE: ngModel compiles at priority 1, so we will compile at priority 2.
+				return({
+					compile: compile,
+					priority: 2,
+					restrict: "A",
+					terminal: true
+				});
+
+
+				// I compile the bnDropdown directive, adding the ngModel directive and
+				// other HTML and CSS class hooks needed to execute the dropdown. This 
+				// assumes that all directives are present (ie, you can't render the
+				// dropdown using an ngInclude or any other asynchronous loading). 
+				function compile( tElement, tAttributes ) {
+
+					// Add the ngModel directive using the attribute value of the main
+					// directive. This just makes it easier to use (and look nicer in 
+					// my opinion).
+					if ( ! tAttributes.ngModel ) {
+
+						tElement.attr( "ng-model", tAttributes.bnDropdown );
+						
+					}
+
+					// Prepend the root of the menu (where the selected value is shown 
+					// when the menu options are hidden).
+					tElement.prepend(
+						"<div class='dropdown-root'>" + 
+							"<div class='dropdown-label'></div>" + 
+						"</div>"
+					);
+
+					// Add CSS hooks. Since we're in the compiling phase, these CSS hooks
+					// will automatically be picked up by any nested ngRepeat directives;
+					// that's what makes the compile phase (and AngularJS) so player!
+					tElement
+						.addClass( "m-dropdown" )
+						.children( "ul" )
+							.addClass( "dropdown-options" )
+							.children( "li" )
+								.addClass( "dropdown-option dropdown-label" )
+					;
+
+					if ( tAttributes.caret ) {
+
+						tElement.addClass( "dropdown-caret" );
+
+					}
+
+					// Since we're using TERMINAL compilation, we have to explicitly 
+					// compile and link everything at a lower priority. This will compile
+					// the newly-injected ngModel directive as well as all the nested
+					// directives in the menu.
+					var linkSubtree = $compile( tElement, null, 2 );
+
+					return( link );
+
+
+					// When the dropdown is linked, we have to link the explicitly 
+					// compiled portion of the DOM.
+					function link( scope ) {
+
+						linkSubtree( scope );
+
+					}
+
+				}
+
+			}
+		);
+
+
+		// Now that we've compiled the directive (in the above priority), we need to work
+		// with the ngModelController to update and reactive to View-Model changes.
+		app.directive(
+			"bnDropdown",
+			function( $parse, $document ) {
+
+				// Return the directive configuration.
+				return({
+					link: link,
+					require: "ngModel",
+					restrict: "A"
+				});
+
+
+				// I bind the JavaScript events to the local scope.
+				function link( scope, element, attributes, ngModelController ) {
+
+					// Cache DOM references.
+					// --
+					// NOTE: We are NOT caching the LI nodes as those are dynamic. We'll 
+					// need to query for those just-in-time when they are needed.
+					var dom = {
+						module: element,
+						root: element.find( "div.dropdown-root" ),
+						rootLabel: element.find( "div.dropdown-root div.dropdown-label" ),
+						options: element.find( "ul.dropdown-options" )
+					};
+
+					// I am the value that will be put in the menu root if we cannot 
+					// find an option with the matching ngModel value.
+					var placeholder = ( attributes.placeholder || "&nbsp;" );
+
+					// When the user clicks outside the menu, we have to close it.
+					$document.on( "mousedown", handleDocumentMouseDown );
+
+					// When the user clicks the root, we're going to toggle the menu.
+					dom.root.on( "click", handelRootClick );
+
+					// When the user clicks on an option, we're going to select it. 
+					// This must use event delegation (only available in jQuery) since
+					// the options are dynamic.
+					dom.options.on( "click", "li.dropdown-option", handleOptionClick );
+
+					// When the scope is destroyed, we have to clean up.
+					scope.$on( "$destroy", handleDestroyEvent );
+
+					// When the ngModel value is changed, we'll have to update the 
+					// rendering of the dropdown menu to reflect the ngModel state.
+					ngModelController.$render = renderSelectedOptionAsync;
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I clean up the directive when it is destroyed.
+					function handleDestroyEvent() {
+
+						$document.off( "mousedown", handleDocumentMouseDown );
+
+					}
+
+
+					// I handle the mouse-down event outside the menu. If the user clicks
+					// down outside the menu, we have to close the menu.
+					function handleDocumentMouseDown( event ) {
+
+						var target = angular.element( event.target );
+
+						// NOTE: .closest() requires jQuery.
+						if ( isOpen() && ! target.closest( dom.module ).length ) {
+
+							hideOptions();
+
+						}
+
+					}
+
+
+					// I handle the selection of an option by a user.
+					function handleOptionClick( event ) {
+
+						// When the user selects an option, we have to tell the 
+						// ngModelController. And, since we are changing the View-Model 
+						// from within a directive, we have to use $apply() so that 
+						// AngularJS knows that something has been updated.
+						scope.$apply(
+							function changeModel() {
+
+								hideOptions();
+
+								var option = angular.element( event.target );
+
+								ngModelController.$setViewValue( getOptionValue( option ) );
+
+								// $setViewValue() does not call render explicitly. As 
+								// such we have to call it explicitly in order to update
+								// the content of the menu-root.
+								renderSelectedOption();
+
+							}
+						);
+
+					}
+
+
+					// I toggle the dropdown options menu.
+					function handelRootClick( event ) {
+
+						isOpen() ? hideOptions() : showOptions() ;
+
+					}
+
+
+					// I get called implicitly by the ngModelController when the View-
+					// Model has been changed by an external factor (ie, not a dropdown
+					// directive interaction). When this happens, we have to update the 
+					// local state to reflect the ngModel state.
+					function renderSelectedOptionAsync() {
+
+						// Since the options may be rendered by a dynamically-linking 
+						// directive like ngRepeat or ngIf, we have to give the content
+						// a chance to be rendered before we try to find a matching 
+						// option value. 
+						// --
+						// Since ngModel $watch() bindings are set up in the 
+						// ngModelController, it means that they are bound before the DOM 
+						// tree is linked. This means that the ngModel $watch() bindings 
+						// are bound before the linking phase which puts the ngRepeat and 
+						// ngIf $watch() bindings at a lower priority, even when on the 
+						// same Scope instance, which is why we have to render asynchronously,
+						// giving ngRepeat and ngIf a chance to react to $watch() callbacks.
+						// The more you know!
+						scope.$evalAsync( renderSelectedOption );
+
+					}
+
+
+					// ---
+					// PRIVATE METHODS.
+					// ---
+
+
+					// I determine if the options menu is being shown.
+					function isOpen() {
+
+						return( dom.module.hasClass( "dropdown-open" ) );
+
+					}
+
+
+					// I find rendered option with the given value. This evaluates the 
+					// [option] attribute in the context of the local scope and then 
+					// performs a direct object reference comparison.
+					function findOptionWithValue( value ) {
+
+						// Since the options are dynamic, we have to collection just-in-
+						// time with the selection event.
+						var options = dom.options.children( "li.dropdown-option" );
+
+						for ( var i = 0, length = options.length ; i < length ; i++ ) {
+
+							var option = angular.element( options[ i ] );
+
+							if ( getOptionValue( option ) === value ) {
+
+								return( option );
+
+							}
+
+						}
+
+						return( null );
+
+					}
+
+
+					// I get the value of the given option (as evaluated in the context
+					// of the local scope associated with the option element).
+					function getOptionValue( option ) {
+
+						var accessor = $parse( option.attr( "option" ) || "null" );
+
+						return( accessor( option.scope() ) );
+
+					}
+
+
+					// I hide the options menu.
+					function hideOptions() {
+
+						dom.module.removeClass( "dropdown-open" );
+
+					}
+
+
+					// I update the dropdown state to reflect the currently selected
+					// ngModel value.
+					function renderSelectedOption() {
+
+						// Find the FIRST DOM element that matches the selected value.
+						var option = findOptionWithValue( ngModelController.$viewValue );
+
+						// Remove any current selection.
+						dom.options.find( "li.dropdown-option" )
+							.removeClass( "dropdown-selection" )
+						;
+
+						// If we found a matching option, copy the content to the root.
+						if ( option ) {
+
+							dom.rootLabel
+								.removeClass( "dropdown-placeholder" )
+								.html( option.html() )
+							;
+
+							option.addClass( "dropdown-selection" );
+
+						// If we have no matching option, copy the placeholder to the root.
+						} else {
+
+							dom.rootLabel
+								.addClass( "dropdown-placeholder" )
+								.html( placeholder )
+							;
+
+						}
+
+					}
+
+
+					// I show the options menu.
+					function showOptions() {
+
+						dom.module.addClass( "dropdown-open" );
+
+					}
+
+				}
+
+			}
+		);
+		
+	</script>
+
+</body>
+</html>

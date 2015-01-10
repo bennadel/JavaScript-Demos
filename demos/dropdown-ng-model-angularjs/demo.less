@@ -1,0 +1,171 @@
+a[ ng-click ] {
+	color: red ;
+	cursor: pointer ;
+	text-decoration: underline ;
+}
+
+form {
+	border: 1px solid #CCCCCC ;
+	padding: 10px 20px 10px 20px ;
+	position: relative ;
+
+	&.ng-dirty,
+	&.ng-invalid-required {
+		border-color: #FFAAAA ;
+
+		&:before {
+			background-color: #CC0000 ;
+			color: #FFFFFF ;
+			content: "So dirty!" ;
+			left: 0px ;
+			font-family: monospace ;
+			font-size: 11px ;
+			padding: 4px 10px 4px 10px ;
+			position: absolute ;
+			top: 0px ;
+		}
+	}
+
+	&.ng-invalid-required {
+		&:before {
+			content: "Don't leave me hanging!" ;
+		}
+	}
+} // END: form.
+
+
+div.m-dropdown {
+	position: relative ;
+	text-decoration: none ;
+	user-select: none ;
+		-moz-user-select: none ;
+		-webkit-user-select: none ;
+
+	div.dropdown-root {
+		background-color: #FFFFFF ;
+		border: 1px solid #CCCCCC ;
+		border-radius: 3px 3px 3px 3px ;
+		cursor: pointer ;
+	}
+
+	ul.dropdown-options {
+		background-color: #FFFFFF ;
+		border: 1px solid #CCCCCC ;
+		border-radius: 0px 0px 3px 3px ;
+		display: none ;
+		left: 0px ;
+		list-style-type: none ;
+		margin: 0px 0px 0px 0px ;
+		padding: 0px 0px 0px 0px ;
+		position: absolute ;
+		right: 0px ;
+		top: 100% ;
+		z-index: 999999 ;
+	}
+
+	li.dropdown-option {
+		border-bottom: 1px solid #CCCCCC ;
+		cursor: pointer ;
+		margin: 0px 0px 0px 0px ;
+		padding: 0px 0px 0px 0px ;
+		position: relative ;
+
+		&.dropdown-selection {}
+
+		&:last-child {
+			border-bottom-width: 0px ;
+		}
+	}
+
+	div.dropdown-label,
+	li.dropdown-label {
+		padding: 9px 10px 7px 10px ;
+		position: relative ;
+	}
+
+	// div.m-dropdown -- variations.
+	
+	&.dropdown-open {
+		div.dropdown-root {
+			border-bottom-width: 0px ;
+			border-radius: 3px 3px 0px 0px ;
+		}
+
+		ul.dropdown-options {
+			display: block ;
+		}
+	}
+
+	&.dropdown-caret {
+		div.dropdown-root {
+			padding-right: 30px ;
+
+			&:after {
+				border-left: 5px solid transparent ;
+				border-right: 5px solid transparent ;
+				border-top: 5px solid #AAAAAA ;
+				content: "" ;
+				height: 0px ;
+				margin-top: -2px ;
+				position: absolute ;
+				right: 10px ;
+				top: 50% ;
+				width: 0px ;
+			}
+		}
+	}
+} // END: div.m-dropdown.
+
+
+// Demo-specific variations.
+div.m-dropdown {
+	margin: 20px 0px 20px 0px ;
+
+	div.dropdown-root {
+		div.dropdown-label {
+			&.dropdown-placeholder {
+				color: #999999 ;
+				font-style: italic ;
+			}
+		}
+	}
+
+	ul.dropdown-options {
+		box-shadow: 1px 1px 0px #DADADA ;
+	}
+
+	li.dropdown-option {
+		&.dropdown-label:hover {
+			background-color: #FAFAFA ;
+		}
+
+		&.dropdown-selection {
+			background-color: #FFFFCC ;
+			font-weight: bold ;
+			padding-left: 27px ;
+
+			&:before {
+				content: "\00BB" ;
+				left: 10px ;
+				line-height: 32px ;
+				position: absolute ;
+				top: 0px ;
+			}
+		}
+
+		&.group.all,
+		&.group.none {
+			border-left: 4px solid #CCCCCC ;
+			color: #333333 ;
+		}
+	}
+
+	&.ng-invalid-required {
+		div.dropdown-root {
+			div.dropdown-label {
+				background-color: #FFEEEE ;
+				color: #CC0000 ;
+			}
+		}
+	}
+}
