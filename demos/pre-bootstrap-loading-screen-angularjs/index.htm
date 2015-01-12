@@ -1,0 +1,228 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Creating A Pre-Bootstrap Loading Screen In AngularJS
+	</title>
+</head>
+<body ng-controller="AppController">
+
+	<!-- 
+		BEGIN: App-Loading Screen. 
+		--
+		Until the AngularJS application code is loaded and bootstrapped, this is just
+		"static HTML." Meaning, the [class-based] directive, "mAppLoading", won't 
+		actually do anything until the application is initialized. As such, we'll give 
+		it just enough CSS to "fail open"; then, when the AngularJS app loads, the
+		directive will run and we'll remove this loading screen.
+		
+		NOTES ON ANIMATION:
+
+		When the AngularJS application is loaded and starts bootstrapping, all 
+		animations are disabled until all the routing information and templating 
+		information is loaded AND at least two digests have run (in order to prevent 
+		a flurry of animation activity). As such, we can't animate the root of the 
+		directive. Instead, we have to add "ngAnimateChildren" to the root element 
+		and then animate the inner container. The "ngAnimateChildren" directive allows 
+		us to override the animation-blocking within the bounds of our directive, which
+		is fine since it only runs once.
+	-->
+	<div class="m-app-loading" ng-animate-children>
+
+		<!--
+			HACKY CODE WARNING: I'm putting Style block inside directive so that it 
+			will be removed from the DOM when we remove the directive container.
+		-->
+		<style type="text/css">
+
+			div.m-app-loading {
+				position: fixed ;
+			}
+
+			div.m-app-loading div.animated-container {
+				background-color: #333333 ;
+				bottom: 0px ;
+				left: 0px ;
+				opacity: 1.0 ;
+				position: fixed ;
+				right: 0px ;
+				top: 0px ;
+				z-index: 999999 ;
+			}
+
+			/* Used to initialize the ng-leave animation state. */
+			div.m-app-loading div.animated-container.ng-leave {
+				opacity: 1.0 ;
+				transition: all linear 200ms ;
+					-webkit-transition: all linear 200ms ;
+			}
+
+			/* Used to set the end properties of the ng-leave animation state. */
+			div.m-app-loading div.animated-container.ng-leave-active {
+				opacity: 0 ;
+			}
+
+			div.m-app-loading div.messaging {
+				color: #FFFFFF ;
+				font-family: monospace ;
+				left: 0px ;
+				margin-top: -37px ;
+				position: absolute ;
+				right: 0px ;
+				text-align: center ;
+				top: 50% ;
+			}
+
+			div.m-app-loading h1 {
+				font-size: 26px ;
+				line-height: 35px ;
+				margin: 0px 0px 20px 0px ;
+			}
+
+			div.m-app-loading p {
+				font-size: 18px ;
+				line-height: 14px ;
+				margin: 0px 0px 0px 0px ;
+			}
+
+		</style>
+		
+
+		<!-- BEGIN: Actual animated container. -->
+		<div class="animated-container">
+
+			<div class="messaging">
+
+				<h1>
+					App is Loading
+				</h1>
+
+				<p>
+					Please stand by for your ticket to awesome-town!
+				</p>
+
+			</div>
+
+		</div>
+		<!-- END: Actual animated container. -->
+
+	</div>
+	<!-- END: App-Loading Screen. -->
+
+
+
+	<h1>
+		Creating A Pre-Bootstrap Loading Screen In AngularJS
+	</h1>
+
+	<p>
+		You have {{ friends.length }} friends:
+	</p>
+
+	<ul>
+		<li ng-repeat="friend in friends">
+
+			{{ friend }}
+
+		</li>
+	</ul>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.3.8.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs/angular-animate-1.3.8.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [ "ngAnimate" ] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// SIMULATING NETWORK LATENCY AND LOAD TIME. We haven't included the ngApp 
+		// directive since we're going to manually bootstrap the application. This is to
+		// give the  page a delay, which it wouldn't normally have with such a small app.
+		setTimeout(
+			function asyncBootstrap() {
+
+				angular.bootstrap( document, [ "Demo" ] );
+
+			},
+			( 2 * 1000 )
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I control the root of the application.
+		app.controller(
+			"AppController",
+			function( $scope ) {
+
+				console.log( "App Loaded!", $scope );
+
+				$scope.friends = [ "Kim", "Sarah", "Tricia" ];
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// This CSS class-based directive controls the pre-bootstrap loading screen. By
+		// default, it is visible on the screen; but, once the application loads, we'll 
+		// fade it out and remove it from the DOM. 
+		// --
+		// NOTE: Normally, I would probably just jQuery to fade-out the container; but,
+		// I thought this would be a nice moment to learn a bit more about AngularJS 
+		// animation. As such, I'm using the ng-leave workflow to learn more about the
+		// ngAnimate module.
+		app.directive(
+			"mAppLoading",
+			function( $animate ) {
+
+				// Return the directive configuration.
+				return({
+					link: link,
+					restrict: "C"
+				});
+
+
+				// I bind the JavaScript events to the scope.
+				function link( scope, element, attributes ) {
+
+					// Due to the way AngularJS prevents animation during the bootstrap 
+					// of the application, we can't animate the top-level container; but,
+					// since we added "ngAnimateChildren", we can animated the inner 
+					// container during this phase.
+					// --
+					// NOTE: Am using .eq(1) so that we don't animate the Style block.
+					$animate.leave( element.children().eq( 1 ) ).then(
+						function cleanupAfterAnimation() {
+
+							// Remove the root directive element.
+							element.remove();
+
+							// Clear the closed-over variable references.
+							scope = element = attributes = null;
+
+						}
+					);
+					
+				}
+
+			}
+		);	
+
+	</script>
+
+</body>
+</html>
