@@ -1,0 +1,102 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Exploring One-Time Bindings In AngularJS 1.3
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		Exploring One-Time Bindings In AngularJS 1.3
+	</h1>
+
+	<p>
+		<em>View the console.</em>
+	</p>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.3.8.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I control the root of the application.
+		app.controller(
+			"AppController",
+			function( $scope, $parse, $timeout ) {
+
+				// The one-time binding feature isn't one thing, exactly. It's the 
+				// interplay between parsed expressions and $watch() bindings. An 
+				// expression will be flagged as a "one-time" expression if it starts
+				// with "::". The "::" is not part of the expression - it gets stripped
+				// out before AngularJS actually parses the expression.
+				var accessor = $parse( "::( 'My Friend, ' + friend )" );
+
+
+				// Now that we have our parsed expression (as an accessor object), we can
+				// test its functionality both when accessed directly (as a function) and
+				// when consumed in a $watch() binding. 
+				$scope.friend = "Kim";
+
+				console.log( "From parse:", accessor( $scope ) );
+
+				$scope.$watch( 
+					accessor,
+					function handleModelChange( newValue ) {
+
+						console.log( "From watch:", newValue );
+
+					}
+				);
+
+				// For the first watch binding, we're passing in the already-parsed 
+				// expression; but, you can use the one-time binding syntax directly in 
+				// the $watch() binding, as this value is simply passed to $parse() 
+				// service behind the scenes.
+				$scope.$watch(
+					"::friend",
+					function handleModelChange( newValue ) {
+
+						console.log( "From watch (2):", newValue );
+
+					}
+				);
+
+
+				// Change the value at a later point in time (to make sure we're not in 
+				// the same digest as the Controller body).
+				$timeout(
+					function asyncProcessing() {
+
+						// NOTE: This change in $scope.friend would normally trigger the 
+						// the $watch() binding above; but when you look at the console
+						// output, you will see that the $watch() callback is only 
+						// invoked once, for the initial configuration (so long as it 
+						// doesn't result in an undefined value).
+						$scope.friend = "Sarah";
+
+						console.log( "From parse:", accessor( $scope ) );
+
+					},
+					10
+				);
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
