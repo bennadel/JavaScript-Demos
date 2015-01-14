@@ -1,0 +1,102 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		One-Time Data Bindings For Object Literal Expressions In AngularJS 1.3
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		One-Time Data Bindings For Object Literal Expressions In AngularJS 1.3
+	</h1>
+
+	<p>
+		<a ng-click="setValue1()">Set Value 1</a>
+		&mdash;
+		<a ng-click="setValue2()">Set Value 2</a>
+	</p>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.3.8.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I control the root of the application.
+		app.controller(
+			"AppController",
+			function( $scope ) {
+
+				// Setup a one-time binding for a simple string value.
+				$scope.$watch(
+					"::watchedValue1",
+					function handleModelChange( newValue ) {
+
+						console.log( "String:", newValue );
+
+					}
+				);
+
+				// Setup a one-time binding for an object literal expression (think 
+				// ngClass and ngStyle directives). In this case, we have two undefined
+				// key-values that will be defined independently of each other.
+				$scope.$watch(
+					"::{ key1: watchedValue1, key2: watchedValue2 }",
+					function handleModelChange( newValue ) {
+
+						console.log( "Object:", newValue );
+
+					},
+
+					// Deep equality, otherwise it's a new object for every digest 
+					// comparison and will cause an infinite digest loop.
+					// --
+					// NOTE: This has NOTHING TO DO with the one-time bindings. This is
+					// just how object-literal watch-bindings need to work.
+					true
+				);
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// Define / increment the first value (used by string and object literal).
+				$scope.setValue1 = function() {
+
+					console.info( "Incrementing value 1" );
+
+					$scope.watchedValue1 = ( ++$scope.watchedValue1 || 1 );
+
+				};
+
+
+				// Define / increment the second value (used only by object literal).
+				$scope.setValue2 = function() {
+
+					console.info( "Incrementing value 2" );
+
+					$scope.watchedValue2 = ( ++$scope.watchedValue2 || 1 );
+
+				};
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>

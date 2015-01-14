@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [One-Time Data Bindings For Object Literal Expressions In AngularJS 1.3](http://bennadel.github.io/JavaScript-Demos/demos/object-literal-one-time-binding-angularjs/)
 * [Exploring One-Time Bindings In AngularJS 1.3](http://bennadel.github.io/JavaScript-Demos/demos/parse-one-time-binding-angularjs/)
 * [Creating A Pre-Bootstrap Loading Screen In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/pre-bootstrap-loading-screen-angularjs/)
 * [Creating An HTML-Based Select Menu In AngularJS Using ngModel And ngModelController](http://bennadel.github.io/JavaScript-Demos/demos/dropdown-ng-model-angularjs/)
