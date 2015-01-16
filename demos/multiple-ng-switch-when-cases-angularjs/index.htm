@@ -1,0 +1,87 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Binding Multiple ngSwitchWhen Cases To The Same Value In AngularJS
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		Binding Multiple ngSwitchWhen Cases To The Same Value In AngularJS
+	</h1>
+
+	<!--
+		Notice that we have multiple ngSwitchWhen "case" statements that all bind to 
+		the same value in the ngSwitch directive.
+	-->
+	<ul ng-switch="showingEven">
+		<li ng-switch-when="false">
+			1 <em>is odd</em>
+		</li>
+		<li ng-switch-when="true">
+			2 <em>is even</em>
+		</li>
+		<li ng-switch-when="false">
+			3 <em>is odd</em>
+		</li>
+		<li ng-switch-when="true">
+			4 <em>is even</em>
+		</li>
+		<li ng-switch-when="false">
+			5 <em>is odd</em>
+		</li>
+		<li ng-switch-when="true">
+			6 <em>is even</em>
+		</li>
+	</ul>
+
+	<p>
+		<a ng-click="toggleEvenOdd()">Toggle Even / Odd</a>
+	</p>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.3.8.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I control the root of the application.
+		app.controller(
+			"AppController",
+			function( $scope ) {
+
+				// I determine if we're showing the even elements (or the odd by omission).
+				$scope.showingEven = false;
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I toggle between showing odd and show even items.
+				$scope.toggleEvenOdd = function() {
+
+					$scope.showingEven = ! $scope.showingEven;
+
+				};
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>

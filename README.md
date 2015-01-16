@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Binding Multiple ngSwitchWhen Cases To The Same Value In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/multiple-ng-switch-when-cases-angularjs/)
 * [ngSwitchWhen Priority Is Higher Than ngRepeat Priority In AngularJS 1.3](http://bennadel.github.io/JavaScript-Demos/demos/ng-switch-when-angularjs-1.3/)
 * [One-Time Data Bindings For Object Literal Expressions In AngularJS 1.3](http://bennadel.github.io/JavaScript-Demos/demos/object-literal-one-time-binding-angularjs/)
 * [Exploring One-Time Bindings In AngularJS 1.3](http://bennadel.github.io/JavaScript-Demos/demos/parse-one-time-binding-angularjs/)
