@@ -1,0 +1,103 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		ngSwitchWhen Priority Is Higher Than ngRepeat Priority In AngularJS 1.3
+	</title>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		ngSwitchWhen Priority Is Higher Than ngRepeat Priority In AngularJS 1.3
+	</h1>
+
+	<h2>
+		Friends
+	</h2>
+
+	<ul ng-switch="!! friends">
+
+		<!-- Data is still loading. -->
+		<li ng-switch-when="false">
+
+			<em>Loading data...</em>
+
+		</li>
+
+		<!-- 
+			Data has loaded and is ready to render. 
+			-- 
+			As of AngularJS 1.3, ngSwitchWhen has a priority of 1,200, which is higher
+			than ngRepeat (which has priority 1,000). As such, the ngSwitchWhen will
+			determine whether or not the LI element is ultimately linked. Then, once it's
+			linked, the ngRepeat directive will determine if it's repeatedly cloned.
+
+			PRIOR to AngularJS 1.3, the ngSwitchWhen would have linked AFTER the 
+			ngRepeat. However, since it transcludes its content and then gets it linked 
+			in the context of the ngSwitch Scope, you end up bypassing the ngRepeat 
+			scope for the second transclusion... which is only PART of what makes double-
+			transclusion a difficult use-case (in this case).
+		-->
+		<li
+			ng-switch-when="true"
+			ng-repeat="friend in friends">
+
+			{{ friend.name }}
+
+		</li>
+	</div>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.3.8.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I control the root of the application.
+		app.controller(
+			"AppController",
+			function( $scope, $timeout ) {
+
+				$scope.friends = null;
+
+
+				// Defer the definition of the data so that we can simulate a loading
+				// state while data "comes over the wire."
+				$timeout(
+					function deferLoading() {
+
+						$scope.friends = [
+							{
+								id: 1, 
+								name: "Sarah"
+							},
+							{
+								id: 2, 
+								name: "Tricia"
+							},
+							{
+								id: 3, 
+								name: "Kim"
+							}
+						];
+
+					},
+					( 2 * 1000 )
+				);
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
