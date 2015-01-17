@@ -1,0 +1,234 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Preventing Animation During The Initial Render Of ngRepeat In AngularJS
+	</title>
+
+	<style type="text/css">
+
+		a[ ng-click ] {
+			color: red ;
+			cursor: pointer ;
+			text-decoration: underline ;
+			user-select: none ;
+				-moz-user-select: none ;
+				-webkit-user-select: none ;
+		}
+
+		li.friend.ng-enter {
+			opacity: 0.2 ;
+			padding-left: 30px ;
+			transition: all ease 250ms ;
+		}
+
+		li.friend.ng-enter-active {
+			opacity: 1.0 ;
+			padding-left: 0px ;
+		}
+
+	</style>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		Preventing Animation During The Initial Render Of ngRepeat In AngularJS
+	</h1>
+
+	<h2>
+		Friends
+	</h2>
+
+	<form ng-submit="processForm()">
+
+		<input ng-model="form.name" type="text" />
+		<input type="submit" value="Add Friend" />
+
+	</form>
+
+	<!--
+		In order to prevent the initial ngRepeat render from animating each ngRepeat
+		clone, we have to hide the parent container (UL) until the ngRepeat data is 
+		actually available. This way, when the data is available, we'll show the 
+		container which, while instant, will get flagged as "animating". This will
+		prevent the ngRepeat directive from animating its elements during the initial
+		render of the friends collection.
+
+		Take care that not all "show" directives block / disable nested animations. 
+		Class-based transition animations like ngShow and ngHide will not block or 
+		cancel existing or successive animations. As such, using ngShow would not 
+		prevent the ngRepeat animation from happening on the first load.
+		--
+		NOTE: I am using the term "initial render" very loosely to define the visual
+		rendering of the (not the initial linking of the directive).
+	-->
+	<ul ng-if="friends.length">
+
+		<!-- These will animate-in using CSS class-based animations. -->
+		<li 
+			ng-repeat="friend in friends track by friend.id"
+			class="friend">
+
+			{{ friend.name }}
+
+		</li>
+
+	</ul>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.3.8.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs/angular-animate-1.3.8.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [ "ngAnimate" ] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I control the root of the application.
+		app.controller(
+			"AppController",
+			function( $scope, friendService ) {
+
+				// I will hold the collection of friends to render.
+				$scope.friends = null;
+
+				// I hold the ngModel data.
+				$scope.form = {
+					name: ""
+				};
+
+				// Initialize the local data store.
+				loadRemoteData();
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I process the form, adding a new friend.
+				$scope.processForm = function() {
+
+					if ( ! $scope.form.name ) {
+
+						return;
+
+					}
+
+					friendService.addFriend( $scope.form.name )
+						.then( loadRemoteData )
+					;
+
+					$scope.form.name = "";
+
+				};
+
+
+				// I load the friends collection from the remote repository.
+				function loadRemoteData() {
+
+					friendService.getFriends()
+						.then(
+							function handleResolve( friends ) {
+
+								$scope.friends = friends;
+
+							}
+						)
+					;
+				}
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I provide access to the "remote" friend repository. 
+		// --
+		// NOTE: Obviously, this is not a remote service; but, I am putting the "get"
+		// behind a $timeout() so that we can see a bit of latency, which is where the
+		// animations need to be a bit more thoughtful.
+		app.factory(
+			"friendService",
+			function( $q, $timeout ) {
+
+				// Default our internal collection.
+				var friends = [
+					{
+						id: 1,
+						name: "Sarah"
+					},
+					{
+						id: 2,
+						name: "Heather"
+					}
+				];
+
+				// Return the public API.
+				return({
+					addFriend: addFriend,
+					getFriends: getFriends
+				});
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I add a friend with the given name and return the new ID (promise).
+				function addFriend( name ) {
+
+					var friend = {
+						id: ( new Date() ).getTime(),
+						name: name
+					};
+
+					friends.push( friend );
+
+					return( $q.when( friend.id ) );
+
+				}
+
+
+				// I get all the friends (promise).
+				function getFriends() {
+
+					var deferred = $q.defer();
+
+					$timeout(
+						function() {
+
+							// NOTE: Return a COPY of the collection so that we don't
+							// break encapsulation and allow external forces to mutate
+							// our internal collection.
+							deferred.resolve( angular.copy( friends ) );
+
+						},
+						350,
+
+						// We don't need to trigger a digest - $q will do that for us 
+						// when we resolve the deferred value.
+						false
+					);
+
+					return( deferred.promise );
+
+				}
+			}
+		);
+
+	</script>
+
+</body>
+</html>
