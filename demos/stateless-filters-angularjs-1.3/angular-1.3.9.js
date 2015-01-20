@@ -16711,7 +16711,7 @@ function createPredicateFn(expression, comparator, matchAgainstAnyProp) {
       expected = lowercase('' + expected);
 
 
-console.log( "Executing deep-copy compare: [", actual, "] vs. [", expected, "]" );
+console.log( "Executing deep-compare: [", actual, "] vs. [", expected, "]" );
 
 
       return actual.indexOf(expected) !== -1;
