@@ -1,0 +1,129 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Stateless Filters Don't Apply Objects, Arrays, or ngRepeat In AngularJS 1.3
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		Stateless Filters Don't Apply Objects, Arrays, or ngRepeat In AngularJS 1.3
+	</h1>
+
+	<ul>
+		<!--
+			For this ngRepeat directive, we'll be using the native filter() filter. 
+			This will limit the collection to objects that have a value that matches
+			the given input query.
+		-->
+		<li ng-repeat=" friend in friends | filter:query track by friend.id">
+
+			{{ friend.name }}
+
+		</li>
+	</ul>
+
+	<p>
+		<!-- 
+			This does nothing but trigger a new digest (implicitly). We're doing this
+			to see if the new digest triggers filter activity above.
+		-->
+		<a ng-click="triggerDigest()">Trigger digest</a>
+	</p>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="./angular-1.3.9.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I control the root of the application.
+		app.controller(
+			"AppController",
+			function( $scope, $timeout ) {
+
+				// We'll be filtering on values that match "ah".
+				$scope.query = "ah";
+
+				// Start out with our default collection. We'll be searching for values
+				// that match the query "ah". To start, only "Sarah" will match.
+				$scope.friends = [
+					{
+						id: 1,
+						name: "Tricia",
+						favoriteThings: [ "Documentaries", "Cats" ]
+					},
+					{
+						id: 2,
+						name: "Sarah",
+						favoriteThings: [ "Action Movies", "Cats" ]
+					},
+					{
+						id: 3,
+						name: "Joanna",
+						favoriteThings: [ "Romantic Comedies", "Dogs" ]
+					}
+				];
+
+				
+				// After some time, let's alter Tricia's name to end with "ah". If the 
+				// filter is being constantly applied, then this will cause Trici"ah" to 
+				// show up in the filtered list.
+				$timeout(
+					function() {
+
+						console.info( "Changing name. . . . Triciah" );
+
+						$scope.friends[ 0 ].name = "Triciah";
+
+					},
+					1000
+				);
+
+
+				// After some time, let's alter Joanna's name to end with "ah". If the
+				// filter is being constantly applied, then this will cause Joann"ah" to
+				// show up in the filtered list.
+				$timeout(
+					function() {
+
+						console.info( "Changing name. . . . Joannah" );
+
+						$scope.friends[ 2 ].name = "Joannah";
+
+					},
+					3000
+				);
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// The ng-click directive will implicitly trigger a new digest.
+				$scope.triggerDigest = function() {
+					
+					console.info( "Triggering digest. . . ." );
+
+				};
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>

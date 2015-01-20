@@ -1,0 +1,104 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Stateless Filters Don't Apply Objects, Arrays, or ngRepeat In AngularJS 1.3
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		Stateless Filters Don't Apply Objects, Arrays, or ngRepeat In AngularJS 1.3
+	</h1>
+
+	<p>
+		{{ friend | uk:field }}
+	</p>
+
+	<p>
+		<a ng-click="triggerDigest()">Trigger digest</a>
+	</p>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="./angular-1.3.9.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I control the root of the application.
+		app.controller(
+			"AppController",
+			function( $scope, $timeout ) {
+
+				$scope.friend = {
+					id: 1,
+					name: "Tricia"
+				};
+
+				$scope.field = "name";
+
+				$timeout(
+					function() {
+
+						$scope.friend.name = "Joanna";
+
+					},
+					1000
+				);
+
+				$timeout(
+					function() {
+
+						$scope.friend.name = "Sarah";
+
+					},
+					3000
+				);
+
+
+				$scope.triggerDigest = function() {
+					console.info( "Triggering Digest. . . ." );
+				};
+
+			}
+		);
+
+
+		app.filter(
+			"uk",
+			function() {
+
+				return( uk );
+
+				function uk( item, key ) {
+
+					console.log( "Applying filter for", key );
+
+					if ( ! item[ key ] ) {
+
+						return( "" );
+
+					}
+
+					return( item[ key ].toUpperCase() );
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
