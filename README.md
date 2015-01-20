@@ -10,7 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
-* [Stateless Filters Don't Apply Objects, Arrays, or ngRepeat In AngularJS 1.3](http://bennadel.github.io/JavaScript-Demos/demos/stateless-filters-angularjs-1.3/)
+* [Stateless Filters Don't Apply To Objects, Arrays, or ngRepeat In AngularJS 1.3](http://bennadel.github.io/JavaScript-Demos/demos/stateless-filters-angularjs-1.3/)
 * [Preventing Animation During The Initial Render Of ngRepeat In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/initial-ng-repeat-animation-angularjs/)
 * [Binding Multiple ngSwitchWhen Cases To The Same Value In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/multiple-ng-switch-when-cases-angularjs/)
 * [ngSwitchWhen Priority Is Higher Than ngRepeat Priority In AngularJS 1.3](http://bennadel.github.io/JavaScript-Demos/demos/ng-switch-when-angularjs-1.3/)
