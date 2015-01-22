@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Staggering ngRepeat Animations In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/ng-repeat-stagger-animation-angularjs/)
 * [Watching A Collection Of Expressions Using Scope.$watchGroup() In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/watch-group-angularjs/)
 * [Stateless Filters Don't Apply To Objects, Arrays, or ngRepeat In AngularJS 1.3](http://bennadel.github.io/JavaScript-Demos/demos/stateless-filters-angularjs-1.3/)
 * [Preventing Animation During The Initial Render Of ngRepeat In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/initial-ng-repeat-animation-angularjs/)

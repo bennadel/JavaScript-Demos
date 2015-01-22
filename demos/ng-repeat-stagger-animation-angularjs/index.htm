@@ -1,0 +1,178 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Staggering ngRepeat Animations In AngularJS
+	</title>
+
+	<style type="text/css">
+
+		a[ ng-click ] {
+			color: red ;
+			cursor: pointer ;
+			text-decoration: underline ;
+			user-select: none ;
+				-moz-user-select: none ;
+				-webkit-user-select: none ;
+		}
+
+		li.friend.ng-enter {
+			opacity: 0.2 ;
+			padding-left: 30px ;
+			transition: all ease 250ms ;
+		}
+
+		li.friend.ng-enter-stagger {
+			transition-delay: 0.1s ;
+				-webkit-transition-delay: 0.1s ;
+
+			/* 
+				FROM THE DOCUMENTATION:
+				In case the stagger doesn't work then these two values must be set 
+				to 0 to avoid an accidental CSS inheritance.
+			*/
+			transition-duration: 0s ;
+				-webkit-transition-duration: 0s ;
+		}
+
+		li.friend.ng-enter-active {
+			opacity: 1.0 ;
+			padding-left: 0px ;
+		}
+
+	</style>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		Staggering ngRepeat Animations In AngularJS
+	</h1>
+
+	<h2>
+		Friends
+	</h2>
+
+	<p>
+		<a ng-click="addFriends()">Add Friends</a>
+		&ndash;
+		<a ng-click="resetFriends()">Reset Friends</a>
+	</p>
+
+	<ul>
+		<!--
+			We are going to be animating the LI elements on to the page with a slight
+			delay to create a staggering effect. This will only affect the "subsequent"
+			additions since the initial page render will block the initial ngRepeat 
+			animation during linking.
+			--
+			NOTE: Normally, I would avoid any filters (orderBy) on the ngRepeat. But, I
+			am using it here simply to make the demo a bit more interesting, visually.
+		-->
+		<li 
+			ng-repeat="friend in friends | orderBy:'name' track by friend.id"
+			class="friend">
+
+			{{ friend.name }}
+
+		</li>
+	</ul>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.3.8.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs/angular-animate-1.3.8.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [ "ngAnimate" ] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I control the root of the application.
+		app.controller(
+			"AppController",
+			function( $scope ) {
+
+				// I hold the collection of friends to render.
+				$scope.friends = loadFriends();
+
+				// Some possible names for the demo.
+				var names = [ 
+					"Olivia", "Ava", "Isabella", "Mia", "Lily", "Madelyn", "Madison", 
+					"Chloe", "Charlotte", "Aubrey", "Leah", "Abigail", "Kaylee", 
+					"Layla", "Harper", "Ella", "Amelia", "Arianna", "Riley", "Aria", 
+					"Hailey", "Hannah", "Maria", "Evelyn", "Addison", "Mackenzie"
+				];
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I add three more friends to the rendered list.
+				$scope.addFriends = function() {
+
+					var i = 3;
+
+					while ( i-- && names.length ) {
+
+						$scope.friends.push({
+							id: ( $scope.friends.length + 1 ),
+							name: names.shift()
+						});
+
+					}
+
+				};
+
+
+				// I reset the list of friends to the original set.
+				$scope.resetFriends = function() {
+
+					$scope.friends = loadFriends();
+
+				};
+
+
+				// ---
+				// PRIVATE METHODS.
+				// ---
+
+
+				// I build (and return) the original list of friends.
+				function loadFriends() {
+
+					return([
+						{
+							id: 1, 
+							name: "Kim"
+						},
+						{
+							id: 2, 
+							name: "Heather"
+						},
+						{
+							id: 3,
+							name: "Tara"
+						},
+						{
+							id: 4,
+							name: "Anna"
+						}
+					]);
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
