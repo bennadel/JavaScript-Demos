@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Providing State-Transformation Triggers Using $location In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/location-state-transformation-angularjs/)
 * [Staggering ngRepeat Animations In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/ng-repeat-stagger-animation-angularjs/)
 * [Watching A Collection Of Expressions Using Scope.$watchGroup() In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/watch-group-angularjs/)
 * [Stateless Filters Don't Apply To Objects, Arrays, or ngRepeat In AngularJS 1.3](http://bennadel.github.io/JavaScript-Demos/demos/stateless-filters-angularjs-1.3/)
