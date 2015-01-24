@@ -1,0 +1,138 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		$route Must Be Injected In Order To Enable The $routeChangeSuccess Event In AngularJS
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		$route Must Be Injected In Order To Enable The $routeChangeSuccess Event In AngularJS
+	</h1>
+
+	<!--
+		These link are here just to change the $location path, which should 
+		trigger a $routeChangeSuccess event. 
+	-->
+	<p>
+		<a href="#/foo">Foo</a> &mdash;
+		<a href="#/bar">Bar</a> &mdash;
+		<a href="#/baz">Baz</a>
+	</p>
+
+	<p>
+		<a ng-click="includeSubController()">Include the $route service</a>
+
+		<!--
+			This conditionally-included controller does nothing but force 
+			AngularJS to instantiate and inject the $route service.
+		-->
+		<span 
+			ng-if="showingSubController"
+			ng-controller="SubController">
+			&mdash;
+			$route is now included.
+		</span>
+	</p>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.3.8.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs/angular-route-1.3.8.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [ "ngRoute" ] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I configure the route provider.
+		app.config(
+			function( $routeProvider ) {
+
+				$routeProvider.when( "/:thing", {} );
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I control the root of the application.
+		app.controller(
+			"AppController",
+			function( $scope, $routeParams, $location ) {
+
+				// I determine if the sub-controller is visible. 
+				$scope.showingSubController = false;
+
+				// I log out the changes to the location as the user navigates around
+				// the AngularJS application.
+				$scope.$on(
+					"$locationChangeSuccess",
+					function handleLocationChangeEvent( event ) {
+
+						console.log( "Location Change:", $location.path() );
+
+					}
+				);
+
+				// I log out changes to the route as the user navigates around the 
+				// AngularJS application. 
+				$scope.$on(
+					"$routeChangeSuccess",
+					function handleRouteChangeEvent( event ) {
+
+						console.log( "Route Change:", $routeParams );
+
+					}
+				);
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I toggle the sub-controller container which will cause the 
+				// sub-controller to be instantiated.
+				$scope.includeSubController = function() {
+
+					$scope.showingSubController = true;
+
+				};
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// This controller does nothing in the demo except for require $route which 
+		// forces AngularJS to call the $route provider and instantiate the routing
+		// service which will, in turn, enable the $routeChangeSuccess event.
+		app.controller(
+			"SubController",
+			function( $route ) {
+
+				console.warn( "$route has been injected, like a boss!" );
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>

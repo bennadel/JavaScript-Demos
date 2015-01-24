@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [$route Must Be Injected In Order To Enable The $routeChangeSuccess Event In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/route-must-be-injected-angularjs/)
 * [Providing State-Transformation Triggers Using $location In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/location-state-transformation-angularjs/)
 * [Staggering ngRepeat Animations In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/ng-repeat-stagger-animation-angularjs/)
 * [Watching A Collection Of Expressions Using Scope.$watchGroup() In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/watch-group-angularjs/)

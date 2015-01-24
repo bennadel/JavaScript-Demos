@@ -106,6 +106,9 @@
 
 				// If the user hits a route that can't be mapped, just redirect to a 
 				// known, valid route configuration.
+				// --
+				// NOTE: This will redirect the initial page request if no route is 
+				// present on page load.
 				$routeProvider.otherwise( "/500/300" );
 
 			}
