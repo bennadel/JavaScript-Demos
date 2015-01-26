@@ -1,0 +1,235 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Defining Post-View-Change Scroll Behavior Using $location in AngularJS
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		Defining Post-View-Change Scroll Behavior Using $location in AngularJS
+	</h1>
+
+	<!-- 
+		BEGIN: Nav. 
+	
+		In these navigational links, the path is mapped on to the view that should
+		be rendered (ie, "a" vs. "b") and the query string is then used to determine 
+		state transformation after the view is rendered.
+	-->
+	<div class="nav">
+
+		<div 
+			class="section"
+			ng-class="{ active: ( section == 'a' ) }">
+
+			<strong>Section A:</strong>
+
+			<a href="#/a">Normal</a>
+			<a href="#/a?scroll=same">Same</a>
+			<a href="#/a?scroll=500">500px</a>
+			<a href="#/a?scroll=1000">1,000px</a>
+
+		</div>
+
+		<div 
+			class="section"
+			ng-class="{ active: ( section == 'b' ) }">
+
+			<strong>Section B:</strong>
+			
+			<a href="#/b">Normal</a>
+			<a href="#/b?scroll=same">Same</a>
+			<a href="#/b?scroll=500">500px</a>
+			<a href="#/b?scroll=1000">1,000px</a>
+
+		</div>
+
+	</div>
+	<!-- END: Nav. -->
+
+
+	<!-- BEGIN: Views. -->
+	<div 
+		class="views" 
+		ng-switch="section">
+
+		<div 
+			ng-switch-when="a"
+			bn-view
+			class="view view-a">
+
+			<h2>
+				Section A
+			</h2>
+
+			Section a - 1.<br />Section a - 2.<br />Section a - 3.<br />Section a - 4.<br />
+			Section a - 5.<br />Section a - 6.<br />Section a - 7.<br />Section a - 8.<br />
+			Section a - 9.<br />Section a - 10.<br />Section a - 11.<br />Section a - 12.<br />
+			Section a - 13.<br />Section a - 14.<br />Section a - 15.<br />Section a - 16.<br />
+			Section a - 17.<br />Section a - 18.<br />Section a - 19.<br />Section a - 20.<br />
+
+		</div>
+
+		<div 
+			ng-switch-when="b" 
+			bn-view
+			class="view view-b">
+
+			<h2>
+				Section B
+			</h2>
+
+			Section b - 1.<br />Section b - 2.<br />Section b - 3.<br />Section b - 4.<br />
+			Section b - 5.<br />Section b - 6.<br />Section b - 7.<br />Section b - 8.<br />
+			Section b - 9.<br />Section b - 10.<br />Section b - 11.<br />Section b - 12.<br />
+			Section b - 13.<br />Section b - 14.<br />Section b - 15.<br />Section b - 16.<br />
+			Section b - 17.<br />Section b - 18.<br />Section b - 19.<br />Section b - 20.<br />
+			
+		</div>
+
+	</div>
+	<!-- END: Views. -->
+	
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.3.8.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs/angular-route-1.3.8.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [ "ngRoute" ] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// Configure the route provider.
+		app.config(
+			function( $routeProvider ) {
+
+				// Set up the route so that we can easily map the URL component on to 
+				// the "section" route parameter.
+				$routeProvider.when( "/:section", {} );
+				
+				// Default to section selection in case one is not being provided.
+				$routeProvider.otherwise( "/a" );
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I control the root of the application.
+		// --
+		// NOTE: While we are not referencing the $route service, we have to inject it or
+		// the "$routeChangeSuccess" event will never be fired (as AngularJS will only 
+		// create the $route service on-demand).
+		app.controller(
+			"AppController",
+			function( $scope, $route, $routeParams ) {
+
+				// I determine which section is rendered.
+				$scope.section = null;
+
+				// I update the rendered section to reflect the route configuration.
+				$scope.$on(
+					"$routeChangeSuccess",
+					function handleRouteChangeEvent( event ) {
+
+						// The $routeChangeSuccess event will fire even if the query
+						// string is the only thing that changes. As such, just ignore
+						// any events that don't result in an actual route-change.
+						if ( $scope.section === $routeParams.section ) {
+
+							return;
+
+						}
+
+						$scope.section = $routeParams.section;
+
+						console.log( "Route Changed:", $scope.section );
+
+					}
+				);
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I help transition the state of the currently rendered view.
+		app.directive(
+			"bnView",
+			function( $location ) {
+
+				// Return the directive configuration.
+				return({
+					link: link,
+					restrict: "A"
+				});
+
+
+				// I bind the JavaScript events to the local scope.
+				function link( scope, element, attributes ) {
+
+					// The current element is the "content" which is being scrolled 
+					// within the context of the parent. As such, we need to affect the
+					// scrolling on the parent element.
+					// --
+					// NOTE: It would probably be cleaner to put this directive directly
+					// on the parent element; but this approach keeps the demo simple.
+					var parentNode = element.parent()[ 0 ];
+
+					// Grab the "scroll" property out of the query string. This value 
+					// determines how we scroll the viewport. If no value is present, 
+					// we'll assume the viewport should scroll to the top.
+					var scroll = ( $location.search().scroll || "none" );
+
+					// Since the query string is only taken into account during the 
+					// linking phase, just remove it from the URL. This way, the user
+					// won't be tempted to play with it.
+					$location.search( "scroll", null );
+
+					// If none, then scroll to the top of the viewport.
+					if ( scroll === "none" ) {
+
+						return( parentNode.scrollTop = 0 );
+
+					}
+
+					// If same, then keep the viewport scrolled to the same position. 
+					// Here, we can just return because this is the natural behavior of
+					// the viewport (assuming some other directive didn't force a repaint
+					// while the content was will loading).
+					if ( scroll === "same" ) {
+
+						return;
+
+					}
+
+					// If we've made it this far, assume the provided scroll value is an
+					// integer - scroll the viewport appropriately. 
+					parentNode.scrollTop = parseInt( scroll, 10 );
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>

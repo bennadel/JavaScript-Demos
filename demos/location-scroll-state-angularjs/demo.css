@@ -1,0 +1,49 @@
+
+div.nav {
+	left: 20px ;
+	position: fixed ;
+	top: 90px ;
+}
+
+div.nav div.section:first-child {
+	margin-bottom: 20px ;
+}
+
+div.nav strong {
+	display: block ;
+	margin-bottom: 5px ;
+}
+
+div.nav a {
+	color: red ;
+	display: block ;
+	padding: 3px 3px 3px 12px ;
+	text-decoration: underline ;
+}
+
+div.nav div.section.active a {
+	color: #999999 ;
+}
+
+div.views {
+	border: 1px solid #CCCCCC ;
+	bottom: 30px ;
+	overflow: auto ;
+	position: fixed ;
+	left: 150px ;
+	top: 90px ;
+	width: 400px ;
+}
+
+div.views div.view {
+	line-height: 100px ;
+	padding: 1px 10px 1px 20px ;
+}
+
+div.views div.view-a {
+	border-left: 5px solid gold ;
+}
+
+div.views div.view-b {
+	border-left: 5px solid slateblue ;
+}
