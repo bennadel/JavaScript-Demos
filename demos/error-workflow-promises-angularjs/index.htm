@@ -1,0 +1,292 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Exploring Asynchronous Promise-Based Workflows In AngularJS
+	</title>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		Exploring Asynchronous Promise-Based Workflows In AngularJS
+	</h1>
+
+	<p>
+		<strong style="background-color: yellow ;">CAUTION</strong>: I wouldn't actually
+		put so much workflow coordination on the <em>client-side</em>. Instead, I would 
+		put all of this behind a single asynchronous call to the server API. I am doing 
+		this here - in AngularJS - because the framework is <strong>JavaScript</strong> and
+		has <strong>Promises</strong>. As such, it makes it really easy to test with; and, 
+		it makes it quite applicable to other asynchronous server-side technologies like Node.js.
+	</p>
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.3.8.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I control the root of the application.
+		app.controller(
+			"AppController",
+			function( $q, friendService, logService ) {
+
+				// As the asynchronous workflow executes, we'll want to keep track of
+				// these values, externally, so that we don't have to constantly pass
+				// them through each resolve and reject transformation.
+				var friendOne = null;
+				var friendTwo = null;
+
+				// The goal here is to create a friendship. This requires us to:
+				// --
+				// 1. Get each friend in question.
+				// 2. Apply superficial validation.
+				// 3. Make sure a friendship doesn't already exist.
+				// 4. Create the friendship.
+				// --
+				$q.all([
+					friendService.getFriend( 1 ), 
+					friendService.getFriend( 2 ) 
+					])
+					.then(
+						function handleFriendsResolve( friends ) {
+
+							friendOne = friends.shift();
+							friendTwo = friends.shift();
+
+							// Apply superficial validation.
+							if ( friendOne.likesMovies !== friendTwo.likesMovies ) {
+
+								return( $q.reject( "MovieIncompatibility" ) );
+
+							}
+
+							// If we've gotten this far, the superficial validation has
+							// completed. Now, we need to see if we can create a new 
+							// friendship. This is an interesting step because we want
+							// to proceed IF the existing friendship check FAILS and stop
+							// if the check passes (ie, the friendship already exists). 
+							// In order to do this, we have to create an intermediary 
+							// promise chain that will, essentially, swap the state of 
+							// the response for the next step in the asynchronous parent
+							// workflow.
+							var friendshipPromise = friendService.getFriendship( friendOne.id, friendTwo.id )
+								.then(
+									function handleResolve() {
+
+										// Since the friendship already exists, we don't
+										// want to try to re-create it. Return a rejected
+										// value so that the parent workflow will enter a
+										// rejected state.
+										return( $q.reject( "AlreadyExists" ) );
+
+									},
+									function handleReject() {
+
+										// This is rejecting because the friendship can't
+										// be found; but, that is good for us - it means 
+										// that we can move ahead with the creation of a
+										// new friendship. As such, initiate the 
+										// friendship creation request and then just pass 
+										// the resultant promise back into the parent,
+										// asynchronous workflow.
+										return( 
+											friendService.makeFriendship( friendOne.id, friendTwo.id )
+										);
+
+									}
+								)
+							;
+
+							// Return the pending result of our intermediary friendship
+							// check. The resolution of this will determine which 
+							// callback gets invoked on the next step.
+							return( friendshipPromise );				
+
+						}
+					)
+					.then(
+						function handleFriendshipResolve() {
+							
+							// Woot! The friendship record was created successfully.
+							console.log( "Friendship forged!" );
+							console.log( friendOne.name, "and", friendTwo.name );
+
+							// Don't include this call as part of the promise workflow.
+							// If the logging were to fail, we don't want to actually
+							// put the asynchronous workflow into a rejected state.
+							// --
+							// NOTE: The lack of Try/Catch here is because we are assuming
+							// that the log-service uses promises. 
+							logService.logEvent({
+								type: "friendship",
+								parameters: [ friendOne.id, friendTwo.id ]
+							});
+
+						}
+					)
+					.catch(
+						function handleReject( error ) {
+
+							// Something went wrong someone where in the asynchronous 
+							// workflow. Since none of the steps above have an error-
+							// handler, this could be do:
+							// --
+							// 1. At least one Friend failed to load.
+							// 2. The friends were superficially incompatible.
+							// 3. The friendship already existed. 
+							// 4. Unexpected network or server-side errors.
+							// --
+							console.warn( "Something went wrong." );
+							console.log( error );
+
+						}
+					)
+					.finally(
+						function handleFinally() {
+
+							// This method gets called regardless of whether or not the 
+							// overall asynchronous workflow was successful. It gives us
+							// a chance to lean up after ourselves. For now, let's just
+							// clean up closed-over variables.
+							$q = friendService = logService = friendOne = friendTwo = null;
+
+						}
+					)
+				; // END: Asynchronous workflow.
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I provide some promise-based access to the friends repository. 
+		// --
+		// CAUTION: These are not real access methods - they just provide immediately
+		// resolved or rejected values.
+		app.service(
+			"friendService",
+			function( $q ) {
+
+				// Return the public API.
+				return({
+					getFriend: getFriend,
+					getFriendship: getFriendship,
+					makeFriendship: makeFriendship
+				});
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I get the friend with the given ID.
+				function getFriend( id ) {
+
+					if ( id === 1 ) {
+
+						var friend = {
+							id: 1,
+							name: "Tricia",
+							likesMovies: true
+						};
+
+					} else if ( id === 2 ) {
+
+						var friend = {
+							id: 2,
+							name: "Sarah",
+							likesMovies: true
+						};
+
+					} else if ( id === 3 ) {
+
+						var friend = {
+							id: 3,
+							name: "Joanna",
+							likesMovies: false
+						};
+
+					} else {
+
+						return( $q.reject( "NotFound" ) );
+
+					}
+
+					return( $q.when( friend ) );
+
+				}
+
+
+				// I get the friendship between the given friend IDs.
+				function getFriendship( idOne, idTwo ) {
+
+					// return( $q.when( {} ) ); 
+
+					return( $q.reject( "NotFound" ) );
+
+				}
+
+
+				// I forge a new friendship between the given friend IDs.
+				function makeFriendship( idOne, idTwo ) {
+
+					// return( $q.reject( "UnexpectedError" ) );
+
+					return( $q.when( true ) );
+
+				}
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I provide a promise-based logging service.
+		// --
+		// CAUTION: These are not real access methods - they just provide immediately
+		// resolved or rejected values.
+		app.service(
+			"logService",
+			function( $q ) {
+
+				// Return the public API.
+				return({
+					logEvent: logEvent
+				});
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I log the given event to the remote repository.
+				function logEvent( event ) {
+
+					return( $q.reject( "NetworkError" ) );
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
