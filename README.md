@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Handling Top-Level Errors In A Promise Workflow In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/handling-pre-promise-errors-angularjs/)
 * [Exploring Asynchronous Promise-Based Workflows In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/error-workflow-promises-angularjs/)
 * [Defining Post-Route-Change Scroll Behavior Using $location in AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/location-scroll-state-angularjs/)
 * [$route Must Be Injected In Order To Enable The $routeChangeSuccess Event In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/route-must-be-injected-angularjs/)
