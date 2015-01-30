@@ -1,0 +1,233 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Monkey-Patching The $q Service With .fcall() In AngularJS
+	</title>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		Monkey-Patching The $q Service With .fcall() In AngularJS
+	</h1>
+
+	<p>
+		<em><storng>Note</strong>: This is not exactly the .fcall() method from Q. 
+		Rather, this is inspired by that concept.</em>
+	</p>
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.3.8.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I monkey-patch the .fcall() method into the root of the $q service. We have 
+		// to do this in a .run() block so that it will modify the $q service before any
+		// other component in the application needs it.
+		app.run(
+			function monkeyPatchQService( $q, $exceptionHandler ) {
+
+				// I invoke the given function using the given arguments. If the 
+				// invocation is successful, it will result in a resolved promise; if it
+				// throws an error, it will result in a rejected promise, passing the 
+				// error object through as the "reason."
+				// --
+				// The possible method signatures:
+				// --
+				// .fcall( methodReference )
+				// .fcall( methodReference, argsArray )
+				// .fcall( context, methodReference, argsArray )
+				// .fcall( context, methodName, argsArrray )
+				// .fcall( context, methodReference )
+				// .fcall( context, methodName )
+				$q.fcall = function() {
+
+					try {
+
+						var components = parseArguments( arguments );
+						var context = components.context;
+						var method = components.method;
+						var inputs = components.inputs;
+
+						return( $q.when( method.apply( context, inputs ) ) );
+
+					} catch ( error ) {
+
+						// We want to pass the error off to the core exception handler.
+						// But, we want to protect ourselves against any errors there. 
+						// While it is unlikely that this will error, if the app has 
+						// added an exception interceptor, it's possible something could
+						// go wrong.
+						try {
+
+							$exceptionHandler( error );
+
+						} catch ( loggingError ) {
+
+							// Nothing we can do here.
+
+						}
+
+						return( $q.reject( error ) );
+
+					}
+
+				};
+
+
+				// ---
+				// PRIVATE METHODS.
+				// ---
+
+
+				// I parse the .fcall() arguments into a normalized structure that is 
+				// ready for consumption.
+				function parseArguments( args ) {
+
+					// First, let's deal with the non-ambiguous arguments. If there are
+					// three arguments, we know exactly which each should be.
+					if ( args.length === 3 ) {
+
+						var context = args[ 0 ];
+						var method = args[ 1 ];
+						var inputs = args[ 2 ];
+
+						// Normalize the method reference.
+						if ( angular.isString( method ) ) {
+
+							method = context[ method ];
+
+						}
+
+						return({
+							context: context,
+							method: method,
+							inputs: inputs
+						});
+
+					}
+
+					// If we have only one argument to work with, then it can only be a
+					// direct method reference.
+					if ( args.length === 1 ) {
+
+						return({
+							context: null,
+							method: args[ 0 ],
+							inputs: []
+						});
+
+					}
+
+					// Now, we have to look at the ambiguous arguments. If w have 
+					// two arguments, we don't immediately know which of the following 
+					// it is:
+					// --
+					// .fcall( methodReference, argsArray )
+					// .fcall( context, methodReference )
+					// .fcall( context, methodName )
+					// --
+					// Since the args array is always passed as an Array, it means that
+					// we can determine the signature by inspecting the last argument. 
+					// If it's a function, then we don't have any argument inputs.
+					if ( angular.isFunction( args[ 1 ] ) ) {
+
+						return({
+							context: args[ 0 ],
+							method: args[ 1 ],
+							inputs: []
+						});
+
+					// And, if it's a string, then don't have any argument inputs.
+					} else if ( angular.isString( args[ 1 ] ) ) {
+
+						// Normalize the method reference.
+						return({
+							context: args[ 0 ],
+							method: args[ 0 ][ args[ 1 ] ],
+							inputs: []
+						});
+
+					// Otherwise, the last argument is the arguments input and we know,
+					// in that case, that we don't have a context object to deal with.
+					} else {
+
+						return({
+							context: null,
+							method: args[ 0 ],
+							inputs: args[ 1 ]
+						});
+
+					}
+
+				}
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I control the root of the application.
+		app.controller(
+			"AppController",
+			function( $q ) {
+
+				// Invoke the loadSomething() method with given arguments - .fcall() will
+				// return a promise even if the method invocation fails.
+				$q.fcall( loadSomething, [ 1, 2, 3 ] )
+					.then(
+						function handleResolve( value ) {
+
+							console.log( "Resolved!" );
+							console.log( value );
+
+						},
+						function handleReject( error ) {
+
+							console.log( "Rejected!" );
+							console.log( error );
+
+						}
+					)
+				;
+
+
+				// ---
+				// PRIVATE METHODS.
+				// ---
+
+
+				// I load some data and return a promise.
+				function loadSomething( a, b, c ) {
+
+					// Using this special case to demonstrate the FAILURE path that
+					// will raise an exception (to see if .fcall() can catch it).
+					if ( ( a === 1 ) && ( b === 2 ) && ( c === 3 ) ) {
+
+						throw( new Error( "InvalidArguments" ) );
+						
+					}
+
+					return( $q.when( "someValue" ) );
+
+				}
+				
+			}
+		);
+
+	</script>
+
+</body>
+</html>
