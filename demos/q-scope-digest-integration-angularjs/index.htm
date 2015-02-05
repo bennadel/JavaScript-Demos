@@ -198,7 +198,7 @@
 						element.click(
 							function( event ) {
 
-								console.info( "Resolving a promise." );
+								console.info( "Resolving an already-resolved promise." );
 
 								deferred.resolve( true );
 
@@ -324,7 +324,7 @@
 						element.click(
 							function( event ) {
 
-								console.info( "Notify pending promise." );
+								console.info( "Notifying a pending promise." );
 
 								deferred.notify( "update" );
 
@@ -360,7 +360,7 @@
 						element.click(
 							function( event ) {
 
-								console.info( "Notify resolved promise." );
+								console.info( "Notifying a resolved promise." );
 
 								deferred.notify( "update" );
 
