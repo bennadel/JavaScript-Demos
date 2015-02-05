@@ -24,8 +24,11 @@
 		<a bn-bind-unresolved>Bind to unresolved promise</a>
 		<a bn-bind-resolved>Bind to resolved promise</a>
 		<a bn-resolve>Resolve promise</a>
+		<a bn-re-resolve>Re-Resolve an already-resolved promise</a>
 		<a bn-resolve-chain>Resolved chained-promise</a>
 		<a bn-resolve-timeout-chain>Resolved timeout-chained-promise</a>
+		<a bn-notify>Notify a pending-promise</a>
+		<a bn-notify-resolved>Notify a resolved-promise</a>
 	</p>
 
 
@@ -174,6 +177,43 @@
 
 		// I test $q and $digest interactions.
 		app.directive(
+			"bnReResolve",
+			function( $q ) {
+
+				// In this demo, we're going to try to resolve an already-resolved 
+				// deferred value. Since a promise cannot be resolved (or rejected) more
+				// than once, this will NOT trigger a digest.
+				return({
+					link: function( scope, element ) {
+
+						var deferred = $q.defer();
+
+						// Resolve it ahead of time.
+						deferred.resolve();
+
+						// NOTE: We have to assign at least one promise handler 
+						// otherwise, AngularJS won't bother scheduling anything.
+						deferred.promise.then( angular.noop );
+
+						element.click(
+							function( event ) {
+
+								console.info( "Resolving a promise." );
+
+								deferred.resolve( true );
+
+							}
+						);
+
+					}
+				});
+
+			}
+		);
+
+
+		// I test $q and $digest interactions.
+		app.directive(
 			"bnResolveChain",
 			function( $q ) {
 
@@ -254,6 +294,75 @@
 								console.info( "Resolving a $timeout promise chain (4)." );
 
 								deferred.resolve( 50 );
+
+							}
+						);
+
+					}
+				});
+
+			}
+		);
+
+
+		// I test $q and $digest interactions.
+		app.directive(
+			"bnNotify",
+			function( $q, $timeout ) {
+
+				// In this demo, we're going to notify a pending deferred value. Since a
+				// notification may cause a view-model change, this will TRIGGER A DIGEST.
+				return({
+					link: function( scope, element ) {
+
+						var deferred = $q.defer();
+
+						// NOTE: We have to assign at least one promise handler 
+						// otherwise, AngularJS won't bother scheduling anything.
+						deferred.promise.then( angular.noop );
+
+						element.click(
+							function( event ) {
+
+								console.info( "Notify pending promise." );
+
+								deferred.notify( "update" );
+
+							}
+						);
+
+					}
+				});
+
+			}
+		);
+
+
+		// I test $q and $digest interactions.
+		app.directive(
+			"bnNotifyResolved",
+			function( $q, $timeout ) {
+
+				// In this demo, we're going to notify a pending deferred value. Since a
+				// notification may cause a view-model change, this will TRIGGER A DIGEST.
+				return({
+					link: function( scope, element ) {
+
+						var deferred = $q.defer();
+
+						// Resolve it ahead of time.
+						deferred.resolve();
+
+						// NOTE: We have to assign at least one promise handler 
+						// otherwise, AngularJS won't bother scheduling anything.
+						deferred.promise.then( angular.noop );
+
+						element.click(
+							function( event ) {
+
+								console.info( "Notify resolved promise." );
+
+								deferred.notify( "update" );
 
 							}
 						);
