@@ -1,0 +1,15 @@
+a {
+	background-color: #FFFFFF ;
+	color: red ; 
+	cursor: pointer ;
+	display: block ;
+	padding: 7px 6px 7px 6px ;
+	text-decoration: underline ;
+	user-select: none ;
+		-moz-user-select: none ;
+		-webkit-user-select: none ;
+}
+
+a:hover {
+	background-color: #F0F0F0 ;
+}

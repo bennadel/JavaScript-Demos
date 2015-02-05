@@ -1,0 +1,289 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Exploring $q And Scope $digest Integration In AngularJS
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="demo.css"></link>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		Exploring $q And Scope $digest Integration In AngularJS
+	</h1>
+
+	<!--
+		NOTE: All of our click-handlers are being defined inside DIRECTIVES rather than
+		in ng-click handlers so that we are sure to be outside of an "Angular Context".
+		This way, we can isolate the $q / $digest interaction.
+	-->
+	<p>
+		<a bn-bind-unresolved>Bind to unresolved promise</a>
+		<a bn-bind-resolved>Bind to resolved promise</a>
+		<a bn-resolve>Resolve promise</a>
+		<a bn-resolve-chain>Resolved chained-promise</a>
+		<a bn-resolve-timeout-chain>Resolved timeout-chained-promise</a>
+	</p>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.3.12.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I control the root of the application.
+		app.controller(
+			"AppController",
+			function( $scope ) {
+
+				// Here's we're binding to the $digest lifecycle. By Supplying a $watch()
+				// function, we can get a hook into each digest iteration. We're going to
+				// log out each digest so we can see how it mixes with the other data 
+				// that we log around the promise binding and resolution.
+				$scope.$watch(
+					function logDigest() {
+
+						console.log( "Such $digest! Much triggered." );
+
+					}
+				);
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I test $q and $digest interactions.
+		app.directive(
+			"bnBindUnresolved",
+			function( $q ) {
+
+				// In this demo, we're going to bind a promise handler to a deferred
+				// value that is in a pending state. Since the binding has no chance of
+				// changing the view-model, NO DIGEST is triggered.
+				return({
+					link: function( scope, element ) {
+
+						var unresolved = $q.defer();
+
+						element.click(
+							function( event ) {
+
+								console.info( "Binding to unresolved promise." );
+
+								unresolved.promise.then( angular.noop );
+
+							}
+						);
+
+					}
+				});
+
+			}
+		);
+
+
+		// I test $q and $digest interactions.
+		app.directive(
+			"bnBindResolved",
+			function( $q ) {
+
+				// In this demo, we're going to bind a promise handler to a RESOLVED 
+				// deferred value. Since this causes the bound callback to be invoked
+				// immediately (yet asynchronously), it means that the view-model has
+				// a chance to change. As such, this will TRIGGER A DIGEST.
+				return({
+					link: function( scope, element ) {
+
+						var resolved = $q.when( true );
+
+						element.click(
+							function( event ) {
+
+								console.info( "Binding to resolved promise." );
+
+								resolved.then(
+									function() {
+
+										console.log( "( 1 ) Callback invoked." );
+									}
+								);
+
+								// NOTE: Here to demonstrate that it will be output in
+								// the console before the log above (due to the 
+								// asynchronous nature of promises).
+								console.log( "( 2 ) Asynchronous callback test." );
+
+							}
+						);
+
+					}
+				});
+
+			}
+		);
+
+
+		// I test $q and $digest interactions.
+		app.directive(
+			"bnResolve",
+			function( $q ) {
+
+				// In this demo, we're going to resolve a deferred value that is in a 
+				// pending state. Since this will cause the promise callbacks to be 
+				// invoked, it means that there is a chance the view-model will be 
+				// changed. As such, this will TRIGGER A DIGEST.
+				return({
+					link: function( scope, element ) {
+
+						var deferred = $q.defer();
+
+						// NOTE: We have to assign at least one promise handler 
+						// otherwise, AngularJS won't bother scheduling anything.
+						deferred.promise.then( angular.noop );
+
+						element.click(
+							function( event ) {
+
+								console.info( "Resolving a promise." );
+
+								deferred.resolve( true );
+
+							}
+						);
+
+					}
+				});
+
+			}
+		);
+
+
+		// I test $q and $digest interactions.
+		app.directive(
+			"bnResolveChain",
+			function( $q ) {
+
+				// In this demo, we're going to resolve a deferred value that has a 
+				// long promise-chain attached to it. We already know that a DIGEST
+				// WILl BE TRIGGERED (based on demo above); this is to see if a digest
+				// is triggered per-promise or, after the entire promise chain is 
+				// executed.
+				return({
+					link: function( scope, element ) {
+
+						// I simply pass-through the resolved value.
+						function passThrough( value ) {
+
+							return( value );
+
+						}
+
+						var deferred = $q.defer();
+
+						deferred.promise
+							.then( passThrough )
+							.then( passThrough )
+							.then( passThrough )
+							.then( passThrough )
+						;
+
+						element.click(
+							function( event ) {
+
+								console.info( "Resolving a promise chain (4)." );
+
+								deferred.resolve( true );
+
+							}
+						);
+
+					}
+				});
+
+			}
+		);
+
+
+		// I test $q and $digest interactions.
+		app.directive(
+			"bnResolveTimeoutChain",
+			function( $q, $timeout ) {
+
+				// In this demo, we're going to resolve a deferred value that has a
+				// long promise-chain attached to it. However, unlike the previous demo,
+				// each of these promise callbacks will return a new promise that is 
+				// delayed by some given timeout. This is to see when a digest is 
+				// triggered - after the entire chain? Or after each delayed promise.
+				return({
+					link: function( scope, element ) {
+
+						// I return a new promise that will be resolved after the given
+						// timeout delay.
+						function delay( time ) {
+
+							return( $timeout( angular.noop, time ) );
+
+						}
+
+						var deferred = $q.defer();
+
+						deferred.promise
+							.then( delay )
+							.then( delay )
+							.then( delay )
+							.then( delay )
+						;
+
+						element.click(
+							function( event ) {
+
+								console.info( "Resolving a $timeout promise chain (4)." );
+
+								deferred.resolve( 50 );
+
+							}
+						);
+
+					}
+				});
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I create an element plugin to allow for "click" to be used a short-hand for
+		// binding element events. This is just to reduce noise in the demo.
+		app.config(
+			function() {
+
+				angular.element.prototype.click = function( callback ) {
+
+					return( this.on( "click", callback ) );
+
+				};
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>

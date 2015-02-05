@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Exploring $q And Scope $digest Integration In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/q-scope-digest-integration-angularjs/)
 * [Monitoring $http Activity With $http Interceptors In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/http-interceptors-angularjs/)
 * [Monkey-Patching The $q Service Using $provide.decorator() In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/monkey-patching-q-using-decorate-angularjs/)
 * [Monkey-Patching The $q Service With .fcall() In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/monkey-patching-fcall-promise-angularjs/)
