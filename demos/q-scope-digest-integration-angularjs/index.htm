@@ -275,7 +275,8 @@
 						// timeout delay.
 						function delay( time ) {
 
-							return( $timeout( angular.noop, time ) );
+							// NOTE: False is here to prevent digest triggered by timeout.
+							return( $timeout( angular.noop, time, false ) );
 
 						}
 
