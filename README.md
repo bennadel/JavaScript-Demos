@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [$route redirectTo Does Not Break The Back Button In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/route-redirect-back-button-angularjs/)
 * [Exploring $q And Scope $digest Integration In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/q-scope-digest-integration-angularjs/)
 * [Monitoring $http Activity With $http Interceptors In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/http-interceptors-angularjs/)
 * [Monkey-Patching The $q Service Using $provide.decorator() In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/monkey-patching-q-using-decorate-angularjs/)
