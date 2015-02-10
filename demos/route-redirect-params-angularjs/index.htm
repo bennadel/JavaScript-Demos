@@ -1,0 +1,156 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		$route redirectTo Will Pass-Through Current Route Params In AngularJS
+	</title>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		$route redirectTo Will Pass-Through Current Route Params In AngularJS
+	</h1>
+
+	<p>
+		<a href="#/home">Home</a>
+		&mdash;
+		<a href="#/users/1">User 1</a>
+		&mdash;
+		<a href="#/users/2/detail">User 2</a>
+		&mdash;
+		<a href="#/users/3/old-broken-link">User 3 (broken)</a>
+	</p>
+
+	<p>
+		<strong>Action</strong>: {{ routeAction }}
+	</p>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.3.8.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs/angular-route-1.3.8.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [ "ngRoute" ] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I setup the routes for the application.
+		app.config(
+			function( $routeProvider ) {
+
+				$routeProvider
+					.when(
+						"/home",
+						{
+							action: "home"
+						}
+					)
+
+					// For convenience (and flexibility), we're going to let the rest of
+					// the app link to the userID; but, in reality, we always want to 
+					// redirect to the user detail page.
+					.when(
+						"/users/:userID",
+						{
+							redirectTo: "/users/:userID/detail"
+						}
+					)
+
+					// These are the "good" user routes.
+					.when(
+						"/users/:userID/detail",
+						{
+							action: "users.detail"
+						}
+					)
+					.when(
+						"/users/:userID/phone",
+						{
+							action: "users.phone"
+						}
+					)
+
+					// This is a catch-all for user-based routes. Routing is matched in 
+					// the same order in which it was defined. As such, if we get this 
+					// far, none of the earlier user-based routes matched. Redirect the 
+					// user to the detail page. This kind of catch-all could be useful in
+					// situations in which you have old / broken links "in the wild" and
+					// you want the app to handle them gracefully.
+					// --
+					// NOTE: The "*" operator, after a named parameter, makes the 
+					// parameter an eager matcher. As such, it will match as much of the
+					// path as it can, which in our case, is the rest of the path.
+					.when(
+						"/users/:userID/:notFound*",
+						{
+							redirectTo: "/users/:userID"
+						}
+					)
+
+					// And, if nothing else matches, just redirect to the home.
+					.otherwise({
+						redirectTo: "/home"
+					})
+				;
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I control the root of the application.
+		app.controller(
+			"AppController",
+			function( $scope, $route, $routeParams, $location ) {
+
+				$scope.routeAction = null;
+
+				// I listen for route-change events. 
+				$scope.$on(
+					"$routeChangeSuccess",
+					function handleRouteChangeEvent( event ) {
+
+						var current = $route.current;
+
+						console.log(
+							"ROUTE CHANGE: [ %s ] .. [ Path: %s ]",
+							current.originalPath, 
+							$location.path()
+						);
+
+						// If the current route doesn't contain an action, then it will,
+						// in all likelihood, be redirected to another route that does
+						// contain a valid action (configured in $routeProvider).
+						// --
+						// NOTE: This is not a native part of routing - this is because 
+						// my route object contains an "action" key in the configuration
+						// in all cases in which a valid route is matched.
+						if ( ! current.action ) {
+
+							console.warn( "Route does not contain an action." );
+
+						}
+
+						// Store our current action for output.
+						$scope.routeAction = current.action;
+
+					}
+				);
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
