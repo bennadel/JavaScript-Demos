@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Exploring $route Resolution In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/route-resolve-angularjs/)
 * [$route redirectTo Will Pass-Through Current Route Params In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/route-redirect-params-angularjs/)
 * [$route redirectTo Does Not Break The Back Button In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/route-redirect-back-button-angularjs/)
 * [Exploring $q And Scope $digest Integration In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/q-scope-digest-integration-angularjs/)

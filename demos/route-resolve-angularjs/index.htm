@@ -1,0 +1,230 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Exploring $route Resolution In AngularJS
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		Exploring $route Resolution In AngularJS
+	</h1>
+
+	<p>
+		<a href="#/a/1">Section A</a>
+		&mdash;
+		<a href="#/b/20">Section B</a>
+		&mdash;
+		<a href="#/c/300">Section C (will fail)</a>
+	</p>
+
+	<p>
+		<strong>Route Action</strong>: {{ routeAction }}
+	</p>
+
+	<!-- BEGIN: Route Activity Notification. -->
+	<div 
+		ng-controller="RouteActivityController"
+		ng-show="isResolvingRoute"
+		class="route-activity">
+
+		<em>Loading Route...</em>
+		
+	</div>
+	<!-- END: Route Activity Notification. -->
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.3.8.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs/angular-route-1.3.8.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [ "ngRoute" ] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I setup the routes for the application.
+		app.config(
+			function( $routeProvider ) {
+
+				// Define routes for the application.
+				$routeProvider
+					.when(
+						"/a/:id",
+						{
+							action: "section-a",
+							resolve: {
+								thingOne: function( $timeout ) {
+
+									// Resolved with timeout. 
+									// --
+									// NOTE: Since $timeout() won't resolve with a 
+									// "value", then "thingOne" will be undefined in 
+									// "locals" within the $route.current object.
+									return( $timeout( angular.noop, 1000, false ) );
+
+								},
+								thingTwo: function( $q, $timeout ) {
+
+									// Immediately resolved.
+									return( $q.when( "thingTwoValue" ) );
+
+								}
+							}
+						}
+					)
+					.when(
+						"/b/:id",
+						{
+							action: "section-b",
+							resolve: {
+								thingThree: function( $q ) {
+
+									// Immediately resolved.
+									return( $q.when( "thingThreeValue" ) );
+
+								}
+							}
+						}
+					)
+					.when(
+						"/c/:id",
+						{
+							action: "section-c",
+							resolve: {
+								thingFour: function( $q ) {
+
+									// This will cause the route to fail and trigger the
+									// $routeChangeError event.
+									return( $q.reject( "meh" ) );
+
+								}
+							}
+						}
+					)
+
+					// And, if nothing else matches, just redirect to section A.
+					.otherwise({
+						redirectTo: "/a/9"
+					})
+				;
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I control the root of the application.
+		app.controller(
+			"AppController",
+			function( $scope, $route, $routeParams, $location ) {
+
+				$scope.routeAction = null;
+
+				// I listen for route change events.
+				$scope.$on(
+					"$routeChangeSuccess",
+					function handleRouteChangeSuccessEvent( event ) {
+
+						// When the route is finally resolved, the results of the 
+						// resolution will be available in the ".locals" object on the 
+						// current route. This object always exists, but will be empty 
+						// if the route didn't have to resolve anything.
+						// --
+						// CAUTION: "locals" only exists when route is resolved - it will
+						// not exist if the route was rejected.
+						console.log( "Route loaded with locals:", $route.current.locals );
+
+						// Store our current action for output.
+						$scope.routeAction = $route.current.action;
+
+					}
+				);
+
+				// I listen for route failure events.
+				$scope.$on(
+					"$routeChangeError",
+					function handleRouteChangeErrorEvent( event ) {
+
+						console.warn( "Route failed!" );
+						console.log( "Route:", $route.current );
+
+						// Warning: On error, the $routeParams are NOT updated; however, 
+						// the $route.current.params and $route.current.pathParams ARE 
+						// updated to reflect even the failed route.
+						console.log( "Current Params:", $route.current.params );
+						console.log( "Route Params:", $routeParams );
+
+					}
+				);
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I control the route-activity indicator.
+		app.controller(
+			"RouteActivityController",
+			function( $scope ) {
+
+				// I determine whether or not there is pending activity on the route
+				// change. If the route change doesn't have to resolve anything, the 
+				// route transition will [likely] start and end within the bounds of 
+				// a single digest phase. However, if there is data to resolve, the
+				// route transition will be spread across multiple digests and the 
+				// "loading" message will be displayed.
+				$scope.isResolvingRoute = false;
+
+				// When the route starts changing, mark the activity.
+				$scope.$on( "$routeChangeStart", handleRouteChangeStartEvent );
+
+				// Whether or not the route finishes successfully, or in error, it is
+				// done. As such, we need to mark is as done resolving.
+				$scope.$on( "$routeChangeSuccess", handleRouteChangeFinallyEvent );
+				$scope.$on( "$routeChangeError", handleRouteChangeFinallyEvent );
+					
+
+				// ---
+				// PRIVATE METHODS.
+				// ---
+
+
+				// I handle either the Success or Error route change events.
+				function handleRouteChangeFinallyEvent( event ) {
+
+					$scope.isResolvingRoute = false;
+
+				}
+
+
+				// I handle the the Start route change event.
+				function handleRouteChangeStartEvent( event ) {
+
+					$scope.isResolvingRoute = true;
+
+				}
+
+			}
+
+		);
+
+	</script>
+
+</body>
+</html>
