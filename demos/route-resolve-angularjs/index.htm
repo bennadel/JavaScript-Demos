@@ -27,7 +27,11 @@
 		<strong>Route Action</strong>: {{ routeAction }}
 	</p>
 
-	<!-- BEGIN: Route Activity Notification. -->
+	<!--
+		BEGIN: Route Activity Notification. This indicator will show up while the 
+		route is being resolved. This will give the user some indication that "work" 
+		is being done.
+	-->
 	<div 
 		ng-controller="RouteActivityController"
 		ng-show="isResolvingRoute"
@@ -63,20 +67,10 @@
 						{
 							action: "section-a",
 							resolve: {
-								thingOne: function( $timeout ) {
+								thingOne: function( $q ) {
 
-									// Resolved with timeout. 
-									// --
-									// NOTE: Since $timeout() won't resolve with a 
-									// "value", then "thingOne" will be undefined in 
-									// "locals" within the $route.current object.
-									return( $timeout( angular.noop, 1000, false ) );
-
-								},
-								thingTwo: function( $q, $timeout ) {
-
-									// Immediately resolved.
-									return( $q.when( "thingTwoValue" ) );
+									// Immediately resolved with static value.
+									return( "thingOneValue" );
 
 								}
 							}
@@ -87,9 +81,19 @@
 						{
 							action: "section-b",
 							resolve: {
-								thingThree: function( $q ) {
+								thingTwo: function( $timeout ) {
 
-									// Immediately resolved.
+									// Resolved with timeout. 
+									// --
+									// NOTE: Since $timeout() won't resolve with a 
+									// "value", then "thingTwo" will be undefined in 
+									// "locals" within the $route.current object.
+									return( $timeout( angular.noop, 1000, false ) );
+
+								},
+								thingThree: function( $q, $timeout ) {
+
+									// Immediately resolved with promise.
 									return( $q.when( "thingThreeValue" ) );
 
 								}
@@ -140,8 +144,8 @@
 
 						// When the route is finally resolved, the results of the 
 						// resolution will be available in the ".locals" object on the 
-						// current route. This object always exists, but will be empty 
-						// if the route didn't have to resolve anything.
+						// current route. This object always exists (upon success), but 
+						// will be empty if the route didn't have to resolve anything.
 						// --
 						// CAUTION: "locals" only exists when route is resolved - it will
 						// not exist if the route was rejected.
