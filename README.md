@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Route Resolution Using Factory Functions vs. Services In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/route-resolution-factory-angularjs/)
 * [Exploring $route Resolution In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/route-resolve-angularjs/)
 * [$route redirectTo Will Pass-Through Current Route Params In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/route-redirect-params-angularjs/)
 * [$route redirectTo Does Not Break The Back Button In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/route-redirect-back-button-angularjs/)
