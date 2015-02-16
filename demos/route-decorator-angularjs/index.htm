@@ -1,0 +1,312 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Deferring Route Configuration Using Decorators And Route Resolution In AngularJS
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		Deferring Route Configuration Using Decorators And Route Resolution In AngularJS
+	</h1>
+
+	<p>
+		<a href="#/a">Section A</a>
+		&mdash;
+		<a href="#/b">Section B</a>
+
+		<!-- NOTE: These routes will be configured after bootstrap. -->
+		&mdash;
+		<a href="#/c/1">Section C-1</a>
+		&mdash;
+		<a href="#/c/2">Section C-2</a>
+		&mdash;
+		<a href="#/c/3">Section C-3</a>
+	</p>
+
+	<p>
+		<strong>Action</strong>: {{ routeAction }}
+	</p>
+
+	<!--
+		BEGIN: Route Activity Notification. This indicator will show up while the 
+		route is being resolved. This will give the user some indication that "work" 
+		is being done.
+	-->
+	<div 
+		ng-controller="RouteActivityController"
+		ng-show="isResolvingRoute"
+		class="route-activity">
+
+		<em>Loading Route...</em>
+		
+	</div>
+	<!-- END: Route Activity Notification. -->
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.3.8.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs/angular-route-1.3.8.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [ "ngRoute" ] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// Decorate the $route service to allow us to alter routes after bootstrap.
+		app.config(
+			function( $provide, $routeProvider ) {
+
+				// Wire up the $route decorator. 
+				$provide.decorator( "$route", routeDecorator );
+
+
+				// I augment the $route service - the original delegate ($route) is 
+				// returned, but with additional methods.
+				function routeDecorator( $delegate ) {
+
+					// Create a familiar short-hand for the delegate.
+					var $route = $delegate;
+
+
+					// I remove a defined route at the given path.
+					$route.remove = function( path ) {
+
+						// Normalize the path by removing any trailing slash - when 
+						// AngularJS sets up a route, it creates an auto-redirect from
+						// your route to the other version (with or without a slash, 
+						// depending on what you defined); we need to delete your path
+						// and the auto-redirect path.
+						path = path.replace( /\/$/i, "" );
+
+						// Delete your path and the auto-redirect version.
+						delete( this.routes[ path ] );
+						delete( this.routes[ path + "/" ] );
+
+						return( this );
+
+					};
+
+
+					// This provides a short-hand to removing the current route without
+					// having to access the current route in the calling context.
+					$route.removeCurrent = function() {
+
+						return( this.remove( this.current.originalPath ) );
+
+					};
+
+
+					// I allow routes to be defined after the application has been 
+					// bootstrapped. These go into a shared "routes" collection.
+					$route.when = function( path, route ) {
+
+						$routeProvider.when( path, route );
+
+						return( this );
+
+					};
+
+
+					// Return the decorated service.
+					return( $route );
+
+				}
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I setup the routes for the application.
+		app.config(
+			function( $routeProvider ) {
+
+				// Define routes for the application.
+				$routeProvider
+					.when(
+						"/a",
+						{
+							action: "section-a"
+						}
+					)
+					.when(
+						"/b",
+						{
+							action: "section-b"
+						}
+					)
+
+					// Since the "/c/" subsystem of routes is going to be configured 
+					// on-demand, when it is accessed for the first time, we'll create
+					// a catch-all for any route in the "/c/" tree. This will trigger a
+					// resolve (using a resolution service), which will configure the 
+					// entire "/c" route system.
+					// --
+					// CAUTION: This will NOT match "/c" or "/c/". There must be 
+					// something that the :catchAll can bind to.
+					.when(
+						"/c/:catchAll*",
+						{
+							resolve: {
+								catchAll: "cResolver"
+							}
+						}
+					)
+
+					// And, if nothing else matches, just redirect to section A.
+					.otherwise({
+						redirectTo: "/a"
+					})
+				;
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I resolve the route "/c/:catchAll*" path, reconfiguring the live routing
+		// system to look for several paths off of "/c".
+		app.factory(
+			"cResolver",
+			function( $route, $timeout ) {
+
+				// We're going to use $timeout() to fake some sort of network latency.
+				// Honestly, I don't have a great use-case for this; just experimenting.
+				// The Promise returned by $timeout() will be used to resolve the route.
+				return( $timeout( fakeNetworkLatency, 1500, false ) );
+
+
+				// I reconfigure the routing.
+				function fakeNetworkLatency() {
+
+					$route
+						// DECORATOR METHOD: This removes the current route from the 
+						// set of active routes, (ie, "/c/:catchAll*").
+						.removeCurrent()
+
+						// DECORATOR METHOD: Configure new routes.
+						.when(
+							"/c/1",
+							{
+								action: "section-c-1"
+							}
+						)
+						.when(
+							"/c/2",
+							{
+								action: "section-c-2"
+							}
+						)
+						.when(
+							"/c/3",
+							{
+								action: "section-c-3"
+							}
+						)
+
+						// Now that we've swapped out the catch-all route for the new
+						// routes, we need to reload the current route so that the 
+						// updated route configuration is applied to the current URL.
+						.reload()
+					;
+					
+				}
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I control the root of the application.
+		app.controller(
+			"AppController",
+			function( $scope, $route ) {
+
+				// I show the action associated with the current route.
+				$scope.routeAction = null;
+
+				// I listen for the route change and store the current route action
+				// so that we can see how the routes changes after user interaction.
+				$scope.$on(
+					"$routeChangeSuccess",
+					function handleRouteChangeSuccessEvent( event ) {
+
+						$scope.routeAction = ( $route.current.action || null );
+
+					}
+				);
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I control the route-activity indicator.
+		app.controller(
+			"RouteActivityController",
+			function( $scope ) {
+
+				// I determine whether or not there is pending activity on the route
+				// change. This will only be meaningful if the route has a resolve that
+				// requires a tick to complete.
+				$scope.isResolvingRoute = false;
+
+				// When the route starts changing, mark the activity.
+				$scope.$on( "$routeChangeStart", handleRouteChangeStartEvent );
+
+				// Whether or not the route finishes successfully, or in error, it is
+				// done. As such, we need to mark is as done resolving.
+				$scope.$on( "$routeChangeSuccess", handleRouteChangeFinallyEvent );
+				$scope.$on( "$routeChangeError", handleRouteChangeFinallyEvent );
+					
+
+				// ---
+				// PRIVATE METHODS.
+				// ---
+
+
+				// I handle either the Success or Error route change events.
+				function handleRouteChangeFinallyEvent( event ) {
+
+					$scope.isResolvingRoute = false;
+
+				}
+
+
+				// I handle the the Start route change event.
+				function handleRouteChangeStartEvent( event ) {
+
+					$scope.isResolvingRoute = true;
+
+				}
+
+			}
+
+		);
+
+	</script>
+
+</body>
+</html>
