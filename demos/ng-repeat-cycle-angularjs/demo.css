@@ -1,0 +1,93 @@
+
+a[ ng-click ] {
+	color: red ;
+	cursor: pointer ;
+	text-decoration: underline ;
+	user-select: none ;
+		-moz-user-select: none ;
+		-webkit-user-select: none ;
+}
+
+div.container {
+	height: 100px ;
+	margin: 20px 0px 20px 0px ;
+	position: relative ;
+}
+
+div.friend {
+	border: 1px solid #CCCCCC ;
+	border-radius: 4px 4px 4px 4px ;
+	background-color: #FAFAFA ;
+	height: 98px ;
+	left: 0px ;
+	position: absolute ;
+	text-align: center ;
+	top: 0px ;
+	width: 350px ;
+}
+
+div.friend div.name {
+	border-bottom: 1px solid #CCCCCC ;
+	font-size: 26px ;
+	margin: 20px 10px 12px 10px ;
+	padding-bottom: 10px ;
+}
+
+div.friend div.meta {
+	color: #999999 ;
+}
+
+p.controls {
+	text-align: center ;
+	width: 350px ;
+}
+
+/* Moving to the NEXT item. */
+
+div.next div.friend.ng-enter {
+	left: 100px ;
+	opacity: 0 ;
+	transition: all 250ms ease ;
+	z-index: 2 ;
+}
+
+div.next div.friend.ng-enter-active {
+	left: 0px ;
+	opacity: 1.0 ;
+}
+
+div.next div.friend.ng-leave {
+	left: 0px ;
+	opacity: 1.0 ;
+	transition: all 250ms ease ;
+}
+
+div.next div.friend.ng-leave-active {
+	left: -100px ;
+	opacity: 0 ;
+}
+
+/* Moving to the PREVIOUS item. */
+
+div.previous div.friend.ng-enter {
+	left: -100px ;
+	opacity: 0 ;
+	transition: all 250ms ease ;
+	z-index: 2 ;
+}
+
+div.previous div.friend.ng-enter-active {
+	left: 0px ;
+	opacity: 1.0 ;
+}
+
+div.previous div.friend.ng-leave {
+	left: 0px ;
+	opacity: 1.0 ;
+	transition: all 250ms ease ;
+}
+
+div.previous div.friend.ng-leave-active {
+	left: 100px ;
+	opacity: 0 ;
+}

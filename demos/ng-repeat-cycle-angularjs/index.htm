@@ -1,0 +1,157 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Animating A Single Item Using ngRepeat And ngAnimate In AngularJS
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		Animating A Single Item Using ngRepeat And ngAnimate In AngularJS
+	</h1>
+
+	<div class="container {{ orientation }}">
+
+		<!--
+			Here, we are using a "hack" to attach ngAnimate to a "single item" cycle.
+			There is no "collection" in this demo - we only have "selectedFriend"; so,
+			in order to animate changes to the single item, we stuff it into an inline 
+			array. This way, every time the selectedFriend changes, the single item in 
+			the array will be replaced. This will cause ngRepeat to trigger a "leave" 
+			and an "enter" animation event.
+
+			NOTE: "selectedFriend" doesn't overwrite itself! In the context of the "[]"
+			notation, it's in the main scope; however, when it's define as the item in 
+			the repeater, it's in a CHILD SCOPE of the repeater. Same object, just stored
+			in two different scopes.
+		-->
+		<div 
+			ng-repeat="selectedFriend in [ selectedFriend ]"
+			class="friend">
+			
+			<div class="name">
+				{{ selectedFriend.name }}
+			</div>
+
+			<div class="meta">
+				ID: {{ selectedFriend.id }} 
+				&nbsp;|&nbsp;
+				{{ selectedFriend.nickname }}
+			</div>
+
+		</div>
+
+	</div>
+
+	<p class="controls">
+		&laquo;
+		<a ng-click="showPrevious()">Previous Friend</a>
+		&mdash;
+		<a ng-click="showNext()">Next Friend</a>
+		&raquo;
+	</p>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.3.8.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs/angular-animate-1.3.8.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [ "ngAnimate" ] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I control the root of the application.
+		app.controller(
+			"AppController",
+			function( $scope ) {
+
+				// I contain the list of friends to iterate in our cycle UI.
+				var friends = [
+					{
+						id: 1,
+						name: "Sarah",
+						nickname: "Stubbs"
+					},
+					{
+						id: 2,
+						name: "Heather",
+						nickname: "Squeaks"
+					},
+					{
+						id: 3,
+						name: "Kim",
+						nickname: "Stud Muffin"
+					},
+					{
+						id: 4,
+						name: "Joanna",
+						nickname: "Jo-Jo"
+					}
+				];
+
+				// I hold the index of the selected friend in the array.
+				var selectedIndex = 0;
+
+				// I relay the orientation of the cycle as the user moves from one 
+				// friend to the next (whether its a "previous" orientation or a 
+				// "next" orientation). This is used to make the animation feel more
+				// natural.
+				$scope.orientation = "next";
+				
+				// I am the selected friend, currently being displayed.
+				$scope.selectedFriend = friends[ selectedIndex ];
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I move to the previous friend in the collection.
+				$scope.showPrevious = function() {
+
+					$scope.orientation = "previous";
+
+					if ( --selectedIndex < 0 ) {
+
+						selectedIndex = ( friends.length - 1 );
+
+					}
+
+					$scope.selectedFriend = friends[ selectedIndex ];
+					
+				}
+
+
+				// I move the next friend in the collection.
+				$scope.showNext = function() {
+
+					$scope.orientation = "next";
+
+					if ( ++selectedIndex >= friends.length ) {
+
+						selectedIndex = 0;
+
+					}
+
+					$scope.selectedFriend = friends[ selectedIndex ];				
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
