@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Creating A Factory Provider For The Configuration Phase In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/provider-with-config-angularjs/)
 * [Animating A Single Item Using ngRepeat And ngAnimate In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/ng-repeat-cycle-angularjs/)
 * [Deferring Route Configuration Using Decorators And Route Resolution In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/route-decorator-angularjs/)
 * [Route Resolution Using Factory Functions vs. Services In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/route-resolution-factory-angularjs/)

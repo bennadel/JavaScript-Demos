@@ -1,0 +1,213 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Creating A Factory Provider For The Configuration Phase In AngularJS
+	</title>
+</head>
+<body>
+
+	<h1>
+		Creating A Factory Provider For The Configuration Phase In AngularJS
+	</h1>
+
+	<p>
+		<em>All of the action takes place in the console.</em>
+	</p>
+
+	
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.3.13.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// When the application is being bootstrapped, it runs the configuration phase
+		// first. During this phase, we have access to all the Providers, but NOT to the
+		// actual service objects that will be created.
+		app.config(
+			function configureApplication( greeterProvider ) {
+
+				// Set the greeting that our greeter will use.
+				// --
+				// NOTE: After the configuration phase is over, there will be no public 
+				// way to change this unless you cache a reference to the provider.
+				greeterProvider.setGreeting( "Good morning, %s. You are looking marvelous in that pant-suit!" );
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// When the application is being bootstrapped, it will run the configuration 
+		// phase first and then it will execute the "Run" phase. At that point, all of 
+		// the run() blocks are executed. During this phase, we no longer have access
+		// to any of the provider; but, we can finally access the services. 
+		app.run(
+			function startApplication( greeter ) {
+
+				// Consume the greeter that we configured in the previous Config phase.
+				console.info( "Testing greeter in .run() phase." );
+				console.log( greeter.greet( "Sarah" ) );
+				console.log( greeter.greet( "Anna" ) );
+				console.log( greeter.greet( "Kim" ) );
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I provide a service for creating greetings.
+		// --
+		// NOTE: The provider can have other providers injected, but it cannot inject 
+		// services as this will be created during the configuration phase, before 
+		// services have been made available.
+		// --
+		// NOTE: The ProvideGreeter() function is going to be instantiated using the
+		// "new" operator; as such, we could use the "this" reference to define object
+		// properties and methods. But, I'm used to returning a public API.
+		app.provider(
+			"greeter",
+			function ProvideGreeter() {
+
+				// I am the greeting template.
+				var greeting = "Hello, %s.";
+
+				// Return the public API for the provider.
+				return({
+					getGreeting: getGreeting,
+					setGreeting: setGreeting,
+
+					// The provider must include a $get() method that will be our 
+					// factory function for creating the service. This $get() method 
+					// will be invoked using $injector.invoke() and can therefore use
+					// dependency-injection.
+					$get: instantiateGreeter
+				});
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I return the current greeting template.
+				function getGreeting() {
+
+					return( greeting );
+
+				}
+
+
+				// I set the new greeting template. It must contains at least one 
+				// instance of the "%s" or "%S" so that we know how to formulate the
+				// interpolated message.
+				function setGreeting( newGreeting ) {
+
+					testGreeting( newGreeting );
+
+					greeting = newGreeting;
+
+				}
+
+
+				// ---
+				// PRIVATE METHODS.
+				// ---
+
+
+				// I test a new greeting for valid structure.
+				// --
+				// CAUTION: Throws "InvalidGreeting" error if greeting is invalid.
+				function testGreeting( newGreeting ) {
+
+					if ( ! newGreeting ) {
+
+						throw( new Error( "InvalidGreeting" ) );
+
+					}
+
+					if ( newGreeting.search( "%[sS]" ) === -1 ) {
+
+						throw( new Error( "InvalidGreeting" ) );
+
+					}
+
+				}
+
+
+				// ---
+				// FACTORY METHOD.
+				// ---
+				
+
+				// I create the actual greeter service. 
+				// --
+				// NOTE: This function is the same function we could have defined if we
+				// had just used .factory() instead of .provider(). As such, this method
+				// is invoked using dependency injection and can inject other services.
+				function instantiateGreeter() {
+
+					// Return the public API.
+					return({
+						greet: greet
+					});
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I return a greeting message for the given name.
+					function greet( name ) {
+
+						return(
+							greeting.replace(
+								/%s/gi,
+								function interpolateName( $0 ) {
+
+									return( ( $0 === "%s" ) ? name : ucase( name ) );
+
+								}
+							)
+						);
+
+					}
+
+
+					// ---
+					// PRIVATE METHODS.
+					// ---
+
+
+					// I safely convert the given value to upper-case.
+					function ucase( name ) {
+
+						return( ( name || "" ).toUpperCase() );
+
+					}
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
