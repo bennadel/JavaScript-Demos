@@ -1,0 +1,125 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Be Careful With Compound Conditions In AngularJS (And JavaScript In General)
+	</title>
+
+	<style type="text/css">
+		p {
+			border: 1px solid #CCCCCC ;
+			padding: 10px 10px 10px 10px ;
+		}
+	</style>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		Be Careful With Compound Conditions In AngularJS (And JavaScript In General)
+	</h1>
+
+
+	<!-- 
+		In this context, the TRUE case will never be selected because the (&&) operator
+		will return the last evaluated expression within the condition. In this	context,
+		/ that will be the thumbnailUrl. So, while thumbnailUrl is a TRUHTY value (when 
+		not an empty string), it is certainly NOT "true". As such, it never matches the
+		"true" CASE.
+	-->
+	<p ng-switch="( image.isProcessed && image.thumbnailUrl )">
+
+		<img ng-switch-when="true" ng-src="{{ image.thumbnailUrl }}" />
+
+		<em ng-switch-default>Your thumbnail is still being generated.</em>
+
+	</p>
+
+
+	<!--
+		In this context, the evaluated expressions are all the same, only the order of
+		them within the compound condition is different. The (&&) operator will still 
+		return the last evaluated expression; however, this time, the last-evaluated 
+		condition happens to be a real Boolean value. As such, it will match the "true"
+		CASE. 
+	-->
+	<p ng-switch="( image.thumbnailUrl && image.isProcessed )">
+
+		<img ng-switch-when="true" ng-src="{{ image.thumbnailUrl }}" />
+
+		<em ng-switch-default>Your thumbnail is still being generated.</em>
+
+	</p>
+
+
+	<!--
+		In this context, we're using the double-not / double-bang pseudo-operator to 
+		coerce the compound condition into a true Boolean value. This way, even though
+		the thumbnailUrl is the last evaluated expression, the overall condition is 
+		converted to a Boolean before it is compared to the CASE statements.
+		--
+		NOTE: The double-bang operator isn't really an operator - it's simply two 
+		instances of the NOT operator.
+	-->
+	<p ng-switch="!!( image.isProcessed && image.thumbnailUrl )">
+
+		<img ng-switch-when="true" ng-src="{{ image.thumbnailUrl }}" />
+
+		<em ng-switch-default>Your thumbnail is still being generated.</em>
+
+	</p>
+
+
+	<!--
+		In this context, rather than using a compound condition in the View, we're 
+		relying on a computed value that has been added to the View-Model. We still have
+		the same concerned; but, those concerns have been pushed into the Controller.
+	-->
+	<p ng-switch="image.showThumbnail">
+
+		<img ng-switch-when="true" ng-src="{{ image.thumbnailUrl }}" />
+
+		<em ng-switch-default>Your thumbnail is still being generated.</em>
+
+	</p>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.3.13.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I control the root of the application.
+		app.controller(
+			"AppController",
+			function( $scope ) {
+
+				// In this scenario, we have the thumbnail URL and we have a flag that 
+				// determines if that URL is ready to be consumed by the client.
+				$scope.image = {
+					isProcessed: true,
+					thumbnailUrl: "./frances-mcdormand.jpg"
+				}
+
+				// Augment the view-model with a flag that more explicitly states 
+				// whether or not the image thumbnail should be displayed. In this 
+				// context, we still have to worry about the thumbnailUrl not evaluating
+				// to a true Boolean value; so, we still need to use the double-bang to
+				// coerce it into a true Boolean.
+				$scope.image.showThumbnail = !! ( $scope.image.isProcessed && $scope.image.thumbnailUrl );
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
