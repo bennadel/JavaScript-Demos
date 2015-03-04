@@ -1,0 +1,118 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		When Do You Need To Compile A Directive In AngularJS
+	</title>
+
+	<style type="text/css">
+
+		.highlight {
+			background-color: yellow ;
+			display: inline-block ;
+			margin-right: 10px ;
+		}
+
+		.emergency {
+			border: 1px solid red ;
+			color: red ;
+			display: inline-block ;
+			margin-right: 10px ;
+			padding: 4px 10px 3px 10px ;
+		}
+
+	</style>
+</head>
+<body>
+
+	<h1>
+		When Do You Need To Compile A Directive In AngularJS
+	</h1>
+
+	<p>
+		<!-- Each of these custom directives adds a class to the SPAN element. -->
+		<span 
+			ng-repeat="word in [ 'Word', 'to', 'your', 'mother' ]"
+			bn-highlight
+			bn-emergency>
+
+			{{ word }}
+
+		</span>
+	</p>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.3.13.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// In this directive, we're going to add a class to the element, but we're 
+		// going to do this during the COMPILE step to see how often that has to happen.
+		app.directive(
+			"bnHighlight",
+			function() {
+
+				// Return the directive configuration.
+				return({
+					compile: compile,
+					restrict: "A"
+				});
+
+
+				// I compile the DOM before the linking phase.
+				function compile( tElement, tAttributes ) {
+
+					console.log( "Adding .highlight class." );
+
+					tElement.addClass( "highlight" );
+
+				}
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// In this directive, we're going to add a class to the element; however, this
+		// time, we're going to do that during the LINKING phase rather than in the 
+		// compiling phase.
+		app.directive(
+			"bnEmergency",
+			function() {
+
+				// Return the directive configuration.
+				return({
+					link: link,
+					restrict: "A"
+				});
+
+
+				// I bind the JavaScript events to the local scope.
+				function link( scope, element, attributes ) {
+
+					console.log( "Adding .emergency class." );
+
+					element.addClass( "emergency" );
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>

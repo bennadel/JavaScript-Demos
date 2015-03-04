@@ -1,0 +1,33 @@
+
+div.m-menu {
+	border: 1px solid red ;
+	margin-bottom: 20px ;
+	padding: 10px 10px 10px 10px ;
+}
+
+div.m-menu div.menu-root {
+	border: 1px solid cornflowerblue ;
+	margin-bottom: 10px ;
+	padding: 10px 10px 10px 10px ;
+}
+
+div.m-menu ul.menu-options {
+	border: 1px solid deeppink ;
+	list-style-type: none ;
+	margin: 0px 0px 0px 0px ;
+	padding: 10px 10px 10px 10px ;
+}
+
+div.m-menu ul.menu-options li.menu-option {
+	border: 1px solid darkviolet ;
+	margin: 0px 0px 10px 0px ;
+	padding: 10px 10px 10px 10px ;
+}
+
+div.m-menu ul.menu-options li.menu-option:last-child {
+	margin-bottom: 0px ;
+}
+
+div.m-menu em {
+	color: #AAAAAA ;
+}

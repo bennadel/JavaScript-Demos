@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [When Do You Need To Compile A Directive In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/when-to-compile-directive-angularjs/)
 * [Be Careful With Compound Conditions In AngularJS (And JavaScript In General)](http://bennadel.github.io/JavaScript-Demos/demos/compound-switch-condition-angularjs/)
 * [Creating A Factory Provider For The Configuration Phase In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/provider-with-config-angularjs/)
 * [Animating A Single Item Using ngRepeat And ngAnimate In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/ng-repeat-cycle-angularjs/)
