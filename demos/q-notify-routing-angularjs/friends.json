@@ -1,0 +1,23 @@
+[
+	{
+		"id": 1,
+		"name": "Sarah",
+		"birthday": "Jan 1, 1978", 
+		"description": "Sarah is so cool! She loves movies almost as much as I do.",
+		"likes": [ "Movies", "TV", "Cats", "Dancing" ]
+	},
+	{
+		"id": 2,
+		"name": "Joanna",
+		"birthday": "Aug 28, 1973", 
+		"description": "Joanna loves to rock out at the gym - it's very inspirational.",
+		"likes": [ "Pumping Iron", "Arnold Schwarzenegger", "Whey Protein" ]
+	},
+	{
+		"id": 3,
+		"name": "Kim",
+		"birthday": "Nov 17, 1967", 
+		"description": "What can I say about Kim? She's just 10-levels of awesome.",
+		"likes": [ "Movies", "Diners", "Street Fairs", "Being Groovy" ]
+	}
+]
