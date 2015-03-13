@@ -1,0 +1,241 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Forcing $q .notify() To Execute With A No-Op In AngularJS
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		Forcing $q .notify() To Execute With A No-Op In AngularJS
+	</h1>
+
+	<h2>
+		Friends
+	</h2>
+
+	<div ng-switch="isLoading">
+
+		<!-- Show while friends are being loaded. -->
+		<p ng-switch-when="true">
+			<em>Loading...</em>
+		</p>
+
+		<!-- Show once the friends have loaded and are available in the view-model. -->
+		<ul ng-switch-when="false">
+			<li ng-repeat="friend in friends track by friend.id">
+				{{ friend.name }}
+			</li>
+		</ul>
+
+	</div>
+
+	<p>
+		<a ng-click="load()">Load</a>
+		&nbsp;|&nbsp;
+		<a ng-click="loadWithNoop()">Load With No-Op</a>
+	</p>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.3.13.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I control the root of the application.
+		app.controller(
+			"AppController",
+			function( $scope, friendService ) {
+
+				$scope.isLoading = false;
+
+				$scope.friends = [];
+
+				// Load the friend data (defaults to "get" method vs. "getWithNoop").
+				loadRemoteData();
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I reload the list of friends using friendService.get().
+				$scope.load = function() {
+
+					loadRemoteData( "get" );
+
+				};
+
+
+				// I reload the list of friends using friendService.getWithNoop().
+				$scope.loadWithNoop = function() {
+
+					loadRemoteData( "getWithNoop" );
+
+				};
+
+
+				// ---
+				// PRIVATE METHODS.
+				// ---
+
+
+				// I load the friends from the friend repository. I am passing-in the 
+				// method name to demonstrate that, from the Controller's point-of-view,
+				// nothing here is different other than the name of the method. The real
+				// substantive difference exists in the implementation of the friend-
+				// Service method and how it interacts with $q / Deferred.
+				function loadRemoteData( loadingMethod ) {
+
+					console.info( "Loading friends." );
+
+					// Indicate that we are in the loading phase.
+					$scope.isLoading = true;
+
+					// When we make the request, we expect the service to try to use 
+					// cached-data, which it will make available via the "notify" event
+					// handler on the promise. As such, we're going to wire up the same 
+					// event handler to both the "resolve" and the "notify" callbacks.
+					friendService[ loadingMethod || "get" ]
+						.call( friendService )
+						.then( 
+							handleResolve, // Resolve.
+							null,
+							handleResolve // Notify.
+						)
+					;
+
+					function handleResolve( friends ) {
+
+						// Indicate that the data is no longer being loaded.
+						$scope.isLoading = false;
+
+						$scope.friends = friends;
+
+						console.log( "Friends loaded successfully at", ( new Date() ).getTime() );
+
+					}
+
+				}
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I provide access to the friend repository.
+		app.factory(
+			"friendService",
+			function( $q, $timeout ) {
+
+				// Our friend "repository".
+				var friends = [
+					{
+						id: 1,
+						name: "Tricia"
+					},
+					{
+						id: 2,
+						name: "Heather"
+					},
+					{
+						id: 3,
+						name: "Kim"
+					}
+				];
+
+				// Return the public API.
+				return({
+					get: get,
+					getWithNoop: getWithNoop
+				});
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I return the list of friends. If the friends are cached locally, the 
+				// cached collection will be exposed via the promise' .notify() event.
+				function get() {
+
+					var deferred = $q.defer();
+
+					// Notify the calling context with the cached data.
+					deferred.notify( angular.copy( friends ) );
+
+					$timeout(
+						function networkLatency() {
+
+							deferred.resolve( angular.copy( friends ) );
+
+						},
+						1000,
+						false // No need to trigger digest - $q will do that already.
+					);
+
+					return( deferred.promise );
+
+				}
+
+
+				// I return the list of friends. If the friends are cached locally, the 
+				// cached collection will be exposed via the promise' .notify() event.
+				function getWithNoop() {
+
+					var deferred = $q.defer();
+
+					// -- BEGIN: Hack. ----------------------------------------------- //
+					// CAUTION: This is a work-around for an optimization in the way 
+					// AngularJS implemented $q. When we go to invoke .notify(),
+					// AngularJS will ignore the event if there are no pending callbacks
+					// for the event. Since our calling context can't bind to .notify() 
+					// until after we invoke .notify() here (and return the promise), 
+					// AngularJS will ignore it. However, if we bind a No-Op (no 
+					// operation) function to the .notify() event, AngularJS will 
+					// schedule a flushing of the deferred queue in the "next tick," 
+					// which will give the calling context time to bind to .notify().
+					deferred.promise.then( null, null, angular.noop );
+					// -- END: Hack. ------------------------------------------------- //
+
+					// Notify the calling context with the cached data.
+					deferred.notify( angular.copy( friends ) );
+
+					$timeout(
+						function networkLatency() {
+
+							deferred.resolve( angular.copy( friends ) );
+
+						},
+						1000,
+						false // No need to trigger digest - $q will do that already.
+					);
+
+					return( deferred.promise );
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
