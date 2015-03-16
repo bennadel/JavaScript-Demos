@@ -4,48 +4,146 @@
 	<meta charset="utf-8" />
 
 	<title>
-		...... In AngularJS
+		Revisiting Routing, Nested Views, And Caching With ngRoute In AngularJS 1.x
 	</title>
 
-	<!-- <link rel="stylesheet" type="text/css" href="demo.css"></link> -->
+	<link rel="stylesheet" type="text/css" href="demo.css"></link>
 </head>
-<body ng-controller="AppController">
+<body ng-controller="AppController" class="module">
 
 	<h1>
-		...... In AngularJS
+		Revisiting Routing, Nested Views, And Caching With ngRoute In AngularJS 1.x
 	</h1>
 
-	<p>
-		<span ng-repeat="friend in friends">
-			[ <a ng-href="#/friends/{{ friend.id }}">{{ friend.name }}</a> ]
-		</span>	
+	<div ng-switch="subview">
+		<div ng-switch-when="list" bn-friend-list></div>
+		<div ng-switch-when="detail" bn-friend-detail></div>
+	</div>
+
+	<!-- 
+		These links are here to help run the demo for the video recording - they 
+		wouldn't be here otherwise. 
+	-->
+	<p class="demo-links">
+		These are here to help run the demo:<br />
+		<a href="#/friends/1/bio">#/friends/1/bio</a> - Sarah<br />
+		<a href="#/friends/1/likes">#/friends/1/likes</a> - Sarah<br />
+		<a href="#/friends/2/bio">#/friends/2/bio</a> - Joanna<br />
+		<a href="#/friends/2/likes">#/friends/2/likes</a> - Joanna<br />
+		<a href="#/friends/3/bio">#/friends/3/bio</a> - Kim<br />
+		<a href="#/friends/3/likes">#/friends/3/likes</a> - Kim<br />
 	</p>
 
-	<div ng-switch="subview">
 
-		<div 
-			ng-switch-when="detail" 
-			ng-controller="DetailController"
-			ng-switch="isLoading">
+	<!-- Template for the FriendList module directive. -->
+	<script type="text/ng-template" id="friend-list.htm">
 
-			Detail.
+		<div ng-switch="isLoading" class="module">
 
-			<div ng-switch-when="true">
+			<h2>
+				My Friends
+			</h2>
 
-				<em>Loading....</em>
+			<p ng-switch-when="true">
+				<em class="loading">Loading friends!</em>
+			</p>
 
-			</div>
+			<ul ng-switch-when="false">
+				<li ng-repeat="friend in friends track by friend.id">
+					<a ng-href="#/friends/{{ friend.id }}">{{ friend.name }}</a>
+				</li>	
+			</ul>
+
+		</div>
+
+	</script>
+
+
+	<!-- Template for the FriendDetail module directive. -->
+	<script type="text/ng-template" id="friend-detail.htm">
+
+		<div ng-switch="isLoading" class="module">
+
+			<p ng-switch-when="true">
+				<em class="loading">Loading detail</em>
+			</p>
 
 			<div ng-switch-when="false">
 
-				{{ friend.name }}
+				<h2>
+					{{ friend.name }} 
+					&mdash;
+					<a href="#/friends">Back to list</a>
+				</h2>
+
+				<p>
+					<strong>Birthday</strong>: {{ friend.birthday }}
+				</p>
+
+				<p>
+					<a ng-href="#/friends/{{ friend.id }}/bio">Biography</a>
+					&nbsp;|&nbsp;
+					<a ng-href="#/friends/{{ friend.id }}/likes">Likes</a>
+				</p>
+
+				<div ng-switch="subview">
+					<div ng-switch-when="bio" bn-friend-bio></div>
+					<div ng-switch-when="likes" bn-friend-likes></div>
+				</div>
 
 			</div>
 
 		</div>
 
-	</div>
+	</script>
 
+
+	<!-- Template for the FriendBio module directive. -->
+	<script type="text/ng-template" id="friend-bio.htm">
+
+		<div ng-switch="isLoading" class="module">
+
+			<h3>
+				Biography
+			</h3>
+
+			<p ng-switch-when="true">
+				<em class="loading">Loading bio</em>
+			</p>
+
+			<p ng-switch-when="false">
+
+				{{ bio }}
+
+			</p>
+
+		</div>
+
+	</script>
+
+
+	<!-- Template for the FriendLikes module directive. -->
+	<script type="text/ng-template" id="friend-likes.htm">
+
+		<div ng-switch="isLoading" class="module">
+
+			<h3>
+				Likes
+			</h3>	
+
+			<p ng-switch-when="true">
+				<em class="loading">Loading likes</em>
+			</p>
+
+			<ul ng-switch-when="false">
+				<li ng-repeat="like in likes">
+					{{ like }}
+				</li>
+			</ul>
+
+		</div>
+
+	</script>
 
 
 	<!-- Load scripts. -->
@@ -62,6 +160,7 @@
 		// -------------------------------------------------- //
 
 
+		// Set up the routes for this application.
 		app.config(
 			function configureRoutes( $routeProvider ) {
 
@@ -69,78 +168,299 @@
 					.when(
 						"/friends",
 						{
-							action: new RouteAction( "friends.list" )
+							action: "list"
 						}
 					)
 					.when(
 						"/friends/:id",
 						{
-							redirectTo: "/friends/:id/bio",
-							action: new RouteAction()
+							redirectTo: "/friends/:id/bio"
 						}
 					)
 					.when(
 						"/friends/:id/bio",
 						{
-							action: new RouteAction( "friends.detail.bio" )
+							action: "detail.bio"
 						}
 					)
 					.when(
 						"/friends/:id/likes",
 						{
-							action: new RouteAction( "friends.detail.likes" )
+							action: "detail.likes"
 						}
 					)
+
+					// Define a catch-all for friend-oriented routes. Try to redirect
+					// the user back to the friend detail.
+					.when(
+						"/friends/:id/:notFound",
+						{
+							redirectTo: "/friends/:id"
+						}
+					)
+
+					// Define a catch-all for the entire application.
 					.otherwise({
-					 	redirectTo: "/friends",
-					 	action: new RouteAction( "" )
+					 	redirectTo: "/friends"
 					})
 				;
 
-
-				function RouteAction( path ) {
-
-					var path = ( actionPath || "" );
-					var parts = path.split( /\./g );
-
-					// Return the public API.
-					return({
-						at: at,
-						isOutside: isOutside,
-						startsWith: startsWith						
-					});
-
-					
-					// ---
-					// PUBLIC METHODS.
-					// ---
+			}
+		);
 
 
-					function at( index ) {
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
 
-						return( parts[ index ] || "" );
+
+		// I provide a light-weight route integration on top of the AngularJS 1.x ngRoute
+		// module. The system relies on each route being mapped onto an "action" variable
+		// which is subsequently translated into events that are broadcast down through 
+		// the scope tree.
+		app.factory(
+			"pike",
+			function pikeFactory( $route, $routeParams, $rootScope ) {
+
+				var splitter = /\./g;
+
+				// Every time the route changes, the state is incremented. We can use 
+				// this unique value to know if a state has changed between two different
+				// moments in time.
+				var routeState = 0;
+
+				var oldRouteParams = {};
+
+				// I am used as the prefix / name-space for the internal event that will
+				// be announced on the scope-chain.
+				var eventTypePrefix = "route:";
+
+				// I bind to the route-change event so that it can be translated into 
+				// action-oriented events on the scope-tree.
+				$rootScope.$on( "$routeChangeSuccess", handleRounteChangeEvent );
+
+				// Return the public API.
+				return({
+					bind: bind,
+					lock: lock,
+					param: param
+				});
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I bind a route-change handler to the contextual scope and return the 
+				// next item in the action path 
+				function bind( scope, eventType, handler ) {
+
+					// If we only get a change-handler passed-in, assume that the 
+					// event-type will be the empty string.
+					if ( arguments.length === 2 ) {
+
+						handler = arguments[ 1 ];
+						eventType = "";
 
 					}
 
+					// Bind the route-change handler on the context scope.
+					scope.$on( ( eventTypePrefix + eventType ), handler );
 
-					function isOutside( prefix ) {
+					// If there is no action associated with the current route, there 
+					// can be no known "next action"; as such, return null.
+					if ( 
+						! $route.current || 
+						! $route.current.action || 
+						( $route.current.action === eventType )
+						) {
 
-						return( ! startsWith( prefix ) );
+						return( null );
 
 					}
 
+					// In order for there to be a relevant next action, the provided
+					// event type must be a prefix for the current action. If it is not,
+					// then return null.
+					if ( $route.current.action.indexOf( eventType + "." ) !== 0 ) {
 
-					function startWith( prefix ) {
+						return( null );
 
-						if ( ! prefix ) {
+					}
 
-							return( true );
+					// Now that we know we'll have a relevant next action, split both 
+					// the route action and the event type so that we can determine the
+					// next action by index.
+					var currentParts = $route.current.action.split( splitter );
+					var eventParts = eventType.split( splitter );
+
+					return( currentParts[ eventParts.length ] );
+
+				};
+
+
+				// I return a proxy to the given callback that will only be invoked if
+				// the scope still exists and the route has not changed "too much". This
+				// is intended to short-circuit AJAX responses that return after the 
+				// initiating route context is no longer relevant. This must be called
+				// with a scope; but, it can also be called with an optional route param
+				// to track.
+				// --
+				// lock( scope, callback )
+				// lock( scope, key, callback )
+				function lock( scope, key, callback ) {
+
+					// If a key was omitted, shift argument mappings.
+					if ( arguments.length === 2 ) {
+
+						callback = arguments [ 1 ];
+						key = null;
+
+					}
+
+					var value = ( key ? param( key ) : null );
+
+					return( proxyCallback );
+
+
+					function proxyCallback() {
+
+						// If the scope has been destroyed, exit out.
+						if ( ! scope.$parent && ( scope !== $rootScope ) ) {
+
+							console.warn( "Response ignored due to scope destruction." );
+							return( callback = null );
 
 						}
 
-						return( path.indexOf( prefix ) === 0 );
+						// If the scope exists, and the tracked key has changed, exit out.
+						if ( key && ( value !== param( key ) ) ) {
+
+							console.warn( "Response ignored due to stale state." );
+							return( callback = null );
+
+						}
+
+						// Otherwise, invoke callback.
+						return( callback.apply( scope, arguments ) );
 
 					}
+
+				}
+
+
+				// I get, coerced, and return the value from the current $routeParams.
+				function param( key ) {
+
+					return( coerceParam( $routeParams[ key ] ) );
+
+				}
+
+
+				// ---
+				// PRIVATE METHODS.
+				// ---
+
+
+				// I try to coerce the given route parameter value in a way that is most
+				// expected - if a parameter can be converted to a number, we will return
+				// it as a number.
+				function coerceParam( value ) {
+
+					if ( angular.isUndefined( value ) ) {
+
+						return( null );
+
+					}
+
+					var numericValue = ( value * 1 );
+
+					return( ( value == numericValue ) ? numericValue : value );
+
+				}
+
+
+				// I try to coerce all of the local keys in the given params object, 
+				// converting each value to a number it can be. This will make strict-
+				// equality much easier to work with as the only "numeric string" in the
+				// entire app will come out of the location data. Everything else should
+				// be a "known" value.
+				function coerceParams( params ) {
+
+					for ( var key in params ) {
+
+						if ( params.hasOwnProperty( key ) ) {
+
+							params[ key ] = coerceParam( params[ key ] );
+
+						}
+
+					}
+
+					return( params );
+
+				}
+
+
+				// I catch the core route-change event and then translated it into 
+				// action-oriented events that get broadcast down through the scope tree.
+				function handleRounteChangeEvent( event, newRoute ) {
+
+					// Increment the route state - every moment in time will be unique;
+					// like a beautiful snowflake. This will allow us to bypass state 
+					// actions when they are no longer relevant.
+					routeState++;
+
+					// If there is no action, it's probably a redirect. 
+					if ( angular.isUndefined( newRoute.action ) ) {
+
+						return;
+
+					}
+
+					// Gather the coerced parameters for the new route.
+					var newRouteParams = coerceParams( angular.copy( $routeParams ) );
+
+					// Each part of the route-action is going to be announced as a
+					// separate route event.
+					var parts = newRoute.action.split( splitter );
+
+					// Announce the root change event. This is necessary for anyone
+					// who is listening for a route-change but does not provide an
+					// event-type to bind to.
+					$rootScope.$broadcast( 
+						eventTypePrefix, 
+						( parts[ 0 ] || null ), 
+						newRouteParams, 
+						oldRouteParams
+					);
+
+					// Now, walk down the route-action and announce a different event
+					// for each part of the path. So, for example, if the action were
+					// "foo.bar.baz", we'll announce the following events:
+					// --
+					// $broadcast( event, "foo", "bar", new, old );
+					// $broadcast( event, "foo.bar", "baz", new, old );
+					// $broadcast( event, "foo.bar.baz", null, new, old );
+					// --
+					// If you think that this causes too much processing, you have to 
+					// get some perspective on the matter; the cost of traversing the 
+					// scope tree for event triggering is quite inconsequential when 
+					// you consider how infrequently route changes are going to be 
+					// triggered.
+					for ( var i = 0, length = parts.length ; i < length ; i++ ) {
+
+						$rootScope.$broadcast( 
+							( eventTypePrefix + parts.slice( 0, i + 1 ).join( "." ) ), 
+							( parts[ i + 1 ] || null ), 
+							newRouteParams, 
+							oldRouteParams
+						);
+
+					}
+
+					// Store the current params for the next change event.
+					oldRouteParams = newRouteParams;
 
 				}
 
@@ -155,86 +475,12 @@
 		// I control the root of the application.
 		app.controller(
 			"AppController",
-			function( $scope, friendService, $route, _ ) {
+			function( $scope, pike ) {
 
-				$scope.subview = null;
-
-				$scope.friends = [];
-
-				friendService.getList().then(
-					function handleResolve( data ) {
-
-						$scope.friends = data;
-
-					}
-				);
-
-				$scope.$on( 
-					"$routeChangeSuccess",
-					function handleRouteChange( event ) {
-
-						if ( $route.current.action.isOutside( "friends" ) ) {
-
-							return;
-
-						}
-
-						$scope.subview = $route.current.action.at( 1 );
-
-					}
-				);
-
-			}
-		);
-
-
-		// -------------------------------------------------- //
-		// -------------------------------------------------- //
-
-
-		app.controller(
-			"DetailController",
-			function( $scope, friendService, $route, $routeParams, _ ) {
-
-				$scope.friendID = ( $routeParams.id * 1 );
-
-				$scope.isLoading = false;
-
-				$scope.subview = null;
-
-				$scope.friend = null;
-
-				$scope.$on( "$routeChangeSuccess", handleRouteChangeEvent );
-					
-				loadRemoteData();
-
-
-				// ---
-				// PUBLIC METHODS.
-				// ---
-
-
-				function handleRouteChangeEvent( event, newRoute ) {
-
-					if ( ! newRoute.action.startsWith( "friends.detail." ) ) {
-
-						return;
-
-					}
-
-					$scope.subview = newRoute.action.at( 2 );
-
-					var newFriendID = ( $routeParams.id * 1 );
-
-					if ( $scope.friendID !== newFriendID ) {
-
-						$scope.friendID = newFriendID;
-
-						loadRemoteData();
-
-					}
-
-				}
+				// NOTE: We are not providing a route-action prefix because this is the 
+				// root of the application - therefore, we want to know about top-level 
+				// action changes.
+				$scope.subview = pike.bind( $scope, handleRouteChange );
 
 
 				// ---
@@ -242,29 +488,77 @@
 				// ---
 
 
-				function loadRemoteData() {
+				// I handle contextual changes in the route.
+				function handleRouteChange( event, nextAction, newParams, oldParams ) {
 
-					var requestingFriendID = $scope.friendID;
+					// Will be one of the following:
+					// --
+					// [ list ]
+					// [ detail ]
+					$scope.subview = nextAction;
 
-					$scope.isLoading = true;
+				}
 
-					friendService
-						.getDetail( $scope.friendID )
-						.then( handleDataLoad, angular.noop, handleDataLoad )
-					;
+			}
+		);
 
 
-					function handleDataLoad( data ) {
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
 
-						if ( requestingFriendID !== $scope.friendID ) {
-							
-							return;
+
+		// I render the FriendList module.
+		app.directive(
+			"bnFriendList",
+			function() {
+
+				// Return the directive configuration.
+				return({
+					controller: Controller,
+					templateUrl: "friend-list.htm"
+				});
+
+
+				// I manage the view-model for the module.
+				function Controller( $scope, friendService, pike ) {
+
+					$scope.isLoading = false;
+
+					$scope.friends = [];
+
+					loadRemoteData();
+
+
+					// ---
+					// PRIVATE METHODS.
+					// ---
+
+
+					// I load the remote data and merge it into the local view-model. If
+					// cache data is available, it will be consumed.
+					function loadRemoteData() {
+
+						$scope.isLoading = true;
+
+						// CAUTION: Using pike.lock() to short-circuit callbacks if the
+						// route has changed by the time the callbacks have returned.
+						friendService.getList()
+							.then( 
+								pike.lock( $scope, handleResolve ), // Live data.
+								null,
+								pike.lock( $scope, handleResolve ) // Cache data.
+							)
+						;
+
+
+						// I apply the remote data to the local scope.
+						function handleResolve( friends ) {
+
+							$scope.isLoading = false;
+
+							$scope.friends = friends;
 
 						}
-
-						$scope.isLoading = false;
-
-						$scope.friend = data;
 
 					}
 
@@ -278,35 +572,179 @@
 		// -------------------------------------------------- //
 
 
-		app.config(
-			function simulateHttpLatency( $httpProvider ) {
+		// I render the FriendDetail module.
+		app.directive(
+			"bnFriendDetail",
+			function() {
 
-				$httpProvider.interceptors.push( slowDownRequest );
+				// Return the directive configuration.
+				return({
+					controller: Controller,
+					templateUrl: "friend-detail.htm"
+				});
 
 
-				function slowDownRequest( $q, $timeout ) {
+				// I manage the view-model for the module.
+				function Controller( $scope, friendService, pike ) {
 
-					return({
-						request: function( config ) {
+					$scope.friendID = pike.param( "id" );
 
-							var latency = $q.defer();
+					$scope.isLoading = false;
 
-							$timeout(
-								function() {
+					$scope.friend = null;
 
-									latency.resolve( config );
+					// Setup the route-change event binding.
+					// --
+					// NOTE: When setting up the route-change binding, .bind() will 
+					// return the next action item based on the current route state. 
+					// In this case, it will be [ bio ] or [ likes ].
+					$scope.subview = pike.bind( $scope, "detail", handleRouteChange );
+	
+					loadRemoteData();
 
-									config = latency = null;
 
-								},
-								750,
-								false // No need trigger a digest.
-							);
+					// ---
+					// PRIVATE METHODS.
+					// ---
 
-							return( latency.promise );
+
+					// I handle contextual changes in the route.
+					function handleRouteChange( event, nextAction, newParams, oldParams ) {
+
+						// Will be one of the following:
+						// --
+						// detail.[ bio ]
+						// detail.[ likes ]
+						$scope.subview = nextAction;
+
+						// If the route ID has changed, we'll have to re-initialize the
+						// data for the new friend.
+						if ( $scope.friendID !== newParams.id ) {
+
+							$scope.friendID = newParams.id;
+
+							loadRemoteData();
 
 						}
-					});
+
+					}
+
+
+					// I load the remote data and merge it into the local view-model. If
+					// cache data is available, it will be consumed.
+					function loadRemoteData() {
+
+						$scope.isLoading = true;
+
+						// CAUTION: Using pike.lock() to short-circuit callbacks if the
+						// route has changed by the time the callbacks have returned.
+						friendService
+							.getDetail( $scope.friendID )
+							.then( 
+								pike.lock( $scope, "id", handleResolve ), // Live data.
+								null,
+								pike.lock( $scope, "id", handleResolve ) // Cache data.
+							)
+						;
+
+
+						// I apply the remote data to the local scope.
+						function handleResolve( friend ) {
+
+							$scope.isLoading = false;
+
+							$scope.friend = friend;
+
+						}
+
+					}
+
+				}
+
+			}
+		);
+
+	
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I render the FriendBio module.
+		app.directive(
+			"bnFriendBio",
+			function() {
+
+				// Return the directive configuration.
+				return({
+					controller: Controller,
+					templateUrl: "friend-bio.htm"
+				});
+
+
+				// I manage the view-model for the module.
+				function Controller( $scope, friendService, pike ) {
+
+					$scope.friendID = pike.param( "id" );
+
+					$scope.isLoading = false;
+
+					$scope.bio = null;
+
+					// Setup the route-change event binding.
+					pike.bind( $scope, "detail.bio", handleRouteChange );
+						
+					loadRemoteData();
+
+
+					// ---
+					// PRIVATE METHODS.
+					// ---
+
+
+					// I handle contextual changes in the route.
+					function handleRouteChange( event, nextAction, newParams, oldParams ) {
+
+						// If the route ID has changed, we'll have to re-initialize the
+						// data for the new friend.
+						if ( $scope.friendID !== newParams.id ) {
+
+							$scope.friendID = newParams.id;
+
+							loadRemoteData();
+
+						}
+
+					}
+
+
+					// I load the remote data and merge it into the local view-model. If
+					// cache data is available, it will be consumed.
+					function loadRemoteData() {
+
+						$scope.isLoading = true;
+
+						// CAUTION: Using pike.lock() to short-circuit callbacks if the
+						// route has changed by the time the callbacks have returned.
+						friendService
+							.getBio( $scope.friendID )
+							.then( 
+								pike.lock( $scope, "id", handleResolve ), // Live data.
+								null, 
+								pike.lock( $scope, "id", handleResolve ) // Cache data.
+							)
+						;
+
+
+						// I apply the remote data to the local scope.
+						function handleResolve( bio ) {
+
+							$scope.isLoading = false;
+
+							$scope.bio = bio;
+
+						}
+
+					}
 
 				}
 
@@ -317,10 +755,103 @@
 		// -------------------------------------------------- //
 		// -------------------------------------------------- //
 
+
+		// I render the FriendLikes module.
+		app.directive(
+			"bnFriendLikes",
+			function() {
+
+				// Return the directive configuration.
+				return({
+					controller: Controller,
+					templateUrl: "friend-likes.htm"
+				});
+
+
+				// I manage the view-model for the module.
+				function Controller( $scope, friendService, pike ) {
+
+					$scope.friendID = pike.param( "id" );
+
+					$scope.isLoading = false;
+
+					$scope.likes = null;
+
+					// Setup the route-change event binding.
+					pike.bind( $scope, "detail.likes", handleRouteChange );
+					
+					loadRemoteData();
+
+
+					// ---
+					// PRIVATE METHODS.
+					// ---
+
+
+					// I handle contextual changes in the route.
+					function handleRouteChange( event, nextAction, newParams, oldParams ) {
+
+						// If the route ID has changed, we'll have to re-initialize the
+						// data for the new friend.
+						if ( $scope.friendID !== newParams.id ) {
+
+							$scope.friendID = newParams.id;
+
+							loadRemoteData();
+
+						}
+
+					}
+
+
+					// I load the remote data and merge it into the local view-model. If
+					// cache data is available, it will be consumed.
+					function loadRemoteData() {
+
+						$scope.isLoading = true;
+
+						// CAUTION: Using pike.lock() to short-circuit callbacks if the
+						// route has changed by the time the callbacks have returned.
+						friendService
+							.getLikes( $scope.friendID )
+							.then(
+								pike.lock( $scope, "id", handleResolve ), // Live data.
+								null,
+								pike.lock( $scope, "id", handleResolve ) // Cache data.
+							)
+						;
+
+
+						// I apply the remote data to the local scope.
+						function handleResolve( likes ) {
+
+							$scope.isLoading = false;
+
+							$scope.likes = likes;
+
+						}
+
+					}
+
+				}
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I provide access to friend-related data for the purposes of the demo. While
+		// we use a single HTTP call to get all of the remote data, we're still going to
+		// expose different aspects of the data through different methods and cache the
+		// sub-data individually so as to make the example a bit more "real world."
 		app.service(
 			"friendService",
 			function( $q, $http, _ ) {
 
+				// I cache each data point by entity ID.
 				var cache = {
 					bio: {},
 					detail: {},
@@ -342,28 +873,23 @@
 				// ---
 
 
+				// I get the bio for the friend with the given ID. If cached data is 
+				// available, it will be announced through the notify event.
 				function getBio( id ) {
 
 					var deferred = $q.defer();
 
+					// If we have cache data, notify the calling context.
 					if ( cache.bio[ id ] ) {
 
-						deferred.promise.then( null, null, angular.noop );
-
-						deferred.notify( angular.copy( cache.bio[ id ] ) );
+						notify( deferred, angular.copy( cache.bio[ id ] ) );
 
 					}
 
 					getData().then(
-						function( data ) {
+						function handleResolve( data ) {
 
-							var friend = _.find( data, { id: id } );
-
-							if ( ! friend ) {
-
-								return( deferred.reject( new Error( "NotFound" ) ) );
-
-							}
+							var friend = extractFriend( data, id );
 
 							deferred.resolve( 
 								angular.copy( cache.bio[ id ] = friend.description )
@@ -378,29 +904,23 @@
 				}
 
 
+				// I get the detail for the friend with the given ID. If cached data is
+				// available, it will be announced through the notify event.
 				function getDetail( id ) {
 
 					var deferred = $q.defer();
 
-
+					// If we have cache data, notify the calling context.
 					if ( cache.detail[ id ] ) {
 
-						deferred.promise.then( null, null, angular.noop );
-
-						deferred.notify( angular.copy( cache.detail[ id ] ) );
+						notify( deferred, angular.copy( cache.detail[ id ] ) );
 
 					}
 
 					getData().then(
-						function( data ) {
+						function handleResolve( data ) {
 
-							var friend = _.find( data, { id: id } );
-
-							if ( ! friend ) {
-
-								return( deferred.reject( new Error( "NotFound" ) ) );
-
-							}
+							var friend = extractFriend( data, id );
 
 							var data = _.pick( friend, [ "id", "name", "birthday" ] );
 
@@ -417,28 +937,23 @@
 				}
 
 
+				// I get the likes for the friend with the given ID. If cached data is 
+				// available, it will be announced through the notify event.
 				function getLikes( id ) {
 
 					var deferred = $q.defer();
 
+					// If we have cache data, notify the calling context.
 					if ( cache.likes[ id ] ) {
 
-						deferred.promise.then( null, null, angular.noop );
-
-						deferred.notify( angular.copy( cache.likes[ id ] ) );
+						notify( deferred, angular.copy( cache.likes[ id ] ) );
 
 					}
 
 					getData().then(
-						function( data ) {
+						function handleResolve( data ) {
 
-							var friend = _.find( data, { id: id } );
-
-							if ( ! friend ) {
-
-								return( deferred.reject( new Error( "NotFound" ) ) );
-
-							}
+							var friend = extractFriend( data, id );
 
 							deferred.resolve( 
 								angular.copy( cache.likes[ id ] = friend.likes ) 
@@ -453,24 +968,25 @@
 				}
 
 
+				// I get the list of friends. If cached data is available, it will be
+				// announced through the notify event.
 				function getList() {
 
 					var deferred = $q.defer();
 
+					// If we have cache data, notify the calling context.
 					if ( cache.list.data ) {
 
-						deferred.promise.then( null, null, angular.noop );
-
-						deferred.notify( angular.copy( cache.list.data ) );
+						notify( deferred, angular.copy( cache.list.data ) );
 
 					}
 
 					getData().then(
-						function( data ) {
+						function handleResolve( data ) {
 
 							var list = _.map( 
 								data, 
-								function( friend ) {
+								function operator( friend ) {
 
 									return( _.pick( friend, [ "id", "name" ] ) );
 
@@ -490,34 +1006,115 @@
 				}
 
 
-
 				// ---
 				// PRIVATE METHODS.
 				// ---
 
 
+				// I find the friend with the given ID in the given data. Throws an error
+				// if the friend cannot be found.
+				function extractFriend( data, id ) {
+
+					var friend = _.find( data, { id: id } );
+
+					if ( ! friend ) {
+
+						throw( new Error( "NotFound" ) );
+
+					}
+
+					return( friend );
+
+				}
+
+
+				// I get the remote data and unwrap it for processing.
+				// --
+				// NOTE: For simplicity of the demo, all the data comes back in a single
+				// JSON object; but, only parts of it will be plucked out.
 				function getData() {
 
-					var deferred = $q.defer();
-
-					$http({
+					var promise = $http({
 						method: "get",
 						url: "./friends.json"
 					})
 					.then(
 						function handleResolve( response ) {
 
-							deferred.resolve( response.data );
+							return( response.data );
 
 						},
 						function handleReject( response ) {
 
-							deferred.reject( new Error( "NetworkError" ) );
+							throw( new Error( "NetworkError" ) );
 
 						}
 					);
 
-					return( deferred.promise );
+					return( promise );
+
+				}
+
+
+				// I notify the promise for the given cached data.
+				function notify( deferred, value ) {
+
+					// Hack needed to get notify queue to flush.
+					// --
+					// SEE: http://bjam.in/2800 for more information.
+					deferred.promise.then( null, null, angular.noop );
+
+					deferred.notify( value );
+
+				}
+
+			}
+		);
+	
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I simulate some network latency so that we can see the UI in a pending state
+		// while remote data is being loaded.
+		app.config(
+			function simulateHttpLatency( $httpProvider ) {
+
+				$httpProvider.interceptors.push( slowDownRequest );
+
+
+				// I add a delay to post-HTTP part of the promise-chain.
+				function slowDownRequest( $q, $timeout ) {
+
+					return({
+						request: function( config ) {
+
+							// We only want to apply the latency to "API"-based calls.
+							if ( config.url.search( /\.json$/i ) === -1 ) {
+
+								return( config );
+
+							}
+
+							var latency = $q.defer();
+
+							$timeout(
+								function() {
+
+									latency.resolve( config );
+
+									config = latency = null;
+
+								},
+								1000,
+								false // No need trigger a digest.
+							);
+
+							return( latency.promise );
+
+						}
+					});
 
 				}
 
@@ -525,17 +1122,24 @@
 		);
 
 
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
 
 
+		// Expose the lodash library as an injectable.
 		app.factory(
 			"_",
 			function( $window ) {
 
-				var lodash = $window._;
+				try {
 
-				delete( $window._ );
+					return( $window._ );
 
-				return( lodash );
+				} finally {
+
+					delete( $window._ );
+
+				}
 
 			}
 		);
@@ -544,24 +1148,3 @@
 
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

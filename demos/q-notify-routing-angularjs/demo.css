@@ -1,0 +1,34 @@
+
+body.module {
+	margin: 20px 20px 20px 20px ;
+}
+
+.module {
+	border: 1px solid red ; 
+	margin: 16px 0px 16px 0px ;
+	padding: 4px 20px 4px 20px ;
+}
+
+em.loading {
+	background-color: gold ;
+	display: inline-block ;
+	padding: 0px 5px 0px 5px ;
+	text-shadow: 1px 1px #FFFFFF ;
+}
+
+p.demo-links {
+	border-left: 3px solid #CCCCCC ;
+	color: #666666 ;
+	font-size: 14px ;
+	line-height: 20px ;
+	margin-top: 30px ;
+	padding: 5px 0px 5px 13px ;
+}
+
+p.demo-links a {
+	color: #AAAAAA ;
+}
+
+p.demo-links a:hover {
+	color: red ;
+}

@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Revisiting Routing, Nested Views, And Caching With ngRoute In AngularJS 1.x](http://bennadel.github.io/JavaScript-Demos/demos/q-notify-routing-angularjs/)
 * [Forcing $q .notify() To Execute With A No-Op In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/q-notify-bindings-angularjs/)
 * [When Do You Need To Compile A Directive In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/when-to-compile-directive-angularjs/)
 * [Be Careful With Compound Conditions In AngularJS (And JavaScript In General)](http://bennadel.github.io/JavaScript-Demos/demos/compound-switch-condition-angularjs/)
