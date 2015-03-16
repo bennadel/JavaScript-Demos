@@ -223,11 +223,6 @@
 
 				var splitter = /\./g;
 
-				// Every time the route changes, the state is incremented. We can use 
-				// this unique value to know if a state has changed between two different
-				// moments in time.
-				var routeState = 0;
-
 				var oldRouteParams = {};
 
 				// I am used as the prefix / name-space for the internal event that will
@@ -405,12 +400,7 @@
 				// I catch the core route-change event and then translated it into 
 				// action-oriented events that get broadcast down through the scope tree.
 				function handleRounteChangeEvent( event, newRoute ) {
-
-					// Increment the route state - every moment in time will be unique;
-					// like a beautiful snowflake. This will allow us to bypass state 
-					// actions when they are no longer relevant.
-					routeState++;
-
+					
 					// If there is no action, it's probably a redirect. 
 					if ( angular.isUndefined( newRoute.action ) ) {
 
