@@ -1,0 +1,175 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Simulating Network Latency In AngularJS With HTTP Interceptors
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		Simulating Network Latency In AngularJS With HTTP Interceptors
+	</h1>
+
+	<p ng-switch="isLoading">
+		<strong>State</strong>:
+		<span ng-switch-when="true">Loading http data.</span>
+		<span ng-switch-when="false">Done after {{ delta }} milliseconds</span>
+	</p>
+
+	<p>
+		<a ng-click="makeRequest()">Make an HTTP request</a>
+	</p>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.3.13.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I control the root of the application.
+		app.controller(
+			"AppController",
+			function( $scope, $http ) {
+
+				// I determine if there is pending HTTP activity.
+				$scope.isLoading = false;
+
+				// I keep track of how long it takes for the outgoing HTTP request to
+				// return (either in success or in error).
+				$scope.delta = 0;
+
+				// I am used to move between "200 OK" and "404 Not Found" requests.
+				var requestCount = 0;
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I alternate between making successful and non-successful requests.
+				$scope.makeRequest = function() {
+
+					$scope.isLoading = true;
+
+					var startedAt = new Date();
+
+					// NOTE: We are using the requestCount to alternate between requests
+					// that return successfully and requests that return in error.
+					$http({
+						method: "get",
+						url: ( ( ++requestCount % 2 ) ? "./data.json" : "./404.json" )
+					})
+					// NOTE: We foregoing "resolve" and "reject" because we only care
+					// about when the HTTP response comes back - we don't care if it 
+					// came back in error or in success.
+					.finally(
+						function handleDone( response ) {
+
+							$scope.isLoading = false;
+
+							$scope.delta = ( ( new Date() ).getTime() - startedAt.getTime() );
+
+						}
+					);
+
+				};
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// Since we cannot change the actual speed of the HTTP request over the wire, 
+		// we'll alter the perceived response time be hooking into the HTTP interceptor
+		// promise-chain.
+		app.config(
+			function simulateNetworkLatency( $httpProvider ) {
+
+				$httpProvider.interceptors.push( httpDelay );
+
+
+				// I add a delay to both successful and failed responses.
+				function httpDelay( $timeout, $q ) {
+
+					var delayInMilliseconds = 850;
+
+					// Return our interceptor configuration.
+					return({
+						response: response,
+						responseError: responseError
+					});
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+					
+
+					// I intercept successful responses.
+					function response( response ) {
+
+						var deferred = $q.defer();
+
+						$timeout(
+							function() {
+
+								deferred.resolve( response );
+
+							},
+							delayInMilliseconds,
+							// There's no need to trigger a $digest - the view-model has
+							// not been changed.
+							false
+						);
+
+						return( deferred.promise );
+
+					}
+
+
+					// I intercept error responses.
+					function responseError( response ) {
+
+						var deferred = $q.defer();
+
+						$timeout(
+							function() {
+
+								deferred.reject( response );
+
+							},
+							delayInMilliseconds,
+							// There's no need to trigger a $digest - the view-model has
+							// not been changed.
+							false
+						);
+
+						return( deferred.promise );
+
+					}
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>

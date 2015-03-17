@@ -1,0 +1,12 @@
+a[ ng-click ] {
+	color: red ;
+	cursor: pointer ;
+	text-decoration: underline ;
+}
+
+span[ ng-switch-when = "true" ] {
+	background-color: gold ;
+	display: inline-block ;
+	padding: 0px 3px 0px 3px ;
+	text-shadow: 1px 1px 1px #FFFFFF ;
+}
