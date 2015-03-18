@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [ng-Template Requests Are Affected By $http Interceptors In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/ng-template-http-angularjs/)
 * [Simulating Network Latency In AngularJS With HTTP Interceptors](http://bennadel.github.io/JavaScript-Demos/demos/simulate-http-latency-angularjs/)
 * [Revisiting Routing, Nested Views, And Caching With ngRoute In AngularJS 1.x](http://bennadel.github.io/JavaScript-Demos/demos/q-notify-routing-angularjs/)
 * [Forcing $q .notify() To Execute With A No-Op In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/q-notify-bindings-angularjs/)

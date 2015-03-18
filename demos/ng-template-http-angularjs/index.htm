@@ -1,0 +1,145 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		ng-Template Requests Are Affected By $http Interceptors In AngularJS
+	</title>
+</head>
+<body>
+
+	<h1>
+		ng-Template Requests Are Affected By $http Interceptors In AngularJS
+	</h1>
+
+	<!--
+		Each of these ngInclude URLs can be pulled out of the Script / ng-template
+		directives below. 
+	-->
+	<div ng-include=" 'one.htm' "></div>
+	<div ng-include=" 'two.htm' "></div>
+	<div ng-include=" 'three.htm' "></div>
+
+
+	<!--
+		These ng-include templates are here to provide a local implementation of the 
+		"remote" URL content. This way, AngularJS doesn't have to make an HTTP request
+		over the wire (but, as you will see, it still goes through the $http() service).
+	-->
+
+	<script type="text/ng-template" id="one.htm">
+
+		<p>
+			I am the 1st ng-template include: <span bn-now></span>.
+		</p>
+
+	</script>
+
+	<script type="text/ng-template" id="two.htm">
+
+		<p>
+			I am the 2nd ng-template include: <span bn-now></span>.
+		</p>
+
+	</script>
+
+	<script type="text/ng-template" id="three.htm">
+
+		<p>
+			I am the 3rd ng-template include: <span bn-now></span>.
+		</p>
+
+	</script>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.3.13.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I add a delay to the HTTP request / response promise chain. Since all 
+		// template requests go through the $http() service, these changes will also 
+		// affect local requests for ng-template (which can be triggered by ngInclude 
+		// and other directive template URLs).
+		app.config(
+			function simulateHttpLatency( $httpProvider ) {
+
+				$httpProvider.interceptors.push( slowDownRequest );
+
+
+				// I add a delay to post-HTTP portion of the promise-chain.
+				function slowDownRequest( $q, $timeout ) {
+
+					// The delay will be incremented with each request.
+					var delay = 0;
+
+					return({
+						response: function( response ) {
+
+							var latency = $q.defer();
+
+							$timeout(
+								function resolver() {
+
+									latency.resolve( response );
+
+									response = latency = null;
+
+								},
+
+								// Increment the delay with each HTTP request.
+								( delay += 1500 ),
+
+								// There's no need to trigger a $digest; the $q service
+								// will automatically do that when the request resolves.
+								false
+							);
+
+							return( latency.promise );
+
+						}
+					});
+
+				}
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I output the current time in the .text() of the parent element.
+		app.directive(
+			"bnNow",
+			function() {
+
+				// Return the directive configuration object.
+				return({
+					link: link
+				});
+
+
+				// I bind the JavaScript events to the local scope.
+				function link( scope, element, attributes ) {
+
+					element.text( ( new Date() ).toTimeString().split( " " ).shift() );
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
