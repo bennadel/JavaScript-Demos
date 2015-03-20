@@ -1,0 +1,115 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		$location Search-Parameter Data Type Depends On Source In AngularJS
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		$location Search-Parameter Data Type Depends On Source In AngularJS
+	</h1>
+
+	<p>
+		<!-- 
+			With these first two links, the URL is going to drive the setting of 
+			the userID value. Meaning, the view-model will be updated to reflect 
+			the state of the URL.
+		-->
+		<a href="#/page?userID=1">#/page?userID=1</a>
+		&nbsp;|&nbsp;
+		<a href="#/page?userID=2">#/page?userID=2</a>
+		&nbsp;|&nbsp;
+
+		<!-- 
+			With this last link, the view-model is going to drive setting the 
+			userID value. Meaning, the URL will be updated to reflect the state 
+			of the view-model.
+		-->
+		<a ng-click="setUserID()">Set Programmatically</a>
+	</p>
+
+	<p>
+		<strong>Current userID</strong>: {{ currentUserID }}
+	</p>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.3.15.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I control the root of the application.
+		app.controller(
+			"AppController",
+			function( $scope, $location ) {
+
+				$scope.currentUserID = null;
+
+				// Listen for changes on the location and inspect the values.
+				$scope.$on( 
+					"$locationChangeStart",
+					function handleLocationChangeEvent( event ) {
+
+						// Pluck the userID out of the search - this is how we can 
+						// access the value regardless of whether it was driven by the
+						// URL or driven by a programmatic change.
+						var userID = $scope.currentUserID = $location.search().userID;
+
+						var data = [];
+
+						for ( var i = 0 ; i <= 5 ; i++ ) {
+
+							// Check the userID against the index using both strict 
+							// quality (===) and loose equality (==).
+							data.push({
+								userID: userID,
+								userIDType: ( typeof userID ),
+								index: i,
+								strict: ( ( userID === i ) ? "STRICT EQUALITY" : "-" ),
+								loose: ( ( userID == i ) ? "LOOSE EQUALITY" : "-" )
+							});
+
+						}
+
+						console.table( 
+							data, 
+							[ "index", "userID", "userIDType", "strict", "loose" ] 
+						);
+						
+					}
+				)
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I programmatically set the userID, which will drive the URL.
+				$scope.setUserID = function() {
+
+					// NOTE: We are setting the value as a NUMBER LITERAL.
+					$location.search( "userID", 3 );
+
+				};
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
