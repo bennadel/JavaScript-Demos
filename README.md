@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [$location Search-Parameter Data Type Depends On Source In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/location-search-type-angularjs/)
 * [ngRoute Exposes The Original Route Definition Through Prototypal Inheritance In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/route-inheritance-angularjs/)
 * [ng-Template Requests Are Affected By $http Interceptors In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/ng-template-http-angularjs/)
 * [Simulating Network Latency In AngularJS With HTTP Interceptors](http://bennadel.github.io/JavaScript-Demos/demos/simulate-http-latency-angularjs/)
