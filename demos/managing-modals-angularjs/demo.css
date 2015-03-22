@@ -1,0 +1,54 @@
+a[ ng-click ] {
+	color: red ;
+	cursor: pointer ;
+	text-decoration: underline ;
+}
+
+div.m-modals {
+	background-color: rgba( 0, 0, 0, 0.8 ) ;
+	bottom: 0px ;
+	left: 0px ;
+	position: fixed ;
+	right: 0px ;
+	top: 0px ;
+}
+
+div.m-modals.ng-hide {
+	background-color: rgba( 0, 0, 0, 0 );
+}
+
+div.m-modals.ng-hide-add.ng-hide-add-active,
+div.m-modals.ng-hide-remove.ng-hide-remove-active {
+	transition: 250ms ease all ;
+}
+
+div.m-modals > .modal {
+	background-color: #FAFAFA ;
+	border-radius: 3px 3px 3px 3px ;
+	box-sizing: border-box ;
+		-moz-box-sizing: border-box ;
+	padding: 20px 20px 20px 20px ;
+	position: fixed ;
+	left: 50% ;
+	margin-left: -200px ;
+	top: 200px ;
+	width: 400px ;
+}
+
+div.m-modals.ng-hide > .modal.ng-enter {
+	top: -200px ;
+	transition: 250ms ease top ;
+}
+
+div.m-modals.ng-hide > .modal.ng-enter.ng-enter-active {
+	top: 200px ;
+}
+
+a.jump {
+	color: #999999 ;
+}
+
+a.jump:hover {
+	background-color: gold ;
+	color: #000000 ;
+}

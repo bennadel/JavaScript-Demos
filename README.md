@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Creating A Simple Modal System In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/managing-modals-angularjs/)
 * [$location Search-Parameter Data Type Depends On Source In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/location-search-type-angularjs/)
 * [ngRoute Exposes The Original Route Definition Through Prototypal Inheritance In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/route-inheritance-angularjs/)
 * [ng-Template Requests Are Affected By $http Interceptors In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/ng-template-http-angularjs/)
