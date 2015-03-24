@@ -1,0 +1,153 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Using $rootScope.$emit() As A Performance Optimization In AngularJS
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body>
+
+	<h1>
+		Using $rootScope.$emit() As A Performance Optimization In AngularJS
+	</h1>
+
+	<ul>
+		<li 
+			ng-repeat="i in [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ]" 
+			bn-toggle>
+			{{ i }} - CSS class will toggle based on event.
+		</li>
+	</ul>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.3.15.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I manage some service functionality, detached from any concept of the DOM.
+		// --
+		// NOTE: We are passing in the $rootScope object. From a service-layer 
+		// standpoint, the $rootScope is nothing more than a publish and subscribe 
+		// (PUB / SUB) mechanism that the service layer can use to broadcast events.
+		app.factory(
+			"someService",
+			function( $interval, $rootScope ) {
+
+				var intervalCount = 0;
+
+				// Kick off an interval that will emit events.
+				$interval( operator, 1000 );
+
+				// Return the public API.
+				return({
+					count: count
+				});
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I return the number of intervals that have passed.
+				function count() {
+
+					return( intervalCount );
+
+				}
+
+
+				// ---
+				// PRIVATE METHODS.
+				// ---
+
+				
+				// I execute the interval operation.
+				function operator() {
+
+					// When the interval runs, we are going to EMIT an event on the 
+					// $rootScope. By using $emit(), instead of $broadcast(), it will 
+					// isolate the event landscape to a single scope - the $rootScope. 
+					// Since $emit() goes "up" in the scope tree, and there's nowhere to
+					// go "up" from the $rootScope, this will limit event handler 
+					// invocation to those handlers that have specifically bound to the 
+					// $rootScope (and not the relevant "local" scope).
+					$rootScope.$emit( "interval.changed", ++intervalCount );
+
+				};
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I render the toggle component.
+		// --
+		// NOTE: We are injecting the $rootScope to act as our pub-sub mechanism.
+		app.directive(
+			"bnToggle",
+			function( $rootScope, someService ) {
+
+				// Return the directive configuration.
+				return( link );
+
+
+				// I bind the JavaScript events to the local scope.
+				function link( scope, element, attributes ) {
+
+					// Listen for the interval event on the $rootScope. Since the original
+					// event is being announced via $emit(), it will never show up on the
+					// local directive-scope (which is a descendant of $rootScope).
+					// --
+					// NOTE: We could have accomplished the same thing by doing something
+					// like binding a $watch() on the .count() method result; however, 
+					// this would have required a check on every single digest, which is
+					// less than optimal (considering that we have a delineated event).
+					// --
+					// CAUTION: This event handler WILL NOT BE AUTOMATICALLY DEREGISTERED
+					// when the local scope is destroyed. As such, if you ever expect this
+					// scope to be destroyed, you MUST explicitly invoke the deregister()
+					// function returned by the event binding.
+					var deregister = $rootScope.$on(
+						"interval.changed",
+						function() {
+
+							console.log( "Responding to event %s.", someService.count() );
+
+							if ( Math.random() > .5 ) {
+
+								element.addClass( "on" );
+								
+							} else {
+
+								element.removeClass( "on" );
+
+							}
+
+						}
+					);
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>

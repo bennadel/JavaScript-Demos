@@ -1,0 +1,20 @@
+
+ul {
+	list-style-type: none ;
+	margin: 0px 0px 0px 0px ;
+	padding: 0px 0px 0px 0px ;
+}
+
+li {
+	background-color: #FAFAFA ;
+	border: 1px solid #CCCCCC ;
+	color: #333333 ;
+	margin-bottom: 10px ;
+	padding: 10px 10px 10px 10px ;
+}
+
+li.on {
+	background-color: #E0E0E0 ;
+	border: 1px solid #AAAAAA ;
+	color: #000000 ;
+}
