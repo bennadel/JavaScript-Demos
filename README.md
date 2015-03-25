@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Asking The User To Confirm Location Or Route Changes In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/location-change-confirm-angularjs/)
 * [Using $rootScope.$emit() As A Performance Optimization In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/rootscope-emit-angularjs/)
 * [Creating A Simple Modal System In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/managing-modals-angularjs/)
 * [$location Search-Parameter Data Type Depends On Source In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/location-search-type-angularjs/)

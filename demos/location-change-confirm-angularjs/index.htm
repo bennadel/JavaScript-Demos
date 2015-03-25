@@ -1,0 +1,227 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Asking The User To Confirm Location Or Route Changes In AngularJS
+	</title>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		Asking The User To Confirm Location Or Route Changes In AngularJS
+	</h1>
+
+	<ul>
+		<li>
+			<a href="#/foo/bar">#/foo/bar</a>
+		</li>
+		<li>
+			<a href="#/hello/world">#/hello/world</a>
+		</li>
+		<li>
+			<a href="#/meep/moop">#/meep/moop</a>
+		</li><li>
+			<a href="#/thats/so?kablamo">#/thats/so?kablamo</a>
+		</li>
+	</ul>
+
+	<p>
+		<strong>Current Location</strong>: {{ currentLocation }}
+	</p>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.3.15.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I control the root of the application.
+		app.controller(
+			"AppController",
+			function( $scope, $location, $timeout, confirminator ) {
+
+				// I hold the current location, once it has changed successfully.
+				$scope.currentLocation = $location.url();
+
+				// When the location is changed, update the view-model to make the demo
+				// UI a bit more intuitive.
+				$scope.$on(
+					"$locationChangeSuccess",
+					function handleLocationChangeSuccessEvent( event ) {
+
+						$scope.currentLocation = $location.url();
+
+					}
+				);
+
+				// In order to confirm navigation, we have to start watching for location
+				// changes. We need to defer the start of the watching, however, so that 
+				// it doesn't pick up the initial location change event trigger on 
+				// application start.
+				// --
+				// NOTE: In this demo, I'm using $locationChangeStart. However, this 
+				// could also be done with $routeChangeStart. Routing is just a very thin
+				// layer built on top of the location service. There's very little 
+				// difference between the two events.
+				// --
+				// CAUTION: We need to use $timeout() here instead of $applyAsync() since
+				// the controller body runs in the $apply phase, which means that the 
+				// $digest phase hasn't started. As such, $applyAsync() would execute too
+				// early (before all the $watch-bindings and the $location initialization).
+				// This is an edge-case due to the fact that this Controller is part of the
+				// core HTML rendering.
+				var startWatchingTimer = $timeout( startWatchingForLocationChanges, 0, false );
+
+				// I hold the deregistration method for the location-watcher. We need to 
+				// store the deregistrtion method so that we can explicitly stop watching
+				// for changes if the user does want to leave the current location.
+				var stopWatchingLocation = null;
+
+
+				// ---
+				// PRIVATE METHODS.
+				// ---
+
+
+				// I handle the $locationChangeStart event and ask the user if they 
+				// really want to leave the current location. In a real-world application,
+				// this would often mean that the user is about to navigate away from the
+				// current user-interface (UI) (and possibly away from unsaved form-data).
+				function handleLocationChangeStartEvent( event ) {
+
+					// Prevent the location from actually changing.
+					event.preventDefault();
+
+					// Keep track of which location the user was about to move to.
+					var targetPath = $location.path();
+					var targetSearch = $location.search();
+					var targetHash = $location.hash();
+
+					// Trigger a confirmation modal to see if the user really wanted to
+					// leave the current page; this returns a promise.
+					confirminator
+						.open( "Are you sure you want to go to:\n\n" + targetPath )
+						.then(
+							function handleResolve() {
+
+								// Since the user has confirmed that they want to leave
+								// the current location, let's reconfigure the location
+								// to mirror the location they wanted to go to.
+								$location
+									.path( targetPath )
+									.search( targetSearch )
+									.hash( targetHash )
+								;
+
+								// The above location-change will eventually trigger 
+								// another "$locationChangeStart" event. As such, we want
+								// to stop watching the location so that the user may 
+								// leave the current view without being prompted again.
+								stopWatchingLocation();
+
+								// NOTE: This is [mostly] for the demo; but, there are 
+								// some real-world situations in which you would want to
+								// restart the watch. We have to use $applyAsync() so 
+								// that we don't rebind the event-handler before the 
+								// subsequent location change is triggered.
+								$scope.$applyAsync( startWatchingForLocationChanges );
+
+							}
+						)
+					;
+
+				}
+
+
+				// In a real-world situation, the reason you'd want to confirm the 
+				// location change is likely related (though not always) to the 
+				// destruction of the current scope. As such, deregistering the watcher
+				// is likely where this controller's responsibility ends; however, in
+				// this demo, we never actually change controller. As such, I have to 
+				// restart the location-watch so that subsequent location-change events
+				// will be managed.
+				function startWatchingForLocationChanges() {
+
+					stopWatchingLocation = $scope.$on( "$locationChangeStart", handleLocationChangeStartEvent );
+
+				}
+				
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I provide an asynchronous promise-based workflow for the core confirm()
+		// provided by the global object. The confirm() modal is guaranteed to be 
+		// opened in the next tick.
+		app.service(
+			"confirminator",
+			function( $q, $timeout, $window ) {
+
+				var currentModal = null;
+				
+				// Return the public API.
+				return({
+					open: open
+				});
+
+
+				// ---
+				// PULBIC METHODS.s
+				// ---
+
+
+				// I open the the confirm() modal with the given message and return a
+				// promise. The promise will be resolved or rejected based on the result
+				// of the confirmation.
+				function open( message ) {
+
+					// If there is already a pending confirmation modal, reject it.
+					if ( currentModal ) {
+
+						currentModal.reject();
+
+					}
+
+					currentModal = $q.defer();
+
+					// Open confirmation modal in next tick.
+					$timeout(
+						function openConfirm() {
+
+							$window.confirm( message )
+								? currentModal.resolve()
+								: currentModal.reject()
+							;
+
+							currentModal = null;
+
+						},
+						0,
+						// No need to trigger a digest - $q will do that.
+						false
+					);
+
+					return( currentModal.promise );
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
