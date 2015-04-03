@@ -1,0 +1,399 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Directive Architecture, Template URLs, And Linking Order In AngularJS
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		Directive Architecture, Template URLs, And Linking Order In AngularJS
+	</h1>
+
+
+	<!-- This set of directives is directly in the initial HTML, nothing fancy. -->
+	<div a-outer>
+
+		A-outer directive. <em>This directive is defined directly in the HTML</em>
+
+		<div a-inner>
+
+			A-inner directive.
+
+		</div>
+
+	</div>
+
+
+	<!--
+		This set of directives is available in the initial HTML, but the templates are
+		provided using ngTemplate Script tags. Since templateUrl values are compiled 
+		asynchronously, the parent directive will actually be linked first, while the 
+		template is being processed.
+	-->
+	<div b-outer></div>
+
+	<script type="text/ng-template" id="b-outer.htm">
+
+		B-outer directive. <em>This directive is defined using inlined ngTemplate</em>
+
+		<div b-inner></div>
+
+	</script>
+
+	<script type="text/ng-template" id="b-inner.htm">
+
+		B-inner directive.
+
+	</script>
+
+
+	<!--
+		This set of directives is available in the initial HTML, but the templates are 
+		provided using ngTemplate Script tags and the outer directive is deferred 
+		using ngIf. However, since the c-outer directive is in the initial HTML, it is
+		compiled and the templateUrl is processed. As such, by the then ng-if brings 
+		the directive into existence, the templateUrl does not need to compiled 
+		asynchronously and it can be processed as though it was inline, allowing the 
+		directives to link from the bottom-up.
+	-->
+	<p>
+		<a ng-click="toggleC()">Toggle C</a>
+	</p>
+
+	<div ng-if="isShowingC" c-outer></div>
+
+	<script type="text/ng-template" id="c-outer.htm">
+
+		C-outer directive. <em>This directive is deferred using ngIf</em>
+
+		<div c-inner></div>
+
+	</script>
+
+	<script type="text/ng-template" id="c-inner.htm">
+
+		C-inner directive.
+
+	</script>
+
+
+	<!-- 
+		This set of directives is NOT available in the initial HTML - it's not available 
+		until the ngInclude directive is linked. This means that the outer directive, 
+		d-outer, isn't compiled until the ng-if renders it. As such, we are back in a 
+		situation where the templateUrls need to be processed asynchronously which means
+		that the outer directive will link before the inner directive.
+	-->
+	<p>
+		<a ng-click="toggleD()">Toggle D</a>
+	</p>
+
+	<div ng-if="isShowingD" ng-include=" 'd-parent.htm' "></div>
+
+	<script type="text/ng-template" id="d-parent.htm">
+
+		D-outer parent (ng-include).
+
+		<div d-outer></div>
+
+	</script>
+
+	<script type="text/ng-template" id="d-outer.htm">
+
+		D-outer directive. <em>This directive is deferred using ngIf / ngInclude parent</em>
+
+		<div d-inner></div>
+
+	</script>
+
+	<script type="text/ng-template" id="d-inner.htm">
+
+		D-inner directive.
+
+	</script>
+
+
+	<!-- 
+		This set of directives is available in the initial HTML, but the directive 
+		templates are provided using remote URLs. The rendering of the directive is
+		deferred using ngIf; however, since the e-outer directive is available in the
+		initial HTML, it will be compiled. The templateUrls will then be retrieved and
+		compiled asynchronously; however, since the directive isn't actually rendered
+		until the ng-if transcludes it, it will be able to link from the bottom up.
+	-->
+	<p>
+		<a ng-click="toggleE()">Toggle E</a>
+	</p>
+
+	<div ng-if="isShowingE" e-outer></div>
+	
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.3.15.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I control the root of the application.
+		app.controller(
+			"AppController",
+			function( $scope ) {
+
+				$scope.isShowingC = false;
+				$scope.isShowingD = false;
+				$scope.isShowingE = false;
+
+				
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				$scope.toggleC = function() {
+
+					console.info( "Toggling C" );
+					
+					$scope.isShowingC = ! $scope.isShowingC;
+
+				};
+
+				$scope.toggleD = function() {
+
+					console.info( "Toggling D" );
+
+					$scope.isShowingD = ! $scope.isShowingD;
+
+				};
+
+				$scope.toggleE = function() {
+
+					console.info( "Toggling E" );
+
+					$scope.isShowingE = ! $scope.isShowingE;
+
+				};
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		app.directive(
+			"body",
+			function() {
+
+				return( link );
+
+				function link( scope, element, attributes ) {
+
+					console.log( "Body linked" );
+
+				}
+
+			}
+		);
+
+
+		app.directive(
+			"aOuter",
+			function() {
+
+				return( link );
+
+				function link( scope, element, attributes ) {
+
+					console.log( "A-Outer linked" );
+
+				}
+
+			}
+		);
+
+
+		app.directive(
+			"aInner",
+			function() {
+
+				return( link );
+
+				function link( scope, element, attributes ) {
+
+					console.log( "A-Inner linked" );
+
+				}
+
+			}
+		);
+
+
+		app.directive(
+			"bOuter",
+			function() {
+
+				return({
+					link: link,
+					templateUrl: "b-outer.htm"
+				});
+
+				function link( scope, element, attributes ) {
+
+					console.log( "B-Outer linked" );
+
+				}
+
+			}
+		);
+
+
+		app.directive(
+			"bInner",
+			function() {
+
+				return({
+					link: link,
+					templateUrl: "b-inner.htm"
+				});
+
+				function link( scope, element, attributes ) {
+
+					console.log( "B-Inner linked" );
+
+				}
+
+			}
+		);
+
+
+		app.directive(
+			"cOuter",
+			function() {
+
+				return({
+					link: link,
+					templateUrl: "c-outer.htm"
+				});
+
+				function link( scope, element, attributes ) {
+
+					console.log( "C-Outer linked" );
+
+				}
+
+			}
+		);
+
+
+		app.directive(
+			"cInner",
+			function() {
+
+				return({
+					link: link,
+					templateUrl: "c-inner.htm"
+				});
+
+				function link( scope, element, attributes ) {
+
+					console.log( "C-Inner linked" );
+
+				}
+
+			}
+		);
+
+
+		app.directive(
+			"dOuter",
+			function() {
+
+				return({
+					link: link,
+					templateUrl: "d-outer.htm"
+				});
+
+				function link( scope, element, attributes ) {
+
+					console.log( "D-Outer linked" );
+
+				}
+
+			}
+		);
+
+
+		app.directive(
+			"dInner",
+			function() {
+
+				return({
+					link: link,
+					templateUrl: "d-inner.htm"
+				});
+
+				function link( scope, element, attributes ) {
+
+					console.log( "D-Inner linked" );
+
+				}
+
+			}
+		);
+
+
+		app.directive(
+			"eOuter",
+			function() {
+
+				return({
+					link: link,
+					templateUrl: "e-outer.htm"
+				});
+
+				function link( scope, element, attributes ) {
+
+					console.log( "E-Outer linked" );
+
+				}
+
+			}
+		);
+
+
+		app.directive(
+			"eInner",
+			function() {
+
+				return({
+					link: link,
+					templateUrl: "e-inner.htm"
+				});
+
+				function link( scope, element, attributes ) {
+
+					console.log( "E-Inner linked" );
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>

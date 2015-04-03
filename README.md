@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Directive Architecture, Template URLs, And Linking Order In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/link-order-directives-angularjs/)
 * [Mutating Isolate Scope References In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/mutating-isolate-collection-angularjs/)
 * [Asking The User To Confirm Location Or Route Changes In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/location-change-confirm-angularjs/)
 * [Using $rootScope.$emit() As A Performance Optimization In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/rootscope-emit-angularjs/)

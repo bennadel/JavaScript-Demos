@@ -1,0 +1,23 @@
+div {
+	border: 1px solid red ;
+	margin-bottom: 30px ;
+	padding: 20px 20px 20px 20px ;
+}
+
+div div {
+	margin: 20px 0px 0px 0px ;
+}
+
+em {
+	background-color: gold ;
+	color: #333333 ;
+	display: inline-block ;
+	padding: 0px 10px 0px 10px ;
+	text-shadow: 1px 1px #FFFFFF ;
+}
+
+a[ ng-click ] {
+	color: red ;
+	cursor: pointer ;
+	text-decoration: underline ;
+}
