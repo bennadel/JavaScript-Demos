@@ -1,0 +1,628 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		..... In AngularJS
+	</title>
+</head>
+<body ng-controller="AppController" bn-app-controller>
+
+	<h1>
+		..... In AngularJS
+	</h1>
+
+	<h2>
+		Friends
+	</h2>
+
+	<ul>
+		<li ng-repeat="friend in friends track by friend.id">
+			{{ friend.name }}
+		</li>
+	</ul>
+
+	<p>
+		Hit "F" to toggle the <strong>F</strong>orm. 
+	</p>
+
+	<form 
+		ng-if="isShowingForm"
+		ng-controller="FormController" 
+		bn-form-controller
+		ng-submit="processForm()">
+
+		<p>
+			Name: <input type="text" ng-model="form.name" />
+		</p>
+
+		<p>
+			<input type="submit" value="Add Friend" />
+		</p>
+
+	</form>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.3.15.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I control the root of the application.
+		app.controller(
+			"AppController",
+			function( $scope, friendService ) {
+
+				$scope.friends = [];
+
+				$scope.isShowingForm = false;
+
+				$scope.$on( 
+					"friends.friendAdded", 
+					function() {
+
+						$scope.isShowingForm = false;
+
+						loadRemoteData();
+
+					}
+				);
+
+				loadRemoteData();
+
+
+				$scope.toggleForm = function() {
+
+					$scope.isShowingForm = ! $scope.isShowingForm;
+
+					console.log( "toggle:", $scope.isShowingForm );
+
+				};
+
+
+				function applyRemoteData( friends ) {
+
+					$scope.friends = friends;
+
+				}
+
+
+				function loadRemoteData() {
+
+					friendService.getFriends().then( applyRemoteData );
+				
+				}
+
+			}
+		);
+
+
+		app.directive(
+			"bnAppController",
+			function( keyEvents ) {
+
+				return( link );
+
+
+				function link( scope, element, attributes ) {
+
+					var keyHandler = keyEvents.newHandler();
+
+					keyHandler.on(
+						"keypress",
+						function handleKeyEvent( event ) {
+
+							if ( String.fromCharCode( event.which ).toLowerCase() === "f" ) {
+
+								scope.$evalAsync( scope.toggleForm );
+
+								event.preventDefault();								
+								
+							}
+
+						}
+					);
+
+					scope.$on( 
+						"$destroy",
+						function() {
+
+							keyEvents.removeHandler( keyHandler );
+
+						}
+					);
+
+				}
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I control the new friend form.
+		app.controller(
+			"FormController",
+			function( $scope, friendService ) {
+
+				$scope.form = {
+					name: ""
+				};
+
+
+				$scope.processForm = function() {
+
+					if ( ! $scope.form.name ) {
+
+						return;
+
+					}
+
+					friendService.addFriend( $scope.form.name );
+
+				};
+
+				
+			}
+		);
+
+
+		app.directive(
+			"bnFormController",
+			function( keyEvents ) {
+
+				return( link );
+
+
+				function link( scope, element, attributes ) {
+
+					element[ 0 ].querySelectorAll( "input[ ng-model ]" )[ 0 ].focus();
+
+					var keyHandler = keyEvents.newHandler( true );
+
+					keyHandler.keypress(
+						function handleKeyPress( event ) {
+
+							if ( event.is.input ) {
+
+								event.stopImmediatePropagation();
+
+							}
+
+						}
+					);
+
+					scope.$on( 
+						"$destroy",
+						function() {
+
+							keyHandler.destroy();
+
+						}
+					);
+
+				}
+
+			}
+		);
+
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		app.factory(
+			"keyEvents",
+			function( $document ) {
+
+
+				function KeyEventManager() {
+
+					this._handlers = [];
+
+					this._keydownCount = 0;
+					this._keypressCount = 0;
+					this._keyupCount = 0;
+
+					this._boundHandleKeyEvent = angular.bind( this, this.handleKeyEvent );
+
+				}
+
+				KeyEventManager.prototype = {
+
+					constructor: KeyEventManager,
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					handleKeyEvent: function( event ) {
+
+						this._processEvent( event );
+
+					},
+
+
+					handleKeypress: function( event ) {
+
+						this._processEvent( event );
+
+					},
+
+
+					handleKeyup: function( event ) {
+
+						this._processEvent( event );
+
+					},
+
+
+					newHandler: function( isTerminal ) {
+
+						var handler = new KeyEventHandler( this, !! isTerminal );
+
+						this._handlers.push( handler );
+
+					},
+
+
+					removeHandler: function( handler ) {
+
+						var index = this._handlers.indexOf( handler );
+
+						if ( index !== -1 ) {
+
+							this._handlers.splice( index, 1 );
+
+						}
+
+					},
+
+
+					startWatchingKeydown: function() {
+
+						if ( ++this._keydownCount === 1 ) {
+
+							$document.on( "keydown", this._boundHandleKeyEvent );
+
+						}
+
+					},
+
+
+					startWatchingKeypress: function() {
+
+						if ( ++this._keypressCount === 1 ) {
+
+							$document.on( "keypress", this._boundHandleKeyEvent );
+
+						}
+
+					},
+
+
+					startWatchingKeyup: function() {
+
+						if ( ++this._keyupCount === 1 ) {
+
+							$document.on( "keyup", this._boundHandleKeyEvent );
+
+						}
+
+					},
+
+
+					stopWatchingKeydown: function() {
+
+						if ( --this._keydownCount === 0 ) {
+
+							$document.off( "keydown", this._boundHandleKeyEvent );
+
+						}
+
+					},
+
+
+					stopWatchingKeypress: function() {
+
+						if ( --this._keypressCount === 0 ) {
+
+							$document.off( "keypress", this._boundHandleKeyEvent );
+
+						}
+
+					},
+
+
+					stopWatchingKeyup: function() {
+
+						if ( --this._keyupCount === 0 ) {
+
+							$document.off( "keyup", this._boundHandleKeyEvent );
+
+						}
+
+					},
+
+
+					// ---
+					// PRIVATE METHODS.
+					// ---
+
+
+					_processEvent: function( event ) {
+
+						// We're looping over the handler backwards so they can be run 
+
+
+					}
+
+				};
+
+
+
+				function KeyEventHandler( manager, isTerminal ) {
+
+					this._manager = manager;
+					this._isTerminal;
+
+					this._handleKeydown = angular.noop;
+					this._handleKeypress = angular.noop;
+					this._handleKeyup = angular.noop;
+
+				}
+
+
+				KeyEventHandler.prototype = {
+
+					constructor: KeyEventHandler,
+
+
+					destroy: function() {
+
+						manager.removeHandler( this );
+
+					},
+
+
+					keydown: function( newKeydown ) {
+
+						this._handleKeydown = newKeydown;
+
+						this._manager.startWatchingKeydown();
+
+						return( this );
+
+					},
+
+
+					keypress: function( newKeypress ) {
+
+						this._handleKeypress = newKeypress;
+
+						this._manager.startWatchingKeypress();
+
+						return( this );
+
+					},
+
+
+					keyup: function( newKeyup ) {
+
+						this._handleKeyup = newKeyup;
+
+						this._manager.startWatchingKeyup();
+
+						return( this );
+
+					},
+
+
+					processEvent: function( event ) {
+
+						( event.type === "keydown" ) && this._handleKeydown( event );
+						( event.type === "keypress" ) && this._handleKeypress( event );
+						( event.type === "keyup" ) && this._handleKeyup( event );
+
+						return( event );
+
+					},
+
+
+					terminal: function( newIsTerminal ) {
+
+						if ( arguments.length === 1 ) {
+
+							this._isTerminal = newIsTerminal;
+
+							return( this );
+
+						}
+
+						return( this._isTerminal );
+
+					}
+
+				};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+				var handlers = [];
+
+				return({
+					newHandler: newHandler,
+					removeHandler: removeHandler
+				});
+
+
+				function newHandler() {
+
+					var handler = {};
+
+					handler.on = function( eventType, callback ) {
+
+						handler[ eventType ] = callback;
+
+					};
+
+					handlers.push( handler );
+
+					if ( handlers.length === 1 ) {
+
+						startWatchingKeys();
+
+					}
+
+					return( handler );
+
+				}
+
+
+				function removeHandler( handler ) {
+
+					var index = handlers.indexOf( handler );
+
+					if ( index !== -1 ) {
+
+						handlers.splice( index, 1 );
+
+					}
+
+					if ( ! handlers.length ) {
+
+						stopWatchingKeys();
+
+					}
+
+				}
+
+
+				function startWatchingKeys() {
+
+					$document.on( "keyup", rootKeyHandler );
+					$document.on( "keypress", rootKeyHandler );
+
+				}
+
+
+				function stopWatchingKeys() {
+
+					$document.off( "keyup", rootKeyHandler );
+					$document.off( "keypress", rootKeyHandler );
+					
+				}
+
+
+				function rootKeyHandler( event ) {
+
+					var eventType = event.type;
+
+					console.log( eventType );
+
+					for ( var i = handlers.length - 1 ; i >= 0 ; i-- ) {
+
+						var handler = handlers[ i ];
+
+						if ( handler[ eventType ] ) {
+
+							handler[ eventType ].call( null, event );
+
+							if ( event.isImmediatePropagationStopped() ) {
+
+								console.log( "Stopping event propagation" );
+								break;
+
+							}
+
+						}
+
+					}
+
+				}
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I provide access to the friend repository.
+		app.factory(
+			"friendService",
+			function( $q, $rootScope ) {
+
+				var friends = [
+					{
+						id: 1,
+						name: "Heather"
+					},
+					{
+						id: 2,
+						name: "Joanna"
+					}
+				];
+
+				return({
+					addFriend: addFriend,
+					getFriends: getFriends
+				});
+
+
+				function addFriend( name ) {
+
+					var friend = {
+						id: ( new Date() ).getTime(),
+						name: name
+					};
+
+					friends.push( friend );
+
+					$rootScope.$broadcast( "friends.friendAdded", friend.id );
+
+					return( $q.when( friend.id ) );
+
+				}
+
+				
+				function getFriends() {
+
+					return( $q.when( angular.copy( friends ) ) );
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
