@@ -1,0 +1,23 @@
+
+div.m-boxes div.box {
+	background-color: #FAFAFA ;
+	border: 1px solid #CCCCCC ;
+	border-radius: 3px 3px 3px 3px ;
+	height: 100px ;
+	line-height: 100px ;
+	margin: 20px 0px 20px 0px ;
+	text-align: center ;
+}
+
+div.m-tooltip {
+	background-color: gold ;
+	border-radius: 3px 3px 3px 3px ;
+	box-shadow: 2px 2px 2px #CCCCCC ;
+		-moz-box-shadow: 2px 2px 2px #CCCCCC ;
+		-webkit-box-shadow: 2px 2px 2px #CCCCCC ;
+	color: #333333 ;
+	padding: 3px 7px 3px 7px ;
+	position: absolute ;
+	text-shadow: 1px 1px #FFFFFF ;
+	z-index: 2 ;
+}

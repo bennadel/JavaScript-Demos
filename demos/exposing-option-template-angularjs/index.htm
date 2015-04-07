@@ -1,0 +1,298 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Exposing An Optional Directive Template Using ng-Template In AngularJS
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body>
+
+	<h1>
+		Exposing An Optional Directive Template Using ng-Template In AngularJS
+	</h1>
+
+	<div class="m-boxes">
+
+		<!--
+			As we output the elements here, notice that I am providing two values:
+			--
+			* bn-tooltip : This is the tooltip content.
+			* tooltip-template : This is the optional tooltip template
+		-->
+		<div
+			ng-repeat="i in [ 1, 2, 3, 4, 5 ]" 
+			bn-tooltip="This is box {{ i }}"
+			tooltip-template="tooltip-override-{{ i }}.htm"
+			class="box">
+			
+			Box {{ i }}
+
+		</div>
+
+	</div>
+
+
+	<!--
+		This Script/ng-template based content can be optionally used to render the 
+		tooltip. If this is present in the $templateCache(), the bnTooltip directive
+		will try to use it. Otherwise, it will defer to its own internal tooltip.
+	-->
+	<script type="text/ng-template" id="m-tooltip.htm">
+
+		<div class="m-tooltip">
+			<strong>Tooltip:</strong> {{ content }}
+		</div>
+
+	</script>
+
+	<script type="text/ng-template" id="tooltip-override-2.htm">
+
+		<div class="m-tooltip">
+			<strong>Pro-tip:</strong> {{ content }}
+		</div>
+
+	</script>
+
+	<script type="text/ng-template" id="tooltip-override-5.htm">
+
+		<div class="m-tooltip">
+			<strong>Up in yo grill:</strong> {{ content }} ( index: {{ $index }} )
+		</div>
+
+	</script>
+	
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.3.15.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I create a simple tooltip directive.
+		app.directive(
+			"bnTooltip",
+			function( $templateCache, $compile, $document, $rootScope ) {
+
+				// I manage the instance of the tooltip that is rendered on the screen.
+				var manager = (function Manager() {
+
+					// I hold a reference to the current instance of the tooltip. Whenever
+					// the user mouses-into a tooltip element, a new instance of the 
+					// tooltip element is created (and the previous one destroyed).
+					var instance = {
+						scope: null,
+						element: null
+					};
+
+					// I hold the transclusion functions for the tooltip element. In 
+					// addition to the internal one, we also allow optional tempaltes to 
+					// be exposed using ngTemplate (and the tooltip-template attribute).
+					// The $compile()'d functions will be cached here.
+					var transcluders = {
+						internal: $compile( "<div class='m-tooltip'>{{ content }}</div>" )
+					}
+
+					// Return the public API (used by the link function).
+					return({
+						hide: hide,
+						position: position,
+						show: show
+					});
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I hide the current instance of the tooltip.
+					function hide() {
+
+						instance.scope.$destroy();
+						instance.element.remove();
+
+						instance.scope = instance.element = null;
+
+					}
+
+
+					// I reposition the current instance of the tooltip according to the 
+					// given page-oriented coordinates.
+					function position( x, y ) {
+
+						instance.element.css({
+							left: ( x + 25 + "px" ),
+							top: ( y - 10 + "px" )
+						});
+
+					}
+
+
+					// I show a new instance of the tooltip with the given content. The 
+					// initial show doesn't position the element - a subsequent call to 
+					// .position() should be made afterward.
+					function show( triggerScope, content, templateUrl ) {
+
+						// Get the most appropriate linking method - this might be based
+						// on the built-in template; or, it might be based on an optional
+						// template provided by the user.
+						var linker = getLinkFunction( templateUrl );
+
+						// Create a new scope for our template. This scope will inherit 
+						// from the scope of the trigger context.
+						instance.scope = triggerScope.$new();
+
+						// Store the view-model - this is the value that actually gets 
+						// rendered inside of the tooltip.
+						instance.scope.content = content;
+
+						// Clone the tooltip element and inject it into the page. Since it
+						// globally positioned, it can just be added to the Body container.
+						instance.element = linker(
+							instance.scope,
+							function appendClone( clone ) {
+
+								$document.prop( "body" )
+									.appendChild( clone[ 0 ] )
+								;
+
+							}
+						);
+
+						// Once the tooltip element has been transcluded, we have to 
+						// trigger a $digest since this will have happened outside of an
+						// AngularJS digest. The use of $digest(), as opposed to $apply(),
+						// allows the update to be localized to the tooltip element.
+						instance.scope.$digest();
+
+					}
+
+
+					// ---
+					// PRIVATE METHODS.
+					// ---
+
+
+					// I get the linking function for the tooltip element. If there is 
+					// an optional template exposed on the cache, that will be used; 
+					// otherwise the template will be hard-coded.
+					function getLinkFunction( templateUrl ) {
+
+						templateUrl = ( templateUrl || "m-tooltip.htm" );
+
+						// If we've already compiled this template, just return the 
+						// existing link function.
+						if ( transcluders[ templateUrl ] ) {
+
+							return( transcluders[ templateUrl ] );
+
+						}
+
+						// If the user has provided an optional template in the cache, 
+						// compile it and use it as the linking function.
+						if ( $templateCache.get( templateUrl ) ) {
+
+							transcluders[ templateUrl ] = $compile( $templateCache.get( templateUrl ) );
+
+							return( transcluders[ templateUrl ] );
+
+						}
+
+						// If the user provided a template, but it didn't exist in the 
+						// template cache, try to get the primary optional template and 
+						// use that one instead.
+						if ( $templateCache.get( "m-tooltip.htm" ) ) {
+
+							transcluders[ templateUrl ] = $compile( $templateCache.get( "m-tooltip.htm" ) );
+
+							return( transcluders[ templateUrl ] );
+
+						}
+
+						// If the user did not provide a template for the given URL, then
+						// just re-cache the internal linker - this will make the lookup
+						// faster next time.
+						transcluders[ templateUrl ] = transcluders.internal;
+
+						return( transcluders[ templateUrl ] );
+
+					}
+
+				})();
+
+
+				// Return the directive configuration.
+				return({
+					link: link
+				});
+
+
+				// I bind the JavaScript events to the local scope.
+				function link( scope, element, attributes ) {
+
+					element.on( "mouseenter", handleMouseEnter );
+
+
+					// I handle the mouse-enter event on the tooltip trigger. When the 
+					// user mouses into a tooltip trigger we need to show the tooltip 
+					// and then start listening for reasons to hide the tooltip.
+					function handleMouseEnter( event ) {
+
+						// Show with the tooltip content associated with the element.
+						manager.show( scope, attributes.bnTooltip, attributes.tooltipTemplate );
+
+						element
+							.off( "mouseenter", handleMouseEnter )
+							.on( "mouseleave", handleMouseLeave )
+						;
+
+						$document.on( "mousemove", handleMouseMove );
+
+					}
+
+
+					// I handle the mouse-leave event on the tooltip trigger. When the
+					// user mouses out of the tooltip trigger we need to hide the current
+					// tooltip element.
+					function handleMouseLeave( event ) {
+
+						manager.hide();
+
+						element
+							.off( "mouseleave", handleMouseLeave )
+							.on( "mouseenter", handleMouseEnter )
+						;
+
+						$document.off( "mousemove", handleMouseMove );
+
+					}
+
+
+					// I handle the mouse-move event on the tooltip trigger. When the 
+					// user moves around within the bounds of the trigger, we need to
+					// update the position of the tooltip relative to the mouse.
+					function handleMouseMove( event ) {
+
+						manager.position( event.pageX, event.pageY );
+
+					}
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
