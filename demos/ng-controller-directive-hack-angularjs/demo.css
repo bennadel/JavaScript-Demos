@@ -1,0 +1,28 @@
+p.box {
+	background-color: #FAFAFA ;
+	border: 1px solid #CCCCCC ;
+	color: #333333 ;
+	height: 150px ;
+	overflow: hidden ;
+	position: relative ;
+}
+
+p.box span.marker {
+	background-color: #FF00CC ;
+	border: 1px solid #FF00AA ;
+	height: 20px ;
+	position: absolute ;
+	width: 20px ;
+}
+
+p.warning {
+	color: #999999 ;
+	font-style: italic ;
+}
+
+p.warning strong {
+	background-color: gold ;
+	color: #000000 ;
+	display: inline-box ;
+	padding: 3px 5px 3px 5px ;
+}
