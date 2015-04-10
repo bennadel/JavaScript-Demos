@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Animating Elements In From A Mouse-Event Location In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/animate-enter-position-angularjs/)
 * [Overloading The ng-Controller Directive In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/ng-controller-directive-hack-angularjs/)
 * [Exposing An Optional Directive Template Using ng-Template In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/exposing-option-template-angularjs/)
 * [Directive Architecture, Template URLs, And Linking Order In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/link-order-directives-angularjs/)

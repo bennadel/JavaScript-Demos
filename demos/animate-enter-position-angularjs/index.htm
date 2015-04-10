@@ -1,0 +1,354 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Animating Elements In From A Mouse-Event Location In AngularJS
+	</title>
+
+	<style type="text/css">
+
+		html {
+			cursor: pointer ;
+			height: 100% ;
+		}
+		
+		body {
+			user-select: none ;
+				-moz-user-select: none ;
+				-webkit-user-select: none ;
+		}
+
+		.friend.animated.ng-enter {
+			color: red ;
+			position: relative ;
+			transition: all 0.75s ease ;
+				-webkit-transition: all 0.75s ease ;
+				-moz-transition: all 0.75s ease ;
+			width: 200px ; /* To remove horizontal scrollbars. */
+			z-index: 2 ;
+		}
+
+		/*
+			NOTE: We need to use "! important" here because we need to override the
+			inline styles set by the Friend directive during the linking phase. We will
+			remove these styles altogether in the "$animate:close" event handler.
+		*/
+		.friend.animated.ng-enter.ng-enter-active {
+			left: 0px ! important ;
+			top: 0px ! important ;
+		}
+
+	</style>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		Animating Elements In From A Mouse-Event Location In AngularJS
+	</h1>
+
+	<ul>
+		<!--
+			CAUTION: In order to setup the click-handler, the bnFriend directive has to
+			bind to two different priorities: higher / lower than the ngRepeat. This way,
+			it can link once for the event-handler and then N-times for each item in the
+			list (which will consume the click event).
+		-->
+		<li 
+			ng-repeat="friend in friends"
+			bn-friend
+			class="friend">
+
+			{{ friend.name }}
+
+		</li>
+	</ul>
+
+	<!-- 
+		This is here to demonstrate that friends can be added to the list without the 
+		use of animation, in the same context. 
+	-->
+	<form ng-submit="processForm()">
+		<input ng-model="form.name" type="text" size="30" />
+		<input type="submit" value="Add Friend" />
+	</form>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/jquery/jquery-2.1.0.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.3.15.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs/angular-animate-1.3.15.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [ "ngAnimate" ] );
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I control the root for the application.
+		app.controller(
+			"AppController",
+			function( $scope ) {
+
+				// I hold the collection of friends.
+				$scope.friends = [
+					{
+						id: 1,
+						name: "Kim"
+					},
+					{
+						id: 2,
+						name: "Heather"
+					},
+					{
+						id: 3,
+						name: "Colleen"
+					}
+				];
+
+				// I hold the form data for ng-model.
+				$scope.form = {
+					name: ""
+				};
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I add a new friend to the collection.
+				$scope.addFriend = function( name ) {
+
+					$scope.friends.push({
+						id: ( new Date() ).getTime(),
+						name: name
+					});
+
+				};
+
+
+				// I process the new-friend form, adding a new friend to the 
+				// collection.
+				$scope.processForm = function() {
+
+					if ( ! $scope.form.name ) {
+
+						return;
+
+					}
+
+					$scope.addFriend( $scope.form.name );
+
+					$scope.form.name = "";
+
+				};
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide friend behavior BEFORE the ngRepeat directive has linked.
+		app.directive(
+			"bnFriend",
+			function( $document ) {
+
+				// Return the directive configuration object.
+				// --
+				// NOTE: We are setting the priority to run before the ngRepeat. This 
+				// way, we can provide a single controller instance for the list that 
+				// can be consumed by each subsequent instance of the lower-priority
+				// bnFriend directive (see below).
+				return({
+					controller: angular.noop,
+					link: link,
+					priority: 1001, // Higher than ngRepeat (1000).
+					require: "bnFriend"
+				});
+
+
+				// I bind the JavaScript events to the local scope.
+				function link( scope, element, attributes, controller ) {
+
+					// I hold the names to pipe into the scope with each click.
+					var names = getNames();
+
+					// Listen for click events on the document - we'll store the click
+					// coordinates and then animate the new friend in from the relative
+					// location.
+					$document.on( "click", handleClickEvent );
+
+					// When the scope is destroyed, be sure to clean up event handlers.
+					scope.$on(
+						"$destroy", 
+						function handleDestroyEvent() {
+
+							$document.off( "click", handleClickEvent );
+
+						}
+					);
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I handle the click event on the document.
+					function handleClickEvent( event ) {
+
+						// If the event target is an input, don't manage the event - just
+						// let the browser do its thang.
+						if ( angular.element( event.target ).is( ":input" ) ) {
+							
+							return;
+
+						}
+
+						// Store the coordinates in the controller - this will be consumed
+						// by the lower-priority directive.
+						controller.coordinates = {
+							x: event.pageX, 
+							y: event.pageY
+						};
+
+						// Add a new name to the collection - the .addFriend() is exposed
+						// as part of the ngController view-model.
+						scope.$apply(
+							function updateViewModel() {
+
+								scope.addFriend( names.shift() );
+
+								( ! names.length ) && ( names = getNames() );
+
+							}
+						);
+
+					}
+
+
+					// ---
+					// PRIVATE METHODS.
+					// ---
+
+
+					// I return a new set of names to use in the demo.
+					function getNames() {
+
+						return([ 
+							"Anna", "Sam", "Libby", "Joanna", "Kit", "Sally", "Hana", "Yu",
+							"Karen", "Ingrid", "Nancy", "Pam", "Betty", "Giselle", "Tori",
+							"Amanda", "Franzi", "Stacy", "Tina", "Noelle", "Fey", "Lana"
+						]);
+
+					}
+
+				}
+
+			}
+		);
+
+
+		// I provide friend behavior AFTER the ngRepeat directive has linked.
+		app.directive(
+			"bnFriend",
+			function( $animate ) {
+
+				// Return the directive configuration object.
+				// --
+				// NOTE: We are requiring the the Controller instance that was provided
+				// by the version of this directive that was run at priority 1001. 
+				return({
+					link: link,
+					priority: 0,
+					require: "bnFriend"
+				});
+
+
+				// I bind the JavaScript events to the local scope.
+				function link( scope, element, attributes, controller ) {
+
+					// We only want to animate the item if there is a event-coordinate
+					// available on the bnFriend controller.
+					if ( controller.coordinates ) {
+
+						animateFriendIntoPosition( controller.coordinates );
+						
+						// Reset the coordinates since they are a single-use value. We 
+						// don't want to accidentally apply this origin to another item
+						// that is added to the list programmatically.
+						controller.coordinates = null;
+
+					}
+
+
+					// ---
+					// PRIVATE METHODS.
+					// ---
+
+
+					// I facilitate the animation of the current element into the list, 
+					// starting at the given {x/y} coordinates. This is intended to work
+					// in conjunction with the ngAnimate module.
+					function animateFriendIntoPosition( origin ) {
+
+						// NOTE: I tried to use the $animate.addClass() method, but I 
+						// was running into a problem with the animation being applied 
+						// immediately, which I think has to do with the fact that the 
+						// the ngRepeat animation was blocking it.
+
+						// Get the position of the item that was just added to the list.
+						// --
+						// CAUTION: This will force a repaint; but, this is OK since the
+						// animation, itself, is about to force a repaint. That said, if 
+						// the browser doesn't support animations, this will still cause
+						// a repaint.
+						var offset = element.offset();
+
+						// Setup the initial position of the element before the animation
+						// enters the "ng-enter-active" state (animations run at the end
+						// of the digest).
+						element
+							.addClass( "animated" )
+							.css({
+								left: ( origin.x - offset.left + "px" ),
+								top: ( origin.y - offset.top + "px" )
+							})
+						;
+
+						// When the animation is done, we want to remove the position 
+						// styles since they are only relevant during the animation.
+						element.one(
+							"$animate:close",
+							function handleAnimationEvent( event, data ) {
+
+								element
+									.removeClass( "animated" )
+									.css({
+										left: "",
+										top: ""
+									})
+								;
+
+							}
+						);
+
+					}
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
