@@ -1,0 +1,59 @@
+
+ng-repeat
+	-> link() / $watchCollection()
+		-> $animate.enter()
+			-> $delegate.enter() - Calls applyStyles() in base service
+			-> runAnimationPostDigest() - Will run at the end of the digest in $$postDigest
+- - -
+Directive link() function
+	-> bind on( "$animate:before" )
+	-> bind on( "$animate:after" )
+	-> bind on( "$animate:close" )
+- - -
+$rootScope.$$postDigest()
+	-> performAnimation()
+		-> Add "ng-animate" class and other "temp" classes
+		-> Queue "$animate:before" event via $$asyncCallback()*
+		-> before() animations
+			-> DOM operation - Seems to only be used by "leave" events
+			-> Queue "$animage:after" event via $$asyncCallback()*
+			-> after() animations
+				-> animateBefore() - This will return UNDEFINED if animateSetup() returns FALSE (which will cancel the animation)
+					-> animateSetup() - This will return FALSE if no duration is detected on the computed styles
+						-> Add "ng-enter" class
+						-> getElementAnimationDetails()
+							-> $window.getComputedStyle(element) - At this point, your animation setup class has to be applied otherwise the computed styles won't have duration and will short-circuit the animation
+				-> Queue afterReflow()** via $$animateReflow()
+- - -
+$$asyncCallback()
+	-> triggerHandler( "$animate:before" )
+	-> triggerHandler( "$animate:after" )
+- - -
+$$animateReflow() !!!! CAUSES REPAINT !!!!
+	-> animateAfter()
+		-> animateRun()
+			-> Add "ng-enter-active" class
+			-> getElementAnimationDetails() - If the duration has been removed from the element, the animation will end
+			-> Setup timer(s) for animation duration
+- - -
+Animation | Transition | $timeout fallback
+	-> onEnd()
+		-> Remove "ng-enter-active" class
+		-> animateClose()
+			-> Remove "ng-enter" class
+	-> activeAnimationComplete() / closeAnimation()
+		-> Apply option styles [options:to/from]
+		-> Remove temp classes
+		-> Queue cleanup() via $$asyncCallback()* - NOTE: Class-based animations are not queued
+		-> Queue "$animate:close" via $$asyncCallback()*
+		-> doneCallback()
+			-> Resolve animation promise
+- - -
+$$asyncCallback()
+	-> cleanup()
+		-> Remove "ng-animate" class
+	-> triggerHandler( "$animate:close" )
+		
+* $$asyncCallback() uses requestAnimationFrame() if it's available; if not, it will fallback to using the $timeout() service.
+
+** afterReflow() - Uses requestAnimationFrame() if it's available; if not, it will fallback to using the $timeout() service.
