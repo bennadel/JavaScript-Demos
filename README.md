@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Directive Controllers Cannot Use The Revealing Module Pattern In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/directive-controller-return-value-angularjs/)
 * [Animating Elements In From A Mouse-Event Location In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/animate-enter-position-angularjs/)
 * [Overloading The ng-Controller Directive In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/ng-controller-directive-hack-angularjs/)
 * [Exposing An Optional Directive Template Using ng-Template In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/exposing-option-template-angularjs/)

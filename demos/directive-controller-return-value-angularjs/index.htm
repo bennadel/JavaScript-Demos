@@ -1,0 +1,100 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Directive Controllers Cannot Use The Revealing Module Pattern In AngularJS
+	</title>
+</head>
+<body>
+
+	<h1>
+		Directive Controllers Cannot Use The Revealing Module Pattern In AngularJS
+	</h1>
+
+	<p bn-test>
+		This is a directive.
+	</p>
+	
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.3.15.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I am a demo directive - I don't actually provide any behavior.
+		app.directive(
+			"bnTest",
+			function() {
+
+				// Return the directive configuration object.
+				// --
+				// NOTE: We are using a lexically-bound Controller constructor to define
+				// the controller for our directive. The demonstrated behavior, however,
+				// would not change even if we were using a .controller() reference.
+				return({
+					controller: TestController,
+					link: link,
+					require: "bnTest",
+					restrict: "A"
+				});
+
+
+				// I am the Controller for the directive. 
+				function TestController( $scope ) {
+
+					var thing = "woot!";
+
+					// Return public API.
+					// --
+					// *************************************************************** //
+					// WARNING: THIS DOES NOT WORK. The instance of the Controller is 
+					// creating using Object.create(). Then, the actual constructor is
+					// invoked using $injector.invoke(); BUT, the return value of the 
+					// constructor is not used to overwrite the instance reference.
+					// *************************************************************** //
+					return({
+						getThing: getThing
+					});
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					function getThing() {
+
+						return( thing );
+
+					}
+
+				}
+
+
+				// I bind the JavaScript events to the local scope.
+				// --
+				// NOTE: The TestController instance is being injected as the fourth 
+				// argument since our directive configuration object "required" it.
+				function link( scope, element, attributes, controller ) {
+
+					console.info( "bnTest Link Controller" );
+					console.log( controller );
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
