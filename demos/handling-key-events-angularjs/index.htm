@@ -4,13 +4,15 @@
 	<meta charset="utf-8" />
 
 	<title>
-		..... In AngularJS
+		Managing User Input Key-Events Across Views In AngularJS
 	</title>
 </head>
-<body ng-controller="AppController" bn-app-controller>
+<body 
+	ng-controller="AppController" 
+	bn-app-manager>
 
 	<h1>
-		..... In AngularJS
+		Managing User Input Key-Events Across Views In AngularJS
 	</h1>
 
 	<h2>
@@ -19,7 +21,7 @@
 
 	<ul>
 		<li ng-repeat="friend in friends track by friend.id">
-			{{ friend.name }}
+			{{ friend.name }} &mdash; <em>{{ friend.bio }}</em>
 		</li>
 	</ul>
 
@@ -27,14 +29,27 @@
 		Hit "F" to toggle the <strong>F</strong>orm. 
 	</p>
 
+	<!-- 
+		BEGIN: Friend form. 
+		--
+		NOTE: The friend form binds key-event handlers that have a higher priority than 
+		the root controller; as such, they will have an opportunity to intercept and stop
+		events before they "bubble up" through the keyEvents queue.
+	-->
 	<form 
 		ng-if="isShowingForm"
 		ng-controller="FormController" 
-		bn-form-controller
+		bn-form-manager
 		ng-submit="processForm()">
 
 		<p>
-			Name: <input type="text" ng-model="form.name" />
+			Name:<br />
+			<input type="text" ng-model="form.name" size="30" />
+		</p>
+
+		<p>
+			Bio:<br />
+			<textarea ng-model="form.bio" rows="5" cols="30"></textarea>
 		</p>
 
 		<p>
@@ -42,6 +57,7 @@
 		</p>
 
 	</form>
+	<!-- END: Friend form. -->
 
 
 	<!-- Load scripts. -->
@@ -52,8 +68,49 @@
 		var app = angular.module( "Demo", [] );
 
 
-		// -------------------------------------------------- //
-		// -------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// When we manage key events using the keyEvents service, each event is augmented
+		// with a ".is." object that holds shortcuts that more clearly define the event.
+		// During the config phase, we have the opportunity to add augment methods to the
+		// service which will add new shortcuts to each event object.
+		app.config(
+			function keyEventsConfig( keyEventsProvider ) {
+
+				// Each shortcut() operator gets called with the event object and the 
+				// "is" object. The goal here is to add ".is" properties based on the 
+				// state of the event.
+				keyEventsProvider.addShortcut(
+					function operator( event, is ) {
+
+						// NOTE: The ESC key is more consistently reported in the keydown
+						// event (as opposed to the keypress event). As such, we'll 
+						// consider it false unless the event type is appropriate.
+						is.esc = ( ( event.type === "keydown" ) && ( event.which === 27 ) );
+
+						// NOTE: The CMD-ENTER combination is more consistently reported
+						// in the keydown event (as opposed to the keypress event). As 
+						// such, we'll consider it false unless the event type is appropriate.
+						is.cmdEnter = ( ( event.type === "keydown" ) && ( event.which === 13 ) && event.metaKey );
+
+						is.input = (
+							( event.target.tagName === "BUTTON" ) ||
+							( event.target.tagName === "INPUT" ) ||
+							( event.target.tagName === "SELECT" ) ||
+							( event.target.tagName === "TEXTAREA" )
+						);
+
+					}
+				);
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
 
 
 		// I control the root of the application.
@@ -61,33 +118,48 @@
 			"AppController",
 			function( $scope, friendService ) {
 
+				// I maintain the collection of friends to render.
 				$scope.friends = [];
 
+				// I determine whether or not the new-friend form is being rendered.
 				$scope.isShowingForm = false;
 
-				$scope.$on( 
-					"friends.friendAdded", 
-					function() {
-
-						$scope.isShowingForm = false;
-
-						loadRemoteData();
-
-					}
-				);
-
+				// Initialize the data.
 				loadRemoteData();
 
 
-				$scope.toggleForm = function() {
+				// ---
+				// PUBLIC METHODS.
+				// ---
 
-					$scope.isShowingForm = ! $scope.isShowingForm;
 
-					console.log( "toggle:", $scope.isShowingForm );
+				// I close the form and reload the friend data. 
+				// --
+				// CAUTION: Normally, I might use an event-model for this, or routing.
+				// But, I'm trying to keep the demo as simple as possible.
+				$scope.closeFormAndReload = function() {
+
+					$scope.isShowingForm = false;
+
+					loadRemoteData();
 
 				};
 
 
+				// I toggle the linking of the form.
+				$scope.toggleForm = function() {
+
+					$scope.isShowingForm = ! $scope.isShowingForm;
+
+				};
+
+
+				// ---
+				// PRIVATE METHODS.
+				// ---
+
+
+				// I apply the remote data to the local view-model.
 				function applyRemoteData( friends ) {
 
 					$scope.friends = friends;
@@ -95,6 +167,7 @@
 				}
 
 
+				// I load the remote data.
 				function loadRemoteData() {
 
 					friendService.getFriends().then( applyRemoteData );
@@ -105,49 +178,8 @@
 		);
 
 
-		app.directive(
-			"bnAppController",
-			function( keyEvents ) {
-
-				return( link );
-
-
-				function link( scope, element, attributes ) {
-
-					var keyHandler = keyEvents.newHandler();
-
-					keyHandler.on(
-						"keypress",
-						function handleKeyEvent( event ) {
-
-							if ( String.fromCharCode( event.which ).toLowerCase() === "f" ) {
-
-								scope.$evalAsync( scope.toggleForm );
-
-								event.preventDefault();								
-								
-							}
-
-						}
-					);
-
-					scope.$on( 
-						"$destroy",
-						function() {
-
-							keyEvents.removeHandler( keyHandler );
-
-						}
-					);
-
-				}
-
-			}
-		);
-
-
-		// -------------------------------------------------- //
-		// -------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
 
 
 		// I control the new friend form.
@@ -155,11 +187,19 @@
 			"FormController",
 			function( $scope, friendService ) {
 
+				// I model the form data for ngModel.
 				$scope.form = {
-					name: ""
+					name: "",
+					bio: ""
 				};
 
 
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I process the form, potentially adding a new friend to repository.
 				$scope.processForm = function() {
 
 					if ( ! $scope.form.name ) {
@@ -168,7 +208,16 @@
 
 					}
 
-					friendService.addFriend( $scope.form.name );
+					friendService.addFriend( $scope.form.name, $scope.form.bio );
+
+					// NOTE: No need to reset form data as the form is about to be 
+					// destroyed by the parent controller.
+					// --
+					// CAUTION: I would normally use something like routing to move the
+					// user away from the current form. However, in an effort to keep 
+					// this simple, I am consuming a method inherited from the parent
+					// controller that indicates that the user has finished with the form.
+					$scope.closeFormAndReload();
 
 				};
 
@@ -177,36 +226,152 @@
 		);
 
 
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I manage the root of the application, mostly dealing with key-events.
 		app.directive(
-			"bnFormController",
+			"bnAppManager",
 			function( keyEvents ) {
 
-				return( link );
+				// Return the directive configuration object.
+				return({
+					link: link,
+					restrict: "A"
+				});
 
 
+				// I bind the JavaScript events to the local scope.
 				function link( scope, element, attributes ) {
 
-					element[ 0 ].querySelectorAll( "input[ ng-model ]" )[ 0 ].focus();
+					// Create a new key-handler with priority (1) - this is the lowest
+					// priority in the application. This means that we will get access
+					// to key events that haven't been terminally blocked by other 
+					// directives in the application.
+					var keyHandler = keyEvents.handler( 1 )
+						.keypress(
+							function handleKeyEvent( event ) {
 
-					var keyHandler = keyEvents.newHandler( true );
+								// Key: F
+								if ( event.is.f && ! event.metaKey ) {
 
-					keyHandler.keypress(
-						function handleKeyPress( event ) {
+									// Since we are managing this key event, don't let
+									// the browser execute the default behavior for this
+									// event (which may be something like automatically 
+									// searching the page when the user starts typing -
+									// which is a setting I have in Firefox).
+									event.preventDefault();
 
-							if ( event.is.input ) {
-
-								event.stopImmediatePropagation();
+									// Change the view-model inside a digest so that 
+									// AngularJS knows something has changed.
+									scope.$applyAsync( scope.toggleForm );
+									
+								}
 
 							}
+						)
+					;
 
-						}
-					);
+				}
 
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+		
+		// I manage the friend form, mostly dealing with key-events.
+		app.directive(
+			"bnFormManager",
+			function( keyEvents ) {
+
+				// Return the directive configuration object.
+				return({
+					link: link,
+					restrict: "A"
+				});
+
+
+				// I bind the JavaScript events to the local scope.
+				function link( scope, element, attributes ) {
+
+					// Focus the input so the user can start typing right-away.
+					element[ 0 ]
+						.querySelectorAll( "input[ ng-model ]" )[ 0 ]
+							.focus()
+					;
+
+					// Create a new key-handler with priority (100) - this means that 
+					// this handler's methods will be invoked before the the root 
+					// controller. This gives the form an opportunity to intercept events
+					// and stop them from propagating.
+					var keyHandler = keyEvents.handler( 100 )
+						// NOTE: Some key-combinations, like the ESC key are more 
+						// consistently reported across browsers in the keydown event.
+						.keydown(
+							function handleKeyDown( event ) {
+
+								// If the user hits the ESC key, we want to close the form.
+								if ( event.is.esc ) {
+
+									// Change the view-model inside a digest.
+									// --
+									// CAUTION: This scope method is inherited from the 
+									// root controller.
+									scope.$applyAsync( scope.closeFormAndReload );
+
+									// Kill the event entirely.
+									return( false );
+
+								}
+
+								// As a convenience, we want to listen for the CMD-Enter
+								// key-combo and use that to submit the Form. This is 
+								// becoming a standard on the web.
+								if ( event.is.cmdEnter ) {
+
+									// Since we are altering the meaning of this key-
+									// combo, we have to stop the browser from trying to
+									// execute the core behavior.
+									event.preventDefault();
+
+									// Change the view-model inside a digest.
+									scope.$applyAsync( scope.processForm );
+
+								}
+
+							}
+						)
+						.keypress(
+							function handleKeyPress( event ) {
+
+								// If the event is triggered by an input-based event, 
+								// we want to stop any propagation of the event. This way,
+								// no other event-handlers will have a chance to try and
+								// mess with it. This makes sense since we don't want to 
+								// interrupt the user while they are typing.
+								if ( event.is.input ) {
+
+									event.stopImmediatePropagation();
+
+								}
+
+							}
+						)
+					;
+
+					// Since we are listening for key events on a service (ie, not on 
+					// the current Element), we have to be sure to teardown the bindings
+					// so that we don't get rogue event handlers persisting in the 
+					// application.
 					scope.$on( 
 						"$destroy",
 						function() {
 
-							keyHandler.destroy();
+							keyHandler.teardown();
 
 						}
 					);
@@ -217,31 +382,76 @@
 		);
 
 
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
 
-		// -------------------------------------------------- //
-		// -------------------------------------------------- //
 
-
-		app.factory(
+		// I provide an event handler queue that manage prioritized key-event bindings.
+		app.provider(
 			"keyEvents",
-			function( $document ) {
+			function provideKeyEvents() {
+
+				// I hold the list of functions that can be used to decorate the .is. 
+				// object with additional short-hand properties.
+				var shortcuts = [
+					function operator( event, is ) {
+
+						// Always add the lower-case key.
+						is[ String.fromCharCode( event.which ).toLowerCase() ] = true;
+
+					}
+				];
 
 
-				function KeyEventManager() {
+				// Return the provider API.
+				return({
+					// This is the core factory method for the service.
+					$get: keyEventsFactory,
 
-					this._handlers = [];
+					// This is the provider-method that lets the developer add shortcut
+					// operators.
+					addShortcut: addShortcut
+				});
 
-					this._keydownCount = 0;
-					this._keypressCount = 0;
-					this._keyupCount = 0;
 
-					this._boundHandleKeyEvent = angular.bind( this, this.handleKeyEvent );
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I add a new shortcut operator that will be applied to every key event.
+				function addShortcut( operator ) {
+
+					shortcuts.push( operator );
 
 				}
 
-				KeyEventManager.prototype = {
 
-					constructor: KeyEventManager,
+				// ---
+                // FACTORY METHOD.
+                // ---
+
+
+                // I provide the keyEvents service.
+                function keyEventsFactory( $document, KeyEventHandler ) {
+
+                	// I hold the event handler queues in ascending priority order. As 
+                	// such, they should be iterated over in reverse order.
+                	var eventHandlers = {
+						keydown: [],
+						keypress: [],
+						keyup: []
+					};
+
+					// Setup the public API.
+					var api = {
+						handler: handler,
+						off: off,
+						on: on
+					};
+
+					// Return the public API.
+					return( api );
 
 
 					// ---
@@ -249,113 +459,33 @@
 					// ---
 
 
-					handleKeyEvent: function( event ) {
+					// I create a new handler with the given priority. If the terminal 
+					// flag is set, no handlers at a lower priority will receive the 
+					// event, regardless of what this handler does to the event.
+					function handler( priority, isTerminal ) {
 
-						this._processEvent( event );
+						return( new KeyEventHandler( api, priority, ( isTerminal || false ) ) );
 
-					},
-
-
-					handleKeypress: function( event ) {
-
-						this._processEvent( event );
-
-					},
+					}
 
 
-					handleKeyup: function( event ) {
+					// I unbind the given event handler. This will unbind all matching
+					// handlers at any priority.
+					function off( eventType, handler ) {
 
-						this._processEvent( event );
+						deregisterHandler( eventType, handler );
 
-					},
-
-
-					newHandler: function( isTerminal ) {
-
-						var handler = new KeyEventHandler( this, !! isTerminal );
-
-						this._handlers.push( handler );
-
-					},
+					}
 
 
-					removeHandler: function( handler ) {
+					// I bind a handler to the given event type at the given priority. 
+					// If the terminal flag is set, no other handlers at a lower priority
+					// will receive the event.
+					function on( eventType, handler, priority, isTerminal ) {
 
-						var index = this._handlers.indexOf( handler );
+						registerHandler( eventType, handler, priority, isTerminal );
 
-						if ( index !== -1 ) {
-
-							this._handlers.splice( index, 1 );
-
-						}
-
-					},
-
-
-					startWatchingKeydown: function() {
-
-						if ( ++this._keydownCount === 1 ) {
-
-							$document.on( "keydown", this._boundHandleKeyEvent );
-
-						}
-
-					},
-
-
-					startWatchingKeypress: function() {
-
-						if ( ++this._keypressCount === 1 ) {
-
-							$document.on( "keypress", this._boundHandleKeyEvent );
-
-						}
-
-					},
-
-
-					startWatchingKeyup: function() {
-
-						if ( ++this._keyupCount === 1 ) {
-
-							$document.on( "keyup", this._boundHandleKeyEvent );
-
-						}
-
-					},
-
-
-					stopWatchingKeydown: function() {
-
-						if ( --this._keydownCount === 0 ) {
-
-							$document.off( "keydown", this._boundHandleKeyEvent );
-
-						}
-
-					},
-
-
-					stopWatchingKeypress: function() {
-
-						if ( --this._keypressCount === 0 ) {
-
-							$document.off( "keypress", this._boundHandleKeyEvent );
-
-						}
-
-					},
-
-
-					stopWatchingKeyup: function() {
-
-						if ( --this._keyupCount === 0 ) {
-
-							$document.off( "keyup", this._boundHandleKeyEvent );
-
-						}
-
-					},
+					}
 
 
 					// ---
@@ -363,200 +493,65 @@
 					// ---
 
 
-					_processEvent: function( event ) {
+					// I remove the given handler from the given event type.
+					function deregisterHandler( eventType, handler ) {
 
-						// We're looping over the handler backwards so they can be run 
+						var handlers = eventHandlers[ eventType ];
 
+						for ( var i = ( handlers.length - 1 ) ; i >= 0 ; i-- ) {
 
-					}
+							if ( handlers[ i ].handler === handler ) {
 
-				};
+								handlers.splice( i, 1 );
 
-
-
-				function KeyEventHandler( manager, isTerminal ) {
-
-					this._manager = manager;
-					this._isTerminal;
-
-					this._handleKeydown = angular.noop;
-					this._handleKeypress = angular.noop;
-					this._handleKeyup = angular.noop;
-
-				}
-
-
-				KeyEventHandler.prototype = {
-
-					constructor: KeyEventHandler,
-
-
-					destroy: function() {
-
-						manager.removeHandler( this );
-
-					},
-
-
-					keydown: function( newKeydown ) {
-
-						this._handleKeydown = newKeydown;
-
-						this._manager.startWatchingKeydown();
-
-						return( this );
-
-					},
-
-
-					keypress: function( newKeypress ) {
-
-						this._handleKeypress = newKeypress;
-
-						this._manager.startWatchingKeypress();
-
-						return( this );
-
-					},
-
-
-					keyup: function( newKeyup ) {
-
-						this._handleKeyup = newKeyup;
-
-						this._manager.startWatchingKeyup();
-
-						return( this );
-
-					},
-
-
-					processEvent: function( event ) {
-
-						( event.type === "keydown" ) && this._handleKeydown( event );
-						( event.type === "keypress" ) && this._handleKeypress( event );
-						( event.type === "keyup" ) && this._handleKeyup( event );
-
-						return( event );
-
-					},
-
-
-					terminal: function( newIsTerminal ) {
-
-						if ( arguments.length === 1 ) {
-
-							this._isTerminal = newIsTerminal;
-
-							return( this );
+							}
 
 						}
 
-						return( this._isTerminal );
+						// If this particular event has no more event bindings, then 
+						// stop watching for it at the root level.
+						if ( ! handlers.length ) {
+
+							stopWatchingEvent( eventType );
+
+						}
 
 					}
 
-				};
 
+					// I process the root key-event, passing it through queue of event 
+					// handlers implemented by the directives.
+					function handleEvent( event ) {
 
+						var handlers = eventHandlers[ event.type ];
 
+						event.is = {};
+						
+						// Pass the event through the shortcut operators.
+						for ( var i = 0, length = shortcuts.length ; i < length ; i++ ) {
 
+							shortcuts[ i ]( event, event.is );
 
+						}
 
+						// Since the handlers are sorted in ascending priority, we need 
+						// to process the queue in reverse order.
+						for ( var i = ( handlers.length - 1 ) ; i >= 0 ; i-- ) {
 
+							// If a handler returns an explicit false, kill the event.
+							if ( handlers[ i ].handler( event ) === false ) {
 
+								event.stopImmediatePropagation();
+								event.preventDefault();
+								return( false );
 
+							}
 
+							// If the handler is flagged as terminal, or if the handle 
+							// explicitly stopped propagation, don't pass the event onto 
+							// any other handlers.
+							if ( handlers[ i ].isTerminal || event.isImmediatePropagationStopped() ) {
 
-
-
-
-
-
-
-				var handlers = [];
-
-				return({
-					newHandler: newHandler,
-					removeHandler: removeHandler
-				});
-
-
-				function newHandler() {
-
-					var handler = {};
-
-					handler.on = function( eventType, callback ) {
-
-						handler[ eventType ] = callback;
-
-					};
-
-					handlers.push( handler );
-
-					if ( handlers.length === 1 ) {
-
-						startWatchingKeys();
-
-					}
-
-					return( handler );
-
-				}
-
-
-				function removeHandler( handler ) {
-
-					var index = handlers.indexOf( handler );
-
-					if ( index !== -1 ) {
-
-						handlers.splice( index, 1 );
-
-					}
-
-					if ( ! handlers.length ) {
-
-						stopWatchingKeys();
-
-					}
-
-				}
-
-
-				function startWatchingKeys() {
-
-					$document.on( "keyup", rootKeyHandler );
-					$document.on( "keypress", rootKeyHandler );
-
-				}
-
-
-				function stopWatchingKeys() {
-
-					$document.off( "keyup", rootKeyHandler );
-					$document.off( "keypress", rootKeyHandler );
-					
-				}
-
-
-				function rootKeyHandler( event ) {
-
-					var eventType = event.type;
-
-					console.log( eventType );
-
-					for ( var i = handlers.length - 1 ; i >= 0 ; i-- ) {
-
-						var handler = handlers[ i ];
-
-						if ( handler[ eventType ] ) {
-
-							handler[ eventType ].call( null, event );
-
-							if ( event.isImmediatePropagationStopped() ) {
-
-								console.log( "Stopping event propagation" );
 								break;
 
 							}
@@ -565,54 +560,235 @@
 
 					}
 
+
+					// I register the given event-type handler at the given priority.
+					function registerHandler( eventType, handler, priority, isTerminal ) {
+
+						var handlers = eventHandlers[ eventType ];
+
+						var newItem = {
+							handler: handler, 
+							priority: priority,
+							isTerminal: isTerminal
+						};
+
+						// If it's the first handler, just push it and start watching for 
+						// events on the document.
+						if ( ! handlers.length ) {
+
+							handlers.push( newItem );
+
+							return( startWatchingEvent( eventType ) );
+
+						}
+
+						// If it's the lowest priority handler, push it onto the bottom.
+						if ( handlers[ 0 ].priority > priority ) {
+
+							return( handlers.unshift( newItem ) );
+
+						}
+
+						// Otherwise, add it in priority sort order.
+						for ( var i = ( handlers.length - 1 ) ; i >= 0 ; i-- ) {
+
+							if ( handlers[ i ].priority <= priority ) {
+
+								return( handlers.splice( ( i + 1 ), 0, newItem ) );
+
+							}
+
+						}
+
+					}
+
+
+					// I start watching the event event-type on the document.
+					function startWatchingEvent( eventType ) {
+
+						$document.on( eventType, handleEvent );
+
+					}
+
+
+					// I stop watching the event event-type on the document.
+					function stopWatchingEvent( eventType ) {
+
+						$document.off( eventType, handleEvent );
+
+					}
+
+
+                }
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I work hand-in-hand with the keyEvents service to provide priority-specific 
+		// handler. This is just a convenience proxy to the keyEvents service.
+		app.factory(
+			"KeyEventHandler",
+			function() {
+
+				// Return the constructor function.
+				return( KeyEventHandler );
+
+
+				// I provide event-binding methods that are pre-bound to the given 
+				// priority and terminal settings.
+				function KeyEventHandler( keyEvents, priority, isTerminal ) {
+
+					// I hold the collection of event handlers associated.
+					var eventHandlers = {
+						keydown: [],
+						keypress: [],
+						keyup: []
+					};
+
+					// Setup the public API.
+					var api = {
+						keydown: keydown,
+						keypress: keypress,
+						keyup: keyup,
+						teardown: teardown
+					};
+
+					// Return the public API.
+					return( api );
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I bind the given handler to the keydown event.
+					function keydown( handler ) {
+
+						eventHandlers.keydown.push( handler );
+
+						keyEvents.on( "keydown", handler, priority, isTerminal );
+
+						return( api );
+
+					}
+
+
+					// I bind the given handler to the keypress event.
+					function keypress( handler ) {
+
+						eventHandlers.keypress.push( handler );
+
+						keyEvents.on( "keypress", handler, priority, isTerminal );
+
+						return( api );
+
+					}
+
+
+					// I bind the given handler to the keyup event.
+					function keyup( handler ) {
+
+						eventHandlers.keyup.push( handler );
+
+						keyEvents.on( "keyup", handler, priority, isTerminal );
+
+						return( api );
+
+					}
+
+
+					// I unbind all of the event handlers bound by this proxy.
+					function teardown() {
+
+						teardownEventType( "keydown" );
+						teardownEventType( "keypress" );
+						teardownEventType( "keyup" );
+
+					}
+
+
+					// ---
+					// PRIVATE METHODS.
+					// ---
+
+
+					// I unbind the specific handlers from the core keyEvents service.
+					function teardownEventType( eventType ) {
+
+						var handlers = eventHandlers[ eventType ];
+
+						for ( var i = 0, length = handlers.length ; i < length ; i++ ) {
+
+							keyEvents.off( eventType, handlers[ i ] );
+
+						}
+
+					}
+
 				}
 
 			}
 		);
 
 
-		// -------------------------------------------------- //
-		// -------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
 
 
 		// I provide access to the friend repository.
 		app.factory(
 			"friendService",
-			function( $q, $rootScope ) {
+			function( $q ) {
 
+				// Create an initial friend collection.
 				var friends = [
 					{
 						id: 1,
-						name: "Heather"
+						name: "Heather",
+						bio: "Spends her time rocking out in her indie goth metal band."
 					},
 					{
 						id: 2,
-						name: "Joanna"
+						name: "Joanna",
+						bio: "Rocks out in the gym like it's going out of style."
 					}
 				];
 
+				// Return the public API.
 				return({
 					addFriend: addFriend,
 					getFriends: getFriends
 				});
 
 
-				function addFriend( name ) {
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I add a new friend to the collection. Returns a promise.
+				function addFriend( name, bio ) {
 
 					var friend = {
 						id: ( new Date() ).getTime(),
-						name: name
+						name: name,
+						bio: bio
 					};
 
 					friends.push( friend );
-
-					$rootScope.$broadcast( "friends.friendAdded", friend.id );
 
 					return( $q.when( friend.id ) );
 
 				}
 
 				
+				// I get the friends collection. Returns a promise.
 				function getFriends() {
 
 					return( $q.when( angular.copy( friends ) ) );
