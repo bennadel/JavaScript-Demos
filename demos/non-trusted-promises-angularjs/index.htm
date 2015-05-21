@@ -1,0 +1,109 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Normalizing Untrusted Deferred / Promise Values In AngularJS
+	</title>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		Normalizing Untrusted Deferred / Promise Values In AngularJS
+	</h1>
+
+	<p>
+		Deferred value: {{ resolvedValue }}
+	</p>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/jquery/jquery-2.1.0.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.3.8.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I control the root of the application.
+		app.controller(
+			"AppController",
+			function( $scope, $q, time ) {
+
+				$scope.resolvedValue = "null";
+
+				// I return an "untrusted" deferred value.
+				// --
+				// This would be any kind of deferred value that is not strictly created
+				// by AngularJS itself. Since AngularJS is tightly integrated with the 
+				// $digest lifecycle, any externally-generated deferred value lack that 
+				// level of integration. 
+				var unsafeDeferred = (function getUnsafeDeferredFromJQuery() {
+
+					// For the "untrusted" demo, use the jQuery Deferred factory.
+					var deferred = jQuery.Deferred();
+
+					setTimeout(
+						function resolveOperator() {
+
+							deferred.resolve( "jQuery Woot!" );
+
+						},
+						3000
+					);
+
+					return( deferred );
+
+				})();
+
+
+				console.log( "Received unsafe promise at", time() );
+
+				// Since we are using a Deferred value that was generated outside of 
+				// AngularJS (via jQuery in this case), it is not to be trusted. As 
+				// such, we have to wrap it in a $q-based deferred value so that it will
+				// normalize it for use within the AngularJS application.
+				$q.when( unsafeDeferred ).then(
+					function handleResolve( value ) {
+
+						console.log( "Unsafe promise resolved at", time() );
+
+						$scope.resolvedValue = value;
+
+					}
+				);
+
+			}
+		);
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I am just a utility service that returns the current time string.
+		app.factory(
+			"time",
+			function() {
+		
+				return( time );
+
+				function time() {
+
+					return( ( new Date() ).toTimeString().split( " " ).shift() );
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
