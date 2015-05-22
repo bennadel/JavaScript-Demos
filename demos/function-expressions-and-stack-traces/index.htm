@@ -1,0 +1,77 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Anonymous Functions, Assigned To References, Show Up Well In JavaScript Stack Traces
+	</title>
+</head>
+<body>
+
+	<h1>
+		Anonymous Functions, Assigned To References, Show Up Well In JavaScript Stack Traces
+	</h1>
+
+	<p>
+		<em>See console, that's where the sweet action is</em>.
+	</p>
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.3.15.min.js"></script>
+	<script type="text/javascript">
+
+		// I run after the AngularJS application has been bootstrapped and configured.
+		angular.module( "Demo", [] ).run(
+			function demo() {
+
+				// I am an anonymous function expression assigned to a variable.
+				var doThis = function() {
+
+					doThat();
+
+				};
+
+				// I am an anonymous function expression assigned to a variable.
+				var doThat = function() {
+
+					var x = y;
+
+				};
+
+				// I am an anonymous function expression assigned to a property.
+				var thing = {
+					oneTimeKickIt: function() {
+
+						doThis();
+
+					}
+				};
+
+
+				// NOTE: I have to invoke the functions after they are defined because 
+				// they are expressions, not declarations, and are therefore not hoisted"
+				// to the top of the current function block.
+				try {
+
+					// Using an anonymous function expression with no named-variable 
+					// assignemnt to demonstrate stack notation.
+					(function() {
+
+						thing.oneTimeKickIt();
+						
+					})();
+
+				} catch ( error ) {
+
+					console.log( error.stack );
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>

@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Anonymous Functions, Assigned To References, Show Up Well In JavaScript Stack Traces](http://bennadel.github.io/JavaScript-Demos/demos/function-expressions-and-stack-traces/)
 * [Normalizing Untrusted Deferred / Promise Values In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/non-trusted-promises-angularjs/)
 * [Managing User Input Key-Events Across Views In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/handling-key-events-angularjs/)
 * [Directive Controllers Cannot Use The Revealing Module Pattern In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/directive-controller-return-value-angularjs/)
