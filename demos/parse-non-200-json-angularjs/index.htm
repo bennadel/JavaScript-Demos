@@ -1,0 +1,88 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		AngularJS Will Parse JSON Payloads In Non-2xx HTTP Responses
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		AngularJS Will Parse JSON Payloads In Non-2xx HTTP Responses
+	</h1>
+
+	<ul>
+		<li>
+			<a ng-click="testRequest( 200 )">Test 200 OK</a>
+		</li>
+		<li>
+			<a ng-click="testRequest( 400 )">Test 400 Bad Request</a>
+		</li>
+		<li>
+			<a ng-click="testRequest( 500 )">Test 500 Server Error</a>
+		</li>
+		<li>
+			<a ng-click="testRequest( 000 )">Test Unexpected Error</a>
+		</li>
+	</ul>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.3.15.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// -------------------------------------------------- //
+		// -------------------------------------------------- //
+
+
+		// I control the root of the application.
+		app.controller(
+			"AppController",
+			function( $scope, $http ) {
+
+				// I make an HTTP request to the server / api, testing the given code.
+				$scope.testRequest = function( statusCode ) {
+
+					var promsie = $http({
+						method: "get",
+						url: "./api/index.cfm",
+						params: {
+							test: statusCode
+						}
+					});
+
+					// We are using the same handler for both the resolve and reject 
+					// handlers. In this case, the rejected response may contain JSON, 
+					// but it may not.
+					promsie.then( handleResponse, handleResponse );
+
+
+					// I handle the HTTP response.
+					function handleResponse( response ) {
+
+						console.info( "HTTP Response [ %s %s ]", response.status, response.statusText );
+
+						// The response.data is the data that has passed through the 
+						// HTTP promise chain, including the default HTTP response 
+						// transformation method, which will attempt to deserialize JSON.
+						console.log( response.data );
+
+					}
+
+				};
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
