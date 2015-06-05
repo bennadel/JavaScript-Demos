@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [The Philosophy Of Extending Lodash In JavaScript](http://bennadel.github.io/JavaScript-Demos/demos/philosophy-extending-lodash/)
 * [AngularJS Will Parse JSON Payloads In Non-2xx HTTP Responses](http://bennadel.github.io/JavaScript-Demos/demos/parse-non-200-json-angularjs/)
 * [Anonymous Functions, Assigned To References, Show Up Well In JavaScript Stack Traces](http://bennadel.github.io/JavaScript-Demos/demos/function-expressions-and-stack-traces/)
 * [Normalizing Untrusted Deferred / Promise Values In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/non-trusted-promises-angularjs/)

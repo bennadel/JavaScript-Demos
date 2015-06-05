@@ -1,0 +1,128 @@
+<!doctype html>
+<html>
+<head>
+	<title>The Philosophy Of Extending Lodash In JavaScript</title>
+</head>
+<body>
+
+	<h1>
+		The Philosophy Of Extending Lodash In JavaScript
+	</h1>
+
+	<p>
+		<em>All the magic is in the console</em>.
+	</p>
+
+	<script type="text/javascript" src="../../vendor/lodash/lodash-3.9.3.min.js"></script>
+	<script type="text/javascript">
+
+		// Start out with our initial collection. We'll be augmenting it using the
+		// lodash library.
+		var friends = [
+			{
+				id: 1,
+				name: "Kim"
+			},
+			{
+				id: 2,
+				name: "Sarah"
+			},
+			{
+				id: 3,
+				name: "Tricia"
+			}
+		];
+
+
+		// ---
+		// APPROACH 1: Use explicit for-each method so you can see exactly what the code 
+		// is doing. Easy to understand, easy to maintain, but verbose.
+		// ---
+
+
+		// Use an inline operator. 
+		_.forEach(
+			friends,
+			function operator( friend, i ) {
+
+				friend.createdAt = _.now();
+
+			}
+		);
+
+
+		// ---
+		// APPROACH 2: Using unfortunate complexity. Hard to understand. Personally, when
+		// I see code like this, I think the developer was trying to be too clever. It's
+		// not about "you" bro, it's about the "next guy" trying to maintain your code.
+		// ---
+
+
+		// Using partial functions.		
+		_.forEach( friends, _.partial( _.set, _, "isActive", true ) );
+
+
+		// ---
+		// APPROACH 3: Factor out common use-cases into an actual extension for lodash
+		// itself. This way, the complexity and verbosity of common tasks can be 
+		// encapsulated behind well-named, easy-to-understand intentional methods. 
+		// ---
+
+
+		// Extend lodash with some custom functions.
+		_.mixin({
+			setEach: function( collection, path, value ) {
+
+				var result = _.forEach(
+					collection,
+					function operator( item, index ) {
+
+						_.set( item, path, value );
+
+					}
+				);
+
+				return( result );
+
+			},
+
+			extendEach: function( collection, source ) {
+
+				var result = _.forEach(
+					collection,
+					function operator( item, index ) {
+
+						_.extend( item, source );
+
+					}
+				);
+
+				return( result );
+
+			}
+		});
+
+		// Now that we've extended lodash, we have a very simple function that is
+		// intuitive and reusable. And, if it's ever not enough, you can fall back to
+		// using a more explicit, inline approach.
+		_.setEach( friends, "isBFF", true );
+
+		// Use our other custom function.
+		_.extendEach( 
+			friends,
+			{
+				foo: "bar",
+				hello: "world"
+			}
+		);
+
+
+		// CAUTION: The fact that I am using _.ary() here to apply the console.log() 
+		// function is a bit tongue-in-cheek. This is more complex that I would like it
+		// to be. But, you can't help but enjoy the challenge of making overly-complex
+		// algorithms.
+		_.forEach( friends, _.ary( console.log, 1 ) );
+
+	</script>
+</body>
+</html>
