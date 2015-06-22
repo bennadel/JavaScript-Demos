@@ -1,0 +1,128 @@
+
+body {
+	font-family: "Open Sans", sans-serif ;
+}
+
+div.body {
+	margin: 0px auto 0px auto ;
+	max-width: 1100px ;
+	text-align: center ;
+}
+
+h1 {
+	color: #00489F ;
+	font-size: 60px ;
+	letter-spacing: -6px ;
+}
+
+form {
+	margin: 25px 0px 25px 0px ;
+	position: relative ;
+}
+
+form input {
+	border: 1px solid #CCCCCC ;
+	border-radius: 4px 4px 4px 4px ;
+	box-shadow: inset 0px 1px 3px #DDDDDD ;
+	box-sizing: border-box ;
+		-webkit-box-sizing: border-box ;
+		-moz-box-sizing: border-box ;
+	font-size: 16px ;
+	margin-right: 10px ;
+	padding: 9px 11px 9px 11px ;
+	vertical-align: middle ;
+}
+
+form div.zoom {
+	display: inline-block ;
+}
+
+form div.zoom a {
+	background-color: #F0F0F0 ;
+	border: 1px solid #CCCCCC ;
+	border-radius: 4px 4px 4px 4px ;
+	cursor: pointer ;
+	display: inline-block ;
+	height: 30px ;
+	line-height: 30px ;
+	margin: 1px 2px 0px 2px ;
+	user-select: none ;
+		-moz-user-select: none ;
+		-webkit-user-select: none ;
+	width: 30px ;
+}
+
+form div.count {
+	line-height: 37px ;
+	position: absolute ;
+	right: 0px ;
+	top: 0px ;
+}
+
+div[ bn-grid ] {
+	
+}
+
+div.grid-items {
+	margin: 0px 0px 0px 0px ;
+	padding: 0px 0px 0px 0px ;
+	position: relative ;
+}
+
+div.grid-items div.grid-item {
+	height: 350px ;
+	position: absolute ;
+	user-select: none ;
+		-moz-user-select: none ;
+		-webkit-user-select: none ;
+	transition: left 250ms ease , top 250ms ease ;
+		-moz-transition: left 250ms ease , top 250ms ease ;
+		-webkit-transition: left 250ms ease , top 250ms ease ;
+	z-index: 1 ;
+}
+
+div.grid-items div.grid-item-sorting {
+	cursor: move ;
+	transition: none ;
+		-moz-transition: none ;
+		-webkit-transition: none ;
+	z-index: 2 ;
+}
+
+div.grid-items div.image {
+	background-repeat: no-repeat ;
+	background-size: 100% ;
+	bottom: 30px ;
+	box-shadow: 0px 0px 1.25em rgba( 0, 0, 0, 0.2 ) ;
+	left: 0px ;
+	position: absolute ;
+	right: 0px ;
+	top: 0px ;
+}
+
+div.grid-items div.label {
+	bottom: 0px ;
+	color: #555555 ;
+	font-size: 14px ;
+	left: 0px ;
+	overflow: hidden ;
+	position: absolute ;
+	right: 0px ;
+	text-align: center ;
+	text-overflow: ellipsis ;
+}
+
+div.no-matches {
+	color: #CCCCCC ;
+	font-size: 36px ;
+	line-height: 100px ;
+}
+
+div.mounting {
+	padding: 20px 0px 0px 0px ;
+}
+
+div.mounting a {
+	cursor: pointer ;
+	text-decoration: underline ;
+}

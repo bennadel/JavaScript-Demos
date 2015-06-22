@@ -1,0 +1,898 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Absolute Grid Knock-Off In AngularJS
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Open+Sans:400,800"></link>
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body ng-controller="AppController as vm">
+
+	<div class="body">
+
+		<h1>
+			Absolute Grid Knock-Off In AngularJS
+		</h1>
+
+		<p>
+			<a href="https://jrowny.com/" target="_blank">Jonathan Rowny</a> built a really cool 
+			<a href="https://github.com/jrowny/react-absolute-grid" target="_blank">grid component for ReactJS</a>
+			(<a href="http://jrowny.github.io/react-absolute-grid/demo/" target="_blank">See Demo</a>).
+			However, as a lover of AngularJS, I thought it would be a fun challenge to try and knock-off the 
+			functionality, in an AngularJS context, with the hopes of achieving the same
+			performance.
+		</p>
+
+		<p>
+			Sample display items courtesy of <a href="http://www.invisionapp.com/do" target="_blank">InVisionApp</a>.
+		</p>
+
+		<!--
+			The filtering and the zoom are owned and operated by the App Controller, 
+			NOT THE GRID, because they are not the purview of the grid. The grid is 
+			simply a consumer of this data and does not have a complete picture as to
+			how this data fits into the greater application.
+		-->
+		<form>
+			
+			<input ng-model="vm.form.filter" type="text" placeholder="Filter eg: calender" />
+			
+			<div class="zoom">
+				<a ng-click="vm.decreaseZoom()">-</a>
+				<a ng-click="vm.increaseZoom()">+</a>
+				( {{ vm.zoom }} )
+			</div>
+
+			<div ng-show="vm.hiddenCount" class="count">
+				Showing {{ vm.visibleCount }} of {{ vm.items.length }}
+			</div>
+
+		</form>
+
+		<!-- 
+			The grid renders the items in an absolutely positioned grid that fits 
+			dynamically in its container (based on width). The grid creates a repeater
+			that will stamp out clones of the content for each item in the collection.
+			--
+			NOTE: Some of these attributes are scope-accessors and some of them are 
+			simple values that will be used to generate the grid repeater. I think this
+			is some of the ambiguity that the AngularJS 2.0 syntax is going to clarify.
+		-->
+		<div 
+			ng-show="vm.visibleCount"
+			bn-grid
+			grid-zoom="vm.zoom"
+			grid-items="vm.items"
+			item-index="item"
+			item-identifier="id"
+			item-width="185"
+			item-height="355"
+			item-visibility="! item.isHiddenByFilter"
+			item-move="vm.moveItem( item, index )">
+
+			<div 
+				class="image" 
+				ng-style="::{ 'background-image': 'url( ' + item.url + ' )' }">
+			</div>
+
+			<div class="label">{{ ::item.name }}</div>
+
+		</div>
+
+		<!-- If the filtering results in no visible items. -->
+		<div ng-show="! vm.visibleCount" class="no-matches">
+			Come at me, bro!
+		</div>
+
+		<!-- Speed tests for DOM execution. -->
+		<div class="mounting">
+			<a ng-show="vm.items.length" ng-click="vm.testUnmount()">Test Unmount</a>
+			<a ng-hide="vm.items.length" ng-click="vm.testMount()">Test Mount</a>
+		</div>
+
+	</div>
+
+
+	<!-- Load scripts (NOTE: Sample data loaded at the bottom). -->
+	<script type="text/javascript" src="../../vendor/jquery/jquery-2.1.0.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.3.16.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I control the root for the application, including the collection of items.
+		app.controller(
+			"AppController",
+			function( $scope, sampleItems ) {
+
+				var vm = this;
+
+				// I am the collection that we are rendering in the grid.
+				vm.items = augmentItems( sampleItems );
+
+				// I keep track of how many items are visible based on filtering.
+				vm.hiddenCount = 0;
+				vm.visibleCount = 0;
+
+				// I am the zoom setting for the items in the grid.
+				vm.zoom = 1.0;
+
+				// I manage the ngModel data.
+				vm.form = {
+					filter: ""
+				};
+
+				// I watch for changes in the filter and then update the visibility of 
+				// items in the collection to match the filtering.
+				$scope.$watch( "vm.form.filter", handleFilterChange );
+
+				// Expose the public API.
+				vm.decreaseZoom = decreaseZoom;
+				vm.increaseZoom = increaseZoom;
+				vm.moveItem = moveItem;
+				vm.testMount = testMount;
+				vm.testUnmount = testUnmount;
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I decrease the zoom of the grid items, stopping at a lower-bound.
+				function decreaseZoom() {
+
+					if ( ( vm.zoom -= 0.1 ) < 0.3 ) {
+
+						vm.zoom = 0.3;
+
+					}
+
+					// To fix horrible maths functionality in JavaScript.
+					vm.zoom = Number( vm.zoom.toFixed( 1 ) );
+
+				}
+
+
+				// I increase the zoom of the grid items, stopping at an upper-bound.
+				function increaseZoom() {
+
+					if ( ( vm.zoom += 0.1 ) > 1.5 ) {
+
+						vm.zoom = 1.5;
+						
+					}
+
+					// To fix horrible maths functionality in JavaScript.
+					vm.zoom = Number( vm.zoom.toFixed( 1 ) );
+
+				}
+
+
+				// After the user is done sorting an item in the list, I execute the 
+				// change in the view-model, moving the given item to the new location.
+				function moveItem( item, newIndex ) {
+
+					var existingIndex = vm.items.indexOf( item );
+
+					if ( existingIndex === -1 ) {
+
+						return;
+
+					}
+
+					vm.items.splice( existingIndex, 1 );
+					vm.items.splice( newIndex, 0, item );
+
+				}
+
+
+				// As a speed test (for rendering), I re-mount the sample data.
+				function testMount() {
+
+					vm.items = sampleItems;
+
+				}
+
+
+				// As a speed test (for rendering), I remove the sample data (so that it 
+				// can be subsequently re-mounted).
+				function testUnmount() {
+
+					vm.items = [];
+
+				}
+
+
+				// ---
+				// PRIVATE METHODS.
+				// ---
+
+
+				// I augment the item for use in the view-model.
+				function augmentItem( item ) {
+
+					item.isHiddenByFilter = false;
+
+					item.normalizedSearchTarget = item.name.toLowerCase();
+
+					return( item );
+
+				}
+
+
+				// I augment the items for use in the view-model.
+				function augmentItems( items ) {
+
+					for ( var i = 0, length = items.length ; i < length ; i++ ) {
+
+						augmentItem( items[ i ], i, length );
+
+					}
+
+					return( items );
+
+				}
+
+
+				// I update the item visibility when the filtering is changed.
+				function handleFilterChange( newQuery ) {
+
+					var normalizedQuery = newQuery.toLowerCase();
+
+					vm.visibleCount = vm.items.length;
+					vm.hiddenCount = 0;
+
+					for ( var i = 0, length = vm.items.length ; i < length ; i++ ) {
+
+						var item = vm.items[ i ];
+
+						item.isHiddenByFilter = normalizedQuery
+							? ( item.normalizedSearchTarget.indexOf( normalizedQuery ) === -1 )
+							: false
+						;
+
+						if ( item.isHiddenByFilter ) {
+
+							vm.hiddenCount++;
+
+						}
+
+					}
+
+					vm.visibleCount -= vm.hiddenCount;
+
+				}
+
+			}
+		);
+
+
+		// I manage the data grid, allowing for soring and filtered rendering.
+		// --
+		// CAUTION: Due to the sorting behavior of this directive, I am depending heavily on
+		// the methods provided by the ** jQuery ** flavor of angular.element().
+		app.directive(
+			"bnGrid",
+			function( $document, $parse ) {
+
+				// Return the directive configuration object.
+				// --
+				// CAUTION: Ultimately, our data-grid is really just a repeater. However, 
+				// we need the data from the repeater to be available in the content of the
+				// grid item. As such, we can't use the isolate scope and the two-way data 
+				// binding, which is actually a good thing since it makes the code easier 
+				// to reason about. Isolate scope is generally not desirable.
+				return({
+					compile: compile,
+					restrict: "A"
+				});
+
+
+				// I compile the directive, wrapping the content inside an ngRepeat.
+				function compile( tElement, tAttributes ) {
+
+					// Gather the grid attributes that we need to construct the ngRepeat.
+					var gridItems = ( tAttributes.gridItems || "[]" );
+					var itemIndex = ( tAttributes.itemIndex || "gridItem" );
+					var itemIdentifier = ( tAttributes.itemIdentifier || "id" );
+					var itemVisibility = ( tAttributes.itemVisibility || "false" );
+
+					tElement.addClass( "grid-items" );
+
+					// Wrap the content in an ngRepeat that is constructed using the value
+					// references defined by the calling context.
+					var item = angular.element( "<div></div>" )
+						.attr( "ng-repeat", ( itemIndex + " in " + gridItems + " track by " + itemIndex + "." + itemIdentifier ) )
+						.attr( "ng-show", itemVisibility )
+						.attr( "ng-style", ( itemIndex + ".gridItemStyle" ) )
+						.addClass( "grid-item" )
+						.append( tElement.children().remove() )
+						.appendTo( tElement )
+					;
+
+					return( link );
+
+				}
+
+
+				// I bind the JavaScript events to the local scope.
+				function link( scope, element, attributes ) {
+
+					// Gather our attribute-based data. 
+					// --
+					// NOTE: Some of these are static values (ex, item-width), and some of them
+					// are expressions that will be pulled out of the context (ex, gridItem).
+					// That is why some are parsed and some are just referenced.
+					var gridItemsAccessor = $parse( attributes.gridItems );
+					var gridZoomAccessor = $parse( attributes.gridZoom );
+					var itemIndex = ( attributes.itemIndex || "gridItem" );
+					var originalItemWidth = attributes.itemWidth;
+					var originalItemHeight = attributes.itemHeight;
+					var itemVisibilityAccessor = $parse( attributes.itemVisibility );
+					var itemMoveAccessor = $parse( attributes.itemMove || angular.noop );
+
+					// Setup the grid state so that we can try to monitor changes in the grid
+					// across the digest cycles.
+					var gridState = {
+						uid: 1,
+						length: -1,
+						zoom: -1,
+						items: [],
+						visibility: []
+					};
+
+					// I determine if an element is currently being sorted.
+					var isItemBeingSorted = false;
+
+					// I watch for potential sort events, initiated by a click on one of the grid items.
+					// --
+					// NOTE: If you want to disable sorting, just omit this event binding.
+					element.on( "mousedown", "div.grid-item", watchForSortEvent );
+
+					// Monitor the state of the gird. We need to update the grid state and layout if any
+					// of the following change:
+					// --
+					// * Items.
+					// * Item visibility.
+					// * Zoom.
+					// --
+					scope.$watch( watchDynamicValues, updateGridState );
+
+
+					// ---
+					// PRIVATE METHODS.
+					// ---
+
+					
+					// All of the items in the grid are absolutely positioned, relative to the container
+					// element. Whenever there is a change in the collection, or in the state of the 
+					// filtering, the layout has to be updated. The grid doesn't "own" the filtering; but,
+					// it does have to react to changes in it.
+					function adjustLayout() {
+
+						// Get the dynamic width of the container. We'll need this to layout and evenly
+						// space out the columns in the grid.
+						var containerWidth = element.width();
+
+						// Get the dimensions of each item to render based on the zoom-level.
+						var itemWidth = Math.floor( originalItemWidth * gridState.zoom );
+						var itemHeight = Math.floor( originalItemHeight * gridState.zoom );
+
+						// Define the buffer size we want to keep between the items.
+						var bufferWidth = 25;
+						var bufferHeight = 25;
+
+						// Get the height and width of the item including the buffers - this will make
+						// subsequent calculations a bit easier.
+						var outerItemWidth = ( itemWidth + bufferWidth );
+						var outerItemHeight = ( itemHeight + bufferHeight );
+
+						// Calculate the number of columns we can fit inside of the container, based 
+						// on the current zoom.
+						var columnCount = Math.floor( containerWidth / outerItemWidth );
+
+						// Check to see if we are a perfect match for N+1 items, less the last buffer.
+						// When the last column is positioned, it won't have a right-hand buffer; as, 
+						// such, let's see if we can fit one more "natural" item in the row.
+						if ( ( ( columnCount * outerItemWidth ) + itemWidth ) <= containerWidth ) {
+
+							columnCount++;
+
+						}
+
+						// Now that we know how many items can fit in a row, we can calculate the 
+						// adjusted buffer width for even distribution.
+						var adjustedBufferWidth = Math.floor( ( containerWidth - ( columnCount * itemWidth ) ) / ( columnCount - 1 ) );
+
+						var currentRow = 0;
+						var currentColumn = 0;
+						var lastPopulatedRow = 0;
+
+						// Layout each item in the collection.
+						for ( var i = 0, length = gridState.items.length ; i < length ; i++ ) {
+
+							// If this item is not visible, skip over it - no need to lay it out.
+							if ( ! gridState.visibility[ i ] ) {
+
+								continue;
+
+							}
+
+							// NOTE: left / top logic is only including "buffer" after the first 
+							// column position (since the first column doesn't need buffer room).
+							gridState.items[ i ].gridItemStyle = {
+								width: ( itemWidth + "px" ),
+								height: ( itemHeight + "px" ),
+								left: ( itemWidth * currentColumn ) + ( currentColumn ? ( currentColumn * adjustedBufferWidth ) : 0 ),
+								top: ( itemHeight * currentRow ) + ( currentRow ? ( currentRow * bufferHeight ) : 0 )
+							};
+
+							lastPopulatedRow = currentRow;
+
+							// If we are on the last column, move onto the next row.
+							if ( ++currentColumn === columnCount ) {
+
+								currentColumn = 0;
+								currentRow++;
+
+							}
+
+						}
+
+						// Since the items are absolutely positioned, we need to explicitly set the
+						// height of the container element so that page flows remain intuitive.
+						element.height( ( lastPopulatedRow + 1 ) * outerItemHeight );
+
+					}
+
+
+					// If a state change was detected, I update the grid state to reflect the changes.
+					function updateGridState() {
+
+						// Get the "passed-in" values from the calling context.
+						var items = gridItemsAccessor( scope );
+						var zoom = gridZoomAccessor( scope );
+
+						// Store the current state of the grid so we can dirty-check in future digests.
+						// --
+						// NOTE: We are allocating a new array for the items so that we have a unique
+						// collection that can't be mutated by the calling context.
+						gridState.length = items.length;
+						gridState.zoom = zoom;
+						gridState.items = items.slice();
+						gridState.visibility = new Array( gridState.length );
+
+						// When we access the visibility flag, we need to pass in the current item 
+						// as a local object (keyed on the itemIndex that was user-provided).
+						var locals = {};
+
+						for ( var i = 0, length = items.length ; i < length ; i++ ) {
+
+							locals[ itemIndex ] = items[ i ];
+
+							gridState.visibility[ i ] = itemVisibilityAccessor( locals );
+
+						}
+
+						// NOTE: Once the state has been updated, we have to update the layout. We are
+						// doing this in a async queue because the layout depends on the visibility of 
+						// the grid itself, which may not be immediately available. The delay ensures
+						// that the grid is visible when we go to gather the dimensions.
+						scope.$applyAsync( adjustLayout );
+
+					}
+
+
+					// Monitor the state of the gird. We need to update the grid if any of the following
+					// change:
+					// --
+					// * Items.
+					// * Item visibility.
+					// * Zoom.
+					// --
+					// Because this will run on every single digest, I am trying to make it as efficient
+					// as possible, checking simple values before having to start checking the state of 
+					// the collection itself.
+					function watchDynamicValues( scope ) {
+
+						// If the user is currently sorting the elements, don't update the grid 
+						// using the normal means - some updating will be done in the sorting logic.
+						if ( isItemBeingSorted ) {
+
+							return( gridState.uid );
+
+						}
+
+						// Changes in the collection reference.
+
+						var items = gridItemsAccessor( scope );
+
+						if ( ! items && ! gridState.length ) {
+
+							return( gridState.uid );
+
+						}
+
+						if ( items.length !== gridState.length ) {
+
+							return( ++gridState.uid );
+
+						}
+
+						// Changes in the zoom.
+
+						var zoom = gridZoomAccessor( scope );
+
+						if ( zoom !== gridState.zoom ) {
+
+							return( ++gridState.uid );
+
+						}
+
+						// Changes in the individual item or visibility references.
+
+						var locals = {};
+
+						for ( var i = 0, length = items.length ; i < length ; i++ ) {
+
+							var item = locals[ itemIndex ] = items[ i ];
+
+							if ( item !== gridState.items[ i ] ) {
+
+								return( ++gridState.uid );
+
+							}
+
+							if ( itemVisibilityAccessor( locals ) !== gridState.visibility[ i ] ) {
+
+								return( ++gridState.uid );
+
+							}
+
+						}
+
+						return( gridState.uid );
+
+					}
+
+
+					// I watch the given mouse-down event to see if it "becomes" a sort event. Not all
+					// mouse-down events trigger a sort; the selected item has to be moved beyond a 
+					// minimum threshold before the sorting will be initiated.
+					function watchForSortEvent( event ) {
+
+						// NOTE: If you don't want the given mouse-event to turn into a sorting event,
+						// such as if the user moused-down on an Input element, for example, you could
+						// put that logic here.
+						// --
+						// if ( isInvalidSortOriginEvent( event ) ) {
+						// 	return;
+						// }
+
+						// Track the origin of the mouse-down event. All movement will be relative to
+						// this coordinate.
+						var originMouseX = event.pageX;
+						var originMouseY = event.pageY;
+
+						// Keep a reference to the select DOM element (the one potentially being sorted).
+						var originElement = angular.element( this );
+
+						enterPreSortPhase();
+
+
+						// I manage the pre-sort phase of the sorting lifecycle. This is where the user 
+						// has moused-down but, has not yet demonstrated sufficient intent to sort.
+						function enterPreSortPhase() {
+
+							// I am the minimum number of pixels that the user has to drag before a 
+							// sort event is initiated.
+							var thresholdDelta = 3;
+
+							originElement.on( "mousemove", handleMousemoveEvent );
+							$document.on( "mouseup", handleMouseupEvent );
+
+
+							// I watch the mouse, checking to see if it exceeds the threshold for sorting.
+							function handleMousemoveEvent( event ) {
+
+								var thresholdDeltaX = Math.abs( originMouseX - event.pageX );
+								var thresholdDeltaY = Math.abs( originMouseY - event.pageY );
+
+								// If the user has expressed an intent to sort, transition to sort state.
+								if ( Math.max( thresholdDeltaX, thresholdDeltaY ) > thresholdDelta ) {
+
+									teardownPhase();
+									enterSortPhase();
+
+								}
+
+							}
+
+							// I handle the mouse-up event for a pre-sort state.
+							function handleMouseupEvent( event ) {
+
+								teardownPhase();
+
+							}
+
+							// I teardown the pre-sort phase.
+							function teardownPhase() {
+
+								originElement.off( "mousemove", handleMousemoveEvent );
+								$document.off( "mouseup", handleMouseupEvent );
+
+							}
+
+						} // END: enterPreSortPhase().
+
+
+						// I manage the sort phase of the sorting lifecycle. This is where the user 
+						// has moved the mouse a sufficient amount to indicate a sort intent.
+						function enterSortPhase() {
+
+							// Flag that grid is now in an active sorting state. During this state, 
+							// the grid will *attempt* to go into lockdown. Meaning, the layout won't
+							// be adjusted while a sort is taking place (as best as it can).
+							isItemBeingSorted = true;
+
+							// Since the item will be moved around with the mouse, we don't want this
+							// item to have any transitions. This class will override transitions.
+							originElement.addClass( "grid-item-sorting" );
+
+							// Calculate the height and width for the origin element. We are going to 
+							// assume uniform dimensions for all items in the gird. This will make it
+							// easier to calculate the hit-area events.
+							var originElementWidth = originElement.width();
+							var originElementHeight = originElement.height();
+
+							var originElementLeft = parseInt( originElement.css( "left" ), 10 );
+							var originElementTop = parseInt( originElement.css( "top" ), 10 );
+
+							// Get all of the items in the grid and the elements they map to.
+							var items = gridItemsAccessor( scope );
+							var elements = element.children( "div.grid-item" );
+
+							var originIndex = -1;
+							var currentIndex = -1;
+
+							var sortables = [];
+
+							// Iterate over all of the elements, mapping teh visible elements into the
+							// sortables collection that will actually manage the sort.
+							for ( var i = 0, length = elements.length ; i < length ; i++ ) {
+
+								var currentElement = angular.element( elements[ i ] );
+
+								// If the current element isn't visible, skip to the next one.
+								if ( ! currentElement.is( ":visible" ) ) {
+
+									continue;
+
+								}
+
+								// If this visible element is the origin element, keep track of the index
+								// of it within the sortables collection. If this index changes, it will 
+								// indicate that the model needs to be udpated (to mirror the sort).
+								if ( currentElement.is( originElement) ) {
+
+									originIndex = currentIndex = sortables.length;
+
+								}
+
+								var item = items[ i ];
+								var offset = currentElement.offset();
+
+								// NOTE: The rectanble here is relative to the document, not to the 
+								// container.
+								sortables.push({
+									index: i,
+									rectangle: {
+										bottom: ( offset.top + originElementHeight ),
+										left: offset.left,
+										right: ( offset.left + originElementWidth ),
+										top: offset.top
+									},
+									position: {
+										left: item.gridItemStyle.left,
+										top: item.gridItemStyle.top
+									},
+									item: item,
+									element: currentElement
+								});
+
+							}
+
+							// Watch the mouse to orient the sortable element with the user.
+							$document.on( "mousemove", handleMousemoveEvent );
+							$document.on( "mouseup", handleMouseupEvent );
+
+
+							// I watch the mouse movement to see if the mouse moves over another element 
+							// in the visible list.
+							function handleMousemoveEvent( event ) {
+
+								var currentMouseX = event.pageX;
+								var currentMouseY = event.pageY;
+
+								// Figure out how much the mouse has moved away from the initial mouse-down.
+								var deltaMouseX = ( originMouseX - currentMouseX );
+								var deltaMouseY = ( originMouseY - currentMouseY );
+
+								// Move the element to the current mouse location, relative to the origin.
+								originElement.css({
+									left: ( originElementLeft - deltaMouseX ),
+									top: ( originElementTop - deltaMouseY )
+								});
+
+								// Now, we need to see if the mouse has moved over the hit-area of another 
+								// element in the grid, which would need to swap places with the origin element.
+								var preHitIndex = currentIndex;
+
+								// Iterate over the collection of sortables to find the first hit area.
+								for ( var i = 0, length = sortables.length ; i < length ; i++ ) {
+
+									// Skip over the current element (the one we are dragging around).
+									if ( i === currentIndex ) {
+
+										continue;
+
+									}
+
+									var sortable = sortables[ i ];
+
+									// Check to see if mouse is over another item in the grid.
+									if ( 
+										( sortable.rectangle.left <= currentMouseX ) && 
+										( sortable.rectangle.right >= currentMouseX ) &&
+										( sortable.rectangle.top <= currentMouseY ) &&
+										( sortable.rectangle.bottom >= currentMouseY )
+										) {
+
+										var tempItem = sortables[ currentIndex ].item;
+										var tempElement = sortables[ currentIndex ].element;
+
+										// Moving the item to the left.
+										if ( i < currentIndex ) {
+
+											for ( var t = currentIndex ; t > i ; t-- ) {
+												
+												sortables[ t ].item = sortables[ t - 1 ].item;
+												sortables[ t ].element = sortables[ t - 1 ].element;
+
+											}
+
+										// Moving the item to the right.
+										} else {
+
+											for ( var t = currentIndex ; t < i ; t++ ) {
+												
+												sortables[ t ].item = sortables[ t + 1 ].item;
+												sortables[ t ].element = sortables[ t + 1 ].element;
+
+											}
+
+										}
+
+										sortables[ currentIndex = i ].item = tempItem;
+										sortables[ currentIndex = i ].element = tempElement;
+
+										// We can only be over one element at a time, no need to keep checking.
+										break;
+
+									}
+
+								} // END: For-loop.
+
+								// If we moused over another item in the collection and the active element
+								// was moved into the new position, then we need to update the layout for
+								// the elements involved.
+								if ( preHitIndex !== currentIndex ) {
+
+									var fromIndex = ( ( preHitIndex < currentIndex ) ? preHitIndex : currentIndex );
+									var toIndex = ( ( preHitIndex < currentIndex ) ? currentIndex : preHitIndex );
+
+									for ( var i = fromIndex ; i <= toIndex ; i++ ) {
+
+										if ( i === currentIndex ) {
+
+											continue;
+
+										}
+
+										var sortable = sortables[ i ];
+										
+										sortable.element.css({
+											left: ( sortable.item.gridItemStyle.left = sortable.position.left ),
+											top: ( sortable.item.gridItemStyle.top = sortable.position.top )
+										});
+
+									}
+
+								}
+
+							}
+
+
+							// I watch for the mouseup event which would indicate that the sorting has
+							// been completed.
+							function handleMouseupEvent( event ) {
+
+								var sortable = sortables[ currentIndex ];
+
+								originElement.removeClass( "grid-item-sorting" );
+
+								// If we never changed the final index, then there's nothing more to do.
+								if ( originIndex === currentIndex ) {
+
+									// Since there was no change in index, the grid state hasn't changed, 
+									// which means there will be no automatic layout adjustment. As such,
+									// we have to explicitly move the item back to it's initial location. 
+									originElement.css({
+										left: sortable.position.left,
+										top: sortable.position.top
+									});
+									
+									return( teardownPhase() );
+
+								}
+
+								// If we made it this far, the current index is different than the origin
+								// index which indicates that the origin element has moved to a different
+								// location in the visible list. As such, we have to change the model.
+								scope.$apply(
+									function changeModel() {
+
+										itemMoveAccessor(
+											scope,
+											{
+												item: sortable.item,
+												index: sortable.index
+											}
+										);
+
+										teardownPhase();
+										adjustLayout();
+
+									}
+								);
+
+							}
+
+
+							// I teardown the sort phase.
+							function teardownPhase() {
+
+								// Flag the grid as no longer in an active sorting state.
+								isItemBeingSorted = false;
+
+								// Remove the mouse listeners.
+								$document.off( "mousemove", handleMousemoveEvent );
+								$document.off( "mouseup", handleMouseupEvent );
+
+							}
+
+						} // END: enterSortPhase().
+
+					} // END: watchForSortEvent().
+
+				}
+
+			}
+		);
+
+	</script>
+	<script type="text/javascript" src="./sample-data.js"></script>
+
+</body>
+</html>
