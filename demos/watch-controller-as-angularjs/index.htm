@@ -1,0 +1,130 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Understanding How To Use $scope.$watch() With Controller-As In AngularJS
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body>
+
+	<h1>
+		Understanding How To Use $scope.$watch() With Controller-As In AngularJS
+	</h1>
+
+	<!-- 
+		Notice that we are aliasing the view-model as "appController". Behind
+		the scenes, this is doing nothing more than setting up the following
+		scope-level binding:
+
+		$scope.appController = {{ controller-instance }}
+	-->
+	<div ng-controller="AppController as appController">
+
+		<p>
+			<a ng-click="appController.incrementFoo()">Increment Foo</a>: 
+			{{ appController.fooCount }}.
+		</p>
+
+	</div>
+
+		
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.3.16.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I control the root for the application.
+		angular.module( "Demo" ).controller(
+			"AppController",
+			function( $scope ) {
+
+				// Setup our Controller instance as the view-model.
+				var vm = this;
+
+				// This is the value we will be "watching".
+				vm.fooCount = 0;
+
+				// When you watch a "vm.*" value from within the Controller, you are 
+				// making the assumption (ie, creating coupling) that your View is using
+				// the same variable - "vm" - externally that you are using internally.
+				// --
+				// CAUTION: In our case, this is NOT true - the view is using the 
+				// "appController" alias.
+				$scope.$watch(
+					"vm.fooCount",
+					function handleFooChange( newValue, oldValue ) {
+
+						console.log( "vm.fooCount:", newValue );
+
+					}
+				);
+
+				// If your Controller and your View are not using the same view-model 
+				// alias, then you can explicitly watch the value that your View is using.
+				// Here, we're watching "appController" instead of "vm". This might make
+				// you dry-heave a tiny bit; but, this is essentially what you are doing 
+				// when you use "vm.*" as well. 
+				$scope.$watch(
+					"appController.fooCount",
+					function handleFooChange( newValue, oldValue ) {
+
+						console.log( "appController.fooCount:", newValue );
+
+					}
+				);
+
+				// To better decouple your Controller from your View, you can define a 
+				// watch function instead of providing a string-based watch expression.
+				// --
+				// NOTE: Behind the scenes, this is what the $parse() service is doing 
+				// anyway; so, don't think of this as more work. In reality, it's actually
+				// less work for AngularJS since it doesn't have to parse the expression
+				// into a function.
+				$scope.$watch(
+					function watchFoo( scope ) {
+
+						// Return the "result" of the watch expression. 
+						return( vm.fooCount );
+
+					},
+					function handleFooChange( newValue, oldValue ) {
+
+						console.log( "fn( vm.fooCount ):", newValue );
+
+					}
+				);
+
+				// Expose public API.
+				vm.incrementFoo = incrementFoo;
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// Increment the value that we will be watching.
+				function incrementFoo() {
+
+					console.log( "---->", ++vm.fooCount, "<----" );
+					
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>

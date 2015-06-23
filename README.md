@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Understanding How To Use $scope.$watch() With Controller-As In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/watch-controller-as-angularjs/)
 * [Absolute Grid Knock-Off In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/absolute-grid-knock-off-angularjs/)
 * [The Philosophy Of Extending Lodash In JavaScript](http://bennadel.github.io/JavaScript-Demos/demos/philosophy-extending-lodash/)
 * [AngularJS Will Parse JSON Payloads In Non-2xx HTTP Responses](http://bennadel.github.io/JavaScript-Demos/demos/parse-non-200-json-angularjs/)
