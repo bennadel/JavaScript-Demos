@@ -98,8 +98,15 @@
 			function( $timeout ) {
 
 				// Return the directive configuration object.
+				// --
+				// NOTE: Using priority 1 to make sure that this link function (post-link),
+				// is executed after the ng-show link function (priority 0 - they are 
+				// linked in reverse order). That way, the ng-show $watch() bindings are 
+				// bound first, which means that our $watch() handler will execute after 
+				// the ng-show $watch() handler.
 				return({
 					link: link,
+					priority: 1,
 					restrict: "A"
 				});
 
