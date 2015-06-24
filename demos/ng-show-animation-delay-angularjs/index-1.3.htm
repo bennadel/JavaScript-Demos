@@ -1,0 +1,159 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		ngShow / ngHide Classes Get Applied In The $$postDigest Phase In AngularJS 1.3
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body ng-controller="AppController as vm">
+
+	<h1>
+		ngShow / ngHide Classes Get Applied In The $$postDigest Phase In AngularJS 1.3
+	</h1>
+
+	<h2>
+		AngularJS 1.3.16 Example
+	</h2>
+
+	<p>
+		<a ng-click="vm.toggleContainer()">Toggle Container</a>
+	</p>
+
+	<!--
+		Imagine that this directive has a need to auto-adjust its dimensions after the
+		element becomes visible. As such, we are using the ng-show directive to manage
+		the visibility and then ALSO telling the custom directive, bn-container, which
+		scope-value to watch in order for it to determine when it's visible.
+
+		NOTE: The more elegant way to solve this might be to have the bn-container 
+		directive manage its own visibility (ie, subsume the responsibility of the 
+		ng-show directive). However, ultimately, the same problem would still exist and
+		the internals of our directive wouldn't change all that much.
+	-->
+	<div 
+		ng-show="vm.isContainerVisible"
+		bn-container="vm.isContainerVisible"
+		class="container">
+
+		Peek-a-boo!
+
+	</div>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/jquery/jquery-2.1.0.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.3.16.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I control the root of the application.
+		app.controller(
+			"AppController",
+			function( $scope ) {
+
+				// Define the controller as the view-model.
+				var vm = this;
+
+				// I determine if the container is visible.
+				vm.isContainerVisible = true;
+
+				// Expose the public API.
+				vm.toggleContainer = toggleContainer;
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I toggle the visibility of the container.
+				function toggleContainer() {
+
+					vm.isContainerVisible = ! vm.isContainerVisible;
+
+				}
+
+			}
+		);
+
+	
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I manage the container element.
+		app.directive(
+			"bnContainer",
+			function( $timeout ) {
+
+				// Return the directive configuration object.
+				return({
+					link: link,
+					restrict: "A"
+				});
+
+
+				// I bind the JavaScript events to the local view-model.
+				function link( scope, element, attributes ) {
+
+					// The calling context is passing in an expression that will determine
+					// when the container changes its visibility. When it changes, we want
+					// to inspect the dimensions of the element.
+					scope.$watch( attributes.bnContainer, testContainerDimensions );
+
+
+					// I log the dimensions of the element when the visibility changes.
+					function testContainerDimensions( newValue ) {
+						
+						var height = element.height();
+						var width = element.width();
+
+						console.log( newValue ? "Visible" : "Hidden" );
+						console.log( "Dimensions:", width, "x", height );
+
+						// Since the default $animate service is adding and removing the 
+						// ng-hide class in the $$postDigest phase, we need to check the
+						// dimensions AFTER that happens, which would be in the next 
+						// tick of the event-loop. We'll use $timeout to do this in the 
+						// next tick.
+						// --
+						// NOTE: The $animate service can return promises; but, that 
+						// wouldn't help us in this case - those resolve when the animation
+						// is complete; we don't care about when it is complete, we only 
+						// care about when it *started*, which is when the DOM element is 
+						// actually, physically, visible.
+						$timeout(
+							function asyncCheck() {
+
+								var height = element.height();
+								var width = element.width();
+
+								console.log( "Async Dimensions:", width, "x", height );
+
+							},
+							0,
+							false // Don't trigger a digest.
+						);
+
+					}
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
