@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [AngularJS In Firefox: TypeError: Missing Argument 1 When Calling Function b.get()](http://bennadel.github.io/JavaScript-Demos/demos/firefox-watch-attribute-angularjs/)
 * [ngShow / ngHide Classes Get Applied In The $$postDigest Phase In AngularJS 1.3](http://bennadel.github.io/JavaScript-Demos/demos/ng-show-animation-delay-angularjs/)
 * [Understanding How To Use $scope.$watch() With Controller-As In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/watch-controller-as-angularjs/)
 * [Absolute Grid Knock-Off In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/absolute-grid-knock-off-angularjs/)
