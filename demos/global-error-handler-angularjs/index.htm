@@ -1,0 +1,148 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Piping Global Errors In The $exceptionHandler Service In AngularJS
+	</title>
+</head>
+<body>
+
+	<h1>
+		Piping Global Errors In The $exceptionHandler Service In AngularJS
+	</h1>
+
+	<p bn-test>
+		Mousing over this &lt;P&gt; will cause an error in the console.
+	</p>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.3.16.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I am here to make sure our error handler doesn't override any existing error.
+		window.onerror = function( message ) {
+
+			console.log( "Original error handler:", message );
+			return( true );
+
+		};
+
+
+		// When the app is bootstrapped, we want to wire into the global error handler
+		// so that we can pass "external errors" (ie, errors that happen outside the 
+		// AngularJS work-flows) off to the $exceptionHandler where they may or may not
+		// be further processed.
+		// --
+		// CAUTION: The global error handler is, apparently, a pile of inconsistent junk
+		// in different browsers. If you are using a 3rd-party script that handles global
+		// errors, it would probably be best to just let that script manage this stuff
+		// since it will likely do a better job. This demo assumes that you are NOT using
+		// something of that nature.
+		app.run(
+			function addGlobalErrorHandler( $window, $exceptionHandler ) {
+
+				// Get a reference to the original error handler, if it exists, so we 
+				// don't overwrite any error-handling functionality that might be added 
+				// by a 3rd-party script.
+				var originalErrorHandler = $window.onerror;
+
+				// If there is no existing global error handler, let's define a mock one 
+				// so that our custom error handler code can be handled uniformly.
+				if ( ! originalErrorHandler ) {
+
+					originalErrorHandler = function mockHandler() {
+
+						// By returning True, we prevent the browser's default error handler.
+						return( true );
+
+					};
+
+				}
+
+				// Define our custom error handler that will pipe errors into the core
+				// $exceptionHandler service (where they may be further processed).
+				// --
+				// NOTE: Only message, fileName, and lineNumber are standardized. 
+				// columnNumber and error are not standardized values and will not be 
+				// present in all browsers. That said, they appear to work in all of the
+				// browsers that "matter".
+				$window.onerror = function handleGlobalError( message, fileName, lineNumber, columnNumber, error ) {
+
+					// If this browser does not pass-in the original error object, let's 
+					// create a new error object based on what we know.
+					if ( ! error ) {
+
+						error = new Error( message );
+
+						// NOTE: These values are not standard, according to MDN.
+						error.fileName = fileName;
+						error.lineNumber = lineNumber;
+						error.columnNumber = ( columnNumber || 0 );
+
+					}
+
+					// Pass the error off to our core error handler.
+					$exceptionHandler( error );
+
+					// Pass of the error to the original error handler.
+					try {
+						
+						return( originalErrorHandler.apply( $window, arguments ) );
+
+					} catch ( applyError ) {
+
+						$exceptionHandler( applyError );
+
+					}
+
+				};
+
+			}
+		);
+
+
+		// I am a directive that will trigger an error outside of an AngularJS workflow.
+		app.directive(
+			"bnTest",
+			function() {
+
+				// Return the directive configuration object.
+				return({
+					link: link,
+					restrict: "A"
+				});
+
+
+				// I bind the JavaScript events to the local view-model.
+				function link( scope, element, attributes ) {
+
+					element.on(
+						"mouseover",
+						function handleMouseoverEvent( event ) {
+
+							// NOTE: This will break, hold on to your butts!
+							undefinedValue.doSomething();
+
+						}
+					);
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
