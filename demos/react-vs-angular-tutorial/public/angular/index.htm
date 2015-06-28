@@ -1,0 +1,332 @@
+<!doctype html>
+<html ng-app="Tutorial">
+<head>
+	<meta charset="utf-8" />
+	
+	<title>Hello AngularJS</title>
+
+	<script src="/vendor/angularjs/angular-1.3.16.min.js"></script>
+	<script src="/vendor/marked/marked-0.3.2.min.js"></script>
+	<script type="text/javascript">
+
+		angular.module( "Tutorial", [] );
+
+	</script>
+</head>
+<body>
+
+	<h1>
+		Hello World: Comparing ReactJS to AngularJS
+	</h1>
+
+	<div 
+		bn:comment-box 
+		url="/comments.json"
+		poll-interval="2000">
+	</div>
+
+
+	<script type="text/javascript">
+
+		// I manage the Comment Box.
+		angular.module( "Tutorial" ).directive(
+			"bnCommentBox",
+			function() {
+
+				// Return the directive configuration object.
+				return({
+					controller: Controller,
+					scope: {
+						url: "@",
+						pollInterval: "@"
+					},
+					templateUrl: "comment-box.htm"
+				});
+
+
+				// I manage the Comment Box view-model.
+				function Controller( $scope, $http ) {
+
+					// I am the collection of comments to render.
+					$scope.comments = [];
+
+					// Start polling the remote URL for new content.
+					setInterval( loadRemoteData, $scope.pollInterval );
+
+					// Load the initial data payload.
+					loadRemoteData();
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I add a new comment to the collection.
+					$scope.submitComment = function( comment ) {
+
+						// Optimistically add the new comment to the collection before 
+						// we even hear back from the server.
+						$scope.comments = $scope.comments.concat( comment );
+
+						var promise = $http({
+							method: "POST",
+							url: $scope.url,
+							data: comment
+						})
+						.then(
+							function handleResolve( response ) {
+
+								// Store the new comments collection, overwriting the 
+								// existing reference.
+								$scope.comments = response.data;
+
+							},
+							function handleReject( response ) {
+
+								console.error( "Error", response );
+
+							}
+						);
+
+					};
+
+
+					// ---
+					// PRIVATE METHODS.
+					// ---
+
+
+					// I load the remote data from the server.
+					function loadRemoteData() {
+
+						var promise = $http({
+							method: "GET",
+							url: $scope.url,
+							cache: false
+						})
+						.then(
+							function handleResolve( response ) {
+
+								$scope.comments = response.data;
+
+							},
+							function handleReject( response ) {
+
+								console.error( "Error", response );
+
+							}
+						);
+
+					}
+
+				}
+
+			}
+		);
+
+	</script>
+	<script type="text/ng-template" id="comment-box.htm">
+
+		<div class="commentBox">
+
+			<h1>
+				Comments
+			</h1>
+
+			<div 
+				bn:comment-list 
+				comments="comments">
+			</div>
+			
+			<div 
+				bn:comment-form 
+				on-submit="submitComment( comment )">
+			</div>
+
+		</div>
+
+	</script>
+
+
+	<script type="text/javascript">
+
+		// I manage the list of comments.
+		angular.module( "Tutorial" ).directive(
+			"bnCommentList",
+			function() {
+
+				// Return the directive configuration object.
+				return({
+					scope: {
+						comments: "="
+					},
+					templateUrl: "comment-list.htm"
+				});
+
+			}
+		);
+
+	</script>
+	<script type="text/ng-template" id="comment-list.htm">
+
+		<div class="commentList">
+
+			<div 
+				ng-repeat="comment in comments track by $index"
+				bn:comment 
+				author="comment.author"
+				text="comment.text">
+			</div>
+
+		</div>
+
+	</script>
+
+
+	<script type="text/javascript">
+
+		// I manage the individual comment.
+		angular.module( "Tutorial" ).directive(
+			"bnComment",
+			function( $sce ) {
+
+				// Return the directive configuration object.
+				return({
+					controller: Controller,
+					scope: {
+						author: "=",
+						text: "="
+					},
+					templateUrl: "comment.htm"
+				});
+
+
+				// I control the comment view-model.
+				function Controller( $scope ) {
+
+					$scope.markdown = "";
+
+					// Since the HTML is based on the content of the comment text, we 
+					// need to watch the text for changes so that we can recompile the
+					// markdown when needed.
+					$scope.$watch(
+						"text",
+						function handleTextChange( newValue ) {
+
+							// NOTE: Since processing markdown is an "expensive" action,
+							// I want to get a sense of how often this will run.
+							console.log( "Running marked on comment." );
+
+							$scope.markdown = marked(
+								$scope.text,
+								{
+									sanitize: true
+								}
+							);
+
+							$scope.markdown = $sce.trustAsHtml( $scope.markdown );
+
+						}
+					);
+
+				}
+
+			}
+		);
+
+	</script>
+	<script type="text/ng-template" id="comment.htm">
+
+		<div class="comment">
+
+			<h2 class="commentAuthor">
+				{{ author }}
+			</h2>
+
+			<div ng-bind-html="markdown"></div>
+
+		</div>
+
+	</script>
+
+
+	<script type="text/javascript">
+
+		// I manage the comment form.
+		angular.module( "Tutorial" ).directive(
+			"bnCommentForm",
+			function() {
+
+				// Return the directive configuration object.
+				return({
+					controller: Controller,
+					scope: {
+						addComment: "&onSubmit"
+					},
+					templateUrl: "comment-form.htm"
+				});
+
+
+				// I manage the comment form view-model.
+				function Controller( $scope ) {
+
+					// Set up the form input value defaults.
+					$scope.form = {
+						author: "",
+						text: ""
+					};
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I validate the form data (lightly) and then submit the comment
+					// for processing.
+					$scope.handleSubmit = function() {
+
+						var author = $scope.form.author.trim();
+						var text = $scope.form.text.trim();
+
+						if ( ! author || ! text ) {
+
+							return;
+
+						}
+
+						// Pass the comment back up to the parent using the passed-in
+						// submission handler.
+						$scope.addComment({
+							comment: {
+								author: author,
+								text: text
+							}
+						});
+
+						$scope.form.author = "";
+						$scope.form.text = "";
+
+					};
+
+				}
+
+			}
+		);
+
+	</script>
+	<script type="text/ng-template" id="comment-form.htm">
+
+		<form class="commentForm" ng-submit="handleSubmit()">
+
+			<input ng-model="form.author" type="text" placeholder="Your name" />
+			<input ng-model="form.text" type="text" placeholder="Say something..." />
+			<input type="submit" value="Post" />
+
+		</form>
+
+	</script>
+
+</body>
+</html>
