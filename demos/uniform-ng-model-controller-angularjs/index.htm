@@ -202,14 +202,8 @@
 			function() {
 
 				// Return the directive configuration object.
-				// --
-				// NOTE: We are using priority 101 here because we want this directive to
-				// link AFTER the ngValue directive (priority: 100) - directives link in 
-				// reverse order. This will give the ngModel and ngView directives a 
-				// chance to synchronize before we react to the ngModel value.
 				return({
 					link: link,
-					priority: 101,
 					restrict: "A"
 				});
 
@@ -228,10 +222,6 @@
 					// behaviors like forcing a scroll of the page. Since we have to watch
 					// for ngModel value changes anyway, we'll defer our Uniform plugin
 					// instantiation until after the first $watch() has fired.
-					// --
-					// NOTE: Since the ngModel input directives are configured in the PRE 
-					// linking phase, we can be confident(ish) that our local $watch() 
-					// binding will execute after the input state has been changed.
 					scope.$watch( attributes.ngModel, handleModelChange );
 
 					// When the scope is destroyed, we have to teardown our jQuery plugin
@@ -264,7 +254,9 @@
 					// update to the Uniform plugin.
 					function handleModelChange( newValue, oldValue ) {
 						
-						// If we try to call render right away, it will force an 
+						// If we try to call render right away, two things will go wrong:
+						// first, we won't give the ngValue directive time to pipe the 
+						// correct value into ngModle; and second, it will force an 
 						// undesirable repaint of the browser. As such, we'll perform the
 						// Uniform synchronization at a later point in the $digest.
 						scope.$evalAsync( synchronizeUniform );
@@ -279,12 +271,13 @@
 						// life-cycle, we need to ensure that the scope hasn't been 
 						// destroyed in the interim period. While this is unlikely (if 
 						// not impossible - I haven't poured over the details of the $digest
-						// in this context - it's still a good idea as it embraces the 
-						// asynchronous control flow.
+						// in this context) it's still a good idea as it embraces the 
+						// nature of the asynchronous control flow.
 						// --
-						// NOTE: During the $destroy event, the parent scope is nullified,
-						// which is why we are checking for the absence of a parent scope
-						// to indicate destruction.
+						// NOTE: During the $destroy event, scope is detached from the 
+						// scope tree and the parent scope is nullified. This is why we
+						// are checking for the absence of a parent scope to indicate 
+						// destruction of the directive.
 						if ( ! scope.$parent ) {
 
 							return;
