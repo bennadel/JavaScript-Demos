@@ -1,0 +1,276 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Consuming The Uniform jQuery Plugin In AngularJS
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+	<link rel="stylesheet" type="text/css" href="../../vendor/uniform/theme/css/uniform.default.css"></link>
+</head>
+<body ng-controller="AppController as vm">
+
+	<h1>
+		Consuming The Uniform jQuery Plugin In AngularJS
+	</h1>
+
+	<p id="toggle">
+		<a href="#toggle" ng-click="vm.toggleForm()">Toggle the form</a>.
+	</p>
+
+	<!-- We are going to toggle to form to showcase DOM element creation and linking. -->
+	<form ng-if="vm.isShowingForm">
+
+		<p>
+			Who is the most bad-ass actress:
+		</p>
+
+		<ul>
+			<li ng-repeat="actor in vm.actors track by actor.id">
+
+				<!--
+					Each Input will have the Uniform directive, which will take care of
+					synchronizing the state of the input to the Uniform instance. 
+				-->
+				<label>
+					<input 
+						type="radio" 
+						ng-model="vm.mostBadass" 
+						ng-value="actor"
+						bn-uniform 
+					/> 
+					{{ actor.name }}
+				</label>
+
+			</li>
+		</ul>
+
+		<p>
+			<!-- This is just an alternate input element for the same selection. -->
+			<select 
+				ng-model="vm.mostBadass"
+				ng-options="actor.name for actor in vm.actors track by actor.id"
+				bn-uniform>
+
+				<option value="">None selected</option>
+
+			</select>
+		</p>
+
+		<p>
+			<a ng-click="vm.selectLastActor()">Select last actor</a>
+			&mdash;
+			<a ng-click="vm.selectNone()">Select no actor</a>.
+		</p>
+
+		<!-- 
+			This forces the page to have vertical scrolling. This is here to show that
+			our Uniform plugin won't force a repaint before the DOM has been structured 
+			properly. 
+		-->
+		<p ng-if="vm.isShowingForm" class="spacer">
+			<br />
+		</p>
+
+	</form>
+
+	<!-- More forced vertical scrolling. -->
+	<p ng-if="! vm.isShowingForm" class="spacer">
+		<br />
+	</p>
+
+		
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/jquery/jquery-2.1.0.min.js"></script>
+	<script type="text/javascript" src="../../vendor/uniform/jquery.uniform-2.1.2.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.3.16.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		angular.module( "Demo", [] );
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I control the root for the application.
+		angular.module( "Demo" ).controller(
+			"AppController",
+			function( $scope ) {
+
+				var vm = this;
+
+				// I am the badass actresses to list.
+				vm.actors = [
+					{
+						id: 1,
+						name: "Angela Bassett"
+					},
+					{
+						id: 2,
+						name: "Linda Hamilton"
+					},
+					{
+						id: 3,
+						name: "Michelle Yeoh"
+					},
+					{
+						id: 4,
+						name: "Gina Carano"
+					}
+				];
+
+				// I hold the currently-selected badass.
+				vm.mostBadass = null
+
+				// I determine if the form is currently being show.
+				vm.isShowingForm = true;
+
+				// I watch for changes in the actress selection.
+				$scope.$watch( "vm.mostBadass", handleBadassChange );
+
+				// Expose the public API.
+				vm.selectLastActor = selectLastActor;
+				vm.selectNone = selectNone;
+				vm.toggleForm = toggleForm;
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I select the last actress in the list.
+				function selectLastActor() {
+
+					vm.mostBadass = vm.actors[ vm.actors.length - 1 ];
+
+				}
+
+
+				// I deselect the most badass actress.
+				function selectNone() {
+
+					vm.mostBadass = null;
+
+				}
+
+
+				// I toggle the visibility of the form.
+				function toggleForm() {
+
+					vm.isShowingForm = ! vm.isShowingForm;
+
+				}
+
+
+				// ---
+				// PRIVATE METHODS.
+				// ---
+
+
+				// I log the selected value upon change.
+				function handleBadassChange( newValue ) {
+
+					if ( newValue ) {
+
+						console.log( "Changed to %s.", newValue.name );
+
+					} else {
+
+						console.log( "Changed to no selection." );
+
+					}
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I bind the Uniform jQuery plugin to the current Form element. This depends
+		// on the existence of the ngModel directive.
+		angular.module( "Demo" ).directive(
+			"bnUniform",
+			function() {
+
+				// Return the directive configuration object.
+				// --
+				// NOTE: We are using priority 101 here because we want this directive to
+				// link AFTER the ngValue directive (priority: 100) - directives link in 
+				// reverse order. This will give the ngModel and ngView directives a 
+				// chance to synchronize before we react to the ngModel value.
+				return({
+					link: link,
+					priority: 101,
+					restrict: "A"
+				});
+
+
+				// I bind the JavaScript events to the view-model.
+				function link( scope, element, attributes ) {
+
+					// We don't want to link-up the Uniform plugin right away as it will
+					// query the DOM (Document Object Model) layout which will cause the 
+					// browser to repaint which will, in turn, lead to unexpected and poor 
+					// behaviors like forcing a scroll of the page. Since we have to watch
+					// for ngModel value changes anyway, we'll defer our Uniform plugin
+					// instantiation until after the first $watch() has fired.
+					// --
+					// NOTE: Since the ngModel input directives are configured in the PRE 
+					// linking phase, we can be confident(ish) that our local $watch() 
+					// binding will execute after the input state has been changed.
+					scope.$watch( attributes.ngModel, handleModelChange );
+
+					// When the scope is destroyed, we have to teardown our jQuery plugin
+					// to in order to make sure that it releases memory.
+					scope.$on( "$destroy", handleDestroy );
+
+
+					// ---
+					// PRIVATE METHODS.
+					// ---
+
+
+					// I clean up the directive when the scope is destroyed.
+					function handleDestroy() {
+
+						// NOTE: This is safe to call even if the Uniform element was 
+						// never configured.
+						element.uniform.restore( element );
+						
+					}
+
+
+					// I handle changes in the ngModel value, synchronizing the Uniform
+					// plugin with the state of the form element.
+					function handleModelChange( newValue, oldValue ) {
+
+						// If this is configuring the watcher, we can use this as an
+						// opportunity to initialize the Uniform plugin.
+						if ( newValue === oldValue ) {
+
+							return( element.uniform() );
+
+						}
+
+						element.uniform.update( element );		
+						
+					}
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
