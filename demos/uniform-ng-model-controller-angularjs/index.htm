@@ -16,8 +16,8 @@
 		Consuming The Uniform jQuery Plugin In AngularJS
 	</h1>
 
-	<p id="toggle">
-		<a href="#toggle" ng-click="vm.toggleForm()">Toggle the form</a>.
+	<p>
+		<a ng-click="vm.toggleForm()">Toggle the form</a>.
 	</p>
 
 	<!-- We are going to toggle to form to showcase DOM element creation and linking. -->
@@ -217,6 +217,11 @@
 				// I bind the JavaScript events to the view-model.
 				function link( scope, element, attributes ) {
 
+					// Because we are deferring the application of the Uniform plugin, 
+					// this will help us keep track of whether or not the plugin has been
+					// applied.
+					var uniformedElement = null;
+
 					// We don't want to link-up the Uniform plugin right away as it will
 					// query the DOM (Document Object Model) layout which will cause the 
 					// browser to repaint which will, in turn, lead to unexpected and poor 
@@ -242,27 +247,60 @@
 					// I clean up the directive when the scope is destroyed.
 					function handleDestroy() {
 
-						// NOTE: This is safe to call even if the Uniform element was 
-						// never configured.
-						element.uniform.restore( element );
+						// If the Uniform plugin has not yet been applied, there's nothing
+						// that we have to explicitly teardown.
+						if ( ! uniformedElement ) {
+
+							return;
+
+						}
+
+						uniformedElement.uniform.restore( uniformedElement );
 						
 					}
 
 
-					// I handle changes in the ngModel value, synchronizing the Uniform
-					// plugin with the state of the form element.
+					// I handle changes in the ngModel value, translating it into an 
+					// update to the Uniform plugin.
 					function handleModelChange( newValue, oldValue ) {
+						
+						// If we try to call render right away, it will force an 
+						// undesirable repaint of the browser. As such, we'll perform the
+						// Uniform synchronization at a later point in the $digest.
+						scope.$evalAsync( synchronizeUniform );
+						
+					}
 
-						// If this is configuring the watcher, we can use this as an
-						// opportunity to initialize the Uniform plugin.
-						if ( newValue === oldValue ) {
 
-							return( element.uniform() );
+					// I synchronize Uniform with the underlying form element.
+					function synchronizeUniform() {
+
+						// Since we are executing this at a later point in the $digest
+						// life-cycle, we need to ensure that the scope hasn't been 
+						// destroyed in the interim period. While this is unlikely (if 
+						// not impossible - I haven't poured over the details of the $digest
+						// in this context - it's still a good idea as it embraces the 
+						// asynchronous control flow.
+						// --
+						// NOTE: During the $destroy event, the parent scope is nullified,
+						// which is why we are checking for the absence of a parent scope
+						// to indicate destruction.
+						if ( ! scope.$parent ) {
+
+							return;
 
 						}
 
-						element.uniform.update( element );		
-						
+						// If Uniform has not yet been integrated, apply it to the element.
+						if ( ! uniformedElement ) {
+
+							return( uniformedElement = element.uniform() );
+
+						}
+
+						// Otherwise, update the existing instance.
+						uniformedElement.uniform.update( uniformedElement );	
+
 					}
 
 				}

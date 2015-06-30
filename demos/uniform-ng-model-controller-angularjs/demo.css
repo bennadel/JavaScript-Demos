@@ -10,3 +10,7 @@ a[ ng-click ] {
 p.spacer {
 	height: 1000px ;
 }
+
+label {
+	cursor: pointer ;
+}
