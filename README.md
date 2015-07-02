@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [What If AngularJS Had A setState() Method Like ReactJS](http://bennadel.github.io/JavaScript-Demos/demos/set-state-angularjs/)
 * [Consuming The Uniform jQuery Plugin In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/uniform-ng-model-controller-angularjs/)
 * [Piping Global Errors Into The $exceptionHandler Service In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/global-error-handler-angularjs/)
 * [AngularJS In Firefox: TypeError: Missing Argument 1 When Calling Function b.get()](http://bennadel.github.io/JavaScript-Demos/demos/firefox-watch-attribute-angularjs/)

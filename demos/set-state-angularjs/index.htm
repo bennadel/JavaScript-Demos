@@ -1,0 +1,312 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		What If AngularJS Had A setState() Method Like ReactJS
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body>
+
+	<h1>
+		What If AngularJS Had A setState() Method Like ReactJS
+	</h1>
+
+	<div ng-controller="ListController">
+
+		<h2>
+			You have {{ friends.length }} friends, nice!
+		</h2>
+
+		<ul>
+			<li ng-repeat="friend in friends track by friend.id">
+
+				{{ friend.name }} ( <a ng-click="deleteFriend( friend )">delete</a> )
+
+			</li>
+		</ul>
+
+		<form ng-submit="processForm()">
+
+			<input type="text" ng-model="form.name" />
+			<input type="submit" value="Add Friend" />
+
+		</form>
+
+	</div>
+
+	<p ng-controller="TimerController">
+
+		You've been viewing this for {{ durationInSeconds }} seconds.
+
+	</o>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="./angular-modified.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		angular.module( "Demo", [] );
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I control the list of friends.
+		angular.module( "Demo" ).controller(
+			"ListController",
+			function( $scope, friendService ) {
+
+				// Set up the initial state of the scope.
+				$scope.$setState({
+					friends: [],
+					form: {
+						name: ""
+					}
+				});
+
+				var tempID = 0;
+
+				// Load the list of friends.
+				loadRemoteData();
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I delete the given friend.
+				$scope.deleteFriend = function( friend ) {
+
+					// Optimistically remove the friend from the list.
+					$scope.friends.splice( $scope.friends.indexOf( friend ), 1 );
+
+					// Since mutating the state directly won't do anything, we have to 
+					// call setState() AND pass in a totally new reference. Notice that
+					// we are using .slice() to make sure we pass in a different top-level
+					// object reference. If we passed-in the same reference, the state 
+					// would NOT be flagged as "dirty".
+					$scope.$setState({
+						friends: $scope.friends.slice()
+					});
+
+					friendService.deleteFriend( friend.id );
+
+				};
+
+
+				// I process the new-friend form, adding a new friend to the collection.
+				$scope.processForm = function() {
+
+					var placeholder = {
+						id: --tempID,
+						name: $scope.form.name
+					};
+
+					// Reset the relevant portions of the state. Notice that we are using
+					// the .concat() method to ensure that we are passing a new top-level
+					// object reference. If we had tried to use .push(), the state would
+					// not be flagged as "dirty."
+					$scope.$setState({
+						friends: $scope.friends.concat( [ placeholder ] ),
+						form: {
+							name: ""
+						}
+					});
+
+					friendService.addFriend( placeholder.name )
+						.then( loadRemoteData )
+					;
+
+				};
+
+
+				// ---
+				// PRIVATE METHODS.
+				// ---
+
+
+				// I get the current list of friend from the repository.
+				function loadRemoteData() {
+
+					friendService.getFriends().then(
+						function handleResolve( friends ) {
+
+							$scope.$setState({
+								friends: friends
+							});
+
+						}
+					);
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I control the timer interface. This is here to show what happens if you try to
+		// set the $scope values directly, as opposed to going through $setState().
+		angular.module( "Demo" ).controller(
+			"TimerController",
+			function( $scope, $interval ) {
+
+				// Set up the initial state.
+				$scope.$setState({
+					durationInSeconds: 0
+				});
+
+				var i = 0;
+
+				// Every second, we are going to update the $scope; however, we are only
+				// going to use $scope.$setState() a small portion of the time. The 
+				// intention here is to demonstrate that the $watch() bindings are only
+				// checked if $setState() is called; other direct calls to the $scope go
+				// unsynchronized (unless a $parent happens to be flagged as dirty).
+				$interval(
+					function() {
+
+						// Every 5 seconds, use the appropriate $setState() method.
+						if ( ! ( i++ % 5 ) ) {
+
+							$scope.$setState({
+								durationInSeconds: ( $scope.durationInSeconds + 1 )
+							});
+
+						// Otherwise, mutate the $scope directly.
+						} else {
+
+							$scope.durationInSeconds++;
+
+						}
+
+					},
+					1000
+				);
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide a data-access object for friends.
+		angular.module( "Demo" ).factory(
+			"friendService",
+			function( $timeout, $q ) {
+
+				// Setup the initial store.
+				var friends = [
+					{
+						id: 1,
+						name: "Sarah"
+					}
+				];
+
+				// Return the public API.
+				return({
+					addFriend: addFriend,
+					deleteFriend: deleteFriend,
+					getFriends: getFriends
+				});
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I add a new friend with the given name. Resolves with new ID.
+				function addFriend( name ) {
+
+					var deferred = $q.defer();
+
+					$timeout(
+						function() {
+
+							var id = ( new Date() ).getTime();
+
+							friends.push({
+								id: id,
+								name: name
+							});
+
+							deferred.resolve( id );
+
+						},
+						500
+					);
+
+					return( deferred.promise );
+
+				}
+
+
+				// I delete the friend with the given ID.
+				function deleteFriend( id ) {
+
+					var deferred = $q.defer();
+
+					$timeout(
+						function() {
+
+							for ( var i = 0, length = friends.length ; i < length ; i++ ) {
+
+								if ( friends[ i ].id === id ) {
+
+									friends.splice( i, 1 );
+
+									return( deferred.resolve() );
+
+								}
+
+							}
+
+							deferred.reject();
+
+						},
+						500
+					);
+
+					return( deferred.promise );
+
+				}
+
+
+				// I get all of the friends in the store.
+				function getFriends() {
+
+					var deferred = $q.defer();
+
+					$timeout(
+						function() {
+
+							deferred.resolve( angular.copy( friends ) );
+
+						},
+						500
+					);
+
+					return( deferred.promise );
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
