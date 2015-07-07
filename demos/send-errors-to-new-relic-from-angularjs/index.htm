@@ -1,0 +1,144 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Sending AngularJS Errors To New Relic, Raygun, Sentry, etc.
+	</title>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		Sending AngularJS Errors To New Relic, Raygun, Sentry, etc.
+	</h1>
+
+	<p>
+		<a href="#" ng-click="causeError()">Cause an error</a>.
+	</p>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.3.16.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		angular.module( "Demo", [] );
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I control the root of the application.
+		angular.module( "Demo" ).controller(
+			"AppController",
+			function( $scope ) {
+
+				// I trigger a JavaScript error by referencing an undefined value.
+				$scope.causeError = function() {
+
+					var foo = bar;
+
+				};
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// All of the errors in an AngularJS application get piped into the 
+		// $exceptionHandler service. In order to get them to show up in something like
+		// the New Relic Browser API, we're going to decorate the $exceptionHandler 
+		// service so that we can intercept the errors and hand them off to our reporter.
+		// --
+		// NOTE: I am not overriding the $exceptionHandler service in totality since I
+		// want this facet of the application to remain as decoupled from the 
+		// implementation as possible.
+		angular.module( "Demo" ).config(
+			function addReporting( $provide ) {
+
+				// Provide an interceptor for the error workflow.
+				$provide.decorator(
+					"$exceptionHandler",
+					function( $delegate, errors ) {
+
+						// Return the new $exceptionHandler implementation which will 
+						// report the error to our internal error handler before passing
+						// it off to the original $exceptionHandler implementation (which
+						// may, itself, be some other delegate provided by another part 
+						// of the application).
+						return(
+							function exceptionHandlerProxy( error, cause ) {
+
+								errors.report( error );
+
+								$delegate( error, cause );
+
+							}
+						);
+
+					}
+				);
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I report JavaScript errors.
+		angular.module( "Demo" ).factory(
+			"errors",
+			function errorLoggerFactory( $window, $log ) {
+
+				// Return the public API.
+				return({
+					report: report
+				});
+
+
+				// I report errors to the remote server.
+				function report( error ) {
+
+					// In this case, we're going to be using New Relic's Browser API to
+					// report JavaScript errors that originate from within the AngularJS
+					// application try / catch blocks (which is why the global error 
+					// handler doesn't see them). But, since New Relic is a per-server 
+					// cost, we might not have it enabled in every environment. Let's 
+					// check to see if the API exists before we try to use it.
+					if ( $window.NREUM && $window.NREUM.noticeError ) {
+
+						try {
+							
+							$window.NREUM.noticeError( error );
+
+						// If logging errors is causing an error, just swallow those 
+						// errors; attempting to log these errors might lock the browser
+						// in an infinite loop.
+						} catch ( newRelicError ) {
+
+							$log.error( newRelicError );
+
+						}
+
+					} else {
+
+						$log.info( "New Relic not available to record error." );
+
+					}
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
