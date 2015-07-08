@@ -1,0 +1,158 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		An Experiment In What React's JSX Might Feel Like In AngularJS
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body>
+
+	<h1>
+		An Experiment In What React's JSX Might Feel Like In AngularJS
+	</h1>
+
+	<div bn:hello-world>
+		Woot!
+	</div>
+
+
+	<!-- 
+		Load scripts. 
+		--
+		NOTE: Our main script block isn't a JavaScript block - it's a "text/ngx" block. 
+		The ngx.js file will defer the bootstrapping of the AngularJS application until
+		the ngx content has been parsed and re-injected into the Head as valid JavaScript.
+	-->
+	<script type="text/javascript" src="../../vendor/jquery/jquery-2.1.0.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.3.16.min.js"></script>
+	<script type="text/javascript" src="./ngx.js"></script>
+	<script type="text/ngx">
+
+		// Create an application module for our demo.
+		angular.module( "Demo", [] );
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		angular.module( "Demo" ).directive(
+			"bnHelloWorld",
+			function( $log ) {
+
+				// Return the directive definition object.
+				return({
+					controller: Controller,
+					controllerAs: "vm",
+					link: link,
+					restrict: "A",
+					transclude: true,
+					scope: true,
+					template: 
+					```
+						<div class="container">
+							<div class="header">
+
+								<h2>
+									HTML <em>in</em> Your JavaScript?!
+								</h2>
+
+							</div>
+							<div class="content" ng-transclude>
+								
+								<!-- Transcluded content will appear here. -->
+
+							</div>
+							<div ng-click="vm.cycleQuote()" class="footer">
+
+								<strong>Inspiration</strong>: {{ vm.quote }}
+
+							</div>
+						</div>
+					```
+				});
+
+
+				// I control the HelloWorld component.
+				function Controller( $scope ) {
+
+					var vm = this;
+
+					var quoteIndex = 0;
+					var quotes = [
+						"Asphinctersayswhat?",
+						"Ah, Nuprin. Little. Yellow. Different.",
+						"As you can see, it sucks as it cuts.",
+						"If you're gonna spew, spew into this.",
+						"Party on Wayne. Party on Garth.",
+						"Calgon - ancient Chinese secret.",
+						"I don't even own A gun, let alone the many guns that would necessitate a rack.",
+						"Game on!"
+					];					
+
+					vm.quote = quotes[ quoteIndex ];
+
+					// Expose the public API.
+					vm.cycleQuote = cycleQuote;
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I move on to the next quote in the collection.
+					function cycleQuote() {
+
+						if ( ++quoteIndex >= quotes.length ) {
+
+							quoteIndex = 0;
+
+						}
+
+						vm.quote = quotes[ quoteIndex ];
+
+					}
+
+				}
+
+
+				// I bind the JavaScript events to the view-model of the component.
+				function link( scope, element, attributes ) {
+
+					element.mouseenter(
+						function handlerMouseenterEvent( event ) {
+
+							$log.info( "Moused into component." );
+
+						}
+					);
+
+					var footer = element.find( "div.footer" )
+						.hover(
+							function hoverOver() {
+
+								footer.addClass( "active" );
+
+							},
+							function hoverOut() {
+
+								footer.removeClass( "active" );
+
+							}
+						)
+					;
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>

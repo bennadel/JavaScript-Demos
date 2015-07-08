@@ -1,0 +1,34 @@
+div.container {
+	border: 1px solid #CCCCCC ;
+	padding: 7px 7px 7px 7px ;
+}
+
+div.container div.header {
+	background-color: #F0F0F0 ;
+	padding: 5px 5px 5px 5px ;
+}
+
+div.container div.header h2 {
+	margin: 0px 0px 0px 0px ;
+}
+
+div.container div.content {
+	border: 1px solid #DADADA ;
+	margin: 7px 0px 7px 0px ;
+	padding: 10px 10px 10px 10px ;
+}
+
+div.container div.footer {
+	background-color: #F0F0F0 ;
+	color: #CCCCCC ;
+	cursor: pointer ;
+	padding: 5px 5px 5px 5px ;
+	transition: color 0.5s ease ;
+	user-select: none ;
+		-moz-user-select: none ;
+		-webkit-user-select: none ;
+}
+
+div.container div.footer.active {
+	color: #000000 ;
+}
