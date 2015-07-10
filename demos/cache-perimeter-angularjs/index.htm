@@ -1,0 +1,117 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Breaking Object References At Cache Boundaries In AngularJS
+	</title>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		Breaking Object References At Cache Boundaries In AngularJS
+	</h1>
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.4.2.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		angular.module( "Demo", [] );
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I control the root of the application.
+		angular.module( "Demo" ).controller(
+			"AppController",
+			function provideAppController( $scope, cache ) {
+
+				var originObject = {
+					hello: "world"
+				};
+
+				// Store the origin object in the cache. This will store a copy of the
+				// object as it is configured at this moment in time.
+				cache.setItem( "test", originObject );
+
+				// TESTING: Since we cache a COPY of the object, we should be able to 
+				// safely modify the origin object without corrupting the state of the 
+				// cache.
+				originObject.foo = "bar";
+
+				// TESTING: Since the cache returns a COPY of the object, we should be 
+				// able to safely modify the cached object without corrupting the state
+				// of the cache.
+				cache.getItem( "test" ).flippity = "floppities";
+
+				// Now that we've attempted to modify the object on each side of the 
+				// caching workflow, let's pull it out of the cache again and verify that
+				// it has not changed. We're expecting to see an object with only one key.
+				console.log( "Cached Item:", cache.getItem( "test" ) );
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide a super simple key-value cache (overly simple for demonstration).
+		angular.module( "Demo" ).factory(
+			"cache",
+			function provideCache() {
+
+				// I hold the cached items in a key-value store.
+				var items = {};
+
+				// Return the public API.
+				return({
+					getItem: getItem,
+					setItem: setItem
+				});
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I get the value stored at the given key.
+				function getItem( key ) {
+
+					// When we return an item from the cache, we want to return a copy
+					// of the cached item. If we were to return a reference to the cached
+					// object, the calling context could update the object remotely, 
+					// thereby altering the state of the cache without going through the
+					// caching interface. That would be an unexpected behavior and would
+					// lead to confusing bugs.
+					return( angular.copy( items[ key ] ) );
+
+				}
+
+
+				// I store the given value at the given key.
+				function setItem( key, value ) {
+
+					// When we put an item into the cache, we want to store a copy of
+					// the item as it is currently. If we were to store the given object
+					// reference, the calling context could update the object remotely, 
+					// thereby altering the state of the cache without going through the 
+					// caching interface. That would be an unexpected behavior and would 
+					// lead to confusing bugs.
+					items[ key ] = angular.copy( value );
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>

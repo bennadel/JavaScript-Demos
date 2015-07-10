@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Breaking Object References At Cache Boundaries In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/cache-perimeter-angularjs/)
 * [Sometimes I'm Tempted To Use Try / Finally In The Worst Way](http://bennadel.github.io/JavaScript-Demos/demos/try-finally-too-clever/)
 * [Encapsulating LocalStorage Access In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/local-storage-angularjs/)
 * [An Experiment In What React's JSX Might Feel Like In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/ngx-angularjs/)
