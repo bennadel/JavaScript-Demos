@@ -1,0 +1,490 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Encapsulating LocalStorage Access In AngularJS
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body ng-controller="AppController as vm">
+
+	<h1>
+		Encapsulating LocalStorage Access In AngularJS
+	</h1>
+
+	<h2>
+		You have {{ vm.friends.length }} friends!
+	</h2>
+
+	<!--
+		This list of friends will be persisted in localStorage and will be seen 
+		across page-refresh actions. 
+	-->
+	<ul>
+		<li ng-repeat="friend in vm.friends track by friend.id">
+
+			{{ friend.name }} ( <a ng-click="vm.removeFriend( friend )">delete</a> )
+
+		</li>
+	</ul>
+
+	<form ng-submit="vm.processForm()">
+
+		<input type="text" ng-model="vm.form.name" size="30" />
+		<input type="submit" value="Add Friend" />
+
+	</form>
+
+	<p>
+		<a ng-click="vm.logout()">Log out</a> ( <em>will kill local storage</em> ).
+	</p>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/jquery/jquery-2.1.0.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.3.16.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		angular.module( "Demo", [] );
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I control the root of the application.
+		angular.module( "Demo" ).controller(
+			"AppController",
+			function provideAppController( $scope, $window, friendService, storage ) {
+
+				var vm = this;
+
+				// I hold the collection of friends.
+				vm.friends = [];
+
+				// I hold the form data for use with ngModel.
+				vm.form = {
+					name: ""
+				};
+
+				loadRemoteData();
+
+				// Expose the public API.
+				vm.logout = logout;
+				vm.processForm = processForm;
+				vm.removeFriend = removeFriend;
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// When the user wants to log out of the application, we don't want 
+				// the in-memory cache to persist to disk. As such, we need to explicitly
+				// disable the persistence before we bounce them out of the app.
+				function logout() {
+
+					storage.disablePersist();
+
+					$window.location.href = "./logout.htm";
+
+				}
+
+
+				// I process the new-friend form in an attempt to add a new friend.
+				function processForm() {
+
+					if ( ! vm.form.name ) {
+						
+						return;
+
+					}
+
+					friendService
+						.addFriend( vm.form.name )
+						.then( loadRemoteData )
+					;
+
+					vm.form.name = "";
+
+				}
+
+
+				// I remove the given friend from the collection.
+				function removeFriend( friend ) {
+
+					// NOTE: Normally, I would optimistically remove the friend from the
+					// local collection; however, since I know that all of the data in 
+					// this demo is client-side, I'm just going to reload the data as it
+					// will be loaded faster than the user can perceive. 
+					friendService
+						.deleteFriend( friend.id )
+						.then( loadRemoteData )
+					;
+
+				}
+
+
+				// ---
+				// PRIVATE METHODS.
+				// ---
+
+
+				// I apply the remote data to the view-model.
+				function applyRemoteData( friends ) {
+
+					vm.friends = friends;
+
+				}
+
+
+				// I load the remote data for use in the view-model.
+				function loadRemoteData() {
+
+					friendService
+						.getFriends()
+						.then( applyRemoteData )
+					;
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide a repository for friends. I use the storage service to persist data
+		// across page reloads.
+		angular.module( "Demo" ).factory(
+			"friendService",
+			function provideFriendService( $q, storage ) {
+
+				// Attempt to pull the friends out of storage.
+				// --
+				// NOTE: Using .extractItem() instead of .getItem() since we don't 
+				// really need the friends item to remain in storage once we have pulled
+				// it into this service (which, for this demo, does it's own caching). 
+				// We'll be repopulating the cache in the onBeforePersist() event below,
+				// anyway; so, this will cut down on memory usage. 
+				var friends = ( storage.extractItem( "friends" ) || [] );
+
+				// Rather than trying to keep the service-data and the cache-data in 
+				// constant sync, let's just hook into the persist event of the storage
+				// which will give us an opportunity to do just-in-time synchronization.
+				storage.onBeforePersist(
+					function handlePersist() {
+
+						storage.setItem( "friends", friends );
+
+					}
+				);
+
+				// Return the public API.
+				return({
+					addFriend: addFriend,
+					deleteFriend: deleteFriend,
+					getFriends: getFriends
+				});
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I add a new friend with the given name. Returns a promise that resolves
+				// with the newly generated ID.
+				function addFriend( name ) {
+
+					var id = ( new Date() ).getTime();
+
+					friends.push({
+						id: id,
+						name: name
+					});
+
+					return( $q.when( id ) );
+
+				}
+
+
+				// I remove the friend with the given id. Returns a promise which resolves
+				// whether or not the friend actually existed.
+				function deleteFriend( id ) {
+
+					for ( var i = 0, length = friends.length ; i < length ; i++ ) {
+
+						if ( friends[ i ].id === id ) {
+
+							friends.splice( i, 1 );
+							break;
+
+						}
+
+					}
+
+					return( $q.when() );
+
+				}
+
+
+				// I get the entire collection of friends. Returns a promise.
+				function getFriends() {
+
+					// NOTE: We are using .copy() so that the internal cache can't be
+					// mutated through direct object references.
+					return( $q.when( angular.copy( friends ) ) );
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// This is just here to make sure that the storage component is loaded when the 
+		// app is bootstrapped. This will cause the localStorage I/O overhead to be front-
+		// loaded in the app rather than caused by a particular user interaction (which 
+		// the user is more likely to notice).
+		angular.module( "Demo" ).run(
+			function loadStorage( storage ) {
+
+				// ... just sit back and bask in the glory of dependency-injection.
+
+			}
+		);
+
+		// I am the localStorage key that will be used to persist data for this demo.
+		angular.module( "Demo" ).value( "storageKey", "angularjs_demo" );
+
+		// I provide a storage API that uses an in-memory data cache that is persisted
+		// to the localStorage at the limits of the application life-cycle.
+		angular.module( "Demo" ).factory(
+			"storage",
+			function provideStorage( $exceptionHandler, $window, storageKey ) {
+
+				// Try to load the initial payload from localStorage.
+				var items = loadData();
+
+				// I maintain a collection of callbacks that want to hook into the 
+				// unload event of the in-memory cache. This will give the calling 
+				// context a chance to update their relevant storage items before 
+				// the data is persisted to localStorage.
+				var persistHooks = [];
+
+				// I determine if the cache should be persisted to localStorage when the
+				// application is unloaded.
+				var persistEnabled = true;
+
+				// During the application lifetime, we're going to be using in-memory
+				// data access (since localStorage I/O is relatively expensive and 
+				// requires data to be serialized - two things we don't want during the 
+				// user to "feel"). However, when the application unloads, we want to try
+				// to persist the in-memory cache to the localStorage.
+				$window.addEventListener( "beforeunload", persistData );
+
+				// Return the public API.
+				return({
+					clear: clear,
+					disablePersist: disablePersist,
+					enablePersist: enablePersist,
+					extractItem: extractItem,
+					getItem: getItem,
+					onBeforePersist: onBeforePersist,
+					removeItem: removeItem,
+					setItem: setItem
+				});
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I clear the current item cache.
+				function clear() {
+
+					items = {};
+
+				}
+
+
+				// I disable the persisting of the cache to localStorage on unload.
+				function disablePersist() {
+
+					persistEnabled = false;
+
+				}
+
+
+				// I enable the persisting of the cache to localStorage on unload.
+				function enablePersist() {
+
+					persistEnabled = true;
+
+				}
+
+
+				// I remove the given key from the cache and return the value that was 
+				// cached at that key; returns null if the key didn't exist.
+				function extractItem( key ) {
+
+					var value = getItem( key );
+
+					removeItem( key );
+
+					return( value );
+
+				}
+
+
+				// I return the item at the given key; returns null if not available.
+				function getItem( key ) {
+
+					key = normalizeKey( key );
+
+					// NOTE: We are using .copy() so that the internal cache can't be
+					// mutated through direct object references. 
+					return( ( key in items ) ? angular.copy( items[ key ] ) : null );
+
+				}
+
+
+				// I add the given operator to persist hooks that will be invoked prior 
+				// to unload-based persistence.
+				function onBeforePersist( operator ) {
+
+					persistHooks.push( operator );
+
+				}
+
+
+				// I remove the given key from the cache.
+				function removeItem( key ) {
+
+					key = normalizeKey( key );
+
+					delete( items[ key ] );
+
+				}
+
+
+				// I store the item at the given key.
+				function setItem( key, value ) {
+
+					key = normalizeKey( key );
+
+					// NOTE: We are using .copy() so that the internal cache can't be
+					// mutated through direct object references. 
+					items[ key ] = angular.copy( value );
+
+				}
+
+
+				// ---
+				// PRIVATE METHODS.
+				// ---
+
+
+				// I attempt to load the cache from the localStorage interface. Once the
+				// data is loaded, it is deleted from localStorage.
+				function loadData() {
+
+					// There's a chance that the localStorage isn't available, even in 
+					// modern browsers (looking at you, Safari, running in Private mode).
+					try {
+
+						if ( storageKey in $window.localStorage ) {
+
+							var data = $window.localStorage.getItem( storageKey );
+
+							$window.localStorage.removeItem( storageKey );
+
+							// NOTE: Using .extend() here as a safe-guard to ensure that
+							// the value we return is actually a hash, even if the data
+							// is corrupted.
+							return( angular.extend( {}, angular.fromJson( data ) ) );
+							
+						}
+
+					} catch ( localStorageError ) {
+
+						$exceptionHandler( localStorageError );
+
+					}
+
+					// If we made it this far, something went wrong.
+					return( {} );
+
+				}
+
+
+				// I normalize the given cache key so that we never collide with any 
+				// native object keys when looking up items.
+				function normalizeKey( key ) {
+
+					return( "storage_" + key );
+
+				}
+
+
+				// I attempt to persist the cache to the localStorage.
+				function persistData() {
+
+					// Before we persist the data, invoke all of the before-persist hook 
+					// operators so that consuming services have one last chance to 
+					// synchronize their local data with the storage data.
+					for ( var i = 0, length = persistHooks.length ; i < length ; i++ ) {
+
+						try {
+
+							persistHooks[ i ]();
+
+						} catch ( persistHookError ) {
+
+							$exceptionHandler( persistHookError );
+							
+						}
+
+					}
+
+					// If persistence is disabled, skip the localStorage access.
+					if ( ! persistEnabled ) {
+
+						return;
+						
+					}
+
+					// There's a chance that localStorage isn't available, even in modern
+					// browsers. And, even if it does exist, we may be attempting to store
+					// more data that we can based on per-domain quotas.
+					try {
+
+						$window.localStorage.setItem( storageKey, angular.toJson( items ) );
+
+					} catch ( localStorageError ) {
+
+						$exceptionHandler( localStorageError );
+
+					}
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
