@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Sometimes I'm Tempted To Use Try / Finally In The Worst Way
+	</title>
+</head>
+<body>
+
+	<script type="text/javascript">
+
+		var cache = {
+			foo: "bar",
+			hello: "world",
+			fizz: "buzz"
+		};
+
+		// The extracItem() will pull the item out of the cache (ie, delete it), and 
+		// then return it.
+		console.log( "Extracted:", extractItem( "foo" ) );
+		console.log( "Extracted:", extractItem( "fizz" ) );
+		console.log( cache );
+
+
+		// I remove the given key from the cache and return the value.
+		function extractItem( key ) {
+
+			// WARNING: Never do this (for a variety of reasons). This is just something
+			// that I am occasionally ** TEMPTED ** to do when I get super frustrated at
+			// the fact that I have to create an intermediary variable to hold the value 
+			// before I delete the key from the hash. More than anything, this is just to
+			// demonstrate that the concept works... NOT that it is good.
+			try {
+				
+				return( cache[ key ] );
+
+			// After we've returned the value, delete the key.
+			} finally {
+
+				delete( cache[ key ] );
+
+			}
+
+		}
+
+	</script>
+
+</body>
+</html>

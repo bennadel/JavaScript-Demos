@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Sometimes I'm Tempted To Use Try / Finally In The Worst Way](http://bennadel.github.io/JavaScript-Demos/demos/try-finally-too-clever/)
 * [Encapsulating LocalStorage Access In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/local-storage-angularjs/)
 * [An Experiment In What React's JSX Might Feel Like In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/ngx-angularjs/)
 * [Sending AngularJS Errors To New Relic, Raygun, Sentry, etc.](http://bennadel.github.io/JavaScript-Demos/demos/send-errors-to-new-relic-from-angularjs/)
