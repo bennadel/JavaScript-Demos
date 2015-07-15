@@ -1,0 +1,66 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Quick Note: Favor $exceptionHandler() Over $log.error() In AngularJS
+	</title>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		Quick Note: Favor $exceptionHandler() Over $log.error() In AngularJS
+	</h1>
+	
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.4.2.min.js"></script>
+	<script type="text/javascript">
+
+		// I control the root of the application.
+		angular.module( "Demo", [] ).controller(
+			"AppController",
+			function provideAppController( $scope, $log, $exceptionHandler ) {
+
+				// ** Avoid. **
+				// --
+				// Using the $log.error() method will safely log the error to the console
+				// if it is available. If the console is not available, the error will 
+				// just be swallowed quietly.
+				try {
+
+					throw( new Error( "Something went boom."))
+
+				} catch ( error ) {
+
+					$log.error( error );
+
+				}
+
+
+				// ** Recommended. **
+				// --
+				// By default, the $exceptionHandler() service does the same thing as 
+				// $log. The default implementation actually just turns around and calls
+				// $log.error() internally. However, the entire framework defers to the 
+				// $exceptionHandler() for all try / catch blocks which makes it a 
+				// perfect place to track errors. By favoring $exceptionHandler() over 
+				// the $log.error() method, you keep in alignment with the rest of the 
+				// code and make your errors more readily available.
+				try {
+
+					throw( new Error( "Something went boom."))
+
+				} catch ( error ) {
+
+					$exceptionHandler( error );
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
