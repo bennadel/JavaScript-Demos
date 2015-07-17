@@ -139,10 +139,12 @@
 				var aliases = [];
 
 				// Expose the public API for the provider.
-				this.addAlias = addAlias;
-				this.setTagName = setTagName;
-				this.setTokens = setTokens;
-				this.$get = emoticons;
+				return({
+					addAlias: addAlias,
+					setTagName: setTagName,
+					setTokens: setTokens,
+					$get: emoticons
+				});
 
 
 				// ---
