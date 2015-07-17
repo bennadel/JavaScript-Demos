@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Fun With Emoticons And Service Providers In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/emoticons-angularjs/)
 * [Quick Note: Favor $exceptionHandler() Over $log.error() In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/favor-exception-handler-angularjs/)
 * [Rendering Large Datasets With AngularJS And ReactJS](http://bennadel.github.io/JavaScript-Demos/demos/render-large-datasets-angularjs-reactjs/)
 * [Breaking Object References At Cache Boundaries In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/cache-perimeter-angularjs/)
