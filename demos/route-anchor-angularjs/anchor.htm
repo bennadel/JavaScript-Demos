@@ -1,0 +1,172 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Using Anchor Tags And URL-Fragment Links In AngularJS
+	</title>
+</head>
+<body ng-controller="AppController as vm">
+
+	<h1>
+		Using Anchor Tags And URL-Fragment Links In AngularJS
+	</h1>
+
+	<h2>
+		Using An ngAnchor Directive
+	</h2>
+
+	<p>
+		<!-- Normal "route" links. -->
+		<strong>Pages</strong>:
+		<a href="#/section-a">Section A</a> &nbsp;|&nbsp;
+		<a href="#/section-b">Section B</a> &nbsp;|&nbsp;
+		<a href="#/section-c">Section C</a> &nbsp;|&nbsp;
+		<a href="#/section-d">Section D</a>
+	</p>
+
+	<p>
+		<strong>Current Url</strong>: {{ vm.currentUrl }}
+	</p>
+
+	<p>
+		<!-- A "fragment" anchor link using ngAnchor instead of HREF. -->
+		<a ng-anchor="#footer">Jump to footer</a>.
+	</p>
+
+	<p style="height: 2000px ;">
+		<!-- To force scrolling. -->.
+	</p>
+
+	<p id="footer">
+		This is a footer!
+	</p>
+
+	
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.4.2.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs/angular-route-1.4.2.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		angular.module( "Demo", [ "ngRoute" ] );
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I configure the application routes to make sure that the user cannot go out
+		// side of the supported route definitions.
+		angular.module( "Demo" ).config(
+			function configureRoutes( $routeProvider ) {
+
+				$routeProvider
+					.when( "/section-a", {} )
+					.when( "/section-b", {} )
+					.when( "/section-c", {} )
+					.when( "/section-d", {} )
+					.otherwise({
+						redirectTo: "/section-a"
+					})
+				;
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I control the root of the application.
+		angular.module( "Demo" ).controller(
+			"AppController",
+			function AppController( $scope, $location, $route ) {
+
+				var vm = this;
+
+				vm.currentUrl = "";
+
+				// When the location changes, capture the state of the full URL.
+				$scope.$on(
+					"$locationChangeSuccess",
+					function locationChanged() {
+
+						vm.currentUrl = $location.url();
+
+					}
+				);
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I watch the ngAnchor attribute to automatically configure the HREF value to 
+		// use natural URL-fragment behavior in AngularJS.
+		// --
+		// NOTE: We don't actually need the $anchorScroll() service; but, we need to 
+		// inject it here in order to guarantee that it is instantiated and starts 
+		// watching the $location for changes.
+		angular.module( "Demo" ).directive(
+			"ngAnchor",
+			function anchorDirective( $location, $anchorScroll ) {
+
+				// Return the directive configuration object.
+				return({
+					link: link,
+					restrict: "A"
+				});
+
+
+				// I bind the JavaScript events to the view-model.
+				function link( scope, element, attributes ) {
+
+					// Whenever the attribute changes, we have to update our HREF state
+					// to incorporate the new ngAnchor value as the embedded fragment.
+					attributes.$observe( "ngAnchor", configureHref );
+
+					// Whenever the the location changes, we want to update the HREF value
+					// of this link to incorporate the current URL plus the URL-fragment 
+					// that we are watching in the ngAnchor attribute.
+					scope.$on( "$locationChangeSuccess", configureHref );
+
+
+					// I update the HREF attribute to incorporate both the current top-
+					// level fragment plus our in-page URL-fragment intent.
+					function configureHref() {
+
+						var fragment = ( attributes.ngAnchor || "" );
+
+						// Strip off the leading # to make the string concatenation 
+						// handle variable-state inputs (ie, ones that may or may not
+						// include the leading pound sign).
+						if ( fragment.charAt( 0 ) === "#" ) {
+
+							fragment = fragment.slice( 1 );
+
+						}
+
+						// Since the anchor is really the fragment INSIDE the fragment,
+						// we have to build two levels of fragment.
+						var routeValue = ( "#" + $location.url().split( "#" ).shift() );
+						var fragmentValue = ( "#" + fragment );
+
+						attributes.$set( "href", ( routeValue + fragmentValue ) );
+
+					}
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
