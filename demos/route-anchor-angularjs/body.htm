@@ -1,0 +1,238 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Using Anchor Tags And URL-Fragment Links In AngularJS
+	</title>
+</head>
+<body ng-controller="AppController as vm">
+
+	<h1>
+		Using Anchor Tags And URL-Fragment Links In AngularJS
+	</h1>
+
+	<h2>
+		Linking The &lt;Body&gt; Element
+	</h2>
+
+	<p>
+		<!-- Normal "route" links. -->
+		<strong>Pages</strong>:
+		<a href="#/section-a">Section A</a> &nbsp;|&nbsp;
+		<a href="#/section-b">Section B</a> &nbsp;|&nbsp;
+		<a href="#/section-c">Section C</a> &nbsp;|&nbsp;
+		<a href="#/section-d">Section D</a>
+	</p>
+
+	<p>
+		<strong>Current Url</strong>: {{ vm.currentUrl }}
+	</p>
+
+	<p>
+		<!-- A "fragment" anchor link. -->
+		<a href="#footer">Jump to footer</a>.
+	</p>
+
+	<p style="height: 2000px ;">
+		<!-- To force scrolling. -->.
+	</p>
+
+	<p id="footer">
+		This is a footer!
+	</p>
+
+	
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/jquery/jquery-2.1.0.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.4.2.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs/angular-route-1.4.2.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		angular.module( "Demo", [ "ngRoute" ] );
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I configure the application routes to make sure that the user cannot go out
+		// side of the supported route definitions.
+		angular.module( "Demo" ).config(
+			function configureRoutes( $routeProvider ) {
+
+				$routeProvider
+					.when( "/section-a", {} )
+					.when( "/section-b", {} )
+					.when( "/section-c", {} )
+					.when( "/section-d", {} )
+					.otherwise({
+						redirectTo: "/section-a"
+					})
+				;
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I control the root of the application.
+		angular.module( "Demo" ).controller(
+			"AppController",
+			function AppController( $scope, $location, $route ) {
+
+				var vm = this;
+
+				vm.currentUrl = "";
+
+				// When the location changes, capture the state of the full URL.
+				$scope.$on(
+					"$locationChangeSuccess",
+					function locationChanged() {
+
+						vm.currentUrl = $location.url();
+
+					}
+				);
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I setup an interceptor on <BODY> tag, allowing normal URL-fragment anchor 
+		// links to work "as intended" within the context of an AngularJS application 
+		// that uses the $location service, which alters the behavior of link-clicks.
+		// --
+		// CAUTION: Since the event-delegation logic is a bit more complicated in this 
+		// approach, I am including the jQuery logic so I can set up event-delegation on
+		// the BODY tag an easily search for the $rootElement.
+		angular.module( "Demo" ).directive(
+			"body",
+			function urlFragmentDirective( $rootElement, $location, $anchorScroll, $log ) {
+
+				// Return the directive configuration object.
+				return({
+					link: link,
+					restrict: "E"
+				});
+
+
+				// I bind the JavaScript events to the view-model.
+				function link( scope, element, attribute ) {
+
+					// For this approach to work, we need to ensure that the BODY tag is 
+					// a descendant of the $rootElement. This is a critical point because
+					// AngularJS uses event-delegation on the $rootElement to rewire <a>
+					// link click behaviors. As such, we can only [be guaranteed to] 
+					// intercept the click-event if the BODY tag can see it first, before 
+					// it bubbles up to the $rootElement.
+					if ( element.is( $rootElement ) || ! element.closest( $rootElement ).length ) {
+
+						return( $log.warn( "URL-fragment interceptor cannot be configured on the Body as it is not a descendant of the $rootElement." ) );
+
+					}
+
+					// At this point, we know that we are in a position to intercept 
+					// link-click events. As such, let's set up event-delegation to listen
+					// for <a> clicks.
+					element.on(
+						"click",
+						"a",
+						function handleClickEvent( event ) {
+
+							// If this was a "special" click, ignore it (the $location 
+							// service will also ignore it).
+							if ( 
+								event.ctrlKey || 
+								event.metaKey || 
+								event.shiftKey || 
+								( event.which == 2 ) || 
+								( event.button == 2 )
+								) {
+
+								return;
+
+							}
+
+							// Since we are using jQuery's event-delegation, we know that 
+							// THIS refers to the <A> tag that triggered the event.
+							var target = angular.element( this );
+
+							// If the anchor tag has a target attribute, ignore the event 
+							// since Angular will already allow the natural link behavior
+							// (of a targeted link) to take place.
+							if ( target.attr( "target" ) ) {
+
+								return;
+
+							}
+
+							var href = ( target.attr( "href" ) || "" );
+
+							// If the relative HREF doesn't start with a URL-fragment 
+							// indicator, ignore this event.
+							if ( href.charAt( 0 ) !== "#" ) {
+
+								return;
+
+							}
+
+							// If the relative HREF appears to be a route, ignore this 
+							// event; let the natural routing behavior take place.
+							if ( href.charAt( 1 ) === "/" ) {
+
+								return;
+
+							}
+
+							// At this point, we know we want to intercept the link 
+							// behavior so that AngularJS doesn't try to manage it for us
+							// (which is where the problem of URL-fragment links is coming
+							// from). As such, cancel the default behavior.
+							event.preventDefault();
+
+							var fragment = href.slice( 1 );
+
+							// If the fragment is already part of the URL, then we have
+							// to explicitly tell Angular to perform the scroll to the 
+							// target anchor. Since this click won't actually change the
+							// location state, the $anchorScroll won't execute.
+							if ( fragment === $location.hash() ) {
+
+								return( $anchorScroll() );
+
+							}
+
+							// Now that we know we need to manage the state of the URL, 
+							// let's pipe the URL-fragment into the $location() where it
+							// becomes the fragment ON THE FRAGMENT that represents the 
+							// current route. When doing this, the $anchorScroll() service
+							// will automatically pick up the change and auto-scroll the 
+							// page to the appropriate hash.
+							$location.hash( fragment );
+
+							// Since the $location is part of the view-model, we have to 
+							// tell AngularJS that the state has changed.
+							scope.$apply();
+							
+						}
+					);
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>

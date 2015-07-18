@@ -1,0 +1,248 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Using Anchor Tags And URL-Fragment Links In AngularJS
+	</title>
+</head>
+<body ng-controller="AppController as vm">
+
+	<h1>
+		Using Anchor Tags And URL-Fragment Links In AngularJS
+	</h1>
+
+	<h2>
+		Compiling The &lt;A&gt; Element
+	</h2>
+
+	<p>
+		<!-- Normal "route" links. -->
+		<strong>Pages</strong>:
+		<a href="#/section-a">Section A</a> &nbsp;|&nbsp;
+		<a href="#/section-b">Section B</a> &nbsp;|&nbsp;
+		<a href="#/section-c">Section C</a> &nbsp;|&nbsp;
+		<a href="#/section-d">Section D</a>
+	</p>
+
+	<p>
+		<strong>Current Url</strong>: {{ vm.currentUrl }}
+	</p>
+
+	<p>
+		<!-- A "fragment" anchor link. -->
+		<a href="#footer">Jump to footer</a>.
+	</p>
+
+	<p style="height: 2000px ;">
+		<!-- To force scrolling. -->.
+	</p>
+
+	<p id="footer">
+		This is a footer!
+	</p>
+
+	
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.4.2.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs/angular-route-1.4.2.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		angular.module( "Demo", [ "ngRoute" ] );
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I configure the application routes to make sure that the user cannot go out
+		// side of the supported route definitions.
+		angular.module( "Demo" ).config(
+			function configureRoutes( $routeProvider ) {
+
+				$routeProvider
+					.when( "/section-a", {} )
+					.when( "/section-b", {} )
+					.when( "/section-c", {} )
+					.when( "/section-d", {} )
+					.otherwise({
+						redirectTo: "/section-a"
+					})
+				;
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I control the root of the application.
+		angular.module( "Demo" ).controller(
+			"AppController",
+			function AppController( $scope, $location, $route ) {
+
+				var vm = this;
+
+				vm.currentUrl = "";
+
+				// When the location changes, capture the state of the full URL.
+				$scope.$on(
+					"$locationChangeSuccess",
+					function locationChanged() {
+
+						vm.currentUrl = $location.url();
+
+					}
+				);
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I compile the <A> tag, allowing normal URL-fragment anchor links to work
+		// "as intended" within the context of an AngularJS application that uses the
+		// $location service, which alters the behavior of link-clicks.
+		angular.module( "Demo" ).directive(
+			"a",
+			function urlFragmentDirective( $location, $anchorScroll ) {
+
+				// Return the directive configuration object.
+				return({
+					compile: compile,
+					restrict: "E"
+				});
+
+
+				// I compile the anchor tag, returning a linking function if necessary.
+				function compile( tElement, tAttributes ) {
+
+					// If the anchor tag has a target attribute, skip this instance of
+					// the tag since Angular will already allow the natural link behavior
+					// (of a targeted link) to take place.
+					if ( tAttributes.target ) {
+
+						return;
+
+					}
+
+					var href = ( tAttributes.href || tAttributes.ngHref || "" );
+
+					// If the anchor tag doesn't have an HREF, skip this instance - we 
+					// know that we won't have anything to link to upon click.
+					// --
+					// NOTE: This assumes that the HREF for URl-fragment style anchor 
+					// will be present in the original HTML and won't be injected during
+					// the compilation phase of another directive.
+					if ( ! href ) {
+
+						return;
+
+					}
+
+					// If the HREF value doesn't start with a URL-fragment hash, skip it.
+					// --
+					// NOTE: This assumes that URL-fragment marker (ie, the "#") won't be
+					// injected based on attribute interpolation. Honestly, I think this 
+					// is a pretty fair assumption based on the nature of URL-fragments
+					// style links.
+					if ( href.charAt( 0 ) !== "#" ) {
+
+						return;
+
+					}
+
+					// If the anchor tag appears to represent a "Route", ignore it - let
+					// the natural routing behavior take effect.
+					if ( href.charAt( 1 ) === "/" ) {
+
+						return;
+
+					}
+
+					return( link );
+
+				}
+
+
+				// I bind the JavaScript events to the view-model.
+				function link( scope, element, attributes ) {
+
+					element.on(
+						"click",
+						function handleClickEvent( event ) {
+
+							// If this was a "special" click, ignore it (the $location 
+							// service will also ignore it).
+							if ( 
+								event.ctrlKey || 
+								event.metaKey || 
+								event.shiftKey || 
+								( event.which == 2 ) || 
+								( event.button == 2 )
+								) {
+
+								return;
+
+							}
+
+							var href = element.attr( "href" );
+
+							// If attribute interpolation caused this HREF to become a
+							// route, then ignore the click event and let the natural
+							// routing behavior take effect.
+							if ( href.indexOf( "#/" ) === 0 ) {
+
+								return;
+
+							}
+
+							// At this point, we know we want to intercept the link 
+							// behavior so that AngularJS doesn't try to manage it for us
+							// (which is where the problem of URL-fragment links is coming
+							// from). As such, cancel the default behavior.
+							event.preventDefault();
+
+							var fragment = href.slice( 1 );
+
+							// If the fragment is already part of the URL, then we have
+							// to explicitly tell Angular to perform the scroll to the 
+							// target anchor. Since this click won't actually change the
+							// location state, the $anchorScroll won't execute.
+							if ( fragment === $location.hash() ) {
+
+								return( $anchorScroll() );
+
+							}
+
+							// Now that we know we need to manage the state of the URL, 
+							// let's pipe the URL-fragment into the $location() where it
+							// becomes the fragment ON THE FRAGMENT that represents the 
+							// current route. When doing this, the $anchorScroll() service
+							// will automatically pick up the change and auto-scroll the 
+							// page to the appropriate hash.
+							$location.hash( fragment );
+
+							// Since the $location is part of the view-model, we have to 
+							// tell AngularJS that the state has changed.
+							scope.$apply();
+							
+						}
+					);
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
