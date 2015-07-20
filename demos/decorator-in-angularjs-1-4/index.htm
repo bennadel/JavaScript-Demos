@@ -1,0 +1,123 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Using Module.decorator() In AngularJS 1.4
+	</title>
+</head>
+<body>
+
+	<h1>
+		Using Module.decorator() In AngularJS 1.4
+	</h1>
+
+	<p>
+		<em>See the console</em>.
+	</p>
+
+	
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.4.2.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		angular.module( "Demo", [] );
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I run when the AngularJS application is bootstrapped.
+		angular.module( "Demo" ).run(
+			function runBlock( greeting ) {
+
+				console.log( greeting( "Joanna" ) );
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I generate a greeting for the given.
+		angular.module( "Demo" ).factory(
+			"greeting",
+			function greetingFactory() {
+
+				return( greeting );
+
+
+				// I return a greeting for the given name.
+				function greeting( name ) {
+
+					return( "Hello " + name + "." );
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I decorate the "greeting" service, altering the return value.
+		// --
+		// CAUTION: Unlike all other module methods, this decorator() has to be defined 
+		// AFTER the service that it is decorating as it relies on the existence of the
+		// $get() method on the target service.
+		angular.module( "Demo" ).decorator(
+			"greeting",
+			function greetingDecorator( $delegate ) {
+
+				// Return the decorated service.
+				return( decoratedGreeting );
+
+
+				// I append a new message to the existing greeting.
+				function decoratedGreeting( name ) {
+
+					return( $delegate( name ) + " How are you doing?" );
+
+				}
+
+			}
+		);
+
+
+		// I decorate the "greeting" service, altering the return value. 
+		// --
+		// NOTE: I am purposefully not combining this with the .decorator() above in 
+		// order to demonstrate that you can decorate the same service more than once.
+		// --
+		// CAUTION: Unlike all other module methods, this decorator() has to be defined 
+		// AFTER the service that it is decorating as it relies on the existence of the
+		// $get() method on the target service.
+		angular.module( "Demo" ).decorator(
+			"greeting",
+			function greetingDecorator( $delegate ) {
+
+				// Return the decorated service.
+				return( decoratedGreeting );
+
+
+				// I append a new message to the existing greeting.
+				function decoratedGreeting( name ) {
+
+					return( $delegate( name ) + " Is there anything I can get for you?" );
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
