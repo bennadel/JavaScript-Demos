@@ -1,0 +1,227 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Managing Conditional Route Changes In AngularJS
+	</title>
+</head>
+<body>
+
+	<h1>
+		Managing Conditional Route Changes In AngularJS
+	</h1>
+
+	<!-- This directive uses a Controller, a link function, and this view here. -->
+	<div bn-route-demo>
+
+		<p>
+			<strong>Current Route</strong>: {{ vm.currentRoute }}
+		</p>
+
+		<ul>
+			<li ng-repeat="friend in vm.friends track by friend.id">
+
+				<!-- 
+					Although some of the friends cannot viewed, the HREF will always
+					define the route and the "happy path" of execution. Overrides of
+					this, based on JavaScript interactions, will be managed by the
+					directive link bindings, leaning heavily on the Controller.
+				-->
+				<a ng-href="#/friends/{{ friend.id }}" class="friend">
+					{{ friend.id}} - {{ friend.name }}
+				</a>
+
+			</li>
+		</ul>
+
+		<p>
+			<a href="#/friends">Back to list</a>
+		</p>
+
+	</div>
+
+
+	<!--
+		Load scripts.
+		--
+		NOTE: I am using jQuery here to facilitate easier event-delegation in the
+		component directive.
+	-->
+	<script type="text/javascript" src="../../vendor/jquery/jquery-2.1.0.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.4.2.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs/angular-route-1.4.2.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [ "ngRoute" ] );
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// Let's configure some simple routing for this demo. We're not actually going
+		// to use a different view - we're just going to use the value of the current
+		// $location.path() to show the route activity.
+		angular.module( "Demo" ).config(
+			function configureRoutes( $routeProvider ) {
+
+				$routeProvider
+					.when( "/friends", {} )
+					.when( "/friends/:id/detail", {} )
+					.when( 
+						"/friends/:id",
+						{
+							redirectTo: "/friends/:id/detail"
+						}
+					)
+					.otherwise({
+						redirectTo: "/friends"
+					})
+				;
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I am a component directive that manages the demo.
+		angular.module( "Demo" ).directive(
+			"bnRouteDemo",
+			function rotueDemoDirective( $exceptionHandler ) {
+
+				// Return the directive configuration.
+				return({
+					controller: RouteDemoController,
+					controllerAs: "vm",
+					link: link,
+					restrict: "A"
+				});
+
+
+				// I control the view-model for the component.
+				function RouteDemoController( $scope, $route, $location, $window ) {
+
+					var vm = this;
+
+					// I hold the list of friends to demo. Each of these will link
+					// to a detail page (that may or may not be accessible).
+					vm.friends = [
+						{
+							id: 1,
+							name: "Sarah"
+						},
+						{
+							id: 2,
+							name: "Joanna"
+						},
+						{
+							id: 3,
+							name: "Kim"
+						}
+					];
+
+					// I hold the currently-active application route.
+					vm.currentRoute = $location.path();
+
+					// I keep track of the current route whenever it changes.
+					$scope.$on(
+						"$locationChangeSuccess", 
+						function handleLocationChange() {
+
+							vm.currentRoute = $location.path();
+
+						}
+					);
+
+					// Expose the public API.
+					vm.canViewFriendDetail = canViewFriendDetail;
+					vm.showFriendBlock = showFriendBlock;
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I determine if the given friend's detail can be viewed.
+					function canViewFriendDetail( friend ) {
+
+						return( friend.name !== "Kim" );
+
+					}
+
+
+					// Assuming the given friend cannot be viewed, I update the 
+					// "view-model" to show an appropriate message as to why the given
+					// friend cannot be viewed.
+					function showFriendBlock( friend ) {
+
+						// NOTE: Using alert() to keep things super simple.
+						$window.alert( "Sorry, you can't view " + friend.name );
+
+					}
+
+				}
+
+
+				// I bind the JavaScript events to the view-model.
+				function link( scope, element, attributes, controller ) {
+
+					// We want to manage any click event on a Friend item.
+					element.on( "click", "a.friend", handleFriendClick );
+
+
+					// I handle the friend-click event.
+					function handleFriendClick( event ) {
+
+						try {
+
+							// Since we are using event-delegation, we have to extract
+							// the target friend from the DOM.
+							var target = angular.element( event.target );
+							var targetScope = target.scope();
+							var friend = targetScope.friend;
+
+							// Check with the controller to see if this friend is 
+							// available for viewing.
+							if ( ! controller.canViewFriendDetail( friend ) ) {
+
+								// Apparently, this friend cannot be viewed, so cancel
+								// the click event (will prevent the Route change).
+								event.preventDefault();
+
+								// Ask the controller to indicate to the user that their
+								// navigation has been blocked for some reason.
+								scope.$apply(
+									function changeViewModel() {
+										
+										controller.showFriendBlock( friend );
+
+									}
+								);
+
+							}
+
+						} catch ( error ) {
+
+							$exceptionHandler( error );
+
+						}
+
+					}
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>

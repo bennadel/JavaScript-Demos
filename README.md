@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Managing Conditional Route Changes In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/conditional-route-on-state-angularjs/)
 * [Using Module.decorator() In AngularJS 1.4](http://bennadel.github.io/JavaScript-Demos/demos/decorator-in-angularjs-1-4/)
 * [Using Anchor Tags And URL-Fragment Links In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/route-anchor-angularjs/)
 * [Fun With Emoticons And Service Providers In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/emoticons-angularjs/)
