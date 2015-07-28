@@ -1,0 +1,105 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Class Attribute Interpolation Much Safer In AngularJS 1.2 And Newer
+	</title>
+
+	<style type="text/css">
+
+		li.friend {
+			border: 1px solid #CCCCCC ;
+			margin-bottom: 10px ;
+			padding: 10px 10px 10px 10px ;
+		}
+
+		li.friend-nth0 {
+			border-width: 1px ;
+		}
+
+		li.friend-nth1 {
+			border-width: 4px ;
+		}
+
+		li.friend-nth2 {
+			border-width: 8px ;
+		}
+
+		li.best-friend {
+			border-color: gold ;
+		}
+
+		li.clicked {
+			font-weight: bold ;
+		}
+
+	</style>
+</head>
+<body>
+
+	<h1>
+		Class Attribute Interpolation Much Safer In AngularJS 1.2 And Newer
+	</h1>
+
+	<ul ng-controller="AppController">
+		<!--
+			Notice that are using two different sources of class names: we're using the
+			attribute interpolation on [class] to build dynamic class names and we're 
+			using [ng-class] to toggle conditional class names.
+		-->
+		<li 
+			ng-repeat="friend in friends"
+			class="friend friend-nth{{ $index }}"
+			ng-class="{ 'best-friend': friend.isBFF }">
+
+			{{ friend.name }}
+
+		</li>
+	</ul>
+
+	
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.4.2.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		angular.module( "Demo", [] );
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I control the root of the application.
+		angular.module( "Demo" ).controller(
+			"AppController",
+			function AppController( $scope ) {
+
+				// I am the collection of friends being rendered.
+				$scope.friends = [
+					{
+						id: 1,
+						name: "Frannie",
+						isBFF: false
+					},
+					{
+						id: 2,
+						name: "Joanna",
+						isBFF: false
+					},
+					{
+						id: 3,
+						name: "Kim",
+						isBFF: true
+					}
+				];
+				
+			}
+		);
+
+	</script>
+
+</body>
+</html>
