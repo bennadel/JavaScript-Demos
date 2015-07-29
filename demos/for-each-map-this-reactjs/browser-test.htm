@@ -1,0 +1,56 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Browser Test For Collection Functions
+	</title>
+</head>
+<body>
+	
+	<h1>
+		Browser Test For Collection Functions
+	</h1>
+
+	<!-- Load scripts. -->
+	<script type="text/javascript">
+		
+		var context = {
+			hello: "world"
+		};
+
+		// Testing to make sure that various Array.prototype methods support the 
+		// context / thisArg argument to ensure proper [this] references.
+
+		[ "hello" ].forEach(
+			function iterator( item ) {
+
+				console.log( "forEach:", item, this[ item ] );
+
+			},
+			context
+		);
+
+		[ "hello" ].map(
+			function iterator( item ) {
+
+				console.log( "map:", item, this[ item ] );
+
+			},
+			context
+		);
+
+		[ "hello" ].filter(
+			function iterator( item ) {
+
+				console.log( "filter:", item, this[ item ] );
+
+			},
+			context
+		);
+
+	</script>
+
+</body>
+</html>

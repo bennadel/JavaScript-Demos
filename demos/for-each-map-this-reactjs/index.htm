@@ -1,0 +1,195 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		You Don't Need To Use .bind( this ) When Using .forEach() Or .map() In ReactJS
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body>
+	
+	<h1>
+		You Don't Need To Use .bind( this ) When Using .forEach() Or .map() In ReactJS
+	</h1>
+
+	<div id="content">
+		<!-- This content will be replaced with the React rendering. -->
+	</div>
+	
+
+	<!-- Load scripts. -->
+	<script src="../../vendor/reactjs/react-0.13.3.min.js"></script>
+	<script src="../../vendor/reactjs/JSXTransformer-0.13.3.js"></script>
+	<script type="text/jsx">
+		
+		// I manage the Demo widget.
+		var Demo = React.createClass({
+
+			// I provide the initial view-model, before the component is mounted.
+			getInitialState: function() {
+
+				return({
+					friends: [
+						{
+							id: 1,
+							name: "Sarah"
+						},
+						{
+							id: 2,
+							name: "Joanna"
+						},
+						{
+							id: 3,
+							name: "Kim"
+						}
+					],
+					selection: []
+				});
+
+			},
+
+
+			// ---
+			// PUBLIC METHODS.
+			// ---
+
+
+			// I render the view using the current state and properties collections.
+			render: function() {
+
+				// Map friends to Friend elements.
+				// --
+				// NOTE: As part of the .map() invocation, I'm explicitly defining 
+				// [this] as the context in the second argument. Doing so will cause 
+				// the iterator to be executed in the Element context which means that
+				// I can continue to use "this." in a natural, expected fashion.
+				var friends = this.state.friends.map(
+					function iterator( friend ) {
+
+						return( 
+							<Friend 
+								key={ friend.id } 
+								friend={ friend }
+								isSelected={ this.isSelected( friend ) }
+								toggleSelection={ this.toggleSelection }>
+							</Friend>
+						);
+
+					},
+					this
+				);
+
+				return(
+					<div>
+						<h2>
+							Friends
+						</h2>
+
+						<ul>
+							{ friends }
+						</ul>
+					</div>
+				);
+
+			},
+
+
+			// I toggle the selection of the given friend.
+			toggleSelection: function( friend ) {
+
+				var index = this.state.selection.indexOf( friend.id );
+				var newSelection = this.state.selection.slice();
+
+				// Friend is not currently selected.
+				if ( index === -1 ) {
+
+					newSelection.push( friend.id );
+
+				// Friend is currently selected.
+				} else {
+
+					newSelection.splice( index, 1 );
+
+				}
+
+				this.setState({
+					selection: newSelection
+				});
+
+			},
+
+
+			// ---
+			// PRIVATE METHODS.
+			// ---
+
+
+			// I determine if the given friend is currently selected.
+			isSelected: function( friend ) {
+
+				return( this.state.selection.indexOf( friend.id ) !== -1 );
+
+			}
+
+		});
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I manage the individual friend in the list.
+		var Friend = React.createClass({
+
+			// I handle the click events on the Friend.
+			handleClick: function( event ) {
+
+				// Pass the mutation request for selection up to the parent.
+				this.props.toggleSelection( this.props.friend );
+
+			},
+
+
+			// I render the friend.
+			render: function() {
+
+				// If the friend is currently selected, Bold the output.
+				if ( this.props.isSelected ) {
+
+					return(
+						<li onClick={ this.handleClick }>
+							<strong>{ this.props.friend.name }</strong>
+							{ " " } 
+							&mdash; woot!
+						</li>
+					);
+
+				} else {
+
+					return(
+						<li onClick={ this.handleClick }>
+							{ this.props.friend.name }
+						</li>
+					);
+
+				}
+
+			}
+
+		});
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// Render the root Demo and mount it inside the given element.
+		React.render( <Demo />, document.getElementById( "content" ) );
+
+	</script>
+
+</body>
+</html>
