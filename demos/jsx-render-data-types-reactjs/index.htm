@@ -1,0 +1,89 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		How JSX Renders Different Data Types In ReactJS
+	</title>
+</head>
+<body>
+	
+	<h1>
+		How JSX Renders Different Data Types In ReactJS
+	</h1>
+
+	<div id="content">
+		<!-- This content will be replaced with the React rendering. -->
+	</div>
+	
+
+	<!-- Load scripts. -->
+	<script src="../../vendor/reactjs/react-0.13.3.min.js"></script>
+	<script src="../../vendor/reactjs/JSXTransformer-0.13.3.js"></script>
+	<script type="text/jsx">
+		
+		// I manage the Demo widget.
+		var Demo = React.createClass({
+
+			// I render the component based on the current state.
+			render: function() {
+
+				var array = [ 1, 2, 3 ];
+
+				var object = {
+					name: "Winnie",
+					status: "Honey lover."
+				};
+
+				return(
+					<ul>
+						<li>
+							True: { true }
+						</li>
+						<li>
+							False: { false }
+						</li>
+						<li>
+							Number: { 4.5 }
+						</li>
+						<li>
+							Number(0): { 0 } { /* Testing for numeric Falsey values. */ }
+						</li>
+						<li>
+							String: { "Hello world!" }
+						</li>
+						<li>
+							Null: { null }
+						</li>
+						<li>
+							Array: { array }
+						</li>
+						<li>
+							Object: { object }
+						</li>
+						<li>
+							NaN: { ( "foo" * 3 ) }
+						</li>
+						<li>
+							Infinity: { ( 3 / 0 ) }
+						</li>
+					</ul>
+				);
+
+			}
+
+		});
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// Render the root Demo and mount it inside the given element.
+		React.render( <Demo />, document.getElementById( "content" ) );
+
+	</script>
+
+</body>
+</html>

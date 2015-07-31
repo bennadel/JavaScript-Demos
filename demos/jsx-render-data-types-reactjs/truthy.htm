@@ -1,0 +1,100 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Leverage Truthy JSX Rendering For Conditional Output In ReactJS
+	</title>
+</head>
+<body>
+	
+	<h1>
+		Leverage Truthy JSX Rendering For Conditional Output In ReactJS
+	</h1>
+
+	<div id="content">
+		<!-- This content will be replaced with the React rendering. -->
+	</div>
+	
+
+	<!-- Load scripts. -->
+	<script src="../../vendor/reactjs/react-0.13.3.min.js"></script>
+	<script src="../../vendor/reactjs/JSXTransformer-0.13.3.js"></script>
+	<script type="text/jsx">
+		
+		// I manage the Demo widget.
+		var Demo = React.createClass({
+
+			// I render the component based on the current state.
+			render: function() {
+
+				// With this collection of friends, there is an "isBFF" flag that we want
+				// to use to conditionally render some additional output.
+				var friends = [
+					{
+						id: 1,
+						name: "Joanna",
+						isBFF: false
+					},
+					{
+						id: 2,
+						name: "Kim",
+						isBFF: true
+					},
+					{
+						id: 3,
+						name: "Sarah",
+						isBFF: false
+					}
+				];
+
+				// Map the friends onto LI elements.
+				var listItems = friends.map(
+					function iterator( friend, i ) {
+
+						return(
+							<li key={ friend.id }>
+								{ friend.name }
+								{ 
+									// Notice that we can leverage Truthy / Falsey 
+									// rendering, in JSX, to conditionally render a string
+									// based on a logical outcome. Since JSX will not 
+									// render [false], then any condition that results in 
+									// [false] will not be rendered. However, in JavaScript,
+									// the [&&] and [||] operators will return the last
+									// evaluated value in the condition, which in our case, 
+									// is the string that we want to render.
+									// --
+									// CAUTION: If [isBFF] is a number, like "0", then it 
+									// will be rendered since JSX will render Falsey numbers.
+								}
+								{ friend.isBFF && " \u2014 Oh man, she's the best!" }
+							</li>
+						);
+
+					}
+				);
+
+				return(
+					<ul>
+						{ listItems }
+					</ul>
+				);
+
+			}
+
+		});
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// Render the root Demo and mount it inside the given element.
+		React.render( <Demo />, document.getElementById( "content" ) );
+
+	</script>
+
+</body>
+</html>
