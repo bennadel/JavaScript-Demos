@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Switch Cases Do Not Have To Be Static In JavaScript](http://bennadel.github.io/JavaScript-Demos/demos/switch-case/)
 * [Rendering White Space Using JSX In ReactJS](http://bennadel.github.io/JavaScript-Demos/demos/rendering-whitespace-reactjs/)
 * [How JSX Renders Different Data Types In ReactJS](http://bennadel.github.io/JavaScript-Demos/demos/jsx-render-data-types-reactjs/)
 * [You Don't Need To Use .bind( this ) When Using .forEach() Or .map() In ReactJS](http://bennadel.github.io/JavaScript-Demos/demos/for-each-map-this-reactjs/)

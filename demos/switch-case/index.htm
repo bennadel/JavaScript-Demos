@@ -1,0 +1,76 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Switch Cases Do Not Have To Be Static In JavaScript
+	</title>
+</head>
+<body>
+
+	<h1>
+		Switch Cases Do Not Have To Be Static In JavaScript
+	</h1>
+
+	<script type="text/javascript">
+
+		var userInput = "foo";
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// In this version, our CASE values are going to be static, hard-coded values.
+		switch ( userInput ) {
+
+			case "foo":
+				console.log( "User entered 'Foo'." );
+			break;
+
+			case "bar":
+				console.log( "User entered 'Bar'." );
+			break;
+
+			case "baz":
+				console.log( "User entered 'Baz'." );
+			break;
+
+		}
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// In this version, our CASE values are going to be dynamic variables that will
+		// be evaluated, on the fly, as the runtime moves down the list.
+		var INPUT_FOO = "foo";
+		var INPUT_BAR = "bar";
+		var INPUT_BAZ = "baz";
+
+		switch ( userInput ) {
+
+			case INPUT_FOO:
+				console.log( "User entered 'Foo'." );
+			break;
+
+			case INPUT_BAR:
+				console.log( "User entered 'Bar'." );
+			break;
+
+			case INPUT_BAZ:
+				console.log( "User entered 'Baz'." );
+			break;
+
+		}
+
+
+		// SIDE NOTE: In ColdFusion, this approach to Switch / Case statements would 
+		// error with the following: "This expression must have a constant value."
+
+	</script>
+
+</body>
+</html>
