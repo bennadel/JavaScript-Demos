@@ -115,11 +115,16 @@
 						// What we'll see here is that the $parent is NULL for the root
 						// of the scope sub-tree that was destroyed; but, for all the 
 						// non-root nodes, the $parent scope will be in tact.
+						// --
+						// CAUTION: The $$destroyed property is a proprietary AngularJS
+						// property; it is not meant to be referenced outside of the 
+						// framework. I am just logging it here for clarity.
 						console.log( 
-							"%s: Scope [%s] with parent scope [%s].",
+							"%s: Scope [%s] with parent scope [%s] .. $$destroyed [%s].",
 							( prefix || "After Timeout" ),
 							scope.$id,
-							( scope.$parent && scope.$parent.$id )
+							( scope.$parent && scope.$parent.$id ),
+							scope.$$destroyed
 						);
 
 					}
