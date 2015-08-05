@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [How The $destroy Event Affects The Scope Tree In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/destroy-parent-scope-angularjs/)
 * [Switch Cases Do Not Have To Be Static In JavaScript](http://bennadel.github.io/JavaScript-Demos/demos/switch-case/)
 * [Rendering White Space Using JSX In ReactJS](http://bennadel.github.io/JavaScript-Demos/demos/rendering-whitespace-reactjs/)
 * [How JSX Renders Different Data Types In ReactJS](http://bennadel.github.io/JavaScript-Demos/demos/jsx-render-data-types-reactjs/)

@@ -1,0 +1,19 @@
+
+a[ ng-click ] {
+	color: red ;
+	cursor: pointer ;
+	text-decoration: underline ;
+	user-select: none ;
+		-moz-user-select: none ;
+		-webkit-user-select: none ;
+}
+
+div[ bn-logger ] {
+	border: 1px solid red ;
+	margin: 16px 0px 16px 0px ;
+	padding: 15px 15px 15px 15px ;
+}
+
+div[ bn-logger ] div[ bn-logger ] {
+	margin: 0px 0px 0px 0px ;
+}

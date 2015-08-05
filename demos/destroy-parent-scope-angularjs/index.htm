@@ -1,0 +1,135 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		How The $destroy Event Affects The Scope Tree In AngularJS
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"><link>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		How The $destroy Event Affects The Scope Tree In AngularJS
+	</h1>
+
+	<p>
+		<a ng-click="toggleContainer()">Toggle Container(s)</a>
+	</p>
+
+	<!-- NOTE: We are using ngIf here to ensure multiple scope are created. -->
+	<div ng-if="isShowingContainer" bn-logger>
+
+		<div ng-if="true" bn-logger>
+
+			<div ng-if="true" bn-logger>
+
+				Inner inner inner thing.
+
+			</div>
+
+		</div>
+
+	</div>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.4.2.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I control the root of the application.
+		angular.module( "Demo" ).controller(
+			"AppController",
+			function AppController( $scope ) {
+
+				// I determine if we are showing the container.
+				$scope.isShowingContainer = true;
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I toggle the existence of the container.
+				$scope.toggleContainer = function() {
+
+					$scope.isShowingContainer = ! $scope.isShowingContainer;
+
+				};
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I log the scope-parent relationship in and around the $destroy event.
+		angular.module( "Demo" ).directive(
+			"bnLogger",
+			function bnLogger( $timeout ) {
+
+				// Return the directive configuration object.
+				return({
+					link: link,
+					restrict: "A"
+				});
+
+
+				// I bind the JavaScript events to the view-model.
+				function link( scope, element, attributes ) {
+
+					// When the $destroy event is triggered, we want to see how it affects
+					// the relationship between the current scope and its parent scope.
+					scope.$on( 
+						"$destroy",
+						function handleDestroy() {
+
+							logIDs( "Before Timeout" );
+
+							// Since the "$destroy" event is triggered before the the 
+							// scope tree is altered, we need to wait a tick and then 
+							// check the parent structure again.
+							$timeout( logIDs, 0, false );
+
+						}
+
+					);
+
+
+					// I log the IDs of the current scope and parent scope.
+					function logIDs( prefix ) {
+
+						// What we'll see here is that the $parent is NULL for the root
+						// of the scope sub-tree that was destroyed; but, for all the 
+						// non-root nodes, the $parent scope will be in tact.
+						console.log( 
+							"%s: Scope [%s] with parent scope [%s].",
+							( prefix || "After Timeout" ),
+							scope.$id,
+							( scope.$parent && scope.$parent.$id )
+						);
+
+					}
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
