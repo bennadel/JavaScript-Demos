@@ -1,0 +1,65 @@
+
+a[ ng-click ] {
+	color: red ;
+	cursor: pointer ;
+	text-decoration: underline ;
+	user-select: none ;
+		-moz-user-select: none ;
+		-webkit-user-select: none ;
+}
+
+div.box {
+	background-color: #F0F0F0 ;
+	border: 1px solid #CCCCCC ;
+	border-radius: 3px 3px 3px 3px ;
+	font-size: 20px ;
+	line-height: 25px ;
+	padding: 40px 40px 40px 40px ;
+}
+
+div.animated div.box.ng-enter {
+	opacity:0;
+	transition: 1s opacity ease ;
+}
+
+div.animated div.box.ng-enter-active {
+	opacity:1;
+}
+
+div.animated div.box.ng-leave {
+	opacity:1;
+	transition: 1s opacity ease ;
+}
+
+div.animated div.box.ng-leave-active {
+	opacity:0;
+}
+
+
+/* Used to create an animation that flushes the cache. */
+
+span.flusher {
+	background-color: #FF0099 ;
+	border-radius: 5px 5px 5px 5px ;
+	display: inline-block ;
+	height: 10px ;
+	width: 10px ;
+}
+
+span.flusher.ng-enter {
+	opacity: 0 ;
+	transition: 300ms opacity ease ;
+}
+
+span.flusher.ng-enter-active {
+	opacity: 1 ;
+}
+
+span.flusher.ng-leave {
+	opacity: 1 ;
+	transition: 300ms opacity ease ;
+}
+
+span.flusher.ng-leave-active {
+	opacity: 0 ;
+}

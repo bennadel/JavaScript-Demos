@@ -1,0 +1,124 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Possible Bug: Empty Animations Are Cached In AngularJS 1.4
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		Possible Bug: Empty Animations Are Cached In AngularJS 1.4
+	</h1>
+
+	<p>
+		<a ng-click="toggleWithAnimation()">Toggle With Animation</a>
+		&mdash;
+		<a ng-click="toggleWithoutAnimation()">Toggle Without Animation</a>
+		&mdash;	
+		<span ng-switch="isUsingAnimation">
+			(
+				<span ng-switch-when="true">Using</span>
+				<span ng-switch-when="false">Not using</span>
+				Animations
+			)
+		</span>
+
+		<!--
+			Any animation, with duration, will cause the animation cache to be be 
+			flushed. As such, once our cache gets "stuck" we can flush it by triggering
+			an unrelated animation.
+		-->
+		<a ng-click="flushCache()">Flush cache w/ Animation</a>
+		<span ng-if="( flushCount % 2 )" class="flusher"></span>
+	</p>
+
+	<!--
+		While we are removing the embedded DIV tag, it's the parent class that will
+		drive the animation in the CSS (via contextual CSS properties).
+		--
+		NOTE: This means that the CLASS attribute on the embedded DIV never changes
+		even if the expected animation behavior changes. This is what will break this
+		particular approach as it is short-circuited by the animation cache.
+	-->
+	<div ng-class="{ animated: isUsingAnimation }">
+
+		<!-- This box will animate based on parent class state. -->
+		<div ng-if="isShowingBox" class="box">
+
+			The thing is, Bob, it's not that I'm lazy, it's that I just don't care. 
+
+		</div>
+
+	</div>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.4.3.js"></script>
+	<script type="text/javascript" src="./angular-animate-1.4.3.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		angular.module( "Demo", [ "ngAnimate" ] );
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I control the root of the demo.
+		angular.module( "Demo" ).controller(
+			"AppController",
+			function AppController( $scope ) {
+
+				// I determine if the dynamic element is currently visible.
+				$scope.isShowingBox = false;
+
+				// I flag the use of animations when hiding / showing the box.
+				$scope.isUsingAnimation = false;
+
+				// I am used to trigger the "flushing" animation.
+				$scope.flushCount = 0;
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I increment the flush count, which triggers a new animation.
+				$scope.flushCache = function() {
+
+					$scope.flushCount++;
+
+				};
+
+
+				// I show / hide the box using animation.
+				$scope.toggleWithAnimation = function() {
+
+					$scope.isUsingAnimation = true;
+					$scope.isShowingBox = ! $scope.isShowingBox;
+
+				};
+
+
+				// I show / hide the box using instant transitions.
+				$scope.toggleWithoutAnimation = function() {
+
+					$scope.isUsingAnimation = false;
+					$scope.isShowingBox = ! $scope.isShowingBox;
+
+				};
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
