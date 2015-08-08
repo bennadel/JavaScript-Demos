@@ -1,0 +1,321 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Conditional Animations And Transition Timing In AngularJS
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		Conditional Animations And Transition Timing In AngularJS
+	</h1>
+
+	<p>
+		<a ng-click="toggleFriends()">Toggle Friends</a>
+		&mdash;
+		<a ng-click="toggleEnemies()">Toggle Enemies</a>
+	</p>
+
+	<!--
+		The list of friends will only animate the first 2 times it is rendered. After
+		that, it will show up and hide instantly.
+	-->
+	<div
+		ng-if="isShowingFriends" 
+		class="box friends"
+		bn-conditional-animation="friend-list">
+
+		<h2>
+			Friends
+		</h2>
+
+		<ul>
+			<li ng-repeat="friend in friends">
+				{{ friend }}
+			</li>
+		</ul>
+
+	</div>
+
+	<!--
+		The list of enemies will only animate the first 5 times it is rendered. After
+		that, it will show up and hide instantly.
+	-->
+	<div 
+		ng-if="isShowingEnemies" 
+		class="box enemies"
+		bn-conditional-animation="enemies-list">
+
+		<h2>
+			Enemies
+		</h2>
+
+		<ul>
+			<li ng-repeat="enemy in enemies">
+				{{ enemy }}
+			</li>
+		</ul>
+
+	</div>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.4.3.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs/angular-animate-1.4.3.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		angular.module( "Demo", [ "ngAnimate" ] );
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I control the root of the demo.
+		angular.module( "Demo" ).controller(
+			"AppController",
+			function AppController( $scope ) {
+
+				// I determine which boxes are being rendered.
+				$scope.isShowingFriends = false;
+				$scope.isShowingEnemies = false;
+
+				// I define the list of data points in each box.
+				$scope.friends = [ "Sarah", "Joanna", "Kim", "Tricia" ];
+				$scope.enemies = [ "Pam", "Anna", "Jane", "Sue", "Cat" ];
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+				
+				// I toggle the rendering of the enemies list.
+				$scope.toggleEnemies = function() {
+
+					$scope.isShowingEnemies = ! $scope.isShowingEnemies;
+
+				};
+
+
+				// I toggle the rendering of the friends list.
+				$scope.toggleFriends = function() {
+
+					$scope.isShowingFriends = ! $scope.isShowingFriends;
+
+				};
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I add conditional-animation classes to the linked element on each rendering.
+		angular.module( "Demo" ).directive(
+			"bnConditionalAnimation",
+			function bnConditionalAnimation( conditionalAnimationService ) {
+
+				// Get the settings for conditional animation rendering.
+				var classPrefix = conditionalAnimationService.getClassPrefix();
+				var maxCount = conditionalAnimationService.getMaxCount();
+
+				// Return the directive configuration object.
+				return({
+					link: link,
+					restrict: "A"
+				});
+
+
+				// I bind the JavaScript events to the local view-model.
+				function link( scope, element, attributes ) {
+
+					// Each linked instances of this directive keeps count, 
+					// individually, of the number of renderings. As such, the 
+					// developer needs to either provide a unique name; or, just 
+					// group this rendering with other non-provided names.
+					var animationKey = ( attributes[ "bnConditionalAnimation" ] || "*" );
+
+					// The whole point of this is to phase animations out over time. 
+					// As such, there is a natural limit to the usefulness of this over
+					// time. Therefore, we're going to max out the actual class name 
+					// after 10-renderings. If you need more granularity than that, you
+					// might be missing the intent here.
+					var count = Math.min(
+						conditionalAnimationService.incrementCount( animationKey ),
+						maxCount
+					);
+
+					// Add the appropriate nth rendering class. 
+					attributes.$addClass( classPrefix + count );
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I work with the bnConditionalAnimation directive to help keep track of which 
+		// elements have been linked, and how many times they have been rendered.
+		angular.module( "Demo" ).provider(
+			"conditionalAnimationService",
+			function conditionalAnimationServiceProvider() {
+
+				// I am the prefix used when adding the conditional class names to the
+				// rendered elements. This value will be followed by the numeric 
+				// rendering count for the given instance.
+				// --
+				// Example: ( "conditional-animation-n" + 3 ).
+				var classPrefix = "conditional-animation-n";
+
+				// I am the maximum count that will actually be appended to the class 
+				// prefix. The internal count will continue to increment; but, overall,
+				// when it comes to rendering, the class name will never go above this.
+				var maxCount = 10;
+				
+				// Return the public API.
+				return({
+					setClassPrefix: setClassPrefix,
+					setMaxCount: setMaxCount,
+					$get: conditionalAnimationService
+				});
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I set the class prefix to use when adding conditional class names.
+				function setClassPrefix( newClassPrefix ) {
+
+					classPrefix = newClassPrefix;
+
+				}
+
+
+				// I set the max value to be used when rendering class names.
+				function setMaxCount( newMaxCount ) {
+
+					maxCount = newMaxCount;
+
+				}
+
+
+				// ---
+				// SERVICE DEFINITION.
+				// ---
+
+
+				// I provide the conditional animation service.
+				function conditionalAnimationService() {
+
+					// I hold the count of each rendered item.
+					var cache = Object.create( null );
+
+					// Return the public API.
+					return({
+						getClassPrefix: getClassPrefix,
+						getCount: getCount,
+						getMaxCount: getMaxCount,
+						incrementCount: incrementCount
+					});
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I return the class prefix for conditional classes.
+					function getClassPrefix() {
+
+						return( classPrefix );
+
+					}
+
+
+					// I return the number of times the given instance has been rendered.
+					function getCount( key ) {
+
+						return( getCachedInstance( key ).count );
+
+					}
+
+
+					// I return the max count that should be used when generating 
+					// conditional class names. This value is capped while the underlying
+					// render count is unbounded.
+					function getMaxCount() {
+
+						return( maxCount );
+
+					}
+
+
+					// I increment the rendering count for the given instance.
+					function incrementCount( key ) {
+
+						return( ++ getCachedInstance( key ).count );
+
+					}
+
+
+					// ---
+					// PRIVATE METHODS.
+					// ---
+
+
+					// I return the cache of the given instance. If the cache does not 
+					// yet exist, it is created and returned.
+					function getCachedInstance( key ) {
+
+						var normalizedKey = normalizeKey( key );
+
+						// Ensure the existence of the cache.
+						if ( ! cache[ normalizedKey ] ) {
+
+							cache[ normalizedKey ] = {
+								key: key,
+								count: 0
+							};
+
+						}
+
+						return( cache[ normalizedKey ] );
+
+					}
+
+
+					// I return a normalized key that won't collide with any other 
+					// values on the Object prototype.
+					// --
+					// NOTE: Since we are using Object.create( null ) to setup the cache,
+					// this probably isn't necessary.
+					function normalizeKey( key ) {
+
+						return( "animation:" + key );
+
+					}
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>

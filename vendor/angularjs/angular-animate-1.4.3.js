@@ -737,15 +737,14 @@ var $AnimateCssProvider = ['$animateProvider', function($animateProvider) {
 
     function computeCachedCssStyles(node, className, cacheKey, properties) {
       var timings = gcsLookup.get(cacheKey);
-console.log( "Cached key", cacheKey )
-console.log( "Cached", timings )
+
       if (!timings) {
         timings = computeCssStyles($window, node, properties);
         if (timings.animationIterationCount === 'infinite') {
           timings.animationIterationCount = 1;
         }
       }
-console.log( "computed", timings );
+
       // we keep putting this in multiple times even though the value and the cacheKey are the same
       // because we're keeping an interal tally of how many duplicate animations are detected.
       gcsLookup.put(cacheKey, timings);
@@ -958,7 +957,6 @@ console.log( "computed", timings );
       }
 
       var timings = computeTimings(node, fullClassName, cacheKey);
-      console.log( timings );
       var relativeDelay = timings.maxDelay;
       maxDelay = Math.max(relativeDelay, 0);
       maxDuration = timings.maxDuration;
@@ -991,7 +989,7 @@ console.log( "computed", timings );
           temporaryStyles.push(getCssKeyframeDurationStyle(maxDuration));
         }
       }
-console.log( "max duration:",  maxDuration, !flags.recalculateTimingStyles );
+
       if (maxDuration === 0 && !flags.recalculateTimingStyles) {
         return closeAndReturnNoopAnimator();
       }
@@ -1108,7 +1106,6 @@ console.log( "max duration:",  maxDuration, !flags.recalculateTimingStyles );
         });
 
         close();
-        gcsLookup.flush();
 
         return {
           $$willAnimate: false,
@@ -2764,7 +2761,6 @@ var $$AnimationProvider = ['$animateProvider', function($animateProvider) {
 
             if (getRunner(targetElement) && getDomNode(targetElement).parentNode) {
               var operation = invokeFirstDriver(animationEntry);
-              //debugger;
               if (operation) {
                 startAnimationFn = operation.start;
               }

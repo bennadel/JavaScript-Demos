@@ -1,0 +1,145 @@
+
+a[ ng-click ] {
+	color: red ;
+	cursor: pointer ;
+	text-decoration: underline ;
+	user-select: none ;
+		-moz-user-select: none ;
+		-webkit-user-select: none ;
+}
+
+div.box {
+	background-color: #F0F0F0 ;
+	border: 1px solid #CCCCCC ;
+	border-radius: 3px 3px 3px 3px ;
+	padding: 6px 20px 6px 20px ;
+	position: relative ;
+}
+
+
+/* Set up the friends timing. */
+
+div.friends.ng-enter {
+	opacity: 0.0 ;
+	transition: 0s opacity ease ;
+}
+
+div.friends.ng-enter-active {
+	opacity: 1.0 ;
+}
+
+div.friends.ng-leave {
+	transition: 0s opacity ease ;
+}
+
+div.friends.ng-leave-active {
+	opacity: 0.0 ;
+}
+
+div.friends.conditional-animation-n1 {
+	transition-duration: 1s ;
+}
+
+div.friends.conditional-animation-n2 {
+	transition-duration: 0.5s ;
+}
+
+
+/* Set up the enemies timing. */
+
+div.enemies.ng-enter {
+	opacity: 0.0 ;
+	transition: 0s opacity ease ;
+}
+
+div.enemies.ng-enter-active {
+	opacity: 1.0 ;
+}
+
+div.enemies.ng-leave {
+	transition: 0s opacity ease ;
+}
+
+div.enemies.ng-leave-active {
+	opacity: 0.0 ;
+}
+
+div.enemies.conditional-animation-n1 {
+	transition-duration: 1s ;
+}
+
+div.enemies.conditional-animation-n2 {
+	transition-duration: 0.85s ;
+}
+
+div.enemies.conditional-animation-n3 {
+	transition-duration: 0.6s ;
+}
+
+div.enemies.conditional-animation-n4 {
+	transition-duration: 0.4s ;
+}
+
+div.enemies.conditional-animation-n5 {
+	transition-duration: 0.15s ;
+}
+
+
+/* Set up the "info note" rendering. */
+
+div.box.conditional-animation-n1:before,
+div.box.conditional-animation-n2:before,
+div.box.conditional-animation-n3:before,
+div.box.conditional-animation-n4:before,
+div.box.conditional-animation-n5:before,
+div.box.conditional-animation-n6:before,
+div.box.conditional-animation-n7:before,
+div.box.conditional-animation-n8:before,
+div.box.conditional-animation-n9:before,
+div.box.conditional-animation-n10:before {
+	background-color: red ;
+	border-radius: 3px 0px 3px 0px ;
+	color: #FFFFFF ;
+	content: "Render n1" ;
+	font-size: 13px ;
+	left: 0px ;
+	position: absolute ;
+	padding: 5px 10px 5px 10px ;
+	top: 0px ;
+}
+
+div.box.conditional-animation-n2:before {
+	content: "Render n2" ;
+}
+
+div.box.conditional-animation-n3:before {
+	content: "Render n3" ;
+}
+
+div.box.conditional-animation-n4:before {
+	content: "Render n4" ;
+}
+
+div.box.conditional-animation-n5:before {
+	content: "Render n5" ;
+}
+
+div.box.conditional-animation-n6:before {
+	content: "Render n6" ;
+}
+
+div.box.conditional-animation-n7:before {
+	content: "Render n7" ;
+}
+
+div.box.conditional-animation-n8:before {
+	content: "Render n8" ;
+}
+
+div.box.conditional-animation-n9:before {
+	content: "Render n9" ;
+}
+
+div.box.conditional-animation-n10:before {
+	content: "Render n10" ;
+}
