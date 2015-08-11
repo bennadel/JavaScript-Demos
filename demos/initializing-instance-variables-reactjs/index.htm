@@ -1,0 +1,130 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Initialize Instance Variables In getInitialState() For Consistency In ReactJS
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body>
+	
+	<h1>
+		Initialize Instance Variables In getInitialState() For Consistency In ReactJS
+	</h1>
+
+	<div id="content">
+		<!-- This content will be replaced with the React rendering. -->
+	</div>
+	
+
+	<!-- Load scripts. -->
+	<script src="../../vendor/reactjs/react-0.13.3.min.js"></script>
+	<script src="../../vendor/reactjs/JSXTransformer-0.13.3.js"></script>
+	<script type="text/jsx">
+		
+		// I manage the Demo widget.
+		var Demo = React.createClass({
+
+			// I get called once for pre-mount state initialization.
+			getInitialState: function() {
+
+				// I maintain a reference to the pending timer for the deferred 
+				// displaying of the message. While not used for rendering directly,
+				// this is part of the component's general state and should live 
+				// alongside the rest of the state.
+				this.timer = null;
+				this.timerDelay = this.getRandomTimerDuration( 1000, 2000 );
+
+				// Return the initial view-model.
+				return({
+					message: null
+				});
+
+			},
+
+
+			// ---
+			// PUBLIC METHODS.
+			// ---
+
+
+			// I get called after the component has mounted in the browser's DOM.
+			componentDidMount: function() {
+
+				// Now that we know we have the DOM, including the global Window object,
+				// we know we have access to the setTimeout() function. Let's kick off
+				// the deferred message timer.
+				this.timer = setTimeout( this.handleTimer, this.timerDelay );
+
+			},
+
+
+			// I get called once before the component is removed from the browser's DOM.
+			componentWillUnmount: function() {
+
+				// Clear the timer in case the component was mounted and then unmounted
+				// before the timer has a chance to resolve. 
+				// --
+				// NOTE: This demo doesn't actually unmount the component; but, I am 
+				// trying to get used to thinking about the full component life cycle.
+				clearTimeout( this.timer );
+
+			},
+
+
+			// I update the view-model when the message timer has resolved.
+			handleTimer: function() {
+
+				this.setState({
+					message: "Bang!"
+				});
+
+			},
+
+
+			// I return the virtual DOM representation of the view-model.
+			render: function() {
+
+				var messageNode = this.state.message
+					? ( <strong>{ this.state.message }</strong> )
+					: "..."
+				;
+
+				return(
+					<p>
+						Wait for it: { messageNode }
+					</p>
+				);
+
+			},
+
+
+			// ---
+			// PRIVATE METHODS.
+			// ---
+
+
+			// I return a value between the given bounds, inclusive.
+			getRandomTimerDuration: function( min, max ) {
+
+				return( min + Math.floor( Math.random() * ( max - min + 1 ) ) );
+
+			}
+
+		});
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// Render the root Demo and mount it inside the given element.
+		React.render( <Demo />, document.getElementById( "content" ) );
+
+	</script>
+
+</body>
+</html>

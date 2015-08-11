@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Initialize Instance Variables In getInitialState() For Consistency In ReactJS](http://bennadel.github.io/JavaScript-Demos/demos/initializing-instance-variables-reactjs/)
 * [Conditional Animations And Transition Timing In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/conditional-animation-angularjs/)
 * [Possible Bug: Empty Animations Are Cached In AngularJS 1.4](http://bennadel.github.io/JavaScript-Demos/demos/empty-animations-cached-in-angularjs-1-4/)
 * [How The $destroy Event Affects The Scope Tree In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/destroy-parent-scope-angularjs/)
