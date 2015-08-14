@@ -250,7 +250,7 @@
 					// DOM-tree has changed. As such, we have unbind the previous mouse
 					// events and re-bind them to the new element.
 					console.warn( "Top-level element has changed." );
-					console.info( "Rending root level tag:", this.element[ 0 ].tagName );
+					console.info( "Rending root level tag:", activeElement.tagName );
 
 					// Unbind the existing handler.
 					this.element.off( "mousemove", this.handleMousemove );
