@@ -1,0 +1,18 @@
+
+p.box {
+	background-color: #FAFAFA ;
+	border: 1px solid #CCCCCC ;
+	border-radius: 4px 4px 4px 4px ;
+	height: 100px ;
+	overflow: hidden ;
+	padding: 20px 20px 20px 20px ;
+	position: relative ;
+}
+
+p.box span.pointer {
+	background-color: #FF0099 ;
+	border-radius: 6px 6px 6px 6px ;
+	height: 12px ;
+	position: absolute ;
+	width: 12px ;
+}

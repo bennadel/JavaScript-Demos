@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Creating AngularJS-Inspired "Directive" Components In ReactJS](http://bennadel.github.io/JavaScript-Demos/demos/behavior-component-reactjs/)
 * [Experimenting With Higher-Order Components In ReactJS](http://bennadel.github.io/JavaScript-Demos/demos/wrapping-components-reactjs/)
 * [Initialize Instance Variables In getInitialState() For Consistency In ReactJS](http://bennadel.github.io/JavaScript-Demos/demos/initializing-instance-variables-reactjs/)
 * [Conditional Animations And Transition Timing In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/conditional-animation-angularjs/)
