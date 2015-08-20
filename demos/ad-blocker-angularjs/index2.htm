@@ -1,0 +1,110 @@
+<!doctype html>
+<html ng-app="Demo" ng-controller="AppController">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		TypeError: Cannot Read Property "childNodes" Of Undefined In AngularJS
+	</title>
+</head>
+<body>
+
+	<h1>
+		TypeError: Cannot Read Property "childNodes" Of Undefined In AngularJS
+	</h1>
+
+	<div>
+
+		<div ng-style="{}">
+			Woot, there it is.
+		</div>
+
+	</div>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="./angular-1.4.3.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I control the root of the application.
+		angular.module( "Demo" ).controller(
+			"AppController",
+			function( $scope, thirdPartyScript ) {
+
+				// Trigger the loading of a script, which will be injected into the DOM.
+				thirdPartyScript.load();
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide the ability to load and then interact with a 3rd-party script.
+		angular.module( "Demo" ).factory(
+			"thirdPartyScript",
+			function( $timeout ) {
+
+				// Return the public API.
+				return({
+					load: load
+				});
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I load the 3rd-party script tag.
+				function load() {
+					
+					// Apply the script inject in the next tick of the event loop. This
+					// will give AngularJS time to safely finish its compile and linking.
+					$timeout( loadSync, 0, false );
+
+				}
+
+
+				// ---
+				// PRIVATE METHODS.
+				// ---
+
+
+				// I load the 3rd-party script tag.
+				function loadSync() {
+					
+					// Inject script before first script in page.
+					// --
+					// NOTE: Code like this is often copy-pasted out of some read-me
+					// on the 3rd-party vendor documentation.
+
+					var script = document.createElement( "script" );
+					script.src = "//cdn.some-3rd-party-vendor.com/js/script.js";
+
+					var firstScript = document.getElementsByTagName( "script" )[ 0 ];
+
+					firstScript
+						.parentNode
+							.insertBefore( script, firstScript )
+					;
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
