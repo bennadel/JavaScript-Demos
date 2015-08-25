@@ -45,7 +45,16 @@
 			// I get called once, on the client, when the component has been rendered.
 			componentDidMount: function() {
 
+				// Automatically update the state every 3 seconds.
 				setInterval( this.updateState, 3000 );
+
+				// Update the state on mouse-down.
+				// --
+				// NOTE: We are implementing our own event binding here - not using the
+				// React Element props to manage the event handler.
+				React.findDOMNode( this )
+					.addEventListener( "mousedown", this.updateState )
+				;
 
 			},
 
@@ -72,7 +81,7 @@
 			updateState: function( event ) {
 
 				console.log( "= = = = = = = = = = = =" );
-				console.log( "EVENT:", ( event ? "Click" : "Timer" ) );
+				console.log( "EVENT:", ( event ? event.type : "timer" ) );
 				console.log( "Pre-setState:", this.state.counter );
 
 				this.setState({
