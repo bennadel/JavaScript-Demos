@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [setState() State Mutation Operation May Be Synchronous In ReactJS](http://bennadel.github.io/JavaScript-Demos/demos/set-state-timing-reactjs/)
 * [TypeError: Cannot Read Property "childNodes" Of Undefined In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/ad-blocker-angularjs/)
 * [ngInclude Asynchronous Template Life Cycle Bug In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/async-template-bug-angularjs/)
 * [Creating AngularJS-Inspired "Directive" Components In ReactJS](http://bennadel.github.io/JavaScript-Demos/demos/behavior-component-reactjs/)

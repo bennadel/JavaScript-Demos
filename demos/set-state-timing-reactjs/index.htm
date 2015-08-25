@@ -1,0 +1,102 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		setState() State Mutation Operation May Be Synchronous In ReactJS
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body>
+	
+	<h1>
+		setState() State Mutation Operation May Be Synchronous In ReactJS
+	</h1>
+
+	<div id="content">
+		<!-- This content will be replaced with the React rendering. -->
+	</div>
+	
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/reactjs/react-0.13.3.js"></script>
+	<script type="text/javascript">
+		
+		// I manage the Demo widget.
+		var Demo = React.createClass({
+
+			// I initialize the state of the component, including instance variables.
+			getInitialState: function() {
+
+				return({
+					counter: 0
+				});
+
+			},
+
+
+			// ---
+			// PUBLIC METHODS.
+			// ---
+
+
+			// I get called once, on the client, when the component has been rendered.
+			componentDidMount: function() {
+
+				setInterval( this.updateState, 3000 );
+
+			},
+
+
+			// I render the component based on the current state.
+			render: function() {
+
+				return(
+					React.DOM.span(
+						{
+							onClick: this.updateState,
+							className: "button"
+						},
+						( "Counter at " + this.state.counter )
+					)
+				);
+
+			},
+
+
+			// I update the state and log the existing state value on either side of 
+			// the operation in an attempt to see if the state mutation operation is 
+			// synchronous or asynchronous. 
+			updateState: function( event ) {
+
+				console.log( "= = = = = = = = = = = =" );
+				console.log( "EVENT:", ( event ? "Click" : "Timer" ) );
+				console.log( "Pre-setState:", this.state.counter );
+
+				this.setState({
+					counter: ( this.state.counter + 1 )
+				});
+
+				console.log( "Post-setState:", this.state.counter );
+
+			}
+
+		});
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// Render the root Demo and mount it inside the given element.
+		React.render( 
+			React.createElement( Demo ),
+			document.getElementById( "content" ) 
+		);
+
+	</script>
+
+</body>
+</html>
