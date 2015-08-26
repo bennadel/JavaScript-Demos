@@ -1,0 +1,351 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Experimenting With "Query String Zones" In AngularJS
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		Experimenting With "Query String Zones" In AngularJS
+	</h1>
+
+	<h2>
+		Hard-Coded Routes
+	</h2>
+
+	<p>
+		<a href="#/foo">Foo</a> &nbsp;|&nbsp;
+		<a href="#/bar?id=3">Bar</a> &nbsp;|&nbsp;
+		<a href="#/meep?id=17&confirm=true#anchor">Meep</a>
+	</p>
+
+	<h2>
+		Query-String Only
+	</h2>
+
+	<p>
+		This zone manages "A", "B", and "C".
+	</p>
+
+	<!--
+		The ngQueryStringZone and ngQueryString directives work together to merge query
+		string values into an HREF attribute as the location of the page changes. Then,
+		the bnDemoZone can work with the ngQueryStringZone directive to manage a subset
+		of query string parameters for a given area of the page.
+
+		In this case, this "zone" will work with the params A, B, and C, leaving the rest
+		of the existing query string values in-place.
+	-->
+	<div ng-query-string-zone="[ 'A', 'B', 'C' ]" bn-demo-zone-DISABLED>
+
+		<p>
+			<a ng-query-string="A=1">Goto Thing A</a> &nbsp;|&nbsp;
+			<a ng-query-string="A=2&B=101">Goto Thing B</a> &nbsp;|&nbsp;
+			<a ng-query-string="A=3&B=201&C=301">Goto Thing C</a>
+		</p>
+
+	</div>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.4.3.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		angular.module( "Demo", [] );
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I control the root of the demo.
+		angular.module( "Demo" ).controller(
+			"AppController",
+			function AppController( $scope, $location ) {
+
+				// When the location changes, let's just log-out the parts to see how
+				// the are being affected.
+				$scope.$on(
+					"$locationChangeSuccess",
+					function logLocationChange() {
+
+						console.log( 
+							"Location changed: [%s] [%s] [%s]", 
+							$location.path(), 
+							JSON.stringify( $location.search() ), 
+							$location.hash()
+						);
+
+					}
+				);
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I work in conjunction with the ngQueryStringZone directive to define the merge
+		// algorithm used to integrate the zone-oriented query string params.
+		angular.module( "Demo" ).directive(
+			"bnDemoZone",
+			function bnDemoZoneDirective() {
+
+				// Return the directive configuration object. 
+				// --
+				// NOTE: We require the ngQueryStringZone directive controller. 
+				return({
+					link: link,
+					require: "ngQueryStringZone",
+					restrict: "A"
+				});
+
+
+				// I bind the JavaScript events to the view-model.
+				function link( scope, element, attributes, zoneController ) {
+
+					// The whole point of this directive is manage the way the zone-based
+					// query string params are integrated into the existing URL. Just 
+					// like the normal $location.search() method, we can set params to 
+					// [null] in order to remove them URL.
+					zoneController.merge = function( search, params, originalMerge ) {
+
+						// To demonstrate how this differs from the default zone behavior,
+						// we'll set the values to "default" rather than "null.
+						search.A = "default";
+						search.B = "default";
+						search.C = "default";
+
+						// Hand-off to the original merge algorithm.
+						originalMerge( search, params );
+
+					};
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I define a "zone" within the application that will help manage the integration
+		// of query string parameters into the existing URL for the generation of HREFs.
+		// If the directive is provided with an array of keys, it will "nullify" those 
+		// keys before it performs the integration.
+		angular.module( "Demo" ).directive(
+			"ngQueryStringZone",
+			function ngQueryStringZoneDirective() {
+
+				// Return the directive configuration object. 
+				return({
+					controller: ZoneController,
+					link: link,
+					require: "ngQueryStringZone",
+					restrict: "A"
+				});
+
+
+				// I provide an API that can be overridden by a sibling directive that
+				// wants to supply a custom merge() method.
+				function ZoneController() {
+
+					return({
+						merge: null
+					});
+					
+				}
+
+
+				// I bind the JavaScript events to the view-model.
+				function link( scope, element, attributes, zoneController ) {
+
+					// If we were not provided with an expression to watch, there's no 
+					// way for us to provide a merge algorithm.
+					if ( ! attributes.ngQueryStringZone ) {
+						
+						return;
+
+					}
+
+					// Watch the collection of keys. If it changes, we need to redefine 
+					// the merge algorithm to use.
+					scope.$watchCollection( 
+						attributes.ngQueryStringZone,
+						function defineCustomMerge( keys ) {
+
+							zoneController.merge = function( search, params, originalMerge ) {
+
+								// Set all the given keys to null before we pass control
+								// back to the original merge algorithm. This will prevent
+								// not-explicitly-provided params from showing up in the 
+								// generated URL.
+								for ( var i = 0, length = keys.length ; i < length ; i++ ) {
+
+									search[ keys[ i ] ] = null;
+
+								}
+
+								originalMerge( search, params );
+
+							};
+
+						}
+					);
+
+				}
+
+			}
+		);
+
+
+		// I observe the given query string subset and generate a full HREF attribute
+		// that merges the given subset into the existing location.
+		angular.module( "Demo" ).directive(
+			"ngQueryString",
+			function ngQueryStringDirective( $location ) {
+
+				// Return the directive configuration object. 
+				return({
+					link: link,
+					require: "^?ngQueryStringZone",
+					restrict: "A"
+				});
+
+
+				// I bind the JavaScript events to the view-model.
+				function link( scope, element, attributes, zoneController ) {
+
+					// Whenever the attribute or the location changes, we need to 
+					// recalculate the HREF for this element.
+					attributes.$observe( "ngQueryString", updateHref );
+					scope.$on( "$locationChangeStart", updateHref );
+
+
+					// I update the HREF attribute, integrating the current query string
+					// substring into the existing location.
+					function updateHref() {
+
+						var search = angular.copy( $location.search() );
+						var params = parseQueryString( attributes.ngQueryString );
+
+						// If we have a zoneController, use the merge-override.
+						if ( zoneController && zoneController.merge ) {
+
+							zoneController.merge( search, params, merge );
+
+						} else {
+
+							merge( search, params );
+
+						}
+
+						// Update the element HREF to use the integrated URL.
+						attributes.$set( 
+							"href",
+							buildUrl( $location.path(), search, $location.hash() )
+						);
+
+					}
+
+				}
+
+
+				// ---
+				// STATIC METHODS.
+				// ---
+
+
+				// I build a valid URL using the given components.
+				function buildUrl( path, search, hash ) {
+
+					var url = ( "#" + path );
+
+					var newQueryString = [];
+
+					for ( var key in search ) {
+
+						// In order to given the "zone" an opportunity to delete query
+						// params, we're going to skip over any value that is explicitly
+						// set to [null].
+						if ( search[ key ] === null ) {
+
+							continue;
+
+						}
+
+						newQueryString.push( key + "=" + search[ key ] );
+
+					}
+
+					if ( newQueryString.length ) {
+
+						url += ( "?" + newQueryString.join( "&" ) );
+
+					}
+
+					if ( hash ) {
+
+						url += ( "#" + hash );
+
+					}
+
+					return( url );
+
+				}
+
+
+				// I merge the given query params into the given search params.
+				function merge( search, params ) {
+
+					for ( var key in params ) {
+
+						search[ key ] = params[ key ];
+
+					}
+
+				}
+
+
+				// I parse the given query string into a set of key-value pairs.
+				function parseQueryString( queryString ) {
+
+					var parsed = {};
+					var pairs = queryString.split( "&" );
+
+					for ( var i = 0, length = pairs.length ; i < length ; i++ ) {
+
+						var parts = pairs[ i ].split( "=" );
+
+						if ( parts.length === 1 ) {
+
+							parts[ 1 ] = true;
+
+						}
+
+						parsed[ parts[ 0 ] ] = parts[ 1 ];
+
+					}
+
+					return( parsed );
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
