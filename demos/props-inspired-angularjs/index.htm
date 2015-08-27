@@ -1,0 +1,221 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Creating A ReactJS-Inspired "Props" Object In AngularJS
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body ng-controller="AppController as vm">
+
+	<h1>
+		Creating A ReactJS-Inspired "Props" Object In AngularJS
+	</h1>
+
+	<!--
+		From our calling context, we will be passing in a number of values to the
+		component directive. This includes:
+
+		* someId (property)
+		* doThis (method)
+		* doThat (method)
+
+		Within the component directive, we will denote these on a incoming "props" 
+		hash (ala ReactJS) to help differentiate it from the "vm" (view-model) hash 
+		that is used by the component internally and by its template.
+	-->
+	<div 
+		bn-widget
+		some-id="vm.someID"
+		do-this="vm.doThis()"
+		do-that="vm.doThat()">
+		<!-- Content supplied by component. -->
+	</div>
+
+
+	<!--
+		This is the component directive template. Note that it makes reference to 
+		both a "vm" object (its own view-model) and to a "props" object, which holds
+		the values passed-in by the calling context.
+	-->
+	<script type="text/ng-template" id="widget.htm">
+
+		<div class="m-widget">
+
+			<p>
+				Passed-in ID: {{ props.someID }}
+			</p>
+			
+			<p>
+				<a ng-click="vm.handleThis()">Do this!</a> 
+				or
+				<a ng-click="vm.handleThat()">Do that!</a>
+			</p>
+
+		</div>
+
+	</script>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.4.3.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I control the root of the application.
+		angular.module( "Demo" ).controller(
+			"AppController",
+			function AppController( $scope ) {
+
+				// Here, we are using the emergent pattern of using the "vm" (ie, the
+				// Controller itself) as the view-model instead of the $scope object. 
+				// In this way, we force ourselves to get away from scope-inheritance 
+				// and must explicitly pass values around. This also has the added 
+				// benefit of making the HTML template more explicit in so much as it
+				// requires us to explicitly scope the reference to the controller 
+				// (using the "controller as" syntax).
+				var vm = this;
+
+				vm.someID = 4;
+
+				// Expose the public methods.
+				vm.doThat = doThat;
+				vm.doThis = doThis;
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				function doThat() {
+
+					console.log( "Do that (passed-in)!" );
+
+				}
+
+
+				function doThis() {
+
+					console.log( "Do this (passed-in)!" );
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I define the demo widget "component directive".
+		angular.module( "Demo" ).directive(
+			"bnWidget",
+			function bnWidgetDirective() {
+
+				// Return the directive configuration object. We are expecting three 
+				// attributes to be passed-in, which we are mapping to isolate-scope 
+				// bindings. 
+				// --
+				// NOTE: I am purposefully NOT USING the "bindToController" configuration
+				// option as these are going to be called-out using our "props" hash 
+				// reference (to differentiate it from the rest of our view-model).
+				return({
+					controller: "WidgetController",
+					controllerAs: "vm",
+					restrict: "A",
+					scope: {
+						someID: "=someId",
+						doThis: "&doThis",
+						doThat: "&doThat",
+					},
+					templateUrl: "widget.htm"
+				});
+
+			}
+		);
+
+
+		// I am the demo widget controller.
+		angular.module( "Demo" ).controller(
+			"WidgetController",
+			function WidgetController( $scope ) {
+
+				// Here, again, we are using the emergent pattern of the controller as 
+				// the "vm" or "view-model". When combined with the "controllerAs" 
+				// directive configuration, this makes our scoping within the controller 
+				// easier (thanks to lexical binding) and makes our template references
+				// more explicit.
+				var vm = this;
+
+				// Our component directive is using an isolate-scope. Which means that 
+				// the passed-in properties are automatically bound to the scope (note 
+				// that I purposefully avoided the bindToController option). And, since
+				// we are no longer depending on $scope for our view-model (see note 
+				// above), it means that all of our incoming properties are isolated 
+				// within the $scope. As such, we can simply alias the scope as our 
+				// ReactJS-inspired "props" object. Also, we can store a reference to 
+				// the props back on itself so that it can be explicitly referenced in 
+				// the template.
+				// --
+				// NOTE: Because this is still technically on the $scope object, you can
+				// easily watch for changes using $scope.$watch( "props.someValue" ).
+				var props = $scope.props = $scope;
+
+				// Expose the public methods.
+				vm.handleThat = handleThat;
+				vm.handleThis = handleThis;
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I manage the that-click, passing it off to the passed-in method.
+				function handleThat() {
+
+					// Notice that I am using the "props" reference to differentiate
+					// between the local view-model and the values passed-in from the
+					// calling context.
+					if ( confirm( "Are you sure for [" + props.someID + "]?" ) ) {
+
+						props.doThat();
+
+					}
+
+				}
+
+
+				// I manage the this-click, passing it off to the passed-in method.
+				function handleThis() {
+
+					// Notice that I am using the "props" reference to differentiate
+					// between the local view-model and the values passed-in from the
+					// calling context.
+					if ( confirm( "Are you sure for [" + props.someID + "]?" ) ) {
+
+						props.doThis();
+
+					}
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>

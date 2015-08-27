@@ -1,0 +1,15 @@
+
+div.m-widget {
+	border: 2px solid #CCCCCC ;
+	border-radius: 4px 4px 4px 4px ;
+	padding: 0px 16px 0px 16px ;
+}
+
+div.m-widget a {
+	color: red ;
+	cursor: pointer ;
+	text-decoration: underline ;
+	user-select: none ;
+		-moz-user-select: none ;
+		-webkit-user-select: none ;
+}

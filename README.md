@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Creating A ReactJS-Inspired "Props" Object In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/props-inspired-angularjs/)
 * [Experimenting With "Query String Zones" In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/ng-query-string-zone/)
 * [setState() State Mutation Operation May Be Synchronous In ReactJS](http://bennadel.github.io/JavaScript-Demos/demos/set-state-timing-reactjs/)
 * [TypeError: Cannot Read Property "childNodes" Of Undefined In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/ad-blocker-angularjs/)
