@@ -1,0 +1,154 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Accessing The View-Model Inside The Link Function When Using Controller-As In AngularJS
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body>
+
+	<h1>
+		Accessing The View-Model Inside The Link Function When Using Controller-As In AngularJS
+	</h1>
+
+	<div bn-widget starting-at="5">
+		<!-- Content to be supplied by component. -->
+	</div>
+
+
+	<!-- 
+		I am the widget component template (inlined). 
+		--
+		NOTE: Since we are using the "controller as" syntax, the view model is 
+		being exposed in the directive template as the "vm" object.
+	-->
+	<script type="text/ng-template" id="widget.htm">
+
+		<div class="m-widget">
+			Click count: {{ vm.clickCount }}
+		</div>
+
+	</script>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.4.3.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		angular.module( "Demo", [] );
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I control the view-model for the widget.
+		angular.module( "Demo" ).controller(
+			"WidgetController",
+			function WidgetController( $scope ) {
+
+				// Using this pattern allows us to maintain a reference to the THIS 
+				// scope as a means to "reveal" public properties and methods for use
+				// as the "view model". It also has the added benefit of providing a
+				// lexical binding which can be referenced inside of closures. 
+				var vm = this;
+
+				// Since we are using the Controller instance as the view model, we
+				// can use the incoming isolate $scope as the ReactJS-inspired "props" 
+				// object. I feel like this creates a really nice separation of origins.
+				var props = $scope.props = $scope;
+
+
+				vm.clickCount = ( props.startingAt || 0 );
+
+				// Expose the public API.
+				vm.incrementClickCount = incrementClickCount;
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I increment the count and return the new value.
+				function incrementClickCount() {
+
+					return( ++vm.clickCount );
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I define the widget directive, gluing the template to a controller.
+		angular.module( "Demo" ).directive(
+			"bnWidget",
+			function WidgetDirective() {
+
+				// Return the directive configuration object.
+				// --
+				// NOTE: By using the "controllerAs" property, we are telling AngularJS
+				// that we *intend* to use the Controller instance as the view-model in
+				// our template and our link function. As such, AngularJS will expose the
+				// controller on the scope using the given variable name.
+				// --
+				// CAUTION: Since we defining the "controller" property, the current 
+				// controller will automatically be injected into the link() function
+				// as the fourth argument.
+				return({
+					controller: "WidgetController",
+					controllerAs: "vm",
+					link: link,
+					scope: {
+						startingAt: "=?"
+					},
+					templateUrl: "widget.htm"
+				});
+
+
+				// I bind the JavaScript events to the view-model (which, in this case, 
+				// is the controller instance).
+				function link( scope, element, attributes, controller ) {
+
+					element.on( "click", handleClick );
+
+
+					// When the user clicks inside the current element, we need to 
+					// consume the .incrementClickCount() on the view-model. Since we 
+					// are using the "controller as" syntax, this means that our 
+					// Controller IS OUR view model; the public properties and methods on
+					// the controller are the properties and methods of our view model. 
+					// As such, in order to access the view model from within our link
+					// function, we just need access to the Controller, which has been
+					// injected into the link() function. 
+					function handleClick( event ) {
+
+						scope.$apply(
+							function changeViewModel() {
+
+								controller.incrementClickCount();
+
+							}
+						);
+
+					}
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>

@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Accessing The View-Model Inside The Link Function When Using Controller-As In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/accessing-vm-in-link-angularjs/)
 * [Creating A ReactJS-Inspired "Props" Object In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/props-inspired-angularjs/)
 * [Experimenting With "Query String Zones" In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/ng-query-string-zone/)
 * [setState() State Mutation Operation May Be Synchronous In ReactJS](http://bennadel.github.io/JavaScript-Demos/demos/set-state-timing-reactjs/)
