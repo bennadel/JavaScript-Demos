@@ -1,0 +1,360 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Protecting Context-Dependent Promise Callbacks In AngularJS
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		Protecting Context-Dependent Promise Callbacks In AngularJS
+	</h1>
+
+	<!-- I show the list of friends. -->
+	<ul>
+		<li ng-repeat="friend in friends track by friend.id">
+
+			<a ng-click="showFriend( friend )">{{ friend.name }}</a>
+
+		</li>
+		<li ng-if="selectedID">
+			<a ng-click="hideFriend()">Close detail</a>
+		</li>
+	</ul>
+
+	<!-- I show the friend detail (based on the selectedID). -->
+	<div 
+		ng-if="selectedID"
+		ng-controller="DetailController"
+		ng-hide="isLoading">
+
+		<hr />
+
+		<h2>
+			{{ friend.name }}
+		</h2>
+
+		<p>
+			Description goes here ....
+		</p>
+
+	</div>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.4.3.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I control the root of the application.
+		app.controller(
+			"AppController",
+			function AppController( $scope, friendService ) {
+
+				$scope.friends = [];
+
+				// I define which friend has been selected for detail-viewing.
+				$scope.selectedID = 0;
+
+				loadRemoteData();
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I close the currently-open friend detail.
+				$scope.hideFriend = function() {
+
+					$scope.selectedID = 0;
+
+				};
+
+
+				// I show the detail for the given friend.
+				$scope.showFriend = function( friend ) {
+
+					$scope.selectedID = friend.id;
+
+				};
+
+
+				// ---
+				// PRIVATE METHODS.
+				// ---
+
+
+				// I apply the given data to the local view-model.
+				function applyRemoteData( friends ) {
+
+					$scope.friends = friends;
+
+					$scope.friends.push({
+						id: -1,
+						name: "Friend that will error"
+					});
+
+				}
+
+
+				// I load the remote data.
+				function loadRemoteData() {
+
+					friendService
+						.getFriends()
+						.then( applyRemoteData )
+					;
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I control the friend detail.
+		// --
+		// NOTE: For this demo, I am not using an isolate scope - I am depending on an
+		// inherited "selectedID" value to determine which friend to select. 
+		app.controller(
+			"DetailController",
+			function DetailController( $scope, friendService ) {
+
+				// I determine if remote data is currently being loaded.
+				$scope.isLoading = false;
+
+				// I am the selected friend.
+				$scope.friend = null;
+
+				// Since the controller will not be destroyed if the friend ID changes, 
+				// we have to listen for changes so that we can reload the new data and
+				// re-render the view.
+				$scope.$watch( "selectedID", handleIdChange );
+
+				// We want to listen for the destroy event so we can clean up the scope
+				// and flag it as deleted (this comes into play with callbacks below).
+				$scope.$on( "$destroy", handleDestroy );
+
+				loadRemoteData();
+
+
+				// ---
+				// PRIVATE METHODS.
+				// ---
+
+
+				// I apply the remote data to the local view-model.
+				function applyRemoteData( friend ) {
+
+					$scope.friend = friend;
+
+				}
+
+
+				// I handle the destroy event on the scope.
+				function handleDestroy() {
+
+					$scope.isDestroyed = true;
+
+				}
+
+
+				// I handle the change in selectedID, updating the controller, as 
+				// necessary, for the new data.
+				function handleIdChange( newValue, oldValue ) {
+
+					if ( newValue === oldValue ) {
+
+						return;
+
+					}
+
+					loadRemoteData();
+
+				}
+
+
+				// I load the remote data.
+				function loadRemoteData() {
+
+					$scope.isLoading = true;
+
+					// NOTE: We are wrapping our resolve and reject callbacks with 
+					// protect(). This will protect the callback against state changes
+					// that occur during the data request.
+					friendService
+						.getFriendByID( $scope.selectedID )
+						.then(
+							protect( handleResolve ),
+							protect( handleReject )
+						)
+						.finally( handleFinally )
+					;
+
+
+					// I handle the resolve event on the promise.
+					function handleResolve( friend ) {
+
+						applyRemoteData( friend );
+
+					}
+
+					// I handle the reject event on the promise.
+					function handleReject() {
+
+						alert( "Oops, data could not be loaded." );
+
+					}
+
+					// I handle the completion of the promise chain, for cleanup.
+					function handleFinally() {
+
+						$scope.isLoading = false;
+
+					}
+
+					// I protect the given callback against state changes that occur 
+					// between the time of definition and invocation. 
+					function protect( callback ) {
+
+						// Here, we can lock in the state references that we want to 
+						// ensure are consistent at the time the callback is invoked. If
+						// and of these values change, we can consider the result no 
+						// longer relevant.
+						var selectedID = $scope.selectedID;
+
+						return( proxy );
+
+
+						function proxy( response ) {
+
+							// Now that the callback is being invoked, let's check to 
+							// make sure that it is still consistent with the state of
+							// the component. If the component was destroyed, of if the
+							// selected ID changed, then the callback no longer makes 
+							// sense to call; and, in fact, it can have a detrimental 
+							// effect on the user experience if we let it through.
+							if ( $scope.isDestroyed || ( selectedID !== $scope.selectedID ) ) {
+
+								console.warn( "Skipping callback due to state change." );
+								return;
+
+							}
+
+							// If we made it this far, the state is still consistent -
+							// invoke the original callback.
+							return( callback.call( null, response ) );
+
+						}
+
+					}
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide access to the friend data over simulated network latency.
+		app.factory(
+			"friendService",
+			function friendServiceFactory( $q, $timeout ) {
+
+				var friends = [
+					{
+						id: 1,
+						name: "Sarah"
+					},
+					{
+						id: 2,
+						name: "Kim"
+					},
+					{
+						id: 3,
+						name: "Joanna"
+					}
+				];
+
+				// Return the public API.
+				return({
+					getFriends: getFriends,
+					getFriendByID: getFriendByID
+				});
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I get all of the friends. Returns a promise.
+				function getFriends() {
+
+					var deferred = $q.defer();
+
+					$timeout(
+						function networkLatency() {
+
+							deferred.resolve( angular.copy( friends ) );
+
+						},
+						1000,
+						false // $q will handle the digest.
+					);
+
+					return( deferred.promise );
+
+				} 
+
+
+				// I get the friend with the given ID. Returns a promise.
+				function getFriendByID( id ) {
+
+					var deferred = $q.defer();
+
+					$timeout(
+						function networkLatency() {
+
+							var friend = friends[ id - 1 ];
+
+							friend
+								? deferred.resolve( angular.copy( friend ) )
+								: deferred.reject()
+							;
+							
+						},
+						1000,
+						false // $q will handle the digest.
+					);
+
+					return( deferred.promise );
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>

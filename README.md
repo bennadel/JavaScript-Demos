@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Protecting Context-Dependent Promise Callbacks In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/protect-promise-callback-angularjs/)
 * [Accessing The View-Model Inside The Link Function When Using Controller-As In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/accessing-vm-in-link-angularjs/)
 * [Creating A ReactJS-Inspired "Props" Object In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/props-inspired-angularjs/)
 * [Experimenting With "Query String Zones" In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/ng-query-string-zone/)
