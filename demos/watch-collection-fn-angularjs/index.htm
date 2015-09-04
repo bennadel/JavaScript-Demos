@@ -1,0 +1,116 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Using Scope.$watchCollection() To Watch Functions In AngularJS
+	</title>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		Using Scope.$watchCollection() To Watch Functions In AngularJS
+	</h1>
+
+	<p>
+		<em>All the action is in the console.</em>
+	</p>
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.4.3.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I control the root for the application.
+		angular.module( "Demo" ).controller(
+			"AppController",
+			function( $scope, $interval ) {
+
+				var a = 1;
+				var b = 1;
+				var friends = [
+					{
+						name: "Sarah"
+					},
+					{
+						name: "Tricia"
+					}
+				];
+
+				// Rather than watching a String value, we're going to watch a Function.
+				// The $watchCollection() method is expecting to find either an Array 
+				// (it will watch the indices) or an Object (it will watch the keys).
+				// However, since we are using function instead of a string, it doesn't
+				// have to watch values that are accessible off of the Scope. In this 
+				// case, we're going to be watching private value (to prove a point).
+				$scope.$watchCollection(
+					function getValue() {
+
+						// Return an array composed of any values that we want. The 
+						// contents of this array will be SHALLOWLY compared on each
+						// run of the digest.
+						return( [ a, b, friends[ 0 ] ] );
+
+					},
+					function collectionChanged( newValue, oldValue ) {
+
+						console.log( 
+							"New value: %s , Was value: %s.", 
+							JSON.stringify( newValue ),
+							JSON.stringify( oldValue )
+						);
+
+					}
+				);
+
+
+				// Increment the values in the collection over time.
+
+				$interval(
+					function incrementA() {
+
+						// NOTE: Even though this is triggering a digest, you will see 
+						// that it doesn't actually trigger the watch since the value
+						// doesn't change.
+						a += 0;
+
+					},
+					1000
+				);
+
+				$interval(
+					function incrementB() {
+
+						b += 1;
+
+					},
+					( 7 * 1000 )
+				);
+
+				$interval(
+					function incrementFriends() {
+
+						// NOTE: We are changing the object REFERENCE in friends[ 0 ].
+						// This is to show that this works for object references as well
+						// as for simple value comparisons.
+						friends.unshift( friends.pop() );
+
+					},
+					( 11 * 1000 )
+				);
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
