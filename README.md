@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Rending ReactJS Components In AngularJS Using AngularJS Directives](http://bennadel.github.io/JavaScript-Demos/demos/react-in-angularjs/)
 * [Using Scope.$watchCollection() To Watch Functions In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/watch-collection-fn-angularjs/)
 * [Protecting Context-Dependent Promise Callbacks In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/protect-promise-callback-angularjs/)
 * [Accessing The View-Model Inside The Link Function When Using Controller-As In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/accessing-vm-in-link-angularjs/)

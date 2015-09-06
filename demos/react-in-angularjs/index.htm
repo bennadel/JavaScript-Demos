@@ -1,0 +1,463 @@
+<!doctype html>
+<html id="app">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Rending ReactJS Components In AngularJS Using AngularJS Directives
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body ng-controller="AppController as vm">
+
+	<h1>
+		Rending ReactJS Components In AngularJS Using AngularJS Directives
+	</h1>
+
+	<h2>
+		You Have {{ vm.friends.length }} Friends - Playa!
+	</h2>
+
+	<!-- List of Friends : The AngularJS aspect. -->
+	<ul>
+		<li ng-repeat="friend in vm.friends track by friend.id">
+
+			<a ng-click="vm.showFriend( friend )">{{ friend.name }}</a>
+
+			<span ng-if="( vm.selectedLike && vm.matchingFriends[ friend.id ] )">
+				&laquo;-- Matching Like for {{ vm.selectedLike }}
+			</span>
+
+		</li>
+	</ul>
+
+	<!-- Friend Detail : The ReactJS aspect (with AngularJS "glue"). -->
+	<bn:friend
+		ng-if="vm.selectedFriend"
+		friend="vm.selectedFriend"
+		on-highlight-matches="vm.highlightMatches( like )"
+		on-close="vm.hideFriend()">
+	</bn:friend>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.4.3.min.js"></script>
+	<script type="text/javascript" src="../../vendor/reactjs/react-0.13.3.min.js"></script>
+	<script type="text/javascript" src="../../vendor/reactjs/JSXTransformer-0.13.3.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		angular.module( "Demo", [] );
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I control the root of the application.
+		angular.module( "Demo" ).controller(
+			"AppController",
+			function provideAppController( $scope ) {
+
+				var vm = this;
+
+				// I am the collection of friends we will render.
+				vm.friends = [
+					{
+						id: 1,
+						name: "Sarah",
+						description: "Probably the coolest person I have ever met...",
+						personality: "Extrovert",
+						likes: [ "Movies", "Cats", "Games", "Hiking" ]
+					},
+					{
+						id: 2,
+						name: "Tricia",
+						description: "She has a simple outlook she calls 'beast mode'...",
+						personality: "Extrovert",
+						likes: [ "Working Out", "Cats", "Running", "Hiking" ]
+					},
+					{
+						id: 3,
+						name: "Joanna",
+						description: "Probably the nicest person I have ever met...",
+						personality: "Introvert",
+						likes: [ "Movies", "Working Out", "Books", "Hiking" ]
+					}
+				];
+
+				// I determine which detail we are viewing.
+				vm.selectedFriend = null;
+
+				// I determine which friends like the given selection.
+				vm.selectedLike = null;
+				vm.matchingFriends = {};
+
+				// Expose public methods.
+				vm.hideFriend = hideFriend;
+				vm.highlightMatches = highlightMatches;
+				vm.showFriend = showFriend;
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I hide the detail for the currently selected friend.
+				function hideFriend() {
+
+					vm.selectedFriend = null;
+					vm.selectedLike = null;
+
+				}
+
+
+				// I highlight all the friends who have the given "like" in common.
+				function highlightMatches( like ) {
+
+					vm.selectedLike = like;
+					vm.matchingFriends = {};
+
+					// Track the ID of each matching friend.
+					vm.friends.forEach(
+						function iterator( friend ) {
+
+							vm.matchingFriends[ friend.id ] = ( friend.likes.indexOf( like ) !== -1 );
+
+						}
+					);
+
+				}
+
+
+				// I show the detail for the given friend.
+				function showFriend( friend ) {
+
+					vm.selectedFriend = friend;
+					vm.selectedLike = null;
+
+				}
+				
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I "glue" the AngularJS context to the React context, wiring the AngularJS 
+		// view-model into the props that are available to the React element.
+		angular.module( "Demo" ).directive(
+			"bnFriend",
+			function bnFriendDirective( ReactFriend ) {
+
+				// Return the directive configuration object.
+				return({
+					link: link,
+					scope: {
+						friend: "=",
+						onHighlightMatches: "&",
+						onClose: "&"
+					}
+				});
+
+
+				// I bind the JavaScript events to the view-model.
+				function link( scope, element, attributes ) {
+
+					// Whenever the friend reference changes, we have to re-render the
+					// ReactJS component as it will need to have new props collection
+					// injected into it.
+					scope.$watch( "friend", renderReactElement );
+
+					// When the scope is destroyed, we have to manually unmount the React
+					// component so that the view can cleanup after itself.
+					scope.$on( "$destroy", unmountReactElement );
+
+
+					// I define the current props and render the React element.
+					function renderReactElement() {
+
+						// CAUTION: When passing in AngularJS methods as ReactJS props,
+						// we can never pass-in the direct method references for two 
+						// reasons. First, ReactJS doesn't know about the AngularJS 
+						// $digest life-cycle; as such, we need to wrap the calls in a
+						// proxy that will invoke $apply(). This way, we get the implicit
+						// AngularJS error handling and will trigger a digest cycle. And
+						// second, these methods use dependency-injection based on both 
+						// the current context (ie, the scope) and the invocation 
+						// arguments. As such, we [may] need the wrapper to translate the
+						// positional arguments into "locals" context-override arguments.
+						var props = {
+							friend: scope.friend,
+							onHighlightMatches: function( value ) {
+
+								scope.$apply(
+									function changeViewModel() {
+
+										// Translate positional arguments to "locals" 
+										// context-override arguments.
+										scope.onHighlightMatches({
+											like: value
+										});
+
+									}
+								);
+
+							},
+							onClose: function() {
+
+								scope.$apply( scope.onClose );
+
+							}
+						};
+
+						React.render( 
+							React.createElement( ReactFriend, props ), 
+							element[ 0 ]
+						);
+
+					}
+
+
+					// I unmount the React element so that the React view can cleanup 
+					// after itself.
+					function unmountReactElement() {
+
+						React.unmountComponentAtNode( element[ 0 ] );
+
+					}
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// We need to defer the AngularJS bootstrapping to give the JSX transpiler 
+		// time to work its magic before we tell AngularJS that our module is ready.
+		// --
+		// NOTE: You wouldn't need this with a build-step. I'm only doing this since I 
+		// am using the in-browser transformation which is our make-shift build step.
+		setTimeout(
+			function deferBootstrapping() {
+
+				angular.bootstrap( document.getElementById( "app" ), [ "Demo" ] );
+
+			},
+			100
+		);
+
+	</script>
+	<script type="text/jsx">
+
+		// I define the Friend ReactJS component that is injected into our directive.
+		angular.module( "Demo" ).factory(
+			"ReactFriend",
+			function ReactFriendFactory() {
+
+				// I render the friend detail.
+				var Friend = React.createClass({
+
+					// I define the incoming props requirements.
+					propTypes: {
+						friend: React.PropTypes.object.isRequired,
+						onHighlightMatches: React.PropTypes.func.isRequired,
+						onClose: React.PropTypes.func.isRequired
+					},
+
+
+					// I return the initial sate of the component.
+					getInitialState: function() {
+
+						console.log( "Friend - get initial state." );
+						return({});
+
+					},
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I get call the first time the component is mounted in the DOM.
+					componentDidMount: function() {
+
+						console.log( "Friend - component did mount." );
+
+					},
+
+
+					// I get called when the component's rendering is synchronized with 
+					// the DOM. This does not get invoked for the first rendering - only
+					// for subsequent renderings.
+					componentDidUpdate: function() {
+
+						console.log( "Friend - component did update." );
+
+					},
+
+
+					// I get called when the component will receive new props. This does
+					// not get invoked for the first rendering - only for subsequent 
+					// renderings.
+					componentWillReceiveProps: function() {
+
+						console.log( "Friend - component will receive props." );
+
+					},
+
+
+					// I get called when the component is about to be removed from the DOM.
+					componentWillUnmount: function() {
+
+						console.log( "Friend - component will unmount." );
+
+					},
+
+
+					// I handle the click on the close button.
+					handleClose: function( event ) {
+
+						this.props.onClose();
+
+					},
+
+
+					// I render the virtual DOM based on the current state.
+					render: function() {
+
+						return(
+							<div>
+
+								<hr />
+
+								<h2>
+									{ this.props.friend.name }
+								</h2>
+
+								<p>
+									<strong>Personality</strong>: { this.props.friend.personality }
+								</p>
+
+								<p>
+									{ this.props.friend.description }
+								</p>
+
+								<Likes 
+									likes={ this.props.friend.likes }
+									onSelect={ this.props.onHighlightMatches }>
+								</Likes>
+
+								<p>
+									( <a onClick={ this.handleClose }>&times; Close</a> )
+								</p>
+
+							</div>
+						);
+						
+					}
+
+				});
+
+
+				// I render the likes collection.
+				var Likes = React.createClass({
+
+					// I define the incoming props requirements.
+					propTypes: {
+						likes: React.PropTypes.array.isRequired,
+						onSelect: React.PropTypes.func.isRequired
+					},
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I render the virtual DOM based on the current state.
+					render: function() {
+
+						var tags = this.props.likes.map(
+							function operator( like, i ) {
+
+								return( 
+									<Like 
+										key={ like }
+										onSelect={ this.props.onSelect }
+										value={ like }>
+									</Like>
+								);
+
+							},
+							this
+						);
+
+						return(
+							<p>
+								<strong>Likes</strong>: { tags }
+							</p>
+						);
+
+					}
+
+				});
+
+
+				// I render the individual likes.
+				var Like = React.createClass({
+
+					// I define the incoming props requirements.
+					propTypes: {
+						value: React.PropTypes.string.isRequired,
+						onSelect: React.PropTypes.func.isRequired
+					},
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I handle the click of the like.
+					handleClick: function( event ) {
+
+						this.props.onSelect( this.props.value );
+
+					},
+
+
+					// I render the virtual DOM based on the current state.
+					render: function() {
+
+						return(
+							<a onClick={ this.handleClick } className="like">
+								{ this.props.value }
+							</a>
+						);
+
+					}
+
+				});
+
+
+				// Return the factory definition - this is the value that injectable 
+				// into our AngularJS directive "glue".
+				return( Friend );
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
