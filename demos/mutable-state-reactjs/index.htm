@@ -1,0 +1,296 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Why Should I Care About Immutable Data In ReactJS?
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body>
+	
+	<h1>
+		Why Should I Care About Immutable Data In ReactJS?
+	</h1>
+
+	<div id="content">
+		<!-- This content will be replaced with the React rendering. -->
+	</div>
+	
+
+	<!-- Load scripts. -->
+	<script src="../../vendor/reactjs/react-0.13.3.min.js"></script>
+	<script src="../../vendor/reactjs/JSXTransformer-0.13.3.js"></script>
+	<script src="../../vendor/lodash/lodash-3.9.3.min.js"></script>
+	<script type="text/jsx">
+		
+		// I manage the Demo widget.
+		var Demo = React.createClass({
+
+			// I provide the initial view-model and instance properties, before the 
+			// component is mounted.
+			getInitialState: function() {
+
+				this.uuid = 3;
+
+				return({
+					widgets: [
+						{
+							id: 1,
+							name: "Widget 1",
+							likes: []
+						},
+						{
+							id: 2,
+							name: "Widget 2",
+							likes: []
+						},
+						{
+							id: 3,
+							name: "Widget 3",
+							likes: []
+						}
+					]
+				});
+
+			},
+
+
+			// ---
+			// PUBLIC METHODS.
+			// ---
+
+
+			// I add a like entry for the widget with the given ID.
+			addLike: function( widgetID ) {
+
+				// NOTE: I am mutating the state values directly rather than treating
+				// them as immutable data structure. Then, I am calling .setState() to
+				// trigger a re-calculation of the virtual DOM.
+
+				var widget = _.find(
+					this.state.widgets,
+					{
+						id: widgetID
+					}
+				);
+
+				widget.likes.push( new Date() );
+
+				this.setState({
+					widgets: this.state.widgets
+				});
+
+			},
+
+
+			// I add a new widget to the current collection. The new widget is 
+			// automatically given a unique ID.
+			addWidget: function() {
+
+				// NOTE: I am mutating the state values directly rather than treating
+				// them as immutable data structure. Then, I am calling .setState() to
+				// trigger a re-calculation of the virtual DOM.
+
+				var nextID = ++this.uuid;
+
+				this.state.widgets.push({
+					id: nextID,
+					name: ( "Widget " + nextID ),
+					likes: []
+				});
+
+				this.setState({
+					widgets: this.state.widgets
+				});
+
+			},
+
+			
+			// I delete the widget with the given ID.
+			deleteWidget: function( widgetID ) {
+
+				// NOTE: I am mutating the state values directly rather than treating
+				// them as immutable data structure. Then, I am calling .setState() to
+				// trigger a re-calculation of the virtual DOM.
+
+				var index = _.findIndex(
+					this.state.widgets,
+					{
+						id: widgetID
+					}
+				);
+
+				this.state.widgets.splice( index, 1 );
+
+				this.setState({
+					widgets: this.state.widgets
+				});
+
+			},
+
+
+			// I handle the click on the add-widget link.
+			handleAddWidget: function( event ) {
+
+				this.addWidget();
+
+			},
+
+
+			// I return the virtual DOM based on the current state.
+			render: function() {
+
+				return( 
+					<div>
+						
+						<h2>
+							You Have { this.state.widgets.length } Widgets!
+						</h2>
+
+						<p>
+							<a onClick={ this.handleAddWidget }>Add Widget</a>
+						</p>
+
+						<Widgets
+							widgets={ this.state.widgets }
+							onLike={ this.addLike }
+							onDelete={ this.deleteWidget }>
+						</Widgets>
+
+					</div>
+				);
+
+			}
+
+		});
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I manage the Widgets collection.
+		var Widgets = React.createClass({
+
+			// I return the virtual DOM based on the current state.
+			render: function() {
+
+				var widgets = this.props.widgets.map(
+					function operator( widget ) {
+
+						return(
+							<Widget 
+								key={ widget.id }
+								widget={ widget } 
+								onLike={ this.props.onLike }
+								onDelete={ this.props.onDelete }>
+							</Widget>
+						);
+
+					},
+					this
+				);
+
+				return( <ul> { widgets } </ul> );
+
+			}
+
+		});
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I manage the Widget line item.
+		var Widget = React.createClass({
+
+			// I get called before the components receives new props after its initial
+			// rendering. At this point, we can update the state based on the change in 
+			// props.
+			// --
+			// CAUTION: If these data references are mutated directly (ie, not treated 
+			// as immutable) anywhere in the chain, the before and after props may be 
+			// the same value.
+			componentWillReceiveProps: function( newProps ) {
+
+				console.log( 
+					"[ %s ] Component will receive props: current( %s ) vs new( %s ).",
+					this.props.widget.name,
+					this.props.widget.likes.length,
+					newProps.widget.likes.length
+				);
+
+			},
+
+
+			// I handle the click on the delete link.
+			handleDelete: function( event ) {
+
+				this.props.onDelete( this.props.widget.id );
+
+			},
+
+
+			// I handle the click on the like link.
+			handleLike: function( event ) {
+
+				this.props.onLike( this.props.widget.id );
+
+			},
+
+
+			// I return the virtual DOM based on the current state.
+			render: function() {
+
+				var likeCount = this.props.widget.likes.length;
+
+				return(
+					<li>
+						{ this.props.widget.name }
+						&mdash;
+						<a onClick={ this.handleLike }>Like ( { likeCount } )</a>
+						{ " or " }
+						<a onClick={ this.handleDelete }>Delete</a>
+					</li>
+				);
+
+			},
+
+
+			// I determine if the component should update based on the delta in both 
+			// the props and the state.
+			// --
+			// CAUTION: If these data references are mutated directly (ie, not treated 
+			// as immutable) anywhere in the chain, the before and after props may be 
+			// the same value.
+			shouldComponentUpdate: function( newProps, newState ) {
+
+				console.log(
+					"[ %s ] Should component update: current( %s ) vs new( %s )",
+					this.props.widget.name,
+					this.props.widget.likes.length,
+					newProps.widget.likes.length
+				);
+
+				return( true ); // Should update.
+
+			}
+
+		});
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// Render the root Demo and mount it inside the given element.
+		React.render( <Demo />, document.getElementById( "content" ) );
+
+	</script>
+
+</body>
+</html>
