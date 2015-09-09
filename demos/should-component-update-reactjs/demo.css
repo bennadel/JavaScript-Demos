@@ -1,0 +1,20 @@
+a {
+	color: red ;
+	cursor: pointer ;
+	text-decoration: underline ;
+	user-select: none ;
+		-moz-user-select: none ;
+		-webkit-user-select: none ;
+}
+
+div.tree {
+	border: 1px solid #999999 ;
+	margin: 16px 0px 16px 0px ;
+	padding: 16px 16px 16px 16px ;
+}
+
+div.tree-node {
+	border: 1px solid #CCCCCC ;
+	margin: 10px 10px 10px 10px ;
+	padding: 10px 10px 10px 10px ;
+}

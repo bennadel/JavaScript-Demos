@@ -1,0 +1,174 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		shouldComponentUpdate() Will Short-Circuit An Entire Subtree Of Components In ReactJS
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body>
+
+	<h1>
+		shouldComponentUpdate() Will Short-Circuit An Entire Subtree Of Components In ReactJS
+	</h1>
+
+	<div id="content">
+		<!-- App will be rendered here. -->
+	</div>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/reactjs/react-0.13.3.js"></script>
+	<script type="text/javascript" src="../../vendor/reactjs/JSXTransformer-0.13.3.js"></script>
+	<script type="text/jsx">
+
+		// I render the demo with two trees - one of which employs updates, the other of
+		// which does not. This will allow us to see how changes in values are propagated
+		// down through different sub-trees with different update settings.
+		var Demo = React.createClass({
+
+			// I return the initial state of the component.
+			getInitialState: function() {
+
+				return({
+					count: 0
+				});
+
+			},
+
+
+			// ---
+			// PUBLIC METHODS.
+			// ---
+
+
+			// I handle a click to update the count.
+			handleCountClick: function( event ) { 
+
+				this.setState({
+					count: ( this.state.count + 1 )
+				});
+
+			},
+
+
+			// I return the virtual DOM based on the current component state.
+			// --
+			// NOTE: One of the trees has update=TRUE, the other has update=FALSE.
+			render: function() {
+
+				return(
+					<div>
+						<p>
+							<a onClick={ this.handleCountClick }>Increase Count</a>
+						</p>
+
+						<Tree update={ true } count={ this.state.count } />
+						<Tree update={ false } count={ this.state.count } />
+					</div>
+				);
+
+			}
+
+		});
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I output a tree of nested nodes. However, after the first render, any 
+		// subsequent requests to render may be short-circuited by the "update" prop
+		// that is passed-in. If the update prop is set to False, the rendering will 
+		// be prevented at the top of the tree, thereby preventing all the nested 
+		// SubTree nodes from rendering as well.
+		var Tree = React.createClass({
+
+			// I return the virtual DOM based on the current component state.
+			render: function() {
+
+				return(
+					<div className="tree">
+						
+						<strong>
+							Will Update: { this.props.update ? "True" : "False" }
+						</strong>
+
+						<SubTree 
+							level={ 1 } 
+							count={ this.props.count }>
+						</SubTree>
+						
+					</div>
+				);
+
+			},
+
+
+			// I determine if the virtual DOM should be recalculated.
+			// --
+			// NOTE: If I return false, recalculation for the entire subtree of this
+			// component will be halted / short-circuited.
+			shouldComponentUpdate: function( newProps, newState ) {
+
+				return( this.props.update );
+
+			}
+
+		});
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I recursively render a set of nested nodes, each of which outputs the count
+		// value that is passed-in.
+		// --
+		// NOTE: This React class doesn't use the .shouldComponentUpdate() method. The
+		// point here is to demonstrate that this node will not update if its parent node
+		// is not going to update.
+		var SubTree = React.createClass({
+
+			// I return the virtual DOM based on the current component state.
+			render: function() {
+
+				// If we've reached our max-depth, stop recursing.
+				if ( this.props.level === 5 ) {
+
+					return( null );
+
+				}
+
+				return(
+					<div className="tree-node">
+
+						Count: { this.props.count }
+
+						<SubTree 
+							level={ this.props.level + 1 }
+							count={ this.props.count }>
+						</SubTree>
+
+					</div>
+				);
+
+			}
+
+		});
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// Render the root Demo and mount it inside the given element.
+		React.render( <Demo />, document.getElementById( "content" ) );
+
+	</script>
+
+</body>
+</html>

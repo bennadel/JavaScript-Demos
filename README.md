@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [shouldComponentUpdate() Will Short-Circuit An Entire Subtree Of Components In ReactJS](http://bennadel.github.io/JavaScript-Demos/demos/should-component-update-reactjs/)
 * [Why Should I Care About Immutable Data In ReactJS?](http://bennadel.github.io/JavaScript-Demos/demos/mutable-state-reactjs/)
 * [Rendering ReactJS Components In AngularJS Using AngularJS Directives](http://bennadel.github.io/JavaScript-Demos/demos/react-in-angularjs/)
 * [Using Scope.$watchCollection() To Watch Functions In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/watch-collection-fn-angularjs/)
