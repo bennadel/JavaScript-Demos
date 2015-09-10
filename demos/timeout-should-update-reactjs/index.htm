@@ -1,0 +1,175 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		setState(), shouldComponentUpdate(), and render() Timing In ReactJS
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body>
+
+	<h1>
+		setState(), shouldComponentUpdate(), and render() Timing In ReactJS
+	</h1>
+
+	<div id="content">
+		<!-- App will be rendered here. -->
+	</div>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/reactjs/react-0.13.3.min.js"></script>
+	<script type="text/javascript">
+
+		// I manage the root application component.
+		var Demo = React.createClass({
+
+			// I return the initial state of the component.
+			getInitialState: function() {
+
+				return({
+					status: "Pre-timeout",
+					count: 0
+				});
+
+			},
+
+
+			// ---
+			// PUBLIC METHODS.
+			// ---
+
+
+			// I get called once, on the client, when the component has been rendered
+			// in the DOM.
+			componentDidMount: function() {
+
+				setTimeout( this.handleTimeout, 1000 );
+
+			},
+
+
+			// I handle the click event.
+			// --
+			// CAUTION: Since this is powered by the onClick prop of the link element,
+			// it is managed through ReactJS' event delegation and allows state updates 
+			// to be queued and flushed asynchronously.
+			handleClick: function( event ) {
+
+				console.warn( "handleClick()." );
+				console.log( "handleClick() - BEFORE setState()." );
+
+				var currentCount = this.state.count;
+
+				this.setState({
+					count: ++currentCount
+				});
+
+				this.setState({
+					count: ++currentCount
+				});
+
+				console.log( "handleClick() - AFTER setState()." );
+
+			},
+
+
+			// I handle the timeout event (callback).
+			// --
+			// CAUTION: Since this is powered by the setTimeout() method, it cannot be
+			// managed by ReactJS' event delegation system. As such, the state changes 
+			// cannot be queued and must be applied synchronously.
+			handleTimeout: function() {
+
+				console.warn( "handleTimeout()." );
+				console.log( "handleTimeout() - BEFORE setState()." );
+				
+				this.setState({
+					status: "Post-timeout"
+				});
+
+				this.setState({
+					count: ( this.state.count + 1 )
+				})
+
+				console.log( "handleTimeout() - AFTER setState()." );
+
+			},
+
+
+
+			// I return the virtual DOM based on the current component state.
+			render: function() {
+
+				console.log( "render()." );
+
+				return(
+					React.DOM.div(
+						null,
+						React.DOM.p(
+							null,
+							React.DOM.strong( null, "Status:" ),
+							" ",
+							this.state.status
+						),
+						React.DOM.p(
+							null,
+							React.DOM.strong( null, "Count:" ),
+							" ",
+							this.state.count
+						),
+						React.DOM.p(
+							null,
+							React.DOM.a(
+								{
+									onClick: this.handleClick
+								},
+								"Increment count"
+							)
+						)
+					)
+				);
+
+			},
+
+
+			// I determine if the virtual DOM should be recalculated based on the 
+			// delta in the incoming state and props collections.
+			shouldComponentUpdate: function( newProps, newState ) {
+
+				console.log( "shouldComponentUpdate()." );
+				console.log(
+					". . . shouldComponentUpdate() - Status: new( %s ) vs. current( %s ).", 
+					newState.status,
+					this.state.status
+				);
+				console.log(
+					". . . shouldComponentUpdate() - Count: new( %s ) vs. current( %s ).",
+					newState.count,
+					this.state.count
+				);
+
+				return( true );
+
+			}
+
+		});
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// Render the root Demo and mount it inside the given element.
+		React.render( 
+			React.createElement( Demo ), 
+			document.getElementById( "content" )
+		);
+
+	</script>
+
+</body>
+</html>
