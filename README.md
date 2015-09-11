@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Is Using .bind() To Lock-In Arguments A "Code Smell" In ReactJS](http://bennadel.github.io/JavaScript-Demos/demos/bind-args-code-smell-reactjs/)
 * [setState(), shouldComponentUpdate(), and render() Timing In ReactJS](http://bennadel.github.io/JavaScript-Demos/demos/timeout-should-update-reactjs/)
 * [shouldComponentUpdate() Will Short-Circuit An Entire Subtree Of Components In ReactJS](http://bennadel.github.io/JavaScript-Demos/demos/should-component-update-reactjs/)
 * [Why Should I Care About Immutable Data In ReactJS?](http://bennadel.github.io/JavaScript-Demos/demos/mutable-state-reactjs/)

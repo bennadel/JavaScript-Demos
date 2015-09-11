@@ -1,0 +1,173 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Is Using .bind() To Lock-In Arguments A "Code Smell" In ReactJS
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body>
+	
+	<h1>
+		Is Using .bind() To Lock-In Arguments A "Code Smell" In ReactJS
+	</h1>
+
+	<p>
+		<strong>Current Approach</strong>: Using a <em>sub-component</em>.
+	</p>
+
+	<div id="content">
+		<!-- This content will be replaced with the React rendering. -->
+	</div>
+	
+
+	<!-- Load scripts. -->
+	<script src="../../vendor/reactjs/react-0.13.3.js"></script>
+	<script src="../../vendor/reactjs/JSXTransformer-0.13.3.js"></script>
+	<script src="../../vendor/lodash/lodash-3.9.3.js"></script>
+	<script type="text/jsx">
+		
+		// I manage the Demo widget.
+		var Demo = React.createClass({
+
+			// I return the initial state (and setup instance properties) for the component.
+			getInitialState: function() {
+
+				return({
+					friends: [
+						{
+							id: 1,
+							name: "Joanna",
+							clickCount: 0
+						},
+						{
+							id: 2,
+							name: "Sarah",
+							clickCount: 0
+						},
+						{
+							id: 3,
+							name: "Kim",
+							clickCount: 0
+						}
+					]
+				});
+
+			},
+
+
+			// ---
+			// PUBLIC METHODS.
+			// ---
+
+
+			// I increment the click-count for the friend with the given ID.
+			incrementCount: function( friendID ) {
+
+				// Clone the data to make sure we aren't mutating values in-place.
+				var friends = _.clone( this.state.friends, true );
+				
+				var friend = _.find( 
+					friends, 
+					{
+						id: friendID
+					}
+				);
+
+				friend.clickCount++;
+
+				this.setState({
+					friends: friends 
+				});
+
+			},
+
+
+			// I return the virtual DOM based on the current state.
+			render: function() {
+
+				// Map the friends collection onto a virtual DOM collection. In this 
+				// version, rather than using .bind(), we are going to render an instance
+				// of the Friend component, which will consume an exposed increment()
+				// method rather than a pre-bound event handler.
+				var friendsBlock = this.state.friends.map(
+					function operator( friend ) {
+
+						return(
+							<li key={ friend.id }>
+
+								<Friend 
+									friend={ friend }
+									increment={ this.incrementCount }>
+								</Friend>
+
+							</li>
+						);
+
+					},
+					this
+				);
+
+				return(
+					<div>
+						<h2>
+							You have { this.state.friends.length } friends! 
+						</h2>
+
+						<ul>
+							{ friendsBlock }
+						</ul>
+					</div>
+				);
+
+			}
+
+		});
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I manage the Friend widget.
+		var Friend = React.createClass({
+
+			// I handle the click event on the component.
+			handleClick: function( event ) {
+
+				// Now that the Friend instance is implicitly linked to a given friend
+				// data point, we can easily consume the exposed increment() method 
+				// without having to worry about binding arguments to methods.
+				this.props.increment( this.props.friend.id );
+
+			},
+
+
+			// I return the virtual DOM based on the current state.
+			render: function() {
+
+				return(
+					<a onClick={ this.handleClick }>
+						{ this.props.friend.name } ( { this.props.friend.clickCount } )
+					</a>
+				);
+
+			}
+
+		});
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// Render the root Demo and mount it inside the given element.
+		React.render( <Demo />, document.getElementById( "content" ) );
+
+	</script>
+
+</body>
+</html>

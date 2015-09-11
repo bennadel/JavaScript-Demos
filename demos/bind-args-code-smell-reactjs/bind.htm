@@ -1,0 +1,145 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Is Using .bind() To Lock-In Arguments A "Code Smell" In ReactJS
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body>
+	
+	<h1>
+		Is Using .bind() To Lock-In Arguments A "Code Smell" In ReactJS
+	</h1>
+
+	<p>
+		<strong>Current Approach</strong>: Using <em>.bind( this, friend.id )</em>.
+	</p>
+
+	<div id="content">
+		<!-- This content will be replaced with the React rendering. -->
+	</div>
+	
+
+	<!-- Load scripts. -->
+	<script src="../../vendor/reactjs/react-0.13.3.js"></script>
+	<script src="../../vendor/reactjs/JSXTransformer-0.13.3.js"></script>
+	<script src="../../vendor/lodash/lodash-3.9.3.js"></script>
+	<script type="text/jsx">
+		
+		// I manage the Demo widget.
+		var Demo = React.createClass({
+
+			// I return the initial state (and setup instance properties) for the component.
+			getInitialState: function() {
+
+				return({
+					friends: [
+						{
+							id: 1,
+							name: "Joanna",
+							clickCount: 0
+						},
+						{
+							id: 2,
+							name: "Sarah",
+							clickCount: 0
+						},
+						{
+							id: 3,
+							name: "Kim",
+							clickCount: 0
+						}
+					]
+				});
+
+			},
+
+
+			// ---
+			// PUBLIC METHODS.
+			// ---
+
+
+			// I handle the click-event for a friend.
+			// --
+			// CAUTION: While this is an event-handler, the "event" argument is not the 
+			// first argument because this method was bound using .bind() such that the
+			// friend ID could be "locked-in" at render time.
+			handleClick: function( friendID, event ) {
+
+				// Clone the data to make sure we aren't mutating values in-place.
+				var friends = _.clone( this.state.friends, true );
+				
+				var friend = _.find( 
+					friends, 
+					{
+						id: friendID
+					}
+				);
+
+				friend.clickCount++;
+
+				this.setState({
+					friends: friends 
+				});
+
+			},
+
+
+			// I return the virtual DOM based on the current state.
+			render: function() {
+
+				// Map the friends collection onto a virtual DOM collection.
+				// --
+				// NOTE: When we wire-up the onClick handler, notice that we are using 
+				// the .bind() method to lock-in the "friend.id" as an argument to the
+				// click handler. 
+				var friendsBlock = this.state.friends.map(
+					function operator( friend ) {
+
+						return(
+							<li key={ friend.id }>
+
+								<a onClick={ this.handleClick.bind( this, friend.id ) }>
+									{ friend.name } ( { friend.clickCount } )
+								</a>
+
+							</li>
+						);
+
+					},
+					this
+				);
+
+				return(
+					<div>
+						<h2>
+							You have { this.state.friends.length } friends! 
+						</h2>
+
+						<ul>
+							{ friendsBlock }
+						</ul>
+					</div>
+				);
+
+			}
+
+		});
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// Render the root Demo and mount it inside the given element.
+		React.render( <Demo />, document.getElementById( "content" ) );
+
+	</script>
+
+</body>
+</html>

@@ -1,0 +1,14 @@
+a {
+	color: red ;
+	cursor: pointer ;
+	text-decoration: underline ;
+	user-select: none ;
+		-moz-user-select: none ;
+		-webkit-user-select: none ;
+}
+
+em {
+	background-color: gold ;
+	display: inline-block ;
+	padding: 0px 7px 0px 7px ;
+}
