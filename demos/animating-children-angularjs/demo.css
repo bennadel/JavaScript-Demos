@@ -1,0 +1,228 @@
+
+a {
+	color: red ;
+	cursor: pointer ;
+	text-decoration: underline ;
+	user-select: none ;
+		-moz-user-select: none ;
+		-webkit-user-select: none ;
+}
+
+div.container {
+	bottom: 0px ;
+	left: 0px ;
+	position: fixed ;
+	right: 0px ;
+	top: 0px ;
+	z-index: 2 ;
+}
+
+div.backdrop {
+	background-color: rgba( 0, 0, 0, 0.8 ) ;
+	bottom: 0px ;
+	left: 0px ;
+	position: absolute ;
+	right: 0px ;
+	top: 0px ;
+}
+
+a.hide {
+	background-color: #FF0099 ;
+	border-radius: 4px 4px 4px 4px ;
+	color: #FFFFFF ;
+	height: 50px ;
+	left: 50% ;
+	line-height: 50px ;
+	margin: -25px 0px 0px -120px ;
+	position: absolute ;
+	text-align: center ;
+	top: 50% ;
+	width: 240px ;
+}
+
+div.box {
+	background-color: #F0F0F0 ;
+	border: 1px solid #CCCCCC ;
+	border-radius: 4px 4px 4px 4px ;
+	height: 100px ;
+	line-height: 100px ;
+	position: absolute ;
+	text-align: center ;
+	width: 100px ;
+}
+
+div.box1 {
+	left: 150px ;
+	top: 150px ;
+}
+
+div.box2 {
+	right: 150px ;
+	top: 150px ;
+}
+
+div.box3 {
+	bottom: 150px ;
+	right: 150px ;
+}
+
+div.box4 {
+	bottom: 150px ;
+	left: 150px ;
+}
+
+
+
+/* CSS Transition Information. */
+
+
+/* 
+	This is the container element managed by the NG-IF directive. As such, this is the
+	element that AngularJS is going to be checking to see if it has any animation 
+	settings associated with it. Even though we are are not "truly" animating this
+	element, we want AngularJS to "transition" this element in and out in order to give
+	the descendant nodes time to transition in their own way.
+*/
+div.container.ng-enter {
+	transition-duration: 500ms ;
+}
+
+div.container.ng-leave {
+	transition-duration: 250ms ;
+}
+
+
+/* 
+	Now that the container is set to transition (in a non-functional way), we can 
+	configure the descendant nodes to transition based on the NG-ENTER AND NG-LEAVE 
+	classes that get associated with the transitioning container.
+
+	In order to make sure that none of the nested transitions don't exceed the container
+	transition in duration, we're just going to have the descendant nodes inherit the 
+	duration that the container is using.
+
+	NOTE: We don't have to worry about the "NG-ANIMATE-CHILDREN" directive since 
+	AngularJS isn't actually managing these children - it's only managing the container.
+	CSS is taking care of the rest.
+*/
+div.container.ng-enter div.backdrop,
+div.container.ng-leave div.backdrop,
+div.container.ng-enter a.hide,
+div.container.ng-leave a.hide,
+div.container.ng-enter div.box1,
+div.container.ng-leave div.box1,
+div.container.ng-enter div.box2,
+div.container.ng-leave div.box2,
+div.container.ng-enter div.box3,
+div.container.ng-leave div.box3,
+div.container.ng-enter div.box4,
+div.container.ng-leave div.box4 {
+	transition-duration: inherit ;
+	transition-property: bottom, left, right, top, opacity ;
+	transition-timing-function: ease ;
+}
+
+
+/* Backdrop. */
+
+div.container.ng-enter div.backdrop {
+	opacity: 0.0 ;
+}
+
+div.container.ng-enter-active div.backdrop {
+	opacity: 1.0 ;
+}
+
+div.container.ng-leave-active div.backdrop {
+	opacity: 0.0 ;
+}
+
+
+/* Close link. */
+
+div.container.ng-enter a.hide {
+	opacity: 0.0 ;
+	top: -5% ;
+}
+
+div.container.ng-enter-active a.hide {
+	opacity: 1.0 ;
+	top: 50% ;
+}
+
+div.container.ng-leave-active a.hide {
+	opacity: 0.0 ;
+	top: 105% ;
+}
+
+
+/* Box 1. */
+
+div.container.ng-enter div.box1 {
+	top: -100px ;
+	left: -100px ;
+}
+
+div.container.ng-enter-active div.box1 {
+	top: 150px ;
+	left: 150px ;
+}
+
+div.container.ng-leave-active div.box1 {
+	top: -150px ;
+	left: -150px ;
+}
+
+
+/* Box 2. */
+
+div.container.ng-enter div.box2 {
+	right: -100px ;
+	top: -100px ;
+}
+
+div.container.ng-enter-active div.box2 {
+	right: 150px ;
+	top: 150px ;
+}
+
+div.container.ng-leave-active div.box2 {
+	right: -150px ;
+	top: -150px ;
+}
+
+
+/* Box 3. */
+
+div.container.ng-enter div.box3 {
+	bottom: -100px ;
+	right: -100px ;
+}
+
+div.container.ng-enter-active div.box3 {
+	bottom: 150px ;
+	right: 150px ;
+}
+
+div.container.ng-leave-active div.box3 {
+	bottom: -150px ;
+	right: -150px ;
+}
+
+
+/* Box 4. */
+
+div.container.ng-enter div.box4 {
+	bottom: -100px ;
+	left: -100px ;
+}
+
+div.container.ng-enter-active div.box4 {
+	bottom: 150px ;
+	left: 150px ;
+}
+
+div.container.ng-leave-active div.box4 {
+	bottom: -150px ;
+	left: -150px ;
+}
