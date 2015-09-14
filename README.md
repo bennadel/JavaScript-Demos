@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Child Animations Have To Take The "Magical" Transition-Delay Into Account In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/animating-children-delay-angularjs/)
 * [Animating Child Nodes Using ngAnimate In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/animating-children-angularjs/)
 * [Is Using .bind() To Lock-In Arguments A "Code Smell" In ReactJS](http://bennadel.github.io/JavaScript-Demos/demos/bind-args-code-smell-reactjs/)
 * [setState(), shouldComponentUpdate(), and render() Timing In ReactJS](http://bennadel.github.io/JavaScript-Demos/demos/timeout-should-update-reactjs/)
