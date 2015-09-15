@@ -82,8 +82,6 @@ ul li.ng-leave-active {
 */
 
 img.ng-anchor {
-	max-height: 100px ;
-	max-width: 100px ;
 	z-index: 10 ;
 }
 
