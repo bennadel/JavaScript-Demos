@@ -1,0 +1,96 @@
+
+div.collection {
+	border: 2px solid #CCCCCC ;
+	min-width: 200px ;
+	position: absolute ;
+	top: 90px ;
+	user-select: none ;
+		-moz-user-select: none ;
+		-webkit-user-select: none ;
+}
+
+div.collection.unselected {
+	left: 30px ;
+}
+
+div.collection.selected {
+	right: 30px ;
+	text-align: right ;
+}
+
+div.collection h3 {
+	background-color: #FAFAFA ;
+	border-bottom: 1px solid #CCCCCC ;
+	margin: 0px 0px 0px 0px ;
+	padding: 10px 0px 10px 0px ;
+	text-align: center ;
+}
+
+ul {
+	list-style-type: none ;
+	margin: 0px 0px 0px 0px ;
+	padding: 20px 20px 20px 20px ;
+}
+
+ul li {
+	margin: 20px 0px 20px 0px ;
+	padding: 0px 0px 0px 0px ;
+}
+
+ul li:first-child {
+	margin-top: 0px ;
+}
+
+ul a {
+	cursor: pointer ;
+	display: block ;
+}
+
+ul img {
+	display: block ;
+	max-height: 100px ;
+	max-width: 100px ;
+}
+
+
+/*
+	List Transitions. 
+	
+	In this case, we don't really need an ENTER transition since the enter item will 
+	be hidden during the ng-anchor transportation (via visibility:hidden). As such, 
+	we only need to have a LEAVE transition to create a pleasing visual effect:
+
+	1. The leave-hole doesn't fill up immediately.
+	2. It gives ngAnimate time to locate the origin and position the transport.
+*/
+
+ul li.ng-leave {
+	opacity: 1.0 ;
+	transition: opacity 250ms ease ;
+}
+
+ul li.ng-leave-active {
+	opacity: 0.0 ;
+}
+
+
+/* 
+	Anchor Transitions. 
+
+	Because this anchor element is added directly to the BODY, we can't really make
+	the class definitions contextual. They have to be self-contained.
+*/
+
+img.ng-anchor {
+	max-height: 100px ;
+	max-width: 100px ;
+	z-index: 10 ;
+}
+
+img.ng-anchor-out {
+	/* I don't have any transition for the first-half of the transport. */
+}
+
+img.ng-anchor-in {
+	transition: all 250ms ease ;
+}

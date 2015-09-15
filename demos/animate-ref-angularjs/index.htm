@@ -1,0 +1,182 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Experimenting With ngAnimate And ng-animate-ref In AngularJS 1.4
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		Experimenting With ngAnimate And ng-animate-ref In AngularJS 1.4
+	</h1>
+
+	<div class="collection unselected">
+
+		<h3>
+			Unselected ( {{ unselectedImages.length }} )
+		</h3>
+
+		<ul>
+			<!--
+				In order for the ng-animate-ref to work, the LEAVE'ing element and the
+				ENTER'ing element have to share at least one non-core CSS class. In this
+				case, they are both going to have "thumbnail-ref-container".
+
+				CAUTION: This class name cannot begin with "ng-".
+
+				NOTE: The actual "transport" element that gets created is based on the 
+				[ng-animate-ref] attribute, not the "class in common."
+			-->
+			<li 
+				ng-repeat="image in unselectedImages track by image.id"
+				class="thumbnail-ref-container">
+
+				<a ng-click="selectImage( image )">
+					<img 
+						ng-src="./images/{{ image.id }}.{{ image.ext }}" 
+						ng-animate-ref="image-{{ image.id }}"
+						class="thumbnail"
+					/>
+				</a>
+
+			</li>
+		</ul>
+
+	</div>
+
+	<div class="collection selected">
+
+		<h3>
+			Selected ( {{ selectedImages.length }} )
+		</h3>
+
+		<ul>
+			<!--
+				In order for the ng-animate-ref to work, the LEAVE'ing element and the
+				ENTER'ing element have to share at least one non-core CSS class. In this
+				case, they are both going to have "thumbnail-ref-container".
+			-->
+			<li 
+				ng-repeat="image in selectedImages track by image.id"
+				class="thumbnail-ref-container">
+
+				<a ng-click="unselectImage( image )">
+					<img 
+						ng-src="./images/{{ image.id }}.{{ image.ext }}" 
+						ng-animate-ref="image-{{ image.id }}"
+						class="thumbnail"
+					/>
+				</a>
+
+			</li>
+		</ul>
+
+	</div>
+
+	<!--
+		When the LI is removed from one list and added to the other list, an ng-anchor
+		transport element will be created and appended to the body. It will look something
+		like this and will use any existing classes on the origin element (IMG) plus the
+		ng-anchor related classes.
+	
+		<img 
+			ng-animate-ref="image-1"
+			src="./images/1.jpg" 
+			class="thumbnail ng-anchor ng-anchor-out-add ng-anchor-out ng-anchor-out-add-active"
+			style="width: 75px; height: 100px; top: 163px; left: 41px;"
+		/>
+	-->
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.4.5.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs/angular-animate-1.4.5.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		angular.module( "Demo", [ "ngAnimate" ] );
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I control the root of the application.
+		angular.module( "Demo" ).controller(
+			"AppController",
+			function AppController( $scope ) {
+
+				// I am the collection of unselected images.
+				$scope.unselectedImages = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ].map(
+					function operator( id ) {
+
+						return({
+							id: id,
+							ext: "jpg"
+						});
+
+					}
+				);
+					
+				// I am the collection of selected images.
+				$scope.selectedImages = [];
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+				
+				// I select the given image, moveing it to the selected list.
+				$scope.selectImage = function( image ) {
+
+					moveImageTo( image, $scope.unselectedImages, $scope.selectedImages );
+
+				};
+
+
+				// I unselect the given image, moveing it to the unselected list.
+				$scope.unselectImage = function( image ) {
+
+					moveImageTo( image, $scope.selectedImages, $scope.unselectedImages );
+
+				};
+
+
+				// ---
+				// PRIVATE METHODS.
+				// ---
+
+
+				// I move the given image from one list to the other.
+				function moveImageTo( image, from, to ) {
+
+					var index = from.indexOf( image );
+
+					from.splice( index, 1 );
+					to.push( image );
+
+					// After the list is mutated, let's sort it to make the animations
+					// a bit easier to see on the screen.
+					to.sort(
+						function operator( a, b ) {
+
+							return( ( a.id < b.id ) ? -1 : 1 )
+
+						}
+					);
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
