@@ -1,0 +1,153 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		More Child-Element Animations Using ngAnimate In AngularJS
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600"></link>
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		More Child-Element Animations Using ngAnimate In AngularJS
+	</h1>
+
+	<div 
+		class="viewport {{ orientation }}" 
+		ng-switch="view">
+
+		<!-- BEGIN: Friends. -->
+		<div ng-switch-when="friends" class="view friends">
+
+			<div class="fixed-header">
+				<div class="title">
+					Friends
+				</div>
+
+				<a ng-click="showEnemies( 'forward' )" class="right">Enemies</a>
+			</div>
+
+			<div class="fixed-body">
+				<div ng-repeat="friend in friends track by friend.id">
+					{{ friend.name }}
+				</div>
+			</div>
+
+			<div class="fixed-footer">
+				Woot &mdash; You have {{ friends.length }} friends :)
+			</div>
+
+		</div>
+		<!-- END: Friends. -->
+
+
+		<!-- BEGIN: Enemies. -->
+		<div ng-switch-when="enemies" class="view enemies">
+
+			<div class="fixed-header">
+				<div class="title">
+					Enemies
+				</div>
+
+				<a ng-click="showFriends( 'backward' )" class="left">Friends</a>
+			</div>
+
+			<div class="fixed-body">
+				<div ng-repeat="enemy in enemies track by enemy.id">
+					{{ enemy.name }}
+				</div>
+			</div>
+
+			<div class="fixed-footer">
+				Pooh &mdash; You have {{ enemies.length }} enemies :(
+			</div>
+
+		</div>
+		<!-- END: Enemies. -->
+
+	</div>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.4.3.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs/angular-animate-1.4.3.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		angular.module( "Demo", [ "ngAnimate" ] );
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I control the root of the application.
+		angular.module( "Demo" ).controller(
+			"AppController",
+			function AppController( $scope ) {
+
+				// I hold the friends for the friends view.
+				$scope.friends = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 ].map(
+					function operator( id ) {
+
+						return({
+							id: id,
+							name: ( "Friend " + id )
+						});
+
+					}
+				);
+					
+				// I hold the enemies for the enemies view.
+				$scope.enemies = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 ].map(
+					function operator( id ) {
+
+						return({
+							id: id,
+							name: ( "Enemy " + id )
+						});
+
+					}
+				);
+
+				// I determine which view is being rendered.
+				$scope.view = "friends";
+
+				// I determine the orientation we will use when transitioning from one 
+				// view to the next.
+				$scope.orientation = null;
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I show the enemies list.
+				$scope.showEnemies = function( orientation ) {
+
+					$scope.view = "enemies";
+					$scope.orientation = ( orientation || "forward" );
+
+				};
+
+
+				// I show the friends list.
+				$scope.showFriends = function( orientation ) {
+
+					$scope.view = "friends";
+					$scope.orientation = ( orientation || "forward" );
+
+				};
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>

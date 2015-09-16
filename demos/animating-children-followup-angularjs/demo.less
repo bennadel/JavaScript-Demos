@@ -1,0 +1,274 @@
+
+// Structural and visual definitions (transitions are down below).
+
+// Storing the width of the view helps define the animations.
+@width: 300px ;
+
+div.viewport {
+	border: 2px solid #AAAAAA ;
+	border-radius: 5px 5px 5px 5px ;
+	font-family: "Open Sans", sans-serif ;
+	font-size: 16px ;
+	height: 600px ;
+	left: 50% ;
+	margin: -301px 0px 0px -151px ;
+	overflow: hidden ;
+	position: fixed ;
+	top: 50% ;
+	width: @width ;
+}
+
+div.view {
+	height: 600px ;
+	left: 0px ;
+	position: absolute ;
+	top: 0px ;
+	width: @width ;
+
+	div.fixed-header {
+		background-color: #FAFAFA ;
+		border-bottom: 1px solid #CCCCCC ;
+		border-radius: 5px 5px 0px 0px ;
+		height: 50px ;
+		left: 0px ;
+		position: absolute ;
+		right: 0px ;
+		top: 0px ;
+
+		div.title {
+			line-height: 52px ;
+			font-size: 18px ;
+			font-weight: 600 ;
+			text-align: center ;
+		}
+
+		a {
+			bottom: 0px ;
+			color: red ;
+			cursor: pointer ;
+			font-size: 14px ;
+			line-height: 52px ;
+			padding: 0px 10px 0px 10px ;
+			position: absolute ;
+			text-decoration: underline ;
+			top: 0px ;
+
+			&.right {
+				right: 0px ;
+
+				&:after {
+					content: "\0020\00BB" ;
+				}
+			}
+
+			&.left {
+				left: 0px ;
+
+				&:before {
+					content: "\00AB\0020" ;
+				}
+			}
+		}
+	} // END: div.fixed-header.
+
+	div.fixed-body {
+		bottom: 52px ;
+		left: 0px ;
+		overflow: auto ;
+		position: absolute ;
+		right: 0px ;
+		top: 52px ;
+
+		div {
+			border-bottom: 1px solid #CCCCCC ;
+			padding: 15px 12px 15px 12px ;
+		}
+	} // END: div.fixed-body.
+
+	div.fixed-footer {
+		background-color: #FAFAFA ;
+		border-radius: 0px 0px 5px 5px ;
+		border-top: 1px solid #CCCCCC ;
+		bottom: 0px ;
+		font-weight: 300 ;
+		height: 50px ;
+		left: 0px ;
+		line-height: 52px ;
+		position: absolute ;
+		text-align: center ;
+		right: 0px ;
+	} // END: div.fixed-footer.
+
+	// div.view -- variations.
+
+	&.enemies {
+		div.fixed-header {
+			background-color: #666666 ;
+			color: #FFFFFF ;
+
+			a {
+				color: #FFFFFF ;
+			}
+		}
+
+		div.fixed-footer {
+			background-color: #666666 ;
+			color: #FFFFFF ;
+		}
+	}
+}
+
+// ----------------------------------------------------------------------------------- //
+// ----------------------------------------------------------------------------------- //
+// Transition information.
+// ----------------------------------------------------------------------------------- //
+// ----------------------------------------------------------------------------------- //
+
+div.viewport {
+	div.view {
+		&.ng-enter,
+		&.ng-leave {
+			// We need to have a transition on the dynamic element so that we get an
+			// ngAnimate to use an animation. But, once we have that working, we can 
+			// then inherit this duration within the nested elements.
+			transition-duration: 300ms ;
+
+			div.fixed-header,
+			div.fixed-body,
+			div.fixed-footer {
+				overflow: hidden ;
+				transition-delay: inherit ;
+				transition-duration: inherit ;
+				transition-timing-function: ease ;
+			}
+		}
+
+		// This allows the enter elements to show up over the leave elements. It makes
+		// the opacity-based transitions work a bit better.
+		&.ng-enter {
+			z-index: 2 ;
+		}
+
+		// Fixed header and footer transitions.
+
+		&.ng-enter,
+		&.ng-leave {
+			div.fixed-header,
+			div.fixed-footer {
+				transition-property: opacity ;
+			}
+		}
+
+		&.ng-enter {
+			div.fixed-header,
+			div.fixed-footer {
+				opacity: 0.0 ;
+			}
+		}
+
+		&.ng-enter-active {
+			div.fixed-header,
+			div.fixed-footer {
+				opacity: 1.0 ;
+			}
+		}
+
+		&.ng-leave {
+			div.fixed-header,
+			div.fixed-footer {
+				opacity: 1.0 ;
+			}
+		}
+
+		&.ng-leave-active {
+			div.fixed-header,
+			div.fixed-footer {
+				opacity: 0.0 ;
+			}
+		}
+	}
+
+	// div.viewport -- variations.
+
+	// Fixed body transitions. Since the body transitions are based on the 
+	// parent viewport class, they have to be defined in the "variations" 
+	// section of the viewport.
+
+	&.foward,
+	&.backward {
+		div.view {
+			&.ng-enter,
+			&.ng-leave {
+				div.fixed-body {
+					transition-property: left, right ;
+				}
+			}
+		}
+	}
+
+	// Sliding from right-to-left.
+	&.forward {
+		div.view {
+			&.ng-enter {
+				div.fixed-body {
+					left: @width ;
+					right: -@width ;
+				}
+			}
+
+			&.ng-enter-active {
+				div.fixed-body {
+					left: 0px ;
+					right: 0px ;
+				}
+			}
+
+			&.ng-leave {
+				div.fixed-body {
+					left: 0px ;
+					right: 0px ;
+				}
+			}
+
+			&.ng-leave-active {
+				div.fixed-body {
+					left: -@width ;
+					right: @width ;
+				}
+			}
+		}
+	}
+
+	// Sliding from left-to-right.
+	&.backward {
+		div.view {
+			&.ng-enter {
+				div.fixed-body {
+					left: -@width ;
+					right: @width ;
+				}
+			}
+
+			&.ng-enter-active {
+				div.fixed-body {
+					left: 0px ;
+					right: 0px ;
+				}
+			}
+
+			&.ng-leave {
+				div.fixed-body {
+					left: 0px ;
+					right: 0px ;
+				}
+			}
+
+			&.ng-leave-active {
+				div.fixed-body {
+					left: @width ;
+					right: -@width ;
+				}
+			}
+		}
+	}
+} // END: div.viewport.

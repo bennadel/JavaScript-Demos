@@ -1,0 +1,173 @@
+div.viewport {
+  border: 2px solid #AAAAAA ;
+  border-radius: 5px 5px 5px 5px ;
+  font-family: "Open Sans", sans-serif;
+  font-size: 16px ;
+  height: 600px ;
+  left: 50% ;
+  margin: -301px 0px 0px -151px;
+  overflow: hidden ;
+  position: fixed ;
+  top: 50% ;
+  width: 300px;
+}
+div.view {
+  height: 600px ;
+  left: 0px ;
+  position: absolute ;
+  top: 0px ;
+  width: 300px;
+}
+div.view div.fixed-header {
+  background-color: #FAFAFA ;
+  border-bottom: 1px solid #CCCCCC ;
+  border-radius: 5px 5px 0px 0px ;
+  height: 50px ;
+  left: 0px ;
+  position: absolute ;
+  right: 0px ;
+  top: 0px ;
+}
+div.view div.fixed-header div.title {
+  line-height: 52px ;
+  font-size: 18px ;
+  font-weight: 600 ;
+  text-align: center ;
+}
+div.view div.fixed-header a {
+  bottom: 0px ;
+  color: red ;
+  cursor: pointer ;
+  font-size: 14px ;
+  line-height: 52px ;
+  padding: 0px 10px 0px 10px ;
+  position: absolute ;
+  text-decoration: underline ;
+  top: 0px ;
+}
+div.view div.fixed-header a.right {
+  right: 0px ;
+}
+div.view div.fixed-header a.right:after {
+  content: "\0020\00BB";
+}
+div.view div.fixed-header a.left {
+  left: 0px ;
+}
+div.view div.fixed-header a.left:before {
+  content: "\00AB\0020";
+}
+div.view div.fixed-body {
+  bottom: 52px ;
+  left: 0px ;
+  overflow: auto ;
+  position: absolute ;
+  right: 0px ;
+  top: 52px ;
+}
+div.view div.fixed-body div {
+  border-bottom: 1px solid #CCCCCC ;
+  padding: 15px 12px 15px 12px ;
+}
+div.view div.fixed-footer {
+  background-color: #FAFAFA ;
+  border-radius: 0px 0px 5px 5px ;
+  border-top: 1px solid #CCCCCC ;
+  bottom: 0px ;
+  font-weight: 300 ;
+  height: 50px ;
+  left: 0px ;
+  line-height: 52px ;
+  position: absolute ;
+  text-align: center ;
+  right: 0px ;
+}
+div.view.enemies div.fixed-header {
+  background-color: #666666 ;
+  color: #FFFFFF ;
+}
+div.view.enemies div.fixed-header a {
+  color: #FFFFFF ;
+}
+div.view.enemies div.fixed-footer {
+  background-color: #666666 ;
+  color: #FFFFFF ;
+}
+div.viewport div.view.ng-enter,
+div.viewport div.view.ng-leave {
+  transition-duration: 300ms ;
+}
+div.viewport div.view.ng-enter div.fixed-header,
+div.viewport div.view.ng-leave div.fixed-header,
+div.viewport div.view.ng-enter div.fixed-body,
+div.viewport div.view.ng-leave div.fixed-body,
+div.viewport div.view.ng-enter div.fixed-footer,
+div.viewport div.view.ng-leave div.fixed-footer {
+  overflow: hidden ;
+  transition-delay: inherit ;
+  transition-duration: inherit ;
+  transition-timing-function: ease ;
+}
+div.viewport div.view.ng-enter {
+  z-index: 2 ;
+}
+div.viewport div.view.ng-enter div.fixed-header,
+div.viewport div.view.ng-leave div.fixed-header,
+div.viewport div.view.ng-enter div.fixed-footer,
+div.viewport div.view.ng-leave div.fixed-footer {
+  transition-property: opacity ;
+}
+div.viewport div.view.ng-enter div.fixed-header,
+div.viewport div.view.ng-enter div.fixed-footer {
+  opacity: 0.0 ;
+}
+div.viewport div.view.ng-enter-active div.fixed-header,
+div.viewport div.view.ng-enter-active div.fixed-footer {
+  opacity: 1.0 ;
+}
+div.viewport div.view.ng-leave div.fixed-header,
+div.viewport div.view.ng-leave div.fixed-footer {
+  opacity: 1.0 ;
+}
+div.viewport div.view.ng-leave-active div.fixed-header,
+div.viewport div.view.ng-leave-active div.fixed-footer {
+  opacity: 0.0 ;
+}
+div.viewport.foward div.view.ng-enter div.fixed-body,
+div.viewport.backward div.view.ng-enter div.fixed-body,
+div.viewport.foward div.view.ng-leave div.fixed-body,
+div.viewport.backward div.view.ng-leave div.fixed-body {
+  transition-property: left, right ;
+}
+div.viewport.forward div.view.ng-enter div.fixed-body {
+  left: 300px;
+  right: -300px;
+}
+div.viewport.forward div.view.ng-enter-active div.fixed-body {
+  left: 0px ;
+  right: 0px ;
+}
+div.viewport.forward div.view.ng-leave div.fixed-body {
+  left: 0px ;
+  right: 0px ;
+}
+div.viewport.forward div.view.ng-leave-active div.fixed-body {
+  left: -300px;
+  right: 300px;
+}
+div.viewport.backward div.view.ng-enter div.fixed-body {
+  left: -300px;
+  right: 300px;
+}
+div.viewport.backward div.view.ng-enter-active div.fixed-body {
+  left: 0px ;
+  right: 0px ;
+}
+div.viewport.backward div.view.ng-leave div.fixed-body {
+  left: 0px ;
+  right: 0px ;
+}
+div.viewport.backward div.view.ng-leave-active div.fixed-body {
+  left: 300px;
+  right: -300px;
+}

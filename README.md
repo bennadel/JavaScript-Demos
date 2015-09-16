@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [More Child-Element Animations Using ngAnimate In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/animating-children-followup-angularjs/)
 * [Experimenting With ngAnimate And ng-animate-ref In AngularJS 1.4](http://bennadel.github.io/JavaScript-Demos/demos/animate-ref-angularjs/)
 * [Child Animations Have To Take The "Magical" Transition-Delay Into Account In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/animating-children-delay-angularjs/)
 * [Animating Child Nodes Using ngAnimate In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/animating-children-angularjs/)
