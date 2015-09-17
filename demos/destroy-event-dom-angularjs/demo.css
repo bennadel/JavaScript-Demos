@@ -1,0 +1,42 @@
+
+a[ ng-click ] {
+	color: red ;
+	cursor: pointer ;
+	text-decoration: underline ;
+	user-select: none ;
+		-moz-user-select: none ;
+		-webkit-user-select: none ;
+}
+
+div.views {
+	margin-top: 40px ;
+	position: relative ;
+}
+
+div.view {
+	background-color: #F0F0F0 ;
+	border: 1px solid #CCCCCC ;
+	box-sizing: border-box ;
+	height: 200px ;
+	padding: 4px 20px 4px 20px ;
+	position: absolute ;
+	top: 0px ;
+	width: 275px ;
+}
+
+div.view-a {
+	left: 20px ;
+}
+
+div.view-b {
+	left: 330px ;
+}
+
+div.view.ng-leave {
+	transition: opacity 3s ease ;
+	opacity: 1.0 ;
+}
+
+div.view.ng-leave-active {
+	opacity: 0.0 ;
+}

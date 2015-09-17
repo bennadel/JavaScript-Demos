@@ -1,0 +1,142 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Don't Alter The DOM (Too Much) During The $destroy Event In AngularJS
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"><link>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		Don't Alter The DOM (Too Much) During The $destroy Event In AngularJS
+	</h1>
+
+	<p>
+		<a ng-click="toggleViews()">Toggle View(s)</a>
+		&mdash;
+		{{ ( isShowingViews ? "Visible" : "Hidden" ) }}
+	</p>
+
+	<div class="views">
+
+		<!-- When this view is destroyed, we'll clear the content. -->
+		<div ng-if="isShowingViews" bn-view="true" class="view view-a">
+			
+			<h2>
+				This is a View!
+			</h2>
+
+			<p>
+				How cool!
+			</p>
+
+		</div>
+
+		<!-- When this view is destroyed, we'll leave the content alone. -->
+		<div ng-if="isShowingViews" bn-view="false" class="view view-b">
+
+			<h2>
+				This is another View!
+			</h2>
+
+			<p>
+				Tote's neat!
+			</p>
+
+		</div>
+
+	</div>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.4.5.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs/angular-animate-1.4.5.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [ "ngAnimate" ] );
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I control the root of the application.
+		angular.module( "Demo" ).controller(
+			"AppController",
+			function AppController( $scope ) {
+
+				$scope.isShowingViews = true;
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I show or hide the views depending on their current visibility.
+				$scope.toggleViews = function() {
+
+					$scope.isShowingViews = ! $scope.isShowingViews;
+
+				};
+				
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I conditionally clear the current element during the $destroy event.
+		angular.module( "Demo" ).directive(
+			"bnView",
+			function bnViewDirective() {
+
+				// Return the directive configuration object.
+				return({
+					link: link,
+					restrict: "A"
+				});
+
+
+				// I bind the JavaScript events to the view-model.
+				function link( scope, element, attributes ) {
+
+					if ( attributes.bnView !== 'true' ) {
+
+						return;
+
+					}
+
+					// When the scope is destroyed, let's clear the content of the 
+					// element. This is a very silly example; but, the extreme case
+					// readily demonstrates why you don't want to alter the DOM [too 
+					// much] during the $destroy event.
+					// --
+					// NOTE: It's OK to clean up transient elements that may relate to
+					// things like jQuery plugins. This is more of a suggestion than a
+					// commandment.
+					scope.$on(
+						"$destroy",
+						function handleDestroy() {
+
+							element.empty();
+
+						}
+					);
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
