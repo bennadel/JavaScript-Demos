@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Setting The State Based On Rendered DOM Elements In ReactJS](http://bennadel.github.io/JavaScript-Demos/demos/set-state-callback-reactjs/)
 * [Don't Alter The DOM (Too Much) During The $destroy Event In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/destroy-event-dom-angularjs/)
 * [More Child-Element Animations Using ngAnimate In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/animating-children-followup-angularjs/)
 * [Experimenting With ngAnimate And ng-animate-ref In AngularJS 1.4](http://bennadel.github.io/JavaScript-Demos/demos/animate-ref-angularjs/)

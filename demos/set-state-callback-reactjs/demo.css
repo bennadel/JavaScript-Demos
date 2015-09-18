@@ -1,0 +1,51 @@
+
+a {
+	color: red ;
+	cursor: pointer ;
+	text-decoration: underline ;
+	user-select: none ;
+		-moz-user-select: none ;
+		-webkit-user-select: none ;
+}
+
+div.list {
+	background-color: #333333 ;
+	border-radius: 4px 4px 4px 4px ;
+	box-sizing: border-box ;
+	padding: 15px 15px 15px 15px ;
+}
+
+div.list.full {
+	width: 100% ;
+}
+
+div.list.half {
+	width: 50% ;
+}
+
+div.items {
+	overflow: hidden ;
+	white-space: nowrap ;
+}
+
+span.item {
+	background-color: #F0F0F0 ;
+	border-radius: 50px 50px 50px 50px ;
+	color: #666666 ;
+	display: inline-block ;
+	font-size: 20px ;
+	height: 50px ;
+	line-height: 50px ;
+	margin-right: 10px ;
+	text-align: center ;
+	width: 50px ;
+}
+
+span.item.teaser {
+	background-color: #FFDD00 ;
+	color: #000000 ;
+}
+
+span.item:last-child {
+	margin-right: 0px ;
+}
