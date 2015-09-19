@@ -1,0 +1,375 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Attaching Dynamic Event Handlers To Proxied Child Elements In ReactJS
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body>
+
+	<h1>
+		Attaching Dynamic Event Handlers To Proxied Child Elements In ReactJS
+	</h1>
+
+	<div id="content">
+		<!-- App will be rendered here. -->
+	</div>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/reactjs/react-0.13.3.min.js"></script>
+	<script type="text/javascript" src="../../vendor/reactjs/JSXTransformer-0.13.3.js"></script>
+	<script type="text/javascript" src="../../vendor/jquery/jquery-2.1.0.min.js"></script>
+	<script type="text/javascript" src="../../vendor/lodash/lodash-3.9.3.min.js"></script>
+	<script type="text/jsx">
+
+		// I manage the root component.
+		var Demo = React.createClass({
+
+			// I return the initial state of the component.
+			getInitialState: function() {
+
+				return({
+					x: 300,
+					y: 300,
+					isActivated: false,
+					containerType: "article"
+				});
+
+			},
+
+
+			// ---
+			// PUBLIC METHODS.
+			// ---
+
+
+			// I put the dongle in an activate state.
+			activate: function() {
+
+				this.setState({
+					isActivated: true
+				});
+
+			},
+
+
+			// When the component mounts, we want to start an interval that will 
+			// continuously change the TYPE of the root level container element. This
+			// will help us explore the power of the event-delegation system that 
+			// ReactJS uses, and what that means for dynamically-bound event handlers.
+			componentDidMount: function() {
+
+				setInterval( this.toggleContainerType, 1000 );
+
+			},
+
+
+			// I put the dongle in a deactivated state.
+			deactivate: function() {
+
+				this.setState({
+					isActivated: false
+				});
+
+			},
+
+
+			// I return the virtual DOM represented by the current component state.
+			render: function() {
+
+				// As the setInterval() kicks in, we will be toggling back and forth
+				// between an "Article" element and a "Section" element. This will force
+				// ReactJS to physically destroy and create DOM elements, rather than 
+				// trying to reconcile attribute-based differences.
+				var Container = this.state.containerType;
+
+				var dongleClass = this.state.isActivated
+					? "dongle activated"
+					: "dongle"
+				;
+
+				var dongleStyle = {
+					left: this.state.x,
+					top: this.state.y
+				};
+
+				// When we render our component, we are wrapping the "content" in an
+				// AngularJS-inspired "directive component." This DemoDirective will take
+				// care of manging the complex user interactions (ie, mouse events), while
+				// the current component will worry about managing state and layout.
+				return(
+					<DemoDirective 
+						activate={ this.activate }
+						deactivate={ this.deactivate }
+						setPosition={ this.setPosition }>
+
+						<Container className="container">
+
+							<div className={ dongleClass } style={ dongleStyle }>
+								<span className="label">
+									{ this.state.x } / { this.state.y }
+								</span>
+							</div>
+
+						</Container>
+
+					</DemoDirective>
+				);
+
+			},
+
+
+			// I set the x/y coordinates of the dongle.
+			setPosition: function( x, y ) {
+
+				this.setState({
+					x: x,
+					y: y
+				});
+
+			},
+
+
+			// ---
+			// PRIVATE METHODS.
+			// ---
+
+
+			// I cycle to the next container type.
+			// --
+			// NOTE: We are doing this in order to force ReactJS to physically destroy 
+			// and create a new top-level DOM element during virtual DOM reconciliation.
+			toggleContainerType: function() {
+
+				var newType = ( this.state.containerType === "article" )
+					? "section"
+					: "article"
+				;
+
+				this.setState({
+					containerType: newType
+				});
+
+			}
+
+		});
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		var DemoDirective = React.createClass({
+
+			// NOTE: We are requiring that "children" be a single element. This way, when
+			// we render, we can use the single child-element as the virtual DOM.
+			propTypes: {
+				activate: React.PropTypes.func.isRequired,
+				children: React.PropTypes.element.isRequired,
+				deactive: React.PropTypes.func.isRequired,
+				setPosition: React.PropTypes.func.isRequired
+			},
+
+
+			// I return the initial state of the component.
+			getInitialState: function() {
+
+				this.initialMouseDown = null;
+				this.initialMouseOffset = null;
+				this.dragThreshold = 15;
+
+				// Since this component is an AngularJS-inspired "directive component", 
+				// we're going to have it handle complex UI interactions. In this case,
+				// we'll be using the state to keep track of which event-handlers are
+				// being bound to the virtual DOM (through ReactJS' event delegation).
+				return({
+					handlers: {}
+				});
+
+			},
+
+
+			// ---
+			// PUBLIC METHODS.
+			// ---
+
+
+			// I get called once, on the client, when the component is rendered on the DOM.
+			componentDidMount: function() {
+
+				console.info( "Directive component did mount." );
+
+				this.setState({
+					handlers: {
+						onMouseDown: this.phasePreDragHandleMouseDown
+					}
+				});
+
+			},
+
+
+			// I return the virtual DOM represented by the current component state.
+			render: function() {
+
+				// When we render the "directive component", we're really just rendering
+				// the child element as there is no additional markup to render. However,
+				// since we are adding dynamic behavior, we need to clone the the child
+				// in order to mix-in the props for mouse-interaction.
+				// --
+				// NOTE: Since we are using "props" to bind mouse-event handlers, we know
+				// that ReactJS is going to bind them using event delegation. This means
+				// that we do NOT HAVE TO WORRY about the element unmounting or event 
+				// changing. Heck, it means we don't even have to unbind event handlers
+				// when we want to change them - we simply define a new set of handlers.
+				var props = _.extend(
+					{
+						ref: this.handleRefChange
+					},
+					this.state.handlers
+				);
+
+				return( React.cloneElement( this.props.children, props ) );
+
+			},
+
+
+
+			// ---
+			// PRIVATE METHODS.
+			// ---
+
+
+			// I get called when ever the targeted ref is created or destroyed.
+			handleRefChange: function( ref ) {
+
+				if ( ref ) {
+
+					console.warn( "Ref changed:", ref.getDOMNode().tagName );
+
+				}
+
+			},
+
+
+			// INTERACTION PHASE: Drag - I handle the mouse-move event.
+			phaseDragHandleMouseMove: function( event ) {
+
+				this.props.setPosition( 
+					Math.floor( event.pageX - this.initialMouseOffset.x ),
+					Math.floor( event.pageY - this.initialMouseOffset.y )
+				);
+
+			},
+
+
+			// INTERACTION PHASE: Drag - I handle the mouse-up event.
+			phaseDragHandleMouseUp: function( event ) {
+
+				this.initialMouseDown = null;
+				this.initialMouseOffset = null;
+
+				this.setState({
+					handlers: {
+						onMouseDown: this.phasePreDragHandleMouseDown
+					}
+				});
+
+				this.props.deactivate();
+
+			},
+
+
+			// INTERACTION PHASE: Pre-Drag - I handle the mouse-down event.
+			phasePreDragHandleMouseDown: function( event ) {
+
+				var dongle = $( event.target ).closest( ".dongle" );
+
+				// If the user moused-down in the dongle, then we want to start tracking
+				// their mouse movements to see if they exceed the drag threshold.
+				if ( dongle.length ) {
+
+					var offset = dongle.offset();
+
+					this.initialMouseDown = {
+						x: event.pageX,
+						y: event.pageY
+					};
+
+					this.initialMouseOffset = {
+						x: ( event.pageX - offset.left ),
+						y: ( event.pageY - offset.top )
+					};
+
+					this.setState({
+						handlers: {
+							onMouseMove: this.phasePreDragHandleMouseMove,
+							onMouseUp: this.phasePreDragHandleMouseUp
+						}
+					});
+
+				}
+
+			},
+
+
+			// INTERACTION PHASE: Pre-Drag - I handle the mouse-move event.
+			phasePreDragHandleMouseMove: function( event ) {
+
+				var maxDelta = Math.max(
+					Math.abs( event.pageX - this.initialMouseDown.x ),
+					Math.abs( event.pageY - this.initialMouseDown.y )
+				);
+
+				// If the user has exceeded the pre-drag threshold, push the component
+				// into the drag state. This uses a different set of event handlers.
+				if ( maxDelta >= this.dragThreshold ) {
+
+					this.setState({
+						handlers: {
+							onMouseMove: this.phaseDragHandleMouseMove,
+							onMouseUp: this.phaseDragHandleMouseUp
+						}
+					});
+
+					this.props.activate();
+
+					this.phaseDragHandleMouseMove( event );
+
+				}
+
+			},
+
+
+			// INTERACTION PHASE: Pre-Drag - I handle the mouse-up event.
+			phasePreDragHandleMouseUp: function( event ) {
+
+				this.initialMouseDown = null;
+				this.initialMouseOffset = null;
+
+				this.setState({
+					handlers: {
+						onMouseDown: this.phasePreDragHandleMouseDown
+					}
+				});
+
+			}
+
+		});
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// Render the root Demo and mount it inside the given element.
+		React.render( <Demo />, document.getElementById( "content" ) );
+
+	</script>
+
+</body>
+</html>

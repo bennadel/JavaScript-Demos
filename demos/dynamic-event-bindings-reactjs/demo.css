@@ -1,0 +1,66 @@
+
+body {
+	user-select: none ;
+		-moz-user-select: none ;
+		-webkit-user-select: none ;
+}
+
+section.container,
+article.container {
+	bottom: 0px ;
+	left: 0px ;
+	position: fixed ;
+	right: 0px ;
+	top: 0px ;
+}
+
+section.container:after,
+article.container:after {
+	background-color: gold ;
+	border-radius: 3px 3px 3px 3px ;
+	color: #333333 ;
+	content: "" ;
+	font-size: 18px ;
+	padding: 10px 20px 10px 20px ;
+	position: absolute ;
+	right: 10px ;
+}
+
+article.container:after {
+	content: "Article" ;
+	top: 10px ;
+}
+
+section.container:after {
+	bottom: 10px ;
+	content: "Section" ;
+}
+
+div.dongle {
+	height: 1px ;
+	position: absolute ;
+	width: 1px ;
+}
+
+div.dongle span.label {
+	background-color: #DADADA ;
+	border-radius: 40px 40px 40px 40px ;
+	color: #000000 ;
+	cursor: pointer ;
+	font-size: 14px ;
+	height: 80px ;
+	left: -40px ;
+	line-height: 80px ;
+	position: absolute ;
+	text-align: center ;
+	top: -40px ;
+	transition-property: background-color, color ;
+	transition-duration: 500ms ;
+	transition-timing-function: ease ;
+	width: 80px ;
+}
+
+div.dongle.activated span.label {
+	background-color: #FF0099 ;
+	color: #FFFFFF ;
+}
