@@ -1,0 +1,37 @@
+#content div,
+#content p,
+#content article,
+#content section,
+#content header,
+#content footer {
+	border: 2px solid #000000 ;
+	border-radius: 4px 4px 4px 4px ;
+	font-size: 22px ;
+	line-height: 30px ;
+	margin: 0px 0px 0px 0px ;
+	padding: 20px 20px 20px 20px ;
+}
+
+#content div {
+	border-color: #DDDDDD ;
+}
+
+#content p {
+	border-color: #CCCCCC ;
+}
+
+#content article {
+	border-color: #BBBBBB ;
+}
+
+#content section {
+	border-color: #AAAAAA ;
+}
+
+#content header {
+	border-color: #999999 ;
+}
+
+#content footer {
+	border-color: #888888 ;
+}

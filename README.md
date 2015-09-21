@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Using Dynamic Element Names With The JSX Transpiler In ReactJS](http://bennadel.github.io/JavaScript-Demos/demos/dynamic-tag-names-reactjs/)
 * [Attaching Dynamic Event Handlers To Proxied Child Elements In ReactJS](http://bennadel.github.io/JavaScript-Demos/demos/dynamic-event-bindings-reactjs/)
 * [Setting The State Based On Rendered DOM Elements In ReactJS](http://bennadel.github.io/JavaScript-Demos/demos/set-state-callback-reactjs/)
 * [Don't Alter The DOM (Too Much) During The $destroy Event In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/destroy-event-dom-angularjs/)

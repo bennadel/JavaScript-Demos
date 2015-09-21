@@ -1,0 +1,109 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Using Dynamic Element Names With The JSX Transpiler In ReactJS
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body>
+
+	<h1>
+		Using Dynamic Element Names With The JSX Transpiler In ReactJS
+	</h1>
+
+	<div id="content">
+		<!-- App will be rendered here. -->
+	</div>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/reactjs/react-0.13.3.js"></script>
+	<script type="text/javascript" src="../../vendor/reactjs/JSXTransformer-0.13.3.js"></script>
+	<script type="text/jsx">
+
+		// I manage the root component.
+		var Demo = React.createClass({
+
+			// I return the initial state of the component.
+			getInitialState: function() {
+
+				this.tagNames = [ "div", "p", "article", "section", "header", "footer" ];
+
+				return({
+					tagName: "div"
+				});
+
+			},
+
+
+			// ---
+			// PUBLIC METHODS.
+			// ---
+
+
+			// I run once, on the client, when the component has been mounted on the DOM.
+			componentDidMount: function() {
+
+				// Now that we have access to the window, let's start changing the
+				// current tag every second. 
+				setInterval( this.cycleTagName, 1000 );
+
+			},
+
+
+			// I return the virtual DOM represented by the current component state.
+			render: function() {
+
+				// We are using the variable, this.state.tagName, to define the element
+				// in this component. As long as our variable name doesn't conflict with 
+				// one of the known DOM elements (ex, "<a>"), the JSX transpiler will 
+				// happily create a dynamic tag.
+				// --
+				// NOTE: I could have stored this value in an intermediary value that was
+				// easier to read, like "Container", and it would have worked as well.
+				return(
+					<this.state.tagName>
+
+						Holy chickens, this is a &lt;{ this.state.tagName }&gt; tag!
+					
+					</this.state.tagName>
+				);
+
+			},
+
+
+			// ---
+			// PRIVATE METHODS.
+			// ---
+
+
+			// I cycle through to the next tag name in the collection.
+			cycleTagName: function() {
+
+				var index = this.tagNames.indexOf( this.state.tagName );
+				var nextTag = ( this.tagNames[ ++index ] || this.tagNames[ 0 ] );
+
+				this.setState({
+					tagName: nextTag
+				});
+
+			}
+
+		});
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// Render the root Demo and mount it inside the given element.
+		React.render( <Demo />, document.getElementById( "content" ) );
+
+	</script>
+
+</body>
+</html>
