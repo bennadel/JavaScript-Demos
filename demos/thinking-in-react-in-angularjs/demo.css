@@ -1,0 +1,104 @@
+
+body {
+	font-family: "Open Sans", sans-serif ;
+	font-size: 100% ;
+	font-weight: 400 ;
+}
+
+h2 {
+	font-weight: 400 ;
+	margin-bottom: 30px ;
+}
+
+filterable-product-table {
+	background-color: #FAFAFA ;
+	border: 1px solid #DADADA ;
+	border-radius: 4px 4px 4px 4px ;
+	display: block ;
+	padding: 15px 13px 15px 13px ;
+}
+
+filterable-product-table > div {}
+
+
+search-bar {
+	display: block ;
+	margin-bottom: 22px ;
+}
+
+search-bar form {
+	margin: 0px 0px 0px 0px ;
+}
+
+search-bar input[ type = text ] {
+	box-sizing: border-box ;
+	display: block ;
+	font-size: 110% ;
+	padding: 4px 4px 4px 4px ;
+	width: 100% ;
+}
+
+search-bar p {
+	margin: 7px 0px 0px 0px ;
+}
+
+search-bar label {
+	cursor: pointer ;
+	user-select: none ;
+		-moz-user-select: none ;
+		-webkit-user-select: none ;
+}
+
+
+product-table {
+	display: block ;
+}
+
+product-table table {
+	border-collapse: collapse ;
+	border-spacing: 0px ;
+	font-size: 100% ;
+	width: 100% ;
+}
+
+product-table table td,
+product-table table th {
+	padding: 8px 8px 7px 8px ;
+	text-align: left ;
+}
+
+product-table thead th {
+	background-color: #EAEAEA ;
+	font-weight: 700 ;
+}
+
+product-table tbody th {
+	border-bottom: 2px solid #CCCCCC ;
+	font-weight: 600 ;
+	padding-top: 15px ;
+}
+
+product-table tbody td {
+	border-bottom: 1px dotted #CCCCCC ;
+}
+
+product-table tr.out-of-stock td:first-child {
+	color: red ;
+}
+
+product-table tbody td.no-data {
+	padding: 50px 0px 50px 0px ;
+	text-align: center ;
+}
+
+product-table tbody td.no-data em {
+	background-color: #FFFFFF ;
+	border: 1px solid #CCCCCC ;
+	border-radius: 5px 5px 5px 5px ;
+	color: #CC0000 ;
+	display: inline-block ;
+	font-size: 120% ;
+	font-style: normal ;
+	font-weight: 300 ;
+	padding: 4px 16px 5px 16px ;
+}

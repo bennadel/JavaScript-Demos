@@ -1,0 +1,241 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Thinking In React In AngularJS
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Open+Sans:300,400,600,700"></link>
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body ng-controller="AppController as vm">
+
+	<h1>
+		Thinking In React In AngularJS
+	</h1>
+
+	<h2>
+		Step 2: Build A Static Version In AngularJS 
+	</h2>
+
+	<filterable-product-table 
+		products="vm.products"
+		style="width: 400px ;">
+	</filterable-product-table>
+
+	<p ng-if="false">
+		CAUTION: This demo using the back-tick to define "template strings"
+		and will not work in older browsers like <strong>Safari</strong>
+		and <strong>Internet Explorer</strong>. If you're seeing this message,
+		your browser needs to be updated.
+	</p>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.4.5.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		angular.module( "Demo", [] );
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I control the root of the application.
+		angular.module( "Demo" ).controller(
+			"AppController",
+			function( $scope ) {
+
+				var vm = this;
+
+				// Expose the products on the demo so that they can be passed into
+				// our filterable demo component.
+				vm.products = [
+					{category: "Sporting Goods", price: "$49.99", stocked: true, name: "Football"},
+					{category: "Sporting Goods", price: "$9.99", stocked: true, name: "Baseball"},
+					{category: "Sporting Goods", price: "$29.99", stocked: false, name: "Basketball"},
+					{category: "Electronics", price: "$99.99", stocked: true, name: "iPod Touch"},
+					{category: "Electronics", price: "$399.99", stocked: false, name: "iPhone 5"},
+					{category: "Electronics", price: "$199.99", stocked: true, name: "Nexus 7"}
+				];
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide a filterable table of products and prices.
+		angular.module( "Demo" ).directive(
+			"filterableProductTable",
+			function filterableProductTable() {
+
+				// Return the directive configuration object.
+				return({
+					controller: function FilterableProductTableController( $scope ) {
+
+						var vm = this;
+						var props = $scope.props = $scope;
+
+					},
+					controllerAs: "vm",
+					restrict: "E",
+					scope: {
+						products: "="
+					},
+					template: 
+					`
+						<div>
+							<search-bar></search-bar>
+							<product-table products="props.products"></product-table>
+						</div>
+					`
+				});
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide the search form for the filterable table component.
+		angular.module( "Demo" ).directive(
+			"searchBar",
+			function searchBar() {
+
+				// Return the directive configuration object.
+				return({
+					controller: function SearchBarController( $scope ) {
+
+						var vm = this;
+						var props = $scope.props = $scope;
+
+					},
+					controllerAs: "vm",
+					restrict: "E",
+					scope: {},
+					template: 
+					`
+						<form>
+							<input type="text" placeholder="Search..." />
+							
+							<p>
+								<label>
+									<input type="checkbox" /> Only show products in stock
+								</label>
+							</p>
+						</form>
+					`
+				});
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide the table grid for the filterable table component.
+		angular.module( "Demo" ).directive(
+			"productTable",
+			function productTable() {
+
+				// Return the directive configuration object.
+				return({
+					controller: function ProductTableController( $scope ) {
+
+						var vm = this;
+						var props = $scope.props = $scope;
+
+						// Let's transform the incoming products array into something that
+						// is a bit easier to render. Rather than a single array, we're 
+						// going to break the products down in a collection of Categories,
+						// each of which has a collection of products.
+						vm.categories = [];
+
+						// I help keep track of the group generation.
+						var category = null;
+						var lastCategory = null;
+
+						// Divide products into categories.
+						props.products.forEach(
+							function iterator( product ) {
+
+								if ( product.category !== lastCategory ) {
+
+									category = {
+										name: ( lastCategory = product.category ),
+										products: []
+									};
+
+									vm.categories.push( category );
+
+								}
+
+								category.products.push({
+									name: product.name,
+									stocked: product.stocked,
+									price: product.price
+								});
+
+							}
+						);
+
+					},
+					controllerAs: "vm",
+					restrict: "E",
+					scope: {
+						products: "="
+					},
+					template: 
+					`
+						<table>
+							<col width="80%" />
+							<col width="20%" />
+							<thead>
+								<tr>
+									<th>
+										Name
+									</th>
+									<th>
+										Price
+									</th>
+								</tr>
+							</thead>
+							<tbody ng-repeat="category in vm.categories track by category.name">
+								<tr>
+									<th colspan="2">
+										{{ category.name }}
+									</th>
+								</tr>
+								<tr 
+									ng-repeat="product in category.products track by product.name"
+									ng-class="{ 'out-of-stock': ! product.stocked }">
+									<td>
+										{{ product.name }}
+									</td>
+									<td>
+										{{ product.price }}
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					`
+				});
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>

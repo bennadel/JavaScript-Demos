@@ -1,0 +1,367 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Thinking In React In AngularJS
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body ng-controller="AppController as vm">
+
+	<h1>
+		Thinking In React In AngularJS
+	</h1>
+
+	<h2>
+		Step 4: Identify Where Your State Should Live
+	</h2>
+
+	<filterable-product-table 
+		products="vm.products"
+		style="width: 400px ;">
+	</filterable-product-table>
+
+	<p ng-if="false">
+		CAUTION: This demo using the back-tick to define "template strings"
+		and will not work in older browsers like <strong>Safari</strong>
+		and <strong>Internet Explorer</strong>. If you're seeing this message,
+		your browser needs to be updated.
+	</p>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.4.5.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		angular.module( "Demo", [] );
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I control the root of the application.
+		angular.module( "Demo" ).controller(
+			"AppController",
+			function( $scope ) {
+
+				var vm = this;
+
+				// Expose the products on the demo so that they can be passed into
+				// our filterable demo component.
+				vm.products = [
+					{category: "Sporting Goods", price: "$49.99", stocked: true, name: "Football"},
+					{category: "Sporting Goods", price: "$9.99", stocked: true, name: "Baseball"},
+					{category: "Sporting Goods", price: "$29.99", stocked: false, name: "Basketball"},
+					{category: "Electronics", price: "$99.99", stocked: true, name: "iPod Touch"},
+					{category: "Electronics", price: "$399.99", stocked: false, name: "iPhone 5"},
+					{category: "Electronics", price: "$199.99", stocked: true, name: "Nexus 7"}
+				];
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide a filterable table of products and prices.
+		angular.module( "Demo" ).directive(
+			"filterableProductTable",
+			function filterableProductTable() {
+	
+				// Return the directive configuration object.
+				return({
+					controller: function FilterableProductTableController( $scope ) {
+
+						var vm = this;
+						var props = $scope.props = $scope;
+
+						// The filterable table component will hold the state of the
+						// filtering so that it be passed both into the search component
+						// as well as into the table. This the highest common point.
+						// --
+						// CAUTION: We have some values hard-coded here since we are 
+						// testing the one-way data flow and want to make sure that the 
+						// incoming data is being applied.
+						vm.filterText = "ball";
+						vm.inStockOnly = true;
+
+					},
+					controllerAs: "vm",
+					restrict: "E",
+					scope: {
+						products: "="
+					},
+					template:
+					`
+						<div>
+							<search-bar
+								filter-text="vm.filterText"
+								in-stock-only="vm.inStockOnly">
+							</search-bar>
+
+							<product-table 
+								products="props.products"
+								filter-text="vm.filterText"
+								in-stock-only="vm.inStockOnly">
+							</product-table>
+						</div>
+					`
+				});
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide the search form for the filterable table component.
+		angular.module( "Demo" ).directive(
+			"searchBar",
+			function searchBar() {
+
+				// Return the directive configuration object.
+				return({
+					controller: function SearchBarController( $scope ) {
+
+						var vm = this;
+						var props = $scope.props = $scope;
+
+						// I hold the form values for the ng-model bindings. Since we
+						// don't want the ng-model bindings to alter the references in
+						// the calling context, we'll create an intermediary structure
+						// to hold the local data.
+						vm.form = {
+							filterText: "",
+							inStockOnly: false
+						};
+
+						// Since we're using an intermediary data structure, we have to
+						// watch for changes on the props; and, when they change, we
+						// have to synchronize the local form inputs.
+						// --
+						// NOTE: Watch configuration will set initial values.
+						$scope.$watchCollection(
+							"[ props.filterText, props.inStockOnly ]",
+							function handlePropsChange( newValues, oldValues ) {
+
+								vm.form.filterText = props.filterText;
+								vm.form.inStockOnly = props.inStockOnly;
+
+							}
+						);
+
+					},
+					controllerAs: "vm",
+					restrict: "E",
+					scope: {
+						filterText: "=",
+						inStockOnly: "="
+					},
+					template: 
+					`
+						<form>
+							<input type="text" ng-model="vm.form.filterText" placeholder="Search..." />
+							
+							<p>
+								<label>
+									<input type="checkbox" ng-model="vm.form.inStockOnly" /> 
+									Only show products in stock
+								</label>
+							</p>
+						</form>
+					`
+				});
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide the table grid for the filterable table component.
+		angular.module( "Demo" ).directive(
+			"productTable",
+			function productTable() {
+
+				// Return the directive configuration object.
+				return({
+					controller: function ProductTableController( $scope ) {
+
+						var vm = this;
+						var props = $scope.props = $scope;
+
+						// Let's transform the incoming products array into something that
+						// is a bit easier to render. Rather than a single array, we're 
+						// going to break the products down in a collection of Categories,
+						// each of which has a collection of products.
+						vm.categories = [];
+
+						// Since we're employing a data-transformation, we have to watch 
+						// for changes on the props; and, when the products or the filter
+						// criteria changes, we have to synchronize the transformed structure.
+						// --
+						// NOTE: Watch configuration will set initial values.
+						$scope.$watchCollection(
+							"[ props.products, props.filterText, props.inStockOnly ]",
+							function handlePropsChange() {
+
+								vm.categories = getFilteredProducts( 
+									props.products,
+									props.filterText,
+									props.inStockOnly 
+								);
+
+							}
+						);
+
+
+						// ---
+						// PRIVATE METHODS.
+						// ---
+
+
+						// I return the category breakdown for the given products after 
+						// the given filtering has been applied.
+						function getFilteredProducts( products, filterText, inStockOnly ) {
+
+							var categories = [];
+							var category = null;
+							var lastCategory = null;
+
+							filterText = filterText.toLowerCase();
+
+							products
+								// Filter out the products that don't match the current criteria.
+								.filter(
+									function operator( product ) {
+
+										// Filter based on text.
+										if ( 
+											filterText && 
+											( product.name.toLowerCase().indexOf( filterText ) === -1 )
+											) {
+
+											return( false );
+
+										}
+
+										// Filter based on stock status.
+										if ( inStockOnly && ! product.stocked ) {
+											
+											return( false );
+
+										}
+
+										// If we made it this far, the product was not 
+										// filtered-out of the results.
+										return( true );
+
+									}
+								)
+								// Now that we have the filtered products, break them 
+								// down into the different categories. And, since we pre-
+								// filtered the products, we know that we won't get any 
+								// empty categories in the final breakdown.
+								.forEach(
+									function iterator( product ) {
+
+										if ( product.category !== lastCategory ) {
+
+											category = {
+												name: ( lastCategory = product.category ),
+												products: []
+											};
+
+											categories.push( category );
+
+										}
+
+										category.products.push({
+											name: product.name,
+											stocked: product.stocked,
+											price: product.price
+										});
+
+									}
+								)
+							;
+
+							return( categories );
+
+						}
+
+					},
+					controllerAs: "vm",
+					restrict: "E",
+					scope: {
+						products: "=",
+						filterText: "=",
+						inStockOnly: "="
+					},
+					template: 
+					`
+						<table>
+							<col width="80%" />
+							<col width="20%" />
+							<thead>
+								<tr>
+									<th>
+										Name
+									</th>
+									<th>
+										Price
+									</th>
+								</tr>
+							</thead>
+
+							<!-- If we have data to display. -->
+							<tbody 
+								ng-if="vm.categories.length"
+								ng-repeat="category in vm.categories track by category.name">
+								<tr>
+									<th colspan="2">
+										{{ category.name }}
+									</th>
+								</tr>
+								<tr 
+									ng-repeat="product in category.products track by product.name"
+									ng-class="{ 'out-of-stock': ! product.stocked }">
+									<td>
+										{{ product.name }}
+									</td>
+									<td>
+										{{ product.price }}
+									</td>
+								</tr>
+							</tbody>
+
+							<!-- If we have no data to display. -->
+							<tbody ng-if="( ! vm.categories.length )">
+								<tr>
+									<td colspan="2" class="no-data">
+										<em>No products match your criteria.</em>
+									</td>
+								</td>
+							</tbody>
+						</table>
+					`
+				});
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
