@@ -1,0 +1,119 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Passing Contextual Classes And Styles Into Child Components In ReactJS
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body>
+
+	<h1>
+		Passing Contextual Classes And Styles Into Child Components In ReactJS
+	</h1>
+
+	<div id="content">
+		<!-- App will be rendered here. -->
+	</div>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/reactjs/react-0.13.3.js"></script>
+	<script type="text/javascript" src="../../vendor/reactjs/JSXTransformer-0.13.3.js"></script>
+	<script type="text/jsx">
+
+		// I manage the root component.
+		var Demo = React.createClass({
+
+			// I return the virtual DOM represented by the current component state.
+			render: function() {
+
+				var widgetStyle = {
+					left: 50,
+					top: 100
+				};
+
+				// While the "Widget" isn't the actual rendered DOM element, it is a
+				// component that can accept "override" className and style properties. 
+				// These will be applied to the underlying DOM element at render time.
+				return(
+					<div>
+						<Widget className="for-demo" style={ widgetStyle }>
+							Woot!
+						</Widget>
+					</div>
+				);
+
+			}
+
+		});
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I manage the widget component.
+		var Widget = React.createClass({
+
+			// I define the shape of the incoming props requirement.
+			propTypes: {
+				className: React.PropTypes.string,
+				style: React.PropTypes.object
+			},
+
+
+			// I provide the defaults for props that were desired, but not passed-in.
+			getDefaultProps: function() {
+
+				return({
+					className: "",
+					style: {}
+				});
+
+			},
+
+
+			// ---
+			// PUBLIC METHODS.
+			// ---
+
+
+			// I return the virtual DOM represented by the current component state.
+			render: function() {
+
+				// When we render our widget, notice that we are transferring the 
+				// incoming className and style props onto our widget. This allows the
+				// calling context to provide overrides for what we would define as
+				// the default styling of the component.
+				return(
+					<div 
+						className={ "widget " + this.props.className } 
+						style={ this.props.style }>
+
+						<span className="label">
+							{ this.props.children }
+						</span>
+
+					</div>
+				);
+
+			}
+
+		});
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// Render the root Demo and mount it inside the given element.
+		React.render( <Demo />, document.getElementById( "content" ) );
+
+	</script>
+
+</body>
+</html>

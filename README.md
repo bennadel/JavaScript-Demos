@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Passing Contextual Classes And Styles Into Child Components In ReactJS](http://bennadel.github.io/JavaScript-Demos/demos/context-style-reactjs/)
 * [Thinking In React In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/thinking-in-react-in-angularjs/)
 * [Using Dynamic Element Names With The JSX Transpiler In ReactJS](http://bennadel.github.io/JavaScript-Demos/demos/dynamic-tag-names-reactjs/)
 * [Attaching Dynamic Event Handlers To Proxied Child Elements In ReactJS](http://bennadel.github.io/JavaScript-Demos/demos/dynamic-event-bindings-reactjs/)

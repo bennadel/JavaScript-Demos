@@ -1,0 +1,38 @@
+/* By default, this widget is just inline-block. */
+
+div.widget {
+	background-color: #FAFAFA ;
+	border: 1px solid #CCCCCC ;
+	border-radius: 3px 3px 3px 3px ;
+	display: inline-block ;
+	padding: 14px 25px 12px 25px ;
+	position: relative ;
+}
+
+div.widget span.label {
+	display: block ;
+}
+
+div.widget:after {
+	background-color: #FF0099 ;
+	border-radius: 7px 7px 7px 7px ;
+	content: "" ;
+	height: 7px ;
+	position: absolute ;
+	right: 7px ;
+	top: 7px ;
+	width: 7px ;
+}
+
+
+/*
+	For the demo, the widget is going to be overridden to be an 
+	absolutely-positioned element rather than an inline-block one.
+
+	NOTE: We have to provide the DIV otherwise this selector won't be 
+	able to override the previous selector that defined the base styles. 
+*/
+div.widget.for-demo {
+	border-width: 2px ;
+	position: absolute ;
+}
