@@ -1,0 +1,102 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Using A Compound Track-By Expression With ngRepeat In AngularJS
+	</title>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		Using A Compound Track-By Expression With ngRepeat In AngularJS
+	</h1>
+
+	<h2>
+		You have {{ $scope.friends.length }} friends 
+		and {{ $scope.enemies.length }} enemies.
+	</h2>
+
+	<ul>
+		<!--
+			When using the ngRepeat, we have to output a mixed collection of items 
+			that has non-unique IDs. If all we did was track-by the "id", we'd get 
+			the [ngRepeat:dupes] error. However, we can create a unique tracking value
+			by employing a compound track-by expression that combines two different
+			fields from the iteration object.
+		-->
+		<li 
+			ng-repeat="person in people track by ( person.type + person.id )"
+			ng-switch="person.type">
+			
+			{{ person.name }}
+			&mdash;
+			( {{ person.id }} ) 
+			<span ng-switch-when="friend">friend, yay!</span>
+			<span ng-switch-when="enemy">enemy, meh.</span>
+
+		</li>
+	</ul>
+
+	
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.4.5.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		angular.module( "Demo", [] );
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I control the root of the application.
+		angular.module( "Demo" ).controller(
+			"AppController",
+			function AppController( $scope ) {
+
+				$scope.friends = [
+					{
+						id: 1,
+						name: "Kim",
+						type: "friend"
+					},
+					{
+						id: 2,
+						name: "Sarah",
+						type: "friend"
+					},
+					{
+						id: 3,
+						name: "Tricia",
+						type: "friend"
+					}
+				];
+
+				$scope.enemies = [
+					{
+						id: 1,
+						name: "Tessa",
+						type: "enemy"
+					},
+					{
+						id: 2,
+						name: "Helen",
+						type: "enemy"
+					}
+				];
+
+				// I hold the collection of people that we are going to output. Notice
+				// that our collection contains two sets of objects that have overlapping
+				// ID values, but have distinct TYPE values.
+				$scope.people = $scope.friends.concat( $scope.enemies );
+				
+			}
+		);
+
+	</script>
+
+</body>
+</html>
