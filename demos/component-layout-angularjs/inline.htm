@@ -1,0 +1,113 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Decoupling Component Directives From Layout In AngularJS
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./inline.css"></link>
+</head>
+<body ng-controller="AppController as vm">
+
+	<h1>
+		Decoupling Component Directives From Layout In AngularJS
+	</h1>
+
+	<h2>
+		Coupled Version
+	</h2>
+
+	<div class="chat">
+		<div class="history">
+			
+			<!--
+				In this version, the concept of the history line-item and the chat
+				message are one-in-the-same. This means that the chat message is 
+				responsible not just for its own content but also for other things like
+				line-item spacing.
+
+				The upside to this is that there is minimal markup.
+			-->
+			<div
+				ng-repeat="message in vm.messages track by message.id"
+				class="message"
+				ng-class="{ other: ( message.name != 'Ben' ) }">
+
+				<img ng-src="./{{ message.name.toLowerCase() }}.jpg" />
+
+				<div class="header">
+					{{ message.name }}
+				</div>
+
+				<div class="content">
+					{{ message.message }}
+				</div>
+
+			</div>
+
+		</div>
+	</div>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.4.5.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		angular.module( "Demo", [] );
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I control the root of the application.
+		angular.module( "Demo" ).controller(
+			"AppController",
+			function( $scope ) {
+
+				var vm = this;
+
+				// I am the messages to render in the chat history.
+				vm.messages = [
+					{
+						id: 1,
+						name: "Ben",
+						message: "Hey, how's it going?"
+					},
+					{
+						id: 2,
+						name: "Kim",
+						message: "Good. What's going on?"
+					},
+					{
+						id: 3,
+						name: "Ben",
+						message: "Not too much. I was thinking about going to a movie. Any interest?"
+					},
+					{
+						id: 4,
+						name: "Kim",
+						message: "Heck's to the yeah. Which one?"
+					},
+					{
+						id: 5,
+						name: "Ben",
+						message: "How about Everest?"
+					},
+					{
+						id: 6,
+						name: "Kim",
+						message: "Let's do it!"
+					}
+				];				
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>	

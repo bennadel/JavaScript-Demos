@@ -1,0 +1,45 @@
+
+div.chat {
+	border: 1px solid #CCCCCC ;
+	padding: 10px 10px 10px 10px ;
+	width: 300px ;
+}
+
+div.history {}
+
+div.message {
+	border: 1px solid #999999 ;
+	border-radius: 4px 4px 4px 4px ;
+	margin: 0px 0px 10px 0px ;
+	min-height: 40px ;
+	padding: 9px 7px 9px 57px ;
+	position: relative ;
+}
+
+div.message:last-child {
+	margin-bottom: 0px ;
+}
+
+div.message img {
+	border-radius: 40px 40px 40px 40px ;
+	height: 40px ;
+	left: 7px ;
+	position: absolute ;
+	top: 7px ;
+	width: 40px ;
+}
+
+div.message div.header {
+	font-weight: 800 ;
+}
+
+div.message.other {
+	border-color: #CCCCCC ;
+	padding: 9px 57px 7px 7px ;
+	text-align: right ;
+}
+
+div.message.other img {
+	left: auto ;
+	right: 7px ;
+}

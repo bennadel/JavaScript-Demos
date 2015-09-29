@@ -1,0 +1,166 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Decoupling Component Directives From Layout In AngularJS
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./component.css"></link>
+</head>
+<body ng-controller="AppController as vm">
+
+	<h1>
+		Decoupling Component Directives From Layout In AngularJS
+	</h1>
+
+	<h2>
+		Decoupled Version
+	</h2>
+
+	<div class="chat">
+		<div class="history">
+			
+			<!--
+				In this version, the concept of the chat history line-item is completely
+				separate from the concept of the chat message. The line-item is all about
+				layout whereas the chat-message is all about the message. Now, the chat-
+				message doesn't have to care about spacing and contextual layout.
+
+				The downside to this is that there is more markup. But, I'm starting to
+				embrace the idea that this is just an "emotional" downside.
+			-->
+			<div
+				ng-repeat="message in vm.messages track by message.id"
+				class="history-item">
+
+				<chat-message
+					id="message.id"
+					name="message.name"
+					message="message.message"
+					other="( message.name != 'Ben' )">
+				</chat-message>
+
+			</div>
+
+		</div>
+	</div>
+
+	<p>
+		<strong>Caution</strong>: I am using template strings (ie, the back-tick) to 
+		inline the component view. If you are using an older browser, this will not work.
+	</p>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.4.5.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		angular.module( "Demo", [] );
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I control the root of the application.
+		angular.module( "Demo" ).controller(
+			"AppController",
+			function( $scope ) {
+
+				var vm = this;
+
+				// I am the messages to render in the chat history.
+				vm.messages = [
+					{
+						id: 1,
+						name: "Ben",
+						message: "Hey, how's it going?"
+					},
+					{
+						id: 2,
+						name: "Kim",
+						message: "Good. What's going on?"
+					},
+					{
+						id: 3,
+						name: "Ben",
+						message: "Not too much. I was thinking about going to a movie. Any interest?"
+					},
+					{
+						id: 4,
+						name: "Kim",
+						message: "Heck's to the yeah. Which one?"
+					},
+					{
+						id: 5,
+						name: "Ben",
+						message: "How about Everest?"
+					},
+					{
+						id: 6,
+						name: "Kim",
+						message: "Let's do it!"
+					}
+				];				
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I manage that Chat Message component directive.
+		angular.module( "Demo" ).directive(
+			"chatMessage",
+			function chatMessageDirective() {
+
+				// Return the directive configuration object.
+				return({
+					controller: Controller,
+					controllerAs: "vm",
+					restrict: "E",
+					scope: {
+						id: "=",
+						name: "=",
+						message: "=",
+						other: "="
+					},
+					template: 
+					`
+						<div class="content" ng-class="{ other: props.other }">
+
+							<img ng-src="./{{ props.name.toLowerCase() }}.jpg" />
+
+							<div class="header">
+								{{ props.name }}
+							</div>
+
+							<div class="content">
+								{{ props.message }}
+							</div>
+
+						</div>
+					`
+				});
+
+
+				// I control the chat module.
+				function Controller( $scope ) {
+
+					var vm = this;
+					var props = $scope.props = $scope;
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>	

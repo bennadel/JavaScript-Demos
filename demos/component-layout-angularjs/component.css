@@ -1,0 +1,55 @@
+
+div.chat {
+	border: 1px solid #CCCCCC ;
+	padding: 10px 10px 10px 10px ;
+	width: 300px ;
+}
+
+div.history {}
+
+div.history-item {
+	margin: 0px 0px 10px 0px ;
+}
+
+div.history-item:last-child {
+	margin-bottom: 0px ;
+}
+
+
+chat-message {
+	display: block ;
+	margin: 0px 0px 0px 0px ;
+	padding: 0px 0px 0px 0px ;
+}
+
+chat-message > div.content {
+	border: 1px solid #999999 ;
+	border-radius: 4px 4px 4px 4px ;
+	min-height: 40px ;
+	padding: 9px 7px 9px 57px ;
+	position: relative ;
+}
+
+chat-message img {
+	border-radius: 40px 40px 40px 40px ;
+	height: 40px ;
+	left: 7px ;
+	position: absolute ;
+	top: 7px ;
+	width: 40px ;
+}
+
+chat-message div.header {
+	font-weight: 800 ;
+}
+
+chat-message div.content.other {
+	border-color: #CCCCCC ;
+	padding: 9px 57px 7px 7px ;
+	text-align: right ;
+}
+
+chat-message div.content.other img {
+	left: auto ;
+	right: 7px ;
+}
