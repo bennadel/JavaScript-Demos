@@ -1,0 +1,164 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Decoupling Component And Layout Responsibilities In ReactJS
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./component.css"></link>
+</head>
+<body>
+
+	<h1>
+		Decoupling Component And Layout Responsibilities In ReactJS
+	</h1>
+
+	<h2>
+		Decoupled Version
+	</h2>
+
+	<div id="content">
+		<!-- App will be rendered here. -->
+	</div>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/reactjs/react-0.13.3.min.js"></script>
+	<script type="text/javascript" src="../../vendor/reactjs/JSXTransformer-0.13.3.js"></script>
+	<script type="text/jsx">
+
+		// I manage the root component.
+		var Demo = React.createClass({
+
+			// I return the initial state of the component.
+			getInitialState: function() {
+
+				return({
+					messages: [
+						{
+							id: 1,
+							name: "Ben",
+							message: "Good morning, wanna grab some breakfast?"
+						},
+						{
+							id: 2,
+							name: "Kim",
+							message: "I just woke up, can you give me like 15 mins to shower and dress?"
+						},
+						{
+							id: 3,
+							name: "Ben",
+							message: "Yeah, no problemo, just text me."
+						},
+						{
+							id: 4,
+							name: "Kim",
+							message: "Will do."
+						},
+						{
+							id: 5,
+							name: "Kim",
+							message: "Ok, ready to rock. Meet outside?"
+						},
+						{
+							id: 6,
+							name: "Ben",
+							message: "Let's do this!"
+						}
+					]
+				});
+
+			},
+
+
+			// ---
+			// PUBLIC METHODS.
+			// ---
+
+
+			// I return the virtual DOM represented by the current component state.
+			render: function() {
+
+				var items = this.state.messages.map(
+					function operator( message ) {
+
+						// In this version, we have a clear distinction between the 
+						// history-item and the embedded chat message. This allows the
+						// two components to retain different responsibilities.
+						return(
+							<div key={ message.id } className="history-item">
+
+								<ChatMessage
+									name={ message.name }
+									message={ message.message }
+									other={ ( message.name !== "Ben" ) }>
+								</ChatMessage>
+
+							</div>
+						);
+
+					}
+				);
+
+				return(
+					<div className="chat">
+						<div className="history">
+							{ items }
+						</div>
+					</div>
+				);
+
+			}
+
+		});
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I manage the chat message component.
+		var ChatMessage = React.createClass({
+
+			// I return the virtual DOM represented by the current component state.
+			render: function() {
+
+				var classes = this.props.other
+					? "m-message for-other"
+					: "m-message"
+				;
+
+				return(
+					<div className={ classes }>
+
+						<img src={ "./" + this.props.name.toLowerCase() + ".jpg" } />
+
+						<div className="header">
+							{ this.props.name }
+						</div>
+
+						<div className="content">
+							{ this.props.message }
+						</div>
+
+					</div>
+				);
+
+			}
+
+		});
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// Render the root Demo and mount it inside the given element.
+		React.render( <Demo />, document.getElementById( "content" ) );
+
+	</script>
+
+</body>
+</html>
