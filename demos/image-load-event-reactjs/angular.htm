@@ -1,0 +1,130 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Image Load And Error Events Bubble Up In ReactJS
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		Image Load And Error Events Bubble Up In ReactJS
+	</h1>
+
+	<h2>
+		AngularJS "Control" Example
+	</h2>
+
+	<div bn-load="imageLoadBubbled( $event )">
+
+		<p>
+			<a ng-click="toggleImage()">Toggle Image</a>
+		</p>
+
+		<img 
+			ng-if="isShowingImage"
+			ng-src="./flex.jpg"
+			bn-load="imageLoaded( $event )"
+			width="400"
+		/>
+
+	</div>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.4.5.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		angular.module( "Demo", [] );
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I control the root of the application.
+		angular.module( "Demo" ).controller(
+			"AppController",
+			function AppController( $scope ) {
+
+				$scope.isShowingImage = true;
+
+				
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I handle the load event WHEN / IF it bubbles up to the DIV element.
+				$scope.imageLoadBubbled = function( event ) {
+
+					console.log( "Image load event bubbled up to Div -->", event.target.tagName );
+
+				};
+
+
+				// I handle the load event on the image.
+				$scope.imageLoaded = function( event ) {
+
+					console.log( "Image load event fired -->", event.target.tagName );
+
+				};
+
+
+				// I toggle the inclusion of the image element.
+				$scope.toggleImage = function() {
+
+					$scope.isShowingImage = ! $scope.isShowingImage;
+
+				};
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I bind to the load event on the given element and invoke the given callback.
+		angular.module( "Demo" ).directive(
+			"bnLoad",
+			function bnLoadDirective() {
+
+				// Return the directive configuration object.
+				return({
+					link: link,
+					restrict: "A"
+				});
+
+
+				// I bind the JavaScript events to the view-model.
+				function link( scope, element, attributes ) {
+
+					element.on( "load", handleLoad );
+
+					function handleLoad( event ) {
+
+						scope.$eval(
+							attributes.bnLoad,
+							{
+								$event: event 
+							}
+						);
+
+					}
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>

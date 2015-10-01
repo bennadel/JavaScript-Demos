@@ -1,0 +1,107 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Image Load And Error Events Bubble Up In ReactJS
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body>
+	
+	<h1>
+		Image Load And Error Events Bubble Up In ReactJS
+	</h1>
+
+	<div id="content">
+		<!-- This content will be replaced with the React rendering. -->
+	</div>
+	
+
+	<!-- Load scripts. -->
+	<script src="../../vendor/reactjs/react-0.13.3.min.js"></script>
+	<script src="../../vendor/reactjs/JSXTransformer-0.13.3.js"></script>
+	<script type="text/jsx">
+		
+		// I manage the Demo widget.
+		var Demo = React.createClass({
+
+			getInitialState: function() {
+
+				return({
+					isShowingImage: true
+				});
+
+			},
+
+
+			// ---
+			// PUBLIC METHODS.
+			// ---
+
+
+			// I handle the load event on the image.
+			handleImageLoad: function( event ) {
+
+				console.log( "Image load event fired -->", event.target.tagName );
+
+			},
+
+
+			// I handle the load event WHEN / IF it bubbles up to the DIV element.
+			handleImageLoadBubbled: function( event ) {
+
+				console.log( "Image load event bubbled up to Div -->", event.target.tagName );
+
+			},
+
+
+			// I render the view using the current state and properties collections.
+			render: function() {
+
+				var image = (
+					<img 
+						src="./flex.jpg"
+						onLoad={ this.handleImageLoad }
+						width="400" 
+					/>
+				);
+
+				return(
+					<div onLoad={ this.handleImageLoadBubbled }>
+						<p>
+							<a onClick={ this.toggleImage }>Toggle Image</a>
+						</p>
+						
+						{ this.state.isShowingImage && image }
+					</div>
+				);
+
+			},
+
+
+			// I toggle the inclusion of the image element.
+			toggleImage: function() {
+
+				this.setState({
+					isShowingImage: ! this.state.isShowingImage
+				});
+
+			}
+
+		});
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// Render the root Demo and mount it inside the given element.
+		React.render( <Demo />, document.getElementById( "content" ) );
+
+	</script>
+
+</body>
+</html>
