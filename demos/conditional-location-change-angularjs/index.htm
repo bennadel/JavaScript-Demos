@@ -1,0 +1,329 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Getting User Confirmation For Location-Change Events In AngularJS
+	</title>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		Getting User Confirmation For Location-Change Events In AngularJS
+	</h1>
+
+	<div ng-switch="subview">
+
+		<!-- BEGIN: Home View. -->
+		<div ng-switch-when="home" ng-controller="HomeController">
+
+			<h2>
+				Home
+			</h2>
+
+			<ul>
+				<li ng-repeat="item in items">
+					<a ng-href="#/item/{{ item.id }}">{{ item.name }}</a>
+				</li>
+			</ul>
+
+		</div>
+		<!-- END: Home View. -->
+
+		<!-- BEGIN: Item Detail View. -->
+		<div ng-switch-when="item" ng-controller="ItemController">
+
+			<h2>
+				Item Detail
+			</h2>
+
+			<p>
+				You are view <strong>item {{ itemID }}</strong>.
+			</p>
+
+			<p>
+				<strong style="background-color: gold ;">
+					Pretend there is some pending information here that may need to be
+					saved by the user before the view is destroyed or changed.
+				</strong>
+			</p>
+
+			<p>
+				&laquo; 
+				<a ng-href="#/item/{{ prevItemID }}">Prev Item</a>
+				&nbsp;|&nbsp;
+				<a ng-href="#/item/{{ nextItemID }}">Next Item</a> 
+				&raquo;
+			</p>
+
+			<p>
+				Or, <a ng-href="#/home">Go home</a>
+			</p>
+
+		</div>
+		<!-- END: Item Detail View. -->
+
+	</div>
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.3.13.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs/angular-route-1.3.13.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		angular.module( "Demo", [ "ngRoute" ] );
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I setup the routes for the application.
+		angular.module( "Demo" ).config(
+			function configRoutes( $routeProvider ) {
+
+				$routeProvider
+					.when(
+						"/home",
+						{
+							action: "home"
+						}
+					)
+					.when(
+						"/item/:id",
+						{
+							action: "item"
+						}
+					)
+					.otherwise({
+						redirectTo: "/home"
+					})
+				;
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I control the root of the demo.
+		angular.module( "Demo" ).controller(
+			"AppController",
+			function AppController( $scope, $route ) {
+
+				$scope.subview = null;
+
+				// Whenever the route changes, we need to update the view selection.
+				$scope.$on( "$routeChangeSuccess", handleRouteChange );
+
+
+				// ---
+				// PRIVATE METHODS.
+				// ---
+
+
+				// I synchronize the view with the newly updated route.
+				function handleRouteChange() {
+
+					$scope.subview = $route.current.action;
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I control the home view.
+		angular.module( "Demo" ).controller(
+			"HomeController",
+			function HomeController( $scope ) {
+
+				// Setup the items for the list. The number here is totally arbitrary.
+				$scope.items = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ].map(
+					function operator( id ) {
+
+						return({
+							id: id, 
+							name: ( "Item " + id )
+						});
+
+					}
+				);
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I control the item detail view.
+		angular.module( "Demo" ).controller(
+			"ItemController",
+			function ItemController( $scope, $route, $routeParams, $location, $window, $log, asyncConfirm ) {
+
+				// Get the relevant IDs for the view.
+				$scope.itemID = $routeParams.id;
+				$scope.prevItemID = getPrevItemID( $scope.itemID );
+				$scope.nextItemID = getNextItemID( $scope.itemID );
+
+				// Because we need to get the user to confirm the location change, we'll
+				// run into a situation in which we potentially never let the user leave.
+				// As such, we need to keep track of whether or not the user confirmed the
+				// current location change so that we don't request another confirmation.
+				var userConfirmedLocationChange = false;
+
+				// Bind to the location change start event so that we can get the user 
+				// confirm the location change.
+				$scope.$on( "$locationChangeStart", handleLocationChangeStart );
+
+				// Bind to the route change success event so that we can synchronize the 
+				// view-model with the newly-selected route.
+				$scope.$on( "$routeChangeSuccess", handleRouteChange );
+
+
+				// ---
+				// PRIVATE METHODS.
+				// ---
+
+
+				// I get the ID of the next item in the list.
+				function getNextItemID( id ) {
+
+					// CAUTION: Just hard-coding the limits to keep this simple.
+					return( ( ++id > 10 ) ? 1 : id );
+					
+				}
+
+
+				// I get the ID of the previous item in the list.
+				function getPrevItemID( id ) {
+
+					// CAUTION: Just hard-coding the limits to keep this simple.
+					return( ( --id < 1 ) ? 10 : id );
+
+				}
+
+
+				// I hook into the pre-location-change event to see if the user actually 
+				// wants to let the location (and subsequently the route) change. The 
+				// location change can still be canceled in the "Start" phase.
+				function handleLocationChangeStart( event, newUrl ) {
+
+					// If this location was changed with the expressed intent of the 
+					// user, we need to skip this check, but then continue checking 
+					// subsequent changes to the location.
+					if ( userConfirmedLocationChange ) {
+
+						userConfirmedLocationChange = false;
+						return;
+
+					}
+
+					// CAUTION: Because the user cannot confirm the location-change mid-
+					// event, we have to cancel the location change, no matter what. Then,
+					// we have to react to the user's feedback asynchronously.
+					// --
+					// NOTE: If you use the BLOCKING confirm(), you could just wrap this 
+					// in if-statement, ex:
+					// --
+					// if ( ! confirm( "..." ) ) { event.preventDefatul(); }
+					event.preventDefault();
+					$log.warn( "Canceling location-change event:", $location.path() );
+
+
+					// Check with the user ASYNCHRONOUSLY to see if they want to leave the
+					// current state of the view.
+					// --
+					// NOTE: The reason that I am stressing the asynchronous check is that 
+					// it leaves you open to create a richer experience, like a Bootstrap-
+					// based confirmation modal.
+					asyncConfirm( "Are you sure you want to leave?" ).then(
+						function handleResolve() {
+
+							// Since we're about to change the location, we have to 
+							// indicate that the location change was done on purpose and 
+							// should be accepted the next time this event handler kicks
+							// in (as a result of the subsequent change).
+							userConfirmedLocationChange = true;
+
+							// Now that the user has confirmed, send them through to the
+							// URL that initiated the original location-change event.
+							$window.location = newUrl;
+
+						}
+					);
+
+				}
+
+
+				// I synchronize the view model with the newly updated route.
+				function handleRouteChange() {
+
+					// CAUTION: This is a hacky check to make sure the exist route doesn't
+					// cause a problem. I am doing this because I am not really implementing
+					// a full routing system here.
+					if ( $route.current.action !== "item" ) {
+						
+						return;
+
+					}
+
+					$scope.itemID = $routeParams.id;
+					$scope.prevItemID = getPrevItemID( $scope.itemID );
+					$scope.nextItemID = getNextItemID( $scope.itemID );
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide a confirm() box that is outside of the current tick in order to 
+		// ensure that it is non-blocking (and cannot be used mid-event-broadcast).
+		angular.module( "Demo" ).factory(
+			"asyncConfirm",
+			function asyncConfirmFactory( $q, $rootScope, $window ) {
+
+				return( asyncConfirm );
+
+
+				// I open a promise-based confirm box.
+				function asyncConfirm( message ) {
+
+					var deferred = $q.defer();
+
+					$rootScope.$evalAsync(
+						function changeModel() {
+
+							$window.confirm( message )
+								? deferred.resolve()
+								: deferred.reject()
+							;
+							
+						}
+					);
+
+					return( deferred.promise );
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
