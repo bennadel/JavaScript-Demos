@@ -1,0 +1,56 @@
+
+div.people {
+	border: 1px solid #CCCCCC ;
+	border-radius: 4px 4px 4px 4px ;
+	margin: 20px 0px 20px 0px ;
+	position: relative ;
+	width: 600px ;
+}
+
+div.people ul {
+	border-right: 1px solid #CCCCCC ;
+	border-radius: 4px 0px 0px 4px ;
+	list-style-type: none ;
+	margin: 0px 0px 0px 0px ;
+	padding: 0px 0px 0px 0px ;
+	width: 200px ;
+}
+
+div.people li {
+	border-bottom: 1px solid #CCCCCC ;
+	margin: 0px 0px 0px 0px ;
+}
+
+div.people li:last-child {
+	border-bottom-width: 0px ;
+}
+
+div.people li a {
+	background-color: #F0F0F0 ;
+	color: #333333 ;
+	cursor: pointer ;
+	display: block ;
+	padding: 7px 10px 7px 10px ;
+}
+
+div.people li.on a {
+	background-color: #666666 ;
+	color: #FFFFFF ;
+}
+
+div.people div {
+	bottom: 0px ;
+	left: 200px ;
+	padding: 20px 20px 20px 20px ;
+	position: absolute ;
+	right: 0px ;
+	top: 0px ;
+}
+
+p.current-url {
+	background-color: #333333 ;
+	border-radius: 4px 4px 4px 4px ;
+	color: #FFFFFF ;
+	margin-top: 35px ;
+	padding: 15px 18px 15px 18px ;
+}

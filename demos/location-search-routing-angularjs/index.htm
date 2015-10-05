@@ -1,0 +1,387 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		$location.search() Facilitates Independent Sub-Routing In AngularJS
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		$location.search() Facilitates Independent Sub-Routing In AngularJS
+	</h1>
+
+	<div ng-switch="subview">
+
+		<!-- BEGIN: Home View. -->
+		<div ng-switch-when="home">
+
+			<h2>
+				Home
+			</h2>
+
+			<p>
+				<a href="#/lists">Go to lists page</a> &raquo;
+			</p>
+
+		</div>
+		<!-- END: Home View. -->
+
+
+		<!-- BEGIN: Lists View. -->
+		<div ng-switch-when="lists">
+			
+			<h2>
+				Lists
+			</h2>
+
+			<p>
+				&laquo; <a href="#/home">Back to home page</a>
+			</p>
+
+			<!-- BEGIN: Sub-Router One. -->
+			<div ng-controller="SubRouterOneController">
+
+				<h3>
+					Friends
+				</h3>
+
+				<div class="people">
+					<ul>
+						<li 
+							ng-repeat="friend in friends track by friend.id"
+							ng-class="{ on: ( friend == selectedFriend ) }">
+
+							<!-- 
+								Because this module is being powered by an independent 
+								$location.search()-based set of parameters, and not the 
+								$location.path(), we can't just use a regular HREF value.
+								Instead, we have to use a click-handler that the module 
+								will translate into subsequent URL modifications. 
+							-->
+							<a ng-click="viewFriend( friend )">{{ friend.name }}</a>
+
+						</li>
+					</ul>
+
+					<div ng-if="selectedFriend">
+						{{ selectedFriend.description }}
+					</div>
+				</div>
+
+			</div>
+			<!-- END: Sub-Router One. -->
+
+			<!-- BEGIN: Sub-Router Two. -->
+			<div ng-controller="SubRouterTwoController">
+
+				<h3>
+					Enemies
+				</h3>
+
+				<div class="people">
+					<ul>
+						<li 
+							ng-repeat="enemy in enemies track by enemy.id"
+							ng-class="{ on: ( enemy == selectedEnemy ) }">
+
+							<!-- 
+								Because this module is being powered by an independent 
+								$location.search()-based set of parameters, and not the 
+								$location.path(), we can't just use a regular HREF value.
+								Instead, we have to use a click-handler that the module 
+								will translate into subsequent URL modifications. 
+							-->
+							<a ng-click="viewEnemy( enemy )">{{ enemy.name }}</a>
+
+						</li>
+					</ul>
+
+					<div ng-if="selectedEnemy">
+						{{ selectedEnemy.description }}
+					</div>
+				</div>
+
+			</div>
+			<!-- END: Sub-Router Two. -->
+
+		</div>
+		<!-- END: Lists View. -->
+
+	</div>
+
+	<!-- Output the current URL for debugging. -->
+	<p class="current-url">
+		<strong>URL:</strong> {{ currentUrl }}
+	</p>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.4.5.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs/angular-route-1.4.5.min.js"></script>
+	<script type="text/javascript" src="../../vendor/lodash/lodash-3.9.3.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		angular.module( "Demo", [ "ngRoute" ] );
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I configure the top-level routes for the application.
+		angular.module( "Demo" ).config(
+			function configureRoutes( $routeProvider ) {
+
+				// At the top-level, we only have two traditional "routes" in the 
+				// application. However, we can use the $location.search() collection 
+				// to create as many independent routing systems as we want.
+				$routeProvider
+					.when(
+						"/home",
+						{
+							action: "home"
+						}
+					)
+					.when(
+						"/lists",
+						{
+							action: "lists"
+						}
+					)
+					.otherwise({
+						redirectTo: "/home"
+					})
+				;
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I control the root of the application.
+		angular.module( "Demo" ).controller(
+			"AppController",
+			function AppController( $scope, $route, $location ) {
+
+				// I determine which subview is being rendered.
+				$scope.subview = null;
+
+				// I hold the current location so that the user can clearly see how
+				// it changes as we navigate through the sub-route systems.
+				$scope.currentUrl = null;
+
+				// As the route changes, we need to update the view to reflect the changes.
+				$scope.$on( "$routeChangeSuccess", handleRouteChange );
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I synchronize the view with the current route.
+				function handleRouteChange() {
+
+					$scope.subview = ( $route.current.action || null );
+					$scope.currentUrl = $location.url();
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I control the first sub-routing module.
+		angular.module( "Demo" ).controller(
+			"SubRouterOneController",
+			function SubRouterOneController( $scope, $location ) {
+
+				// I hold the list of friends to navigate.
+				$scope.friends = [ 1, 2, 3, 4, 5 ].map(
+					function operator( id ) {
+
+						return({
+							id: id,
+							name: ( "Friend " + id ),
+							description: ( "Description for friend ( " + id + " ) here." )
+						});
+
+					}
+				);
+
+				// I hold the currently-selected friend. This value is going to be
+				// driven by the $location.
+				$scope.selectedFriend = null;
+
+				// Since the state of the component is going to be driven by the 
+				// location search parameters, we need to listen for location changes 
+				// and then synchronize the view accordingly.
+				$scope.$on( "$locationChangeSuccess", handleLocationChange );
+
+				// Make sure the initial view matches the location state.
+				synchronizeView();
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I view the given friend.
+				$scope.viewFriend = function( friend ) {
+
+					// Since this component is being driven by the location parameters,
+					// we don't want to change the selected friend directly. Rather, we
+					// want to update the location so that our browser history is updated.
+					// Then, we can have the component react to the location changes.
+					$location.search( "friends.id", friend.id );
+
+				};
+
+
+				// ---
+				// PRIVATE METHODS.
+				// ---
+
+
+				// I handle the location changes and make sure the view is updated.
+				function handleLocationChange( event ) {
+
+					synchronizeView();
+
+				}
+
+
+				// I synchronize the view it the current state of the location.
+				function synchronizeView() {
+
+					var id = ( + $location.search()[ "friends.id" ] || 0 );
+
+					if ( id ) {
+
+						$scope.selectedFriend = _.find( 
+							$scope.friends,
+							{
+								id: id
+							}
+						);
+
+					} else {
+
+						$scope.selectedFriend = null;
+
+					}
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I control the second sub-routing module.
+		angular.module( "Demo" ).controller(
+			"SubRouterTwoController",
+			function SubRouterOneController( $scope, $location ) {
+
+				// I hold the list of enemies to navigate.
+				$scope.enemies = [ 1, 2, 3, 4, 5 ].map(
+					function operator( id ) {
+
+						return({
+							id: id,
+							name: ( "Enemy " + id ),
+							description: ( "Description for enemy ( " + id + " ) here." )
+						});
+
+					}
+				);
+
+				// I hold the currently-selected enemy. This value is going to be
+				// driven by the $location.
+				$scope.selectedEnemy = null;
+
+				// Since the state of the component is going to be driven by the 
+				// location search parameters, we need to listen for location changes 
+				// and then synchronize the view accordingly.
+				$scope.$on( "$locationChangeSuccess", handleLocationChange );
+
+				// Make sure the initial view matches the location state.
+				synchronizeView();
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I view the given enemy.
+				$scope.viewEnemy = function( enemy ) {
+
+					// Since this component is being driven by the location parameters,
+					// we don't want to change the selected enemy directly. Rather, we
+					// want to update the location so that our browser history is updated.
+					// Then, we can have the component react to the location changes.
+					$location.search( "enemies.id", enemy.id );
+
+				};
+
+
+				// ---
+				// PRIVATE METHODS.
+				// ---
+
+
+				// I handle the location changes and make sure the view is updated.
+				function handleLocationChange( event ) {
+
+					synchronizeView();
+
+				}
+
+
+				// I synchronize the view it the current state of the location.
+				function synchronizeView() {
+
+					var id = ( + $location.search()[ "enemies.id" ] || 0 );
+
+					if ( id ) {
+
+						$scope.selectedEnemy = _.find( 
+							$scope.enemies,
+							{
+								id: id
+							}
+						);
+
+					} else {
+
+						$scope.selectedEnemy = null;
+
+					}
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>

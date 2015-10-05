@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [$location.search() Facilitates Independent Sub-Routing In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/location-search-routing-angularjs/)
 * [Getting User Confirmation For Location-Change Events In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/conditional-location-change-angularjs/)
 * [Image Load And Error Events Bubble Up In ReactJS](http://bennadel.github.io/JavaScript-Demos/demos/image-load-event-reactjs/)
 * [Decoupling Component And Layout Responsibilities In ReactJS](http://bennadel.github.io/JavaScript-Demos/demos/component-layout-reactjs/)
