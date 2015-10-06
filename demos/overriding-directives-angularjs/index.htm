@@ -1,0 +1,143 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Overriding Directive Definitions In AngularJS
+	</title>
+</head>
+<body>
+
+	<h1>
+		Overriding Directive Definitions In AngularJS
+	</h1>
+
+	<section>
+		This is a directive &lt;section&gt;!
+	</section>
+
+	<p>
+		<em>See console for output.</em>
+	</p>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.4.5.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		angular.module( "Demo", [] );
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// *** NOTE: We are defining three directives on the SAME ELEMENT. ***
+
+		// First directive on SECTION element.
+		angular.module( "Demo" )
+			.directive(
+				"section",
+				function sectionDirective() {
+
+					// Return the directive configuration object.
+					return({
+						link: function( scope, element, attributes ) {
+
+							console.log( "First directive linked." );
+
+						},
+						restrict: "E",
+
+						// This is not part of the core directive definition object; but,
+						// it will be available within the .decorator() method, which 
+						// may be useful for pairing-down the collection.
+						bensLabel: "First-by-Ben"
+					});
+
+				}
+			)
+			.directive(
+				"section",
+				function sectionDirective() {
+
+					// Return the directive configuration object.
+					return({
+						link: function( scope, element, attributes ) {
+
+							console.log( "Second directive linked." );
+
+						},
+						restrict: "E",
+
+						// This is not part of the core directive definition object; but,
+						// it will be available within the .decorator() method, which 
+						// may be useful for pairing-down the collection.
+						bensLabel: "Second-by-Ben"
+					});
+
+				}
+			)
+			.directive(
+				"section",
+				function sectionDirective() {
+
+					// Return the directive configuration object.
+					return({
+						link: function( scope, element, attributes ) {
+
+							console.log( "Third directive linked." );
+
+						},
+						restrict: "E",
+
+						// This is not part of the core directive definition object; but,
+						// it will be available within the .decorator() method, which 
+						// may be useful for pairing-down the collection.
+						bensLabel: "Third-by-Ben"
+					});
+
+				}
+			)
+		;
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// CAUTION: Because I am using the .decorator() module method, this call has 
+		// to come AFTER the value that it is decorating. This is different than the 
+		// .config() block, which can be invoked at any point in the module definition.
+		// --
+		// SEE: http://www.bennadel.com/blog/2870-using-module-decorator-in-angularjs-1-4.htm
+		angular.module( "Demo" ).decorator(
+			"sectionDirective",
+			function sectionDirectiveDecorator( $delegate ) {
+
+				console.log( ". . . . . . . . . . . . . ." );
+				console.log( "There are %s matching directives.", $delegate.length );
+				console.log( "Selecting a random one." );
+				console.log( ". . . . . . . . . . . . . ." );
+
+				var randomIndex = Math.floor( Math.random() * $delegate.length );
+				var randomDirective = $delegate[ randomIndex ];
+
+				// Demonstrating that our custom "label" field is available on the 
+				// object in the $delegate collection.
+				console.log( "That maths randomly chose: %s.", randomDirective.bensLabel );
+				console.log( ". . . . . . . . . . . . . ." );
+
+				// Return a new array that contains only the randomly-selected version
+				// of the directive.
+				return( [ randomDirective ] );
+				
+			}
+		);
+
+	</script>
+
+</body>
+</html>
