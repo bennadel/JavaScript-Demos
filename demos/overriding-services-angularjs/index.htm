@@ -1,0 +1,133 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Overriding Core And Custom Services In AngularJS
+	</title>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		Overriding Core And Custom Services In AngularJS
+	</h1>
+
+	<p>
+		<em>See console for output.</em>
+	</p>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.4.5.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		angular.module( "Demo", [] );
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I control the root of the application.
+		angular.module( "Demo" ).controller(
+			"AppController",
+			function AppController( greeter, $log ) {
+
+				$log.log( greeter( "Sarah" ) );
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// **** NOTE: I am defining the same service - greeter - three times. This is 
+		// **** to demonstrate that each definition of the service overwrites the 
+		// **** previously-defined ones. Ultimately, only the last one defined will 
+		// **** take root in the application.
+
+		// I provide a function that returns a greeting for the given name.
+		angular.module( "Demo" )
+			.factory(
+				"greeter",
+				function greeterFactory() {
+
+					return( greeter );
+
+					function greeter( name ) {
+
+						return( "Hello there, " + name + "?" );
+
+					}
+
+				}
+			)
+			.factory(
+				"greeter",
+				function greeterFactory() {
+
+					return( greeter );
+
+					function greeter( name ) {
+
+						return( "What it be like, " + name + "?" );
+
+					}
+
+				}
+			)
+			.factory(
+				"greeter",
+				function greeterFactory() {
+
+					return( greeter );
+
+					function greeter( name ) {
+
+						return( "What's going on, " + name + "?" );
+
+					}
+
+				}
+			)
+		;
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I override the CORE SERVICE $log. 
+		// --
+		// NOTE: This is different from a decorator in that we are completely replacing
+		// the service and do not have access to the previously-defined versions (ie, 
+		// the $delegate) of the services.
+		angular.module( "Demo" ).factory(
+			"$log",
+			function logFactory( $window ) {
+
+				// For the sake of simplicity, our override-$log service will only have 
+				// a .log() method.
+				return({
+					log: function() {
+
+						var args = Array.prototype.slice.call( arguments );
+
+						args.unshift( "[ " + new Date().toDateString() + " ]" );
+
+						$window.console.log.apply( $window.console, args );
+
+					}
+				});
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>

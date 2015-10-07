@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Overriding Core And Custom Services In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/overriding-services-angularjs/)
 * [Overriding Directive Definitions In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/overriding-directives-angularjs/)
 * [$location.search() Facilitates Independent Sub-Routing In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/location-search-routing-angularjs/)
 * [Getting User Confirmation For Location-Change Events In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/conditional-location-change-angularjs/)
