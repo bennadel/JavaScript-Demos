@@ -1,0 +1,92 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Using The This-Binding In Directive Definition Objects In AngularJS
+	</title>
+
+	<style type="text/css">
+
+		statement {
+			display: block ;
+			font-size: 140% ;
+		}
+
+		statement.active {
+			background-color: gold ;
+		}
+
+	</style>
+</head>
+<body>
+
+	<h1>
+		Using The This-Binding In Directive Definition Objects In AngularJS
+	</h1>
+
+	<statement>
+		Kim Smith is a strong woman.
+	</statement>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/jquery/jquery-2.1.0.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.4.5.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		angular.module( "Demo", [] );
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I bind to the Statement element and provide some additional behavior.
+		angular.module( "Demo" ).directive(
+			"statement",
+			function statementDirective() {
+
+				// Return the directive definition objection.
+				return({
+					compile: function( tElement, tAttributes ) {
+
+						tElement.html(
+							tElement.html().replace( /(strong)/g, "$1, powerful" )
+						);
+
+						// NOTE: This works because the methods on the directive 
+						// definition object (DDO) are invoked as properties of the 
+						// DDO. As such, the "this" binding is the DDO object and can
+						// therefore reference other methods on the DDO (such as link).
+						return( this.link );
+
+					},
+					link: function( scope, element, attribute ) {
+
+						element.hover(
+							function handleMouseEnter() {
+
+								element.addClass( "active" );
+
+							},
+							function handleMouseLeave() {
+
+								element.removeClass( "active" );
+
+							}
+						);
+
+					},
+					restrict: "E"
+				});
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>

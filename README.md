@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Using The This-Binding In Directive Definition Objects In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/this-ref-directive-definition-angularjs/)
 * [Centering Dynamically-Sized Elements With CSS3 2D Transforms](http://bennadel.github.io/JavaScript-Demos/demos/css-transform-percentage/)
 * [Overriding Core And Custom Services In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/overriding-services-angularjs/)
 * [Overriding Directive Definitions In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/overriding-directives-angularjs/)
