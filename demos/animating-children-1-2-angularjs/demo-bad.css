@@ -1,0 +1,92 @@
+
+a[ ng-click ] {
+	color: red ;
+	cursor: pointer ;
+	text-decoration: underline ;
+	user-select: none ;
+		-moz-user-select: none ;
+		-webkit-user-select: none ;
+}
+
+div.view {
+	border: 2px solid #FF0099 ;
+	border-radius: 4px 4px 4px 4px ;
+	height: 200px ;
+	left: 40px ;
+	overflow: hidden ;
+	position: fixed ;
+	top: 130px ;
+	width: 288px ;
+}
+
+div.view.view-a {
+	left: 40px ;
+}
+
+div.view.view-b {
+	left: 370px ;
+}
+
+div.view.view-c {
+	left: 700px ;
+}
+
+div.view span {
+	border: 1px dotted #AAAAAA ;
+	border-radius: 4px 4px 4px 4px ;
+	display: block ;
+	margin: 20px 20px 0px 20px ;
+	padding: 10px 10px 10px 10px ;
+	text-align: center ;
+}
+
+
+/* Container [ng-if] animation configuration. */
+
+div.view.ng-enter,
+div.view.ng-leave {
+	transition: opacity 2s ease ;
+}
+
+div.view.ng-enter {
+	opacity: 0.0 ;
+}
+
+div.view.ng-enter-active {
+	opacity: 1.0 ;
+}
+
+div.view.ng-leave {
+	opacity: 1.0 ;
+}
+
+div.view.ng-leave-active {
+	opacity: 0.0 ;
+}
+
+
+/* Nested element animation configuration. */
+
+div.view.ng-enter span,
+div.view.ng-leave span {
+	transition-delay: inherit ;
+	transition-duration: inherit ;
+	transition-property: margin-top ;
+	transition-timing-function: inherit ;
+}
+
+div.view.ng-enter span {
+	margin-top: 200px ;
+}
+
+div.view.ng-enter-active span {
+	margin-top: 20px ;
+}
+
+div.view.ng-leave span {
+	margin-top: 20px ;
+}
+
+div.view.ng-leave-active span {
+	margin-top: 200px ;
+}
