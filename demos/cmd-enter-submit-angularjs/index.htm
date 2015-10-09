@@ -1,0 +1,216 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Using CMD+Enter To Submit A Form In AngularJS
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		Using CMD+Enter To Submit A Form In AngularJS
+	</h1>
+
+	<form ng-submit="processMessage()">
+		<!--
+			The bn-cmd-enter directive can take an expression to evaluate upon 
+			CMD+Enter; or, if the expression is omitted, it will travel up the 
+			DOM and trigger the "submit" event on the closest form element that 
+			it finds.
+			--
+			NOTE: When triggering the event, it uses the triggerHandler() method
+			to trigger "submit" event, not the trigger() method. This means that
+			only the first bound event handler will be invoked.
+		-->
+		<textarea 
+			ng-model="form.message" 
+			bn-cmd-enter
+			placeholder="Use CDM+Enter to submit form.">
+		</textarea>
+
+		<button type="submit">Send Message</button>
+	</form>
+
+	<ul class="chat">
+		<li 
+			ng-repeat="message in messages track by message.id"
+			class="chat-item">
+			{{ message.text }}
+		</li>
+	</ul>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.4.5.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		angular.module( "Demo", [] );
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I control the root of the application.
+		angular.module( "Demo" ).controller(
+			"AppController",
+			function AppController( $scope ) {
+
+				// I am the collection of historical chat items.
+				$scope.messages = [{
+					id: 1,
+					text: "Good morning!"
+				}];
+
+				// I hold the form data for the ng-model bindings.
+				$scope.form = {
+					message: ""
+				};
+
+				
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I process the chat form.
+				$scope.processMessage = function() {
+
+					if ( $scope.form.message ) {
+
+						$scope.messages.unshift({
+							id: ( new Date() ).getTime(),
+							text: $scope.form.message
+						});
+
+						$scope.form.message = "";
+
+					}
+
+				};
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I evaluate the given expression, or submit the parent form, when the user 
+		// enters the CMD+Enter key combination on the current element.
+		angular.module( "Demo" ).directive(
+			"bnCmdEnter",
+			function cmdEnterDirective() {
+
+				// Return the directive configuration object.
+				// --
+				// NOTE: The formController is optional and is only used to determine 
+				// if there is a parent form. And, this is only checked if an explicit
+				// expression is not provided.
+				return({
+					link: link,
+					require: "^?form",
+					restrict: "A"
+				});
+
+
+				// I bind the JavaScript events to the view-model.
+				function link( scope, element, attributes, formController ) {
+
+					// If there is neither an expression nor a parent form (as determined 
+					// by the existence of a form controller), then just exit out of the 
+					// directive; there are no actions that we can take.
+					if ( ! attributes.bnCmdEnter && ! formController ) {
+
+						return;
+
+					}
+
+					// Start listening for the CMD+Enter event.
+					element.on( "keydown", handleKeyEvent );
+
+
+					// ---
+					// PRIVATE METHODS.
+					// ---
+
+
+					// I travel up the DOM looking for the closest form element.
+					function closestForm() {
+
+						var parent = element.parent();
+
+						while ( parent.length && ( parent[ 0 ].tagName !== "FORM" ) ) {
+
+							parent = parent.parent();
+
+						}
+
+						return( parent );
+
+					}
+
+
+					// I listen for key events, looking for the CMD+Enter combination.
+					function handleKeyEvent( event ) {
+
+						// Is CMD+Enter event.
+						if ( ( event.which === 13 ) && event.metaKey ) {
+
+							event.preventDefault();
+
+							attributes.bnCmdEnter
+								? triggerExpression( event )
+								: triggerFormEvent()
+							;
+
+						}
+
+					}
+
+
+					// I evaluate the expression passed-into the directive.
+					// --
+					// NOTE: The event is exposed as "$event". While I don't think the 
+					// calling context should have to know about the event object, this
+					// seems to be a pattern that AngularJS uses.
+					function triggerExpression( keyEvent ) {
+
+						scope.$apply(
+							function changeViewModel() {
+
+								scope.$eval( 
+									attributes.bnCmdEnter,
+									{
+										$event: keyEvent
+									}
+								);
+
+							}
+						);
+
+					}
+
+
+					// I find the closest form element and trigger the "submit" event.
+					function triggerFormEvent() {
+
+						closestForm().triggerHandler( "submit" );
+
+					}
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
