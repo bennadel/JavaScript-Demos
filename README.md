@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [CSS3 Transition Properties Are Not Inherited (In AngularJS)](http://bennadel.github.io/JavaScript-Demos/demos/transition-properties-not-inherited-angularjs/)
 * [Using CMD+Enter To Submit A Form In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/cmd-enter-submit-angularjs/)
 * [Using The This-Binding In Directive Definition Objects In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/this-ref-directive-definition-angularjs/)
 * [Centering Dynamically-Sized Elements With CSS3 2D Transforms](http://bennadel.github.io/JavaScript-Demos/demos/css-transform-percentage/)

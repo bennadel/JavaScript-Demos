@@ -1,0 +1,49 @@
+div.box {
+  background-color: #FAFAFA ;
+  border: 1px solid #CCCCCC ;
+  border-radius: 3px 3px 3px 3px ;
+  height: 50px ;
+  margin-bottom: 16px ;
+  overflow: hidden ;
+  position: relative ;
+}
+div.box div.thumb {
+  background-color: #EAEAEA ;
+  border: 1px solid #CCCCCC ;
+  border-radius: 3px 3px 3px 3px ;
+  height: 30px ;
+  left: 50% ;
+  margin-left: -31px;
+  position: absolute ;
+  top: 9px ;
+  width: 60px ;
+}
+div.box.ng-enter {
+  transition-duration: 1200ms ;
+  transition-property: left ;
+  transition-timing-function: ease ;
+}
+div.box.ng-enter div.inner-inherit {
+  transition-delay: inherit ;
+  transition-duration: inherit ;
+  transition-property: inherit ;
+  transition-timing-function: inherit ;
+}
+div.box.ng-enter div.thumb {
+  left: 0% ;
+  transition-delay: inherit ;
+  transition-duration: inherit ;
+  transition-property: inherit ;
+  transition-timing-function: inherit ;
+}
+div.box.ng-enter-active div.thumb {
+  left: 50% ;
+}
+a[ng-click] {
+  color: red ;
+  cursor: pointer ;
+  text-decoration: underline ;
+  user-select: none ;
+  -moz-user-select: none ;
+  -webkit-user-select: none ;
+}
