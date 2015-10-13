@@ -1,0 +1,290 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<!-- CAUTION: Title is a directive that will set the window title. -->
+	<title>
+		Handling Window Blur And Focus Events In AngularJS
+	</title>
+</head>
+<body 
+	ng-controller="AppController as vm"
+	bn-window-blur="vm.setAway()"
+	bn-window-focus="vm.setBack()">
+
+	<h1>
+		Handling Window Blur And Focus Events In AngularJS
+	</h1>
+
+	<p>
+		Hello, thanks for visiting my site!
+	</p>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.4.5.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I control the root of the application.
+		angular.module( "Demo" ).controller(
+			"AppController",
+			function AppController( $scope, windowTitle ) {
+
+				var vm = this;
+
+				// Expose public methods.
+				vm.setAway = setAway;
+				vm.setBack = setBack;
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I handle the window blur event.
+				function setAway() {
+
+					windowTitle.setAwayTitle( "Bro, come back!" );
+
+				}
+
+
+				// I handle window focus event.
+				function setBack() {
+
+					windowTitle.removeAwayTitle();
+
+				}
+				
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I expose Window-based focus and blur events.
+		angular.module( "Demo" )
+			.directive(
+				"bnWindowBlur",
+				function bnWindowBlurDirective( $window, $log ) {
+
+					// Return the directive configuration object.
+					return({
+						link: link,
+						restrict: "A"
+					});
+
+
+					// I bind the JavaScript events to the view-model.
+					function link( scope, element, attributes ) {
+
+						// Hook up blur-handler.
+						var win = angular.element( $window ).on( "blur", handleBlur );
+
+						// When the scope is destroyed, we have to make sure to teardown
+						// the event binding so we don't get a leak.
+						scope.$on( "$destroy", handleDestroy );
+
+						
+						// ---
+						// PRIVATE METHODS.
+						// ---
+
+
+						// I handle the blur event on the Window.
+						function handleBlur( event ) {
+
+							scope.$apply( attributes.bnWindowBlur );
+
+							$log.warn( "Window blurred." );
+
+						}
+
+
+						// I teardown the directive.
+						function handleDestroy() {
+
+							win.off( "blur", handleBlur );
+
+						}
+
+					}
+
+				}
+			)
+			.directive(
+				"bnWindowFocus",
+				function bnWindowFocusDirective( $window, $log ) {
+
+					// Return the directive configuration object.
+					return({
+						link: link,
+						restrict: "A"
+					});
+
+
+					// I bind the JavaScript events to the view-model.
+					function link( scope, element, attributes ) {
+
+						// Hook up focus-handler.
+						var win = angular.element( $window ).on( "focus", handleFocus );
+
+						// When the scope is destroyed, we have to make sure to teardown
+						// the event binding so we don't get a leak.
+						scope.$on( "$destroy", handleDestroy );
+
+						
+						// ---
+						// PRIVATE METHODS.
+						// ---
+
+
+						// I teardown the directive.
+						function handleDestroy() {
+
+							win.off( "focus", handleFocus );
+
+						}
+
+
+						// I handle the focus event on the Window.
+						function handleFocus( event ) {
+
+							scope.$apply( attributes.bnWindowFocus );
+
+							$log.warn( "Window focused." );
+
+						}
+
+					}
+
+				}
+			)
+		;
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I manage the window title.
+		// --
+		// NOTE: I only manage the title value - the actual application of the title to
+		// the DOM (Document Object Model) is handled elsewhere.
+		angular.module( "Demo" ).factory(
+			"windowTitle",
+			function windowTitleFactory() {
+
+				var title = "";
+				var awayTitle = "";
+
+				// Return the public API.
+				return({
+					getTitle: getTitle,
+					removeAwayTitle: removeAwayTitle,
+					setAwayTitle: setAwayTitle,
+					setTitle: setTitle
+				});
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I return the currently-active title.
+				function getTitle() {
+
+					return( awayTitle || title );
+
+				}
+
+
+				// I remove the inactive window title.
+				function removeAwayTitle() {
+
+					awayTitle = "";
+
+				}
+
+
+				// I set the inactive window title.
+				function setAwayTitle( newAwayTitle ) {
+
+					awayTitle = newAwayTitle;
+
+				}
+
+
+				// I set the active window title.
+				function setTitle( newTitle ) {
+
+					title = newTitle;
+					awayTitle = "";
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I hook the windowTitle service up to the DOM.
+		angular.module( "Demo" ).directive(
+			"title",
+			function titleDirective( windowTitle ) {
+
+				// Return the directive configuration object.
+				return({
+					link: link,
+					restrict: "E"
+				});
+
+
+				// I bind the JavaScript events to the view-model.
+				function link( scope, element, attributes ) {
+
+					// Extract the current window title and use that as a means to set
+					// the initial value of the title service.
+					windowTitle.setTitle( element.text() );
+
+					// Now, let's watch the window title for changes.
+					scope.$watch( windowTitle.getTitle, handleTitleChange );
+
+
+					// ---
+					// PRIVATE METHODS.
+					// ---
+
+
+					// I handle title changes and update the DOM accordingly.
+					function handleTitleChange( newTitle ) {
+
+						element.text( newTitle );
+
+					}
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
