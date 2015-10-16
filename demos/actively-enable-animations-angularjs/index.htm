@@ -1,0 +1,140 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Enable Animations Explicitly For A Performance Boost In AngularJS
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		Enable Animations Explicitly For A Performance Boost In AngularJS
+	</h1>
+
+	<p>
+		<a ng-click="showListA()">Show List A</a>
+		&mdash;
+		<a ng-click="showListB()">Show List B</a>
+	</p>
+
+	<ul>
+		<!--
+			We are going to be swapping the "activeList" reference to point 
+			to either listA or listB. When we do this, ngRepeat will perform
+			structural changes on the DOM (Document Object Model). And, as it
+			does this, it will use $animate() service to transition the DOM
+			elements, which will do two things:
+
+			* Check to see if "leave" elements need to be animated.
+			* Check to see if "enter" elements need to be animated.
+
+			This behavior can be altered with the $animateProvider.
+		-->
+		<li ng-repeat="item in activeList">
+			{{ item }}
+		</li>
+	</ul>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.4.5.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs/angular-animate-1.4.5.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		angular.module( "Demo", [ "ngAnimate" ] );
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I configure the $animate service during bootstrap.
+		angular.module( "Demo" ).config(
+			function configureAnimate( $animateProvider ) {
+
+				// By default, the $animate service will check for animation styling
+				// on every structural change. This requires a lot of animateFrame-based
+				// DOM-inspection. However, we can tell $animate to only check for 
+				// animations on elements that have a specific class name RegExp pattern
+				// present. In this case, we are requiring the "animated" class.
+				// --
+				// NOTE: I have personally seen a performance boost using this approach
+				// on some complex page. The AngularJS documentation also says that 
+				// this can also be really beneficial for low-powered mobile devices,
+				// but I don't do much mobile.
+				$animateProvider.classNameFilter( /\banimated\b/ );
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I control the root of the application.
+		angular.module( "Demo" ).controller(
+			"AppController",
+			function AppController( $scope ) {
+
+				// These are the lists we will be swapping in / out.
+				var listA = generateListItems( "A", 100 );
+				var listB = generateListItems( "B", 100 );
+
+				// I hold the reference to the currently selected list.
+				$scope.activeList = listA;
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I select list A as the active list.
+				$scope.showListA = function() {
+
+					$scope.activeList = listA;
+
+				};
+
+
+				// I select list B as the active list.
+				$scope.showListB = function() {
+
+					$scope.activeList = listB;
+
+				};
+
+
+				// ---
+				// PRIVATE METHODS.
+				// ---
+
+
+				// I generate a plain-text list with the given count. 
+				function generateListItems( suffix, count ) {
+
+					var list = [];
+
+					for ( var i = 1 ; i <= count ; i++ ) {
+
+						list.push( "List item " + i + " for " + suffix + "." );
+
+					}
+
+					return( list );
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
