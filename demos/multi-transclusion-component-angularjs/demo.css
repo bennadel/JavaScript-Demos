@@ -1,0 +1,46 @@
+
+a[ ng-click ] {
+	color: red ;
+	cursor: pointer ;
+	text-decoration: underline ;
+	user-select: none ;
+		-moz-user-select: none ;
+		-webkit-user-select: none ;
+}
+
+layout {
+	background-color: #F0F0F0 ;
+	border: 1px solid #AAAAAA ;
+	border-radius: 3px 3px 3px 3px ;
+	display: block ;
+	padding: 10px 10px 10px 10px ;
+	position: relative ;
+}
+
+layout > div.layout-inner {
+	display: block ;
+	position: relative ;
+}
+
+layout > div.layout-inner > div.layout-header {
+	background-color: #FFFFFF ;
+	border: 1px solid #CCCCCC ;
+	padding: 13px 13px 13px 13px ;
+}
+
+layout > div.layout-inner > div.layout-body {
+	background-color: #FFFFFF ;
+	border: 1px solid #CCCCCC ;
+	margin: 10px 0px 10px 0px ;
+	padding: 13px 13px 13px 13px ;
+}
+
+layout > div.layout-inner.large > div.layout-body {
+	min-height: 200px ;
+}
+
+layout > div.layout-inner > div.layout-footer {
+	background-color: #FFFFFF ;
+	border: 1px solid #CCCCCC ;
+	padding: 13px 13px 13px 13px ;
+}
