@@ -13,6 +13,7 @@ layout {
 	border: 1px solid #AAAAAA ;
 	border-radius: 3px 3px 3px 3px ;
 	display: block ;
+	margin: 20px 0px 20px 0px ;
 	padding: 10px 10px 10px 10px ;
 	position: relative ;
 }

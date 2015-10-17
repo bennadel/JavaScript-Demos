@@ -10,6 +10,8 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+
+* [Creating An Isolate-Scope Directive With Multiple Transclusion Points In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/multi-transclusion-component-angularjs/)
 * [Enable Animations Explicitly For A Performance Boost In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/actively-enable-animations-angularjs/)
 * [Handling Window Blur And Focus Events In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/window-blur-focus-angularjs/)
 * [Child Animations Have To Inherit Transition-Property In AngularJS 1.2 And 1.3](http://bennadel.github.io/JavaScript-Demos/demos/animating-children-1-2-angularjs/)

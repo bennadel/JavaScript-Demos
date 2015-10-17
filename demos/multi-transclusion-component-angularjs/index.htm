@@ -19,7 +19,7 @@
 		This Layout component creates an isolate scope, but transcludes the 
 		contents of each one of the embedded "panels" so that the content of 
 		each panel can access the outer scope of the context while the structure
-		of the component can remain encapsulated.
+		of the component can remain encapsulated within the isolate template.
 	-->
 	<layout size="vm.size">
 		<layout-panel role="header">
@@ -57,7 +57,7 @@
 
 	<!-- Load scripts. -->
 	<script type="text/javascript" src="../../vendor/jquery/jquery-2.1.0.min.js"></script>
-	<script type="text/javascript" src="../../vendor/angularjs/angular-1.4.5.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.4.5.min.js"></script>
 	<script type="text/javascript">
 
 		// Create an application module for our demo.
@@ -115,9 +115,14 @@
 		// NOTE: This component directive is broken up into two different priorities.
 		// We need to do this because we need to access the element content before the
 		// "template" is applied, which is not currently possible in a single directive
-		// (that I know of). As such, the first pass inspects the element and gathers up
-		// the linking functions; then, the second pass pulls in the template and 
-		// performs the transclusion.
+		// (that I know of). As such, we have two passes:
+		// --
+		// The first pass defines the controller and inspects the element and gathers 
+		// up the linking functions for the sub-content areas.
+		// --
+		// The second pass pulls in the template, replaces the element content 
+		// (automatically) and performs the sub-content transclusion using the linking 
+		// functions compiled in the first pass.
 		angular.module( "Demo" ).directive(
 			"layout",
 			function layoutDirective( $compile ) {
@@ -138,37 +143,47 @@
 				});
 
 
-				// I compile the 
+				// I compile the contents of the individual panels and make the 
+				// resultant linking functions available on the controller.
 				function compile( tElement ) {
 
+					// I hole the linking functions, indexed by role.
 					var linkFunctions = {};
 
-					tElement.children( "layout-panel" ).each(
-						function iterator( i, node ) {
+					// Find each <layout-panel> and compile the content.
+					tElement
+						.children( "layout-panel" )
+						.each(
+							function iterator( i, node ) {
 
-							var panel = angular.element( node );
-							var role = panel.attr( "role" );
+								var panel = angular.element( node );
+								var role = panel.attr( "role" );
 
-							if ( role ) {
+								if ( role ) {
 
-								linkFunctions[ role ] = $compile( panel.contents() );
+									linkFunctions[ role ] = $compile( panel.contents() );
+
+								}
 
 							}
-
-						}
-					);
+						)
+					;
 
 					return( link );
 
 
+					// I continue the linking process of the terminal workflow.
 					function link( scope, element, attribute, controller ) {
 
-						// Once the controller is instantiated, 
-						// I hold the link functions for the transcludable content. This will
-					// be consumed in the second-pass of this directive.
+						// When the first pass on the Layout links, we have a chance to
+						// expose the sub-content linking functions on the controller.
 						controller.linkFunctions = linkFunctions;
 
-						$compile( element, null, -1 )( scope );
+						// Since this pass was "terminal", we now have to explicitly
+						// compile and link the second-pass. Note that we are linking it
+						// to the ISOLATE SCOPE so that the template in the second-pass
+						// will be linked to the proper scope, not the parent scope.
+						$compile( element, null, -1 )( scope /* Isolate scope. */ );
 
 					}
 
@@ -193,7 +208,8 @@
 			}
 		);
 
-		
+		// I manage the second pass on the layout component directive, providing the 
+		// component template and transcluding the sub-content areas.
 		angular.module( "Demo" ).directive(
 			"layout",
 			function layoutDirective() {
@@ -203,7 +219,7 @@
 					link: link,
 					require: "layout",
 					restrict: "E",
-					priority: -2,
+					priority: -2, // Ensure lower priority than first-pass.
 					template:
 					`
 						<div class="layout-inner" ng-class="{ large: ( props.layoutSize == 'large' ) }">
@@ -221,339 +237,50 @@
 				});
 
 
-				// I transclude the content and bind JavaScript events to the local 
-				// view-model.
+				// I transclude the sub-content areas using the controller-
+				// provided linking functions and bind JavaScript events to the
+				// local view-model.
 				function link( scope, element, attributes, controller ) {
 
+					// Since the first pass on the layout component explicitly linked
+					// this lower-priority directive on the ISOLATE scope, we need to 
+					// go up to the parent scope to access the content scope.
 					var transcludeScope = scope.$parent;
+
+					// Locate the transclusion containers.
 					var inner = element.children( "div.layout-inner" );
 					var headerPanel = inner.children( "div.layout-header" );
 					var bodyPanel = inner.children( "div.layout-body" );
 					var footerPanel = inner.children( "div.layout-footer" );
 
+					// Link and inject the header.
 					controller.linkFunctions.header(
 						transcludeScope,
-						function attachClone( clone, scope ) {
+						function attachClone( clone ) {
 
 							headerPanel.append( clone );
 
 						}
 					);
 
+					// Link and inject the body.
 					controller.linkFunctions.body(
 						transcludeScope,
-						function attachClone( clone, scope ) {
+						function attachClone( clone ) {
 
 							bodyPanel.append( clone );
 
 						}
 					);
 
+					// Link and inject the footer.
 					controller.linkFunctions.footer(
 						transcludeScope,
-						function attachClone( clone, scope ) {
+						function attachClone( clone ) {
 
 							footerPanel.append( clone );
 
 						}
-					);
-
-				}
-
-			}
-		);
-
-	</script>
-
-</body>
-</html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<!doctype html>
-<html ng-app="Demo">
-<head>
-	<meta charset="utf-8" />
-
-	<title>
-		Creating A Component Directive With Multiple Transclusion Points In AngularJS
-	</title>
-
-	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
-</head>
-<body ng-controller="AppController as vm">
-
-	<h1>
-		Creating A Component Directive With Multiple Transclusion Points In AngularJS
-	</h1>
-	
-	<!-- 
-		This Layout component creates an isolate scope, but transcludes the 
-		contents of each one of the embedded "panels" so that the content of 
-		each panel can access the outer scope of the context while the structure
-		of the component can remain encapsulated.
-	-->
-	<layout size="vm.size">
-		<layout-panel role="header">
-
-			Layout Header
-
-		</layout-panel>
-		<layout-panel role="body">
-
-			<p>
-				Layout Body - Size: {{ vm.size }}
-			</p>
-
-			<p>
-				<a ng-click="vm.toggleSize()">Toggle Size</a>
-			</p>
-
-		</layout-panel>
-		<layout-panel role="footer">
-
-			Layout Footer
-
-		</layout-panel>
-	</layout>
-
-
-	<!-- Load scripts. -->
-	<script type="text/javascript" src="../../vendor/jquery/jquery-2.1.0.min.js"></script>
-	<script type="text/javascript" src="../../vendor/angularjs/angular-1.4.5.min.js"></script>
-	<script type="text/javascript">
-
-		// Create an application module for our demo.
-		var app = angular.module( "Demo", [] );
-
-
-		// --------------------------------------------------------------------------- //
-		// --------------------------------------------------------------------------- //
-
-
-		// I control the root of the application.
-		angular.module( "Demo" ).controller(
-			"AppController",
-			function AppController( $scope ) {
-
-				var vm = this;
-
-				// I hold the desired size of the layout.
-				vm.size = "small";
-				
-				// Expose public methods.
-				vm.toggleSize = toggleSize;
-
-
-				// ---
-				// PUBLIC METHODS.
-				// ---
-
-
-				// I toggle the curerntly-desired size of the layout component.
-				function toggleSize() {
-
-					vm.size = ( vm.size === "small" )
-						? "large"
-						: "small"
-					;
-
-				}
-
-			}
-		);
-
-
-		// --------------------------------------------------------------------------- //
-		// --------------------------------------------------------------------------- //
-
-
-		// I provide a layout with thee panels - header, footer, and body.
-		angular.module( "Demo" ).directive(
-			"layout",
-			function layoutDirective( $compile ) {
-
-				// Return the directive configuration.
-				return({
-					compile: compile,
-					restrict: "E",
-
-					// We are telling the component to use an isolate scope.
-					scope: {
-						layoutSize: "=size"
-					},
-
-					template: `<p>test{{layoutSize}}</p>`,
-
-					// Since we need to completely mess with the internals of the 
-					// component markup, we'll make this a terminal component, which
-					// means that the content will not be compiled until we explicitly
-					// compile it.
-					terminal: false
-				});
-
-
-				// I update and compile the content of the directive.
-				function compile( tElement, tAttributes ) {
-console.log( tElement );
-return;
-					// Right now, the content is all wrapped inside panels that are 
-					// acting as delimiters for the panels roles. Locate each panel 
-					// so that we can process its content.
-					var headerPanel = tElement.children( "layout-panel[ role = 'header' ]" );
-					var bodyPanel = tElement.children( "layout-panel[ role = 'body' ]" );
-					var footerPanel = tElement.children( "layout-panel[ role = 'footer' ]" );
-
-					// Since this component is a "terminal" component, we have to 
-					// manually compile the content. Create linking functions for the 
-					// content of each panel.
-					// --
-					// CAUTION: These will be linked to the $parent scope.
-					var headerLink = $compile( ensureElements( headerPanel.contents() ) );
-					var bodyLink = $compile( ensureElements( bodyPanel.contents() ) );
-					var footerLink = $compile( ensureElements( footerPanel.contents() ) );
-
-					// Since this component is a "terminal" component, we need to 
-					// explicitly compile and link the isolate-scope "shadow DOM" that
-					// we're going to use as our "template".
-					// --
-					// CAUTION: This will be linked to the isolate scope.
-					var shadowDomLink = $compile(
-						`
-							<div class="layout-inner" ng-class="{ large: ( layoutSize == 'large' ) }">
-								<div class="layout-header">
-									<!-- Transcuded. -->
-								</div>
-								<div class="layout-body">
-									<!-- Transcuded. -->
-								</div>
-								<div class="layout-footer">
-									<!-- Transcuded. -->
-								</div>
-							</div>
-						`
-					);
-
-					return( link );
-
-
-					// I transclude the content and bind JavaScript events to the local 
-					// view-model.
-					function link( scope, element, attributes ) {
-
-						// Since our component is linking in an isolate-scope, we have
-						// to get a reference to the parent scope so that we can properly
-						// transclude the panel content.
-						var panelScope = scope.$parent;
-
-						// Transclude and append our "shadow DOM". This is the component's
-						// internal structure for the panel layout.
-						shadowDomLink(
-							scope,
-							function applyClone( clone ) {
-
-								element
-									.empty()
-									.append( clone )
-								;
-
-							}
-						);
-
-						// Transclude the header panel.
-						headerLink(
-							panelScope,
-							function applyClone( clone ) {
-
-								element.find( "div.layout-header" )
-									.empty()
-									.append( clone )
-								;
-
-							}
-						);
-
-						// Transclude the body panel.
-						bodyLink(
-							panelScope,
-							function applyClone( clone ) {
-
-								element.find( "div.layout-body" )
-									.empty()
-									.append( clone )
-								;
-
-							}
-						);
-
-						// Transclude the footer panel.
-						footerLink(
-							panelScope,
-							function applyClone( clone ) {
-
-								element.find( "div.layout-footer" )
-									.empty()
-									.append( clone )
-								;
-
-							}
-						);
-
-					}
-
-				}
-
-
-				// When we transclude content, only elements are appended. As such, we
-				// have to ensure that the non-empty text nodes are wrapped in Span tags
-				// so that AngularJS will merge them in properly.
-				function ensureElements( collection ) {
-
-					var ensured = collection.map(
-						function operator( index, node ) {
-
-							if ( isNonEmptyTextNode( node ) ) {
-
-								return( angular.element( "<span></span>" ).append( node )[ 0 ] );
-
-							}
-
-							return( node );
-
-						}
-					);
-
-					return( ensured );
-
-				}
-
-
-				// I determine if the given node is a text node that consists of more 
-				// than just white-space.
-				function isNonEmptyTextNode( node ) {
-
-					return( 
-						( node.nodeType === 3 ) && 
-						( node.nodeValue.search( /\S+/ ) !== -1 )
 					);
 
 				}
