@@ -63,7 +63,18 @@
 
 
 		// I control the root of the application.
-		angular.module( "Demo" ).controller(
+		angular.module(
+			"Demo"
+			
+		).config(
+			function ($compileProvider) {
+
+				// disable debug data, https://docs.angularjs.org/guide/production
+				$compileProvider.debugInfoEnabled(false);
+
+			}
+
+		).controller(
 			"AppController",
 			function provideAppController( $scope ) {
 
