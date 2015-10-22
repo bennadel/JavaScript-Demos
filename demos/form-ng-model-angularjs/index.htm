@@ -1,0 +1,154 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Isolating The ngModel Life-Cycle In AngularJS
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body ng-controller="AppController as vm">
+
+	<h1>
+		Isolating The ngModel Life-Cycle In AngularJS
+	</h1>
+
+	<p class="nav">
+		<a ng-click="vm.viewFriend()">View</a> &mdash;
+		<a ng-click="vm.editFriend()">Edit</a>
+	</p>
+
+	<div ng-switch="vm.isEditing">
+
+		<!-- BEGIN: Viewing Interface. -->
+		<div ng-switch-when="false">
+
+			<p>
+				<strong>Name:</strong> {{ vm.friend.name }}
+			</p>
+
+			<p>
+				<strong>Description:</strong> {{ vm.friend.description }}
+			</p>
+
+		</div>
+		<!-- END: Viewing Interface. -->
+
+
+		<!-- BEGIN: Editing Interface. -->
+		<form ng-switch-when="true" ng-submit="vm.processForm()">
+
+			<p>
+				<label>Name:</label>
+				<input type="text" ng-model="vm.form.name" />
+			</p>
+
+			<p>
+				<label>Description:</label>
+				<input type="text" ng-model="vm.form.description" />
+			</p>
+
+			<p>
+				<button type="submit">Save Friend</button>
+				<a ng-click="vm.viewFriend()">Cancel</a>
+			</p>
+
+		</form>
+		<!-- END: Editing Interface. -->
+
+	</div>
+
+	
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.4.5.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		angular.module( "Demo", [] );
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I control the root for the application.
+		angular.module( "Demo" ).controller(
+			"AppController",
+			function( $scope ) {
+
+				var vm = this;
+
+				vm.isEditing = false;
+
+				// I am the friend that is being viewed. This object WILL NOT BE connected
+				// to the ng-model bindings. Editing will be managed through the vm.form
+				// ng-model bindings.
+				vm.friend = {
+					name: "Kim",
+					description: "One of the coolest people I know!"
+				};
+
+				// I hold the ngModel bindings so that form-interactions can be 
+				// encapsulated and managed without model-changes leaking into the rest
+				// of the view-model.
+				vm.form = {};
+
+				// Expose public methods.
+				vm.editFriend = editFriend;
+				vm.processForm = processForm;
+				vm.viewFriend = viewFriend;
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I show the edit form.
+				function editFriend() {
+
+					vm.isEditing = true;
+
+					// When we enter the editing mode, we want to move the current values
+					// from the Friend into the Form model so that the form / ng-model 
+					// bindings can be edited independently of the friend object.
+					vm.form.name = vm.friend.name;
+					vm.form.description = vm.friend.description;
+
+				}
+
+
+				// I process the edit form, saving the changes.
+				function processForm() {
+
+					vm.isEditing = false;
+
+					// At this point, the ng-model bindings have changed the isolated 
+					// form object. Now, when the form is being saved, we can move the 
+					// isolated changes back into the Friend if they are valid.
+					if ( vm.form.name ) {
+
+						vm.friend.name = vm.form.name;
+						vm.friend.description = vm.form.description;
+						
+					}
+
+				}
+
+
+				// I show the detail page.
+				function viewFriend() {
+
+					vm.isEditing = false;
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>

@@ -1,0 +1,34 @@
+
+a[ ng-click ] {
+	color: red ;
+	cursor: pointer ;
+	text-decoration: underline ;
+	user-select: none ;
+		-moz-user-select: none ;
+		-webkit-user-select: none ;
+}
+
+p.nav {
+	border-bottom: 1px solid #CCCCCC ;
+	margin-bottom: 25px ;
+	padding: 0px 0px 13px 0px ;
+}
+
+form label {
+	display: block ;
+	font-weight: bold ;
+	margin-bottom: 5px ;
+}
+
+form input {
+	box-sizing: border-box ;
+		-moz-box-sizing: border-box ;
+		-webkit-box-sizing: border-box ;
+	font-size: 100% ;
+	padding: 5px 5px 5px 5px ;
+	width: 400px ;
+}
+
+form button {
+	margin-right: 13px ;
+}
