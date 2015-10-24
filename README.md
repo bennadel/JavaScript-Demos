@@ -11,6 +11,7 @@ with.
 ## My JavaScript Demos - I Love JavaScript!
 
 
+* [Leverage CSS user-select For A Better User Experience (UX)](http://bennadel.github.io/JavaScript-Demos/demos/user-select-experience/)
 * [Isolating The ngModel Life-Cycle In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/form-ng-model-angularjs/)
 * [Creating An Isolate-Scope Directive With Multiple Transclusion Points In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/multi-transclusion-component-angularjs/)
 * [Enable Animations Explicitly For A Performance Boost In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/actively-enable-animations-angularjs/)
