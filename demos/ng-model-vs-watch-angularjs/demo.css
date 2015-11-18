@@ -1,0 +1,65 @@
+
+a[ ng-click ] {
+	color: red ;
+	cursor: pointer ;
+	text-decoration: underline ;
+	user-select: none ;
+		-moz-user-select: none ;
+		-webkit-user-select: none ;
+}
+
+bn-toggle {
+	display: inline-block ;
+	height: 40px ;
+	line-height: 40px ;
+	position: relative ;
+	width: 120px ;
+}
+
+bn-toggle div.label-container {
+	border: 1px solid #AAAAAA ;
+	border-radius: 3px 3px 3px 3px ;
+	bottom: 0px ;
+	cursor: pointer ;
+	font-family: sans-serif ;
+	font-size: 14px ;
+	left: 0px ;
+	position: absolute ;
+	right: 0px ;
+	text-align: center ;
+	text-transform: uppercase ;
+	top: 0px ;
+	user-select: none ;
+		-moz-user-select: none ;
+		-webkit-user-select: none ;
+}
+
+bn-toggle div.on-label,
+bn-toggle div.off-label {
+	background-color: #F0F0F0 ;
+	color: #CCCCCC ;
+}
+
+bn-toggle div.on-label.on,
+bn-toggle div.off-label.on {
+	background-color: #FF0099 ;
+	color: #FFFFFF ;
+}
+
+bn-toggle div.on-label {
+	border-radius: 3px 0px 0px 3px ;
+	bottom: 0px ;
+	left: 0px ;
+	position: absolute ;
+	top: 0px ;
+	width: 50% ;
+}
+
+bn-toggle div.off-label {
+	border-radius: 0px 3px 3px 0px ;
+	bottom: 0px ;
+	position: absolute ;
+	right: 0px ;
+	top: 0px ;
+	width: 50% ;
+}

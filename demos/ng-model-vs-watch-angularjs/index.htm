@@ -1,0 +1,267 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Watching ngModel Changes In AngularJS
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body ng-controller="AppController as vm">
+
+	<h1>
+		Watching ngModel Changes In AngularJS
+	</h1>
+
+	<bn-toggle
+		ng-model="vm.isOn"
+		on-text="On"
+		off-text="Off"
+		bn-model-watch
+		bn-model-change-listener>
+	</bn-toggle>
+
+	<p>
+		<a ng-click="vm.toggleState()">Toggle</a> : {{ vm.isOn }}
+	</p>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.4.7.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I control the root of the application.
+		angular.module( "Demo" ).controller(
+			"AppController",
+			function AppController( $scope ) {
+
+				var vm = this;
+
+				// I determine if the toggle is on.
+				vm.isOn = true;
+
+				// Expose public methods.
+				vm.toggleState = toggleState;
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I set the state of the toggle model.
+				function toggleState() {
+
+					vm.isOn = ! vm.isOn;
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I define the toggle "component directive".
+		angular.module( "Demo" ).directive(
+			"bnToggle",
+			function bnToggleDirective() {
+
+				// Return the directive configuration object.
+				return({
+					link: link,
+					require: "ngModel",
+					restrict: "E",
+					scope: {
+						onText: "@",
+						offText: "@"
+					},
+					template:
+					`
+						<div class="label-container">
+							<div class="on-label" ng-class="{ on: toggleIsOn }">
+								{{ onText }}
+							</div>
+							<div class="off-label" ng-class="{ on: ! toggleIsOn }">
+								{{ offText }}
+							</div>
+						</div>
+					`
+				});
+
+
+				// I bind the JavaScript events to the view-model.
+				function link( scope, element, attributes, ngModelController ) {
+
+					// I am used to define the internal state of the toggle (which will 
+					// be synchronized with the ngModel value).
+					scope.toggleIsOn = false;
+
+					// Add a ngModel formatter to ensure that the view value is always
+					// consumable (not really necessary for this demo).
+					ngModelController.$formatters.push( formatModelValue );
+
+					// Wire up the render, which will be called when the $viewModel value
+					// has been updated programmatically and the component needs to be 
+					// updated to reflect that change.
+					ngModelController.$render = renderViewValue;
+
+					element.on( "click", handleClick );
+
+
+					// ---
+					// PRIVATE METHODS.
+					// ---
+
+
+					// I format the incoming model value to make sure it is consumable 
+					// by the view (modeValue --> viewValue). 
+					// --
+					// NOTE: This isn't really required for this demo; but, I wanted to
+					// include it to hint that the ngModel life-cycle is more robust than
+					// it might seem at first.
+					function formatModelValue( modelValue ) {
+
+						return( !! modelValue );
+
+					}
+
+
+					// I handle the click event on the component and update the viewValue
+					// to reflect the intent of the click.
+					function handleClick( event ) {
+
+						var target = angular.element( event.target );
+
+						// Tell AngularJS that we changed something.
+						scope.$apply(
+							function changeViewModel() {
+
+								// Update the internal component state based on the click.
+								scope.toggleIsOn = target.hasClass( "on-label" );
+
+								// Tell the ngModelController about the change.
+								// --
+								// NOTE: This will not trigger a $render() call, which is 
+								// why it is important that internal state of the component
+								// is updated directly (above).
+								ngModelController.$setViewValue( scope.toggleIsOn );
+
+							}
+						);
+
+					}
+
+
+					// I update the rendering of the component based on the ngModel value.
+					function renderViewValue() {
+
+						// NOTE: We know that this will be a strict Boolean based on the
+						// formatter that we pushed onto the stack above.
+						scope.toggleIsOn = ngModelController.$viewValue;
+
+					}
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I log the model value based on the $watch() binding.
+		angular.module( "Demo" ).directive(
+			"bnModelWatch",
+			function bnModelWatchDirective() {
+
+				// Return the directive configuration object.
+				return({
+					link: link,
+					restrict: "A"
+				});
+
+
+				// I bind the JavaScript events to the view-model.
+				function link( scope, element, attributes ) {
+
+					// In this approach, we're just going to watch the ngModel expression
+					// for changes in the same way we would watch any other scope-based
+					// value for changes.
+					scope.$watch( 
+						attributes.ngModel, 
+						function( newValue, oldValue ) {
+
+							console.log( "ngModel value changed (A):", newValue );
+
+						} 
+					);
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I log the model value based on a $viewChangeListeners binding.
+		angular.module( "Demo" ).directive(
+			"bnModelChangeListener",
+			function bnModelChangeListenerDirective() {
+
+				// Return the directive configuration object.
+				// --
+				// NOTE: In order to use this approach, we have to require the 
+				// ngModelController.
+				return({
+					link: link,
+					require: "ngModel",
+					restrict: "A"
+				});
+
+
+				// I bind the JavaScript events to the view-model.
+				function link( scope, element, attributes, ngModelController ) {
+
+					// In this approach, we're just going to push a listener onto the 
+					// change-listener collection of the ngModelController. This will get
+					// called whenever the $viewValue has changed and has resulted in a
+					// change of the $modelValue.
+					// --
+					// NOTE: If the ngModel value is changed programmtically, this will 
+					// not be triggered because, in that case, the viewValue - while 
+					// changing - is simply being synchronized with the ngModel value.
+					ngModelController.$viewChangeListeners.push(
+						function handleNgModelChange() {
+
+							console.log( "ngModel value changed (B):", ngModelController.$viewValue );
+
+						}
+					);
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
