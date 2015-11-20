@@ -102,6 +102,7 @@
 						findTextNodes( parent ).forEach(
 							function( node ) {
 
+								// Replace each individual letter with a Span tag.
 								var wrappedHtml = node.nodeValue.replace( /([^\s])/g, "<span class='scatter-item'>$1</span>" );
 
 								var fragment = angular.element( document.createDocumentFragment() )
