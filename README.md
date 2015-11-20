@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Scattering Letters Based On Mouse Movements In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/design-disruptors-letters-angularjs/)
 * [Watching ngModel Changes In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/ng-model-vs-watch-angularjs/)
 * [Leverage CSS user-select For A Better User Experience (UX)](http://bennadel.github.io/JavaScript-Demos/demos/user-select-experience/)
 * [Isolating The ngModel Life-Cycle In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/form-ng-model-angularjs/)

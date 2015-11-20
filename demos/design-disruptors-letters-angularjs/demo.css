@@ -1,0 +1,51 @@
+
+body {
+	font-family: "Open Sans", sans-serif ;
+}
+
+div.container {
+	background-color: #FAFAFA ;
+	border: 1px solid #CCCCCC ;
+	border-radius: 4px 4px 4px 4px ;
+	box-sizing: border-box ;
+		-moz-box-sizing: border-box ;
+		-webkit-box-sizing: border-box ;
+	height: 130px ;
+	left: 50% ;
+	margin: -65px 0px 0px -225px ;
+	padding-top: 20px ;
+	position: absolute ;
+	top: 50% ;
+	width: 450px ;
+}
+
+div.container div.tagline {
+	font-size: 20px ;
+	font-weight: 600 ;
+	margin-bottom: 20px ;
+	text-align: center ;
+	text-transform: uppercase ;
+}
+
+div.container div.tagline em {
+	color: #FF0099 ;
+	font-style: normal ;
+}
+
+div.container input {
+	box-sizing: border-box ;
+		-moz-box-sizing: border-box ;
+		-webkit-box-sizing: border-box ;
+	display: block ;
+	margin: 0px auto 0px auto ;
+	padding: 5px 5px 5px 5px ;
+	font-size: 20px ;
+	font-weight: 300 ;
+	text-align: center ;
+	width: 300px ;
+}
+
+span.scatter-item {
+	position: relative ;
+	z-index: 100 ;
+}
