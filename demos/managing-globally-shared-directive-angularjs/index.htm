@@ -1,0 +1,599 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Managing A Shared Global UI Component In AngularJS
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body ng-controller="AppController as vm">
+
+	<h1>
+		Managing A Shared Global UI Component In AngularJS
+	</h1>
+
+	<!--
+		Here, we have two different lists, each of which have a "show more" button.
+		This show more button will trigger a popup that is a shared, global component.
+		This component needs to receive view-model data and DOM-related data. However,
+		since the Controller cannot know about the DOM, both of these data-sets are
+		transmitted over different means.
+
+		Showing popup: Controllers / Services.
+		Position popup: Directives.
+	-->
+	<div class="list">
+
+		<h2>
+			Friends
+		</h2>
+
+		<ul>
+			<li ng-repeat="friend in vm.friends|limitTo:3 track by friend.id">
+				{{ friend.name }}
+			</li>
+		</ul>
+
+		<!--
+			Here, the Controller and showAllFriends() method takes care of showing
+			the popup while the popup-list-trigger positions the popup relative to
+			the trigger element. 
+			--
+			NOTE: I do NOT have to pass in the $event to the Controller, which feels
+			like a much cleaner separation to me.
+		-->
+		<a ng-click="vm.showAllFriends()" popup-list-trigger class="show-more">
+			+ {{ ( vm.friends.length - 3 ) }} more
+		</a>
+
+	</div>
+
+	<div class="list">
+
+		<h2>
+			Enemies
+		</h2>
+
+		<ul>
+			<li ng-repeat="enemy in vm.enemies|limitTo:3 track by enemy.id">
+				{{ enemy.name }}
+			</li>
+		</ul>
+
+		<!--
+			Here, the Controller and showAllEnemies() method takes care of showing
+			the popup while the popup-list-trigger positions the popup relative to
+			the trigger element. 
+			--
+			NOTE: I do NOT have to pass in the $event to the Controller, which feels
+			like a much cleaner separation to me.
+		-->
+		<a ng-click="vm.showAllEnemies()" popup-list-trigger class="show-more">
+			+ {{ ( vm.enemies.length - 3 ) }} more
+		</a>
+
+	</div>
+
+
+	<!-- 
+		I am the shared, global popup-list component. Notice that the popup-list 
+		component is always part of the page. However, it is managing the rendering 
+		of the content through the use of an internal, isolate-scope variable: isOpen.
+		This is helpful because it allows the global component to have a complex layout
+		that can be defined in an external template (though I am keeping it inline for 
+		the sake of simplicity). By managing the rendering internally, though, it also
+		means that the parent controller doesn't have to worry about managing or exposing
+		popup-related values.
+		--
+		NOTE: If you are defining HTML inside your JavaScript (like a tooltip element),
+		it is my OPINION that this is not the "AngularJS way."
+	-->
+	<popup-list>
+
+		<section ng-if="popup.isOpen" ng-style=":: { left: popup.x, top: popup.y }">
+
+			<header>
+				<h1>
+					{{ :: popup.title }}
+				</h1>
+
+				<span class="count">
+					{{ :: popup.items.length }} Items
+				</span>
+			</header>
+
+			<ul>
+				<li 
+					ng-repeat="item in popup.items track by $index"
+					ng-click="popup.selectItem( item )">
+
+					{{ :: popup.getItemText( item ) }}
+
+				</li>
+			</ul>
+
+		</section>
+
+		<!-- Backdrop to protect clicks from bleeding through. -->
+		<div ng-if="popup.isOpen" ng-mousedown="popup.close()" class="click-shield">
+			<br />
+		</div>
+
+	</popup-list>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/jquery/jquery-2.1.0.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.4.7.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		angular.module( "Demo", [] );
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I control the root of the application.
+		angular.module( "Demo" ).controller(
+			"AppController",
+			function AppController( $scope, popupList ) {
+
+				var vm = this;
+
+				// Build our list collections.
+				vm.friends = buildCollection( "Joanna", "Kit", "Tricia", "Elle", "Kim", "Sarah", "Sam", "Kristen" );
+				vm.enemies = buildCollection( "Jenny", "Lisa", "Pam", "Amanda", "Kelly", "Tara", "Tina", "Zena", "Gina" );
+
+				// Expose public methods.
+				vm.showAllEnemies = showAllEnemies;
+				vm.showAllFriends = showAllFriends;
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I show the complete enemies list in a popup.
+				function showAllEnemies() {
+
+					// When you ask the popup list to open, it returns a promise. That 
+					// promise will either be resolved with the item that was selected
+					// (out of the given collection); or, it will be rejected without 
+					// reason.
+					popupList
+						.open( "Enemies", vm.enemies, "name" )
+						.then(
+							function handleResolve( enemy ) {
+
+								console.log( "Enemy Selected:", enemy.name );
+
+							},
+							function handleReject() {
+
+								console.log( "Closed without resolution." );
+
+							}
+						)
+					;
+
+				}
+
+
+				// I show the complete friends list in a popup.
+				function showAllFriends() {
+
+					// When you ask the popup list to open, it returns a promise. That 
+					// promise will either be resolved with the item that was selected
+					// (out of the given collection); or, it will be rejected without 
+					// reason.
+					popupList
+						.open( "Friends", vm.friends, "name" )
+						.then(
+							function handleResolve( friend ) {
+
+								console.log( "Friend Selected:", friend.name );
+
+							},
+							function handleReject() {
+
+								console.log( "Closed without resolution." );
+
+							}
+						)
+					;
+
+				}
+
+
+				// ---
+				// PRIVATE METHODS.
+				// ---
+
+
+				// I build an id/name collection using the given arguments as names.
+				function buildCollection() {
+
+					var collection = [];
+
+					for ( var i = 0, length = arguments.length ; i < length ; i++ ) {
+
+						collection.push({
+							id: ( i + 1 ),
+							name: arguments[ i ]
+						});
+
+					}
+
+					return( collection );
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I manages the global state of the popup list.
+		// --
+		// NOTE: This service knows nothing about the state of the DOM.
+		angular.module( "Demo" ).factory(
+			"popupList",
+			function popupListFactory( $q, $rootScope ) {
+
+				// I hold the internal state.
+				var popup = {
+					deferred: null,
+					title: "",
+					items: [],
+					textAccessor: angular.noop
+				};
+
+				// Return the public API.
+				return({
+					getItems: getItems,
+					getItemText: getItemText,
+					getTitle: getTitle,
+					open: open,
+					reject: reject,
+					resolve: resolve
+				});
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I get the items for the popup list.
+				function getItems() {
+
+					return( popup.items );
+					
+				}
+
+
+				// I get the label-text associated with the given item.
+				function getItemText( item ) {
+
+					return( popup.textAccessor( item ) );
+					
+				}
+
+
+				// I get the title for the popup list.
+				function getTitle() {
+
+					return( popup.title );
+
+				}
+
+
+				// I open the popup list with the given title, items, and text-accessor.
+				// Returns a promise that will resolve with the selected item or reject
+				// without reason.
+				// --
+				// NOTE: This method can't actually open the "DOM" element since it 
+				// doesn't know anything about the DOM. However, it will emit an event
+				// that the popup list component is listening for.
+				function open( title, items, textAccessor ) {
+
+					if ( popup.deferred ) {
+
+						popup.deferred.reject();
+
+					}
+
+					popup.deferred = $q.defer();
+					popup.title = title;
+					popup.items = items;
+
+					// If the text accessor is already a function, just assume that it is a
+					// function that takes an item and returns the text value. If it is a 
+					// string, assume it is a property that references the text of the item.
+					popup.textAccessor = angular.isFunction( textAccessor )
+						? textAccessor
+						: function( item ) {
+
+							return( item[ textAccessor ] );
+
+						}
+					;
+
+					// Since the popupList service knows nothing about the DOM, we have 
+					// to emit an event that the popupList component will use as a signal
+					// to open the popupList element.
+					$rootScope.$emit( "popupList.open" );
+
+					return( popup.deferred.promise );
+
+				}
+
+
+				// I move the popup into a rejected state, meaning no item was selected.
+				function reject() {
+
+					if ( popup.deferred ) {
+
+						popup.deferred.reject();
+						popup.deferred = null;
+
+					}
+
+					// Since the popupList knows nothing about the DOM, we have to 
+					// trigger an event that the popupList component is listening for.
+					$rootScope.$emit( "popupList.close" );
+
+				}
+
+
+				// I move the popup into a resolved state, meaning an item was selected.
+				function resolve( value ) {
+
+					if ( popup.deferred ) {
+
+						popup.deferred.resolve( value );
+						popup.deferred = null;
+
+					}
+
+					// Since the popupList knows nothing about the DOM, we have to 
+					// trigger an event that the popupList component is listening for.
+					$rootScope.$emit( "popupList.close" );
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I am the directive "glue" that binds the popupList service to the popupList
+		// component and DOM (Document Object Model).
+		angular.module( "Demo" ).directive(
+			"popupList",
+			function popupListDirective( $document, $rootScope ) {
+
+				// Return the directive configuration object.
+				return({
+					controller: PopupListController,
+					controllerAs: "popup",
+					link: link,
+					restrict: "E"
+				});
+
+
+				// I bind the JavaScript events to the view model.
+				function link( scope, element, attributes, controller ) {
+
+					// The primary means of this linking function is to aide in the 
+					// positioning of the popup. Since neither the Controller nor the
+					// Service are supposed to know anything about the DOM, this linker
+					// will listen for trigger events and position the popup relative
+					// to the origin event.
+					var deregisterHandlePosition = $rootScope.$on( "popupList.position", handlePosition );
+
+					scope.$on( "$destroy", handleDestroy );
+
+
+					// ---
+					// PRIVATE METHODS.
+					// ---
+
+
+					// I teardown the directive bindings.
+					function handleDestroy() {
+
+						deregisterHandlePosition();
+
+					}
+
+
+					// I handle the position event, calculating the relative position of
+					// the popup and then telling the controller to update the view-model.
+					function handlePosition( event, target, x, y ) {
+
+						var offset = target.offset();
+
+						controller.setPosition( 
+							( offset.left + target.outerWidth() + 20 ), 
+							( offset.top - 75 ) 
+						);
+
+					}
+
+				}
+
+
+				// I manage the popup list component.
+				function PopupListController( $scope, $rootScope, popupList ) {
+
+					var vm = this;
+
+					// Setup the view-model.
+					vm.isOpen = false;
+					vm.title = "";
+					vm.items = [];
+					vm.x = 0;
+					vm.y = 0;
+
+					// Since this component is being used to render the state of the
+					// popupList service, we need to register event listeners so that 
+					// we know when to synchronize the state of the component.
+					var deregisterHandleOpen = $rootScope.$on( "popupList.open", handleOpen );
+					var deregisterHandleClose = $rootScope.$on( "popupList.close", handleClose );
+
+					$scope.$on( "$destroy", handleDestroy );
+
+					// Expose public methods.
+					vm.close = close;
+					vm.getItemText = getItemText;
+					vm.selectItem = selectItem;
+					vm.setPosition = setPosition;
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I close the popupList component.
+					function close() {
+
+						popupList.reject();
+						
+					}
+
+
+					// I return the label text for the given item.
+					function getItemText( item ) {
+
+						return( popupList.getItemText( item ) );
+
+					}
+
+
+					// I put the popupList service into a resolved state using the 
+					// given item.
+					function selectItem( item ) {
+
+						popupList.resolve( item );
+
+					}
+
+
+					// I position the popupList component.
+					function setPosition( x, y ) {
+
+						vm.x = x;
+						vm.y = y;
+
+					}
+
+
+					// ---
+					// PRIVATE METHODS.
+					// ---
+
+
+					// I handle the close event emitted by the popupList service.
+					function handleClose( event ) {
+
+						vm.isOpen = false;
+
+					}
+
+
+					// I teardown the controller's bindings.
+					function handleDestroy() {
+
+						deregisterHandleOpen();
+						deregisterHandleClose();
+
+					}
+
+
+					// I handle the open event emitted by the popupList service.
+					function handleOpen( event ) {
+
+						vm.isOpen = true;
+
+						// When the popupList component is being rendered in an open 
+						// state, we have to re-synchronize the local view-model with
+						// the popupList component to make sure that we are rendering 
+						// the correct data.
+						vm.title = popupList.getTitle();
+						vm.items = popupList.getItems();
+
+					}
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide a means to position the popup relative to the current element.
+		angular.module( "Demo" ).directive(
+			"popupListTrigger",
+			function popupListTriggerDirective( $rootScope ) {
+
+				// Return the directive configuration object.
+				return({
+					link: link,
+					restrict: "A"
+				});
+
+
+				// I bind the JavaScript events to the view-model.
+				function link( scope, element, attributes ) {
+
+					// By default, we'll assume the trigger action is Click; but, this
+					// can be overridden by the attribute value.
+					var eventType = ( attributes.popupListTrigger || "click" );
+
+					element.on( eventType, handleTrigger );
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// When the popup is triggered, I emit the data that is needed to 
+					// position the popup relative to the trigger element.
+					function handleTrigger( event ) {
+
+						$rootScope.$emit( 
+							"popupList.position",
+							angular.element( event.target ),
+							event.pageX,
+							event.pageY
+						);
+
+					}
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>

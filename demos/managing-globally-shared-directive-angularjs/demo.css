@@ -1,0 +1,87 @@
+
+div.list ul {
+	margin-left: 20px ;
+	margin-right: 20px ;
+	padding-left: 20px ;
+}
+
+div.list li {
+	margin-left: 0px ;
+}
+
+div.list a.show-more {
+	background-color: #F0F0F0 ;
+	border: 1px solid #CCCCCC ;
+	border-radius: 3px 3px 3px 3px ;
+	cursor: pointer ;
+	display: inline-block ;
+	margin-left: 20px ;
+	padding: 4px 9px 4px 9px ;
+}
+
+popup-list {
+	display: block ;
+	height: 0px ;
+}
+
+popup-list section {
+	background-color: #FFFFFF ;
+	border: 1px solid #454545 ;
+	border-radius: 3px 3px 3px 3px ;
+	box-shadow: 2px 2px 4px rgba( 0, 0, 0, 0.2 ) ;
+	overflow: hidden ;
+	position: absolute ;
+	width: 300px ;
+	z-index: 100 ;
+}
+
+popup-list header {
+	background-color: #F0F0F0 ;
+	border-bottom: 1px solid #CCCCCC ;
+	padding: 13px 15px 13px 15px ;
+	position: relative ;
+}
+
+popup-list header h1 {
+	font-size: 18px ;
+	margin: 0px 0px 0px 0px ;
+}
+
+popup-list header span.count {
+	color: #999999 ;
+	font-size: 18px ;
+	font-weight: 100 ;
+	position: absolute ;
+	right: 20px ;
+	top: 13px ;
+}
+
+popup-list ul {
+	margin: 0px 0px 0px 0px ;
+	max-height: 150px ;
+	padding: 0px 0px 0px 0px ;
+	overflow-x: auto ;
+}
+
+popup-list ul li {
+	border-bottom: 1px solid #CCCCCC ;
+	cursor: pointer ;
+	padding: 10px 10px 10px 10px ;
+}
+
+popup-list ul li:last-child {
+	border-bottom-width: 0px ;
+}
+
+popup-list ul li:hover {
+	background-color: #F0F0F0 ;
+}
+
+popup-list div.click-shield {
+	bottom: 0px ;
+	left: 0px ;
+	position: fixed ;
+	right: 0px ;
+	top: 0px ;
+	z-index: 99 ;
+}
