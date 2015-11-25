@@ -1,0 +1,11 @@
+
+div.logger {
+	border: 1px dashed #CCCCCC ;
+	border-radius: 10px 10px 10px 10px ;
+	bottom: 30px ;
+	left: 30px ;
+	padding: 30px ;
+	position: fixed ;
+	right: 30px ;
+	top: 80px ;
+}

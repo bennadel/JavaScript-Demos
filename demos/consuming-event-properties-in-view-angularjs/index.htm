@@ -1,0 +1,79 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Consuming Event Properties From Within The View In AngularJS
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body ng-controller="AppController as vm">
+
+	<h1>
+		Consuming Event Properties From Within The View In AngularJS
+	</h1>
+
+	<!--
+		The reason that you can pass the $event object from the view into the methods
+		is because it is being exposed as a "locals" override by the directives (ex, 
+		ngClick, ngKeypress) when evaluating your directive expression (pseudo code):
+	
+		`scope.$eval( attributes.ngClick, { $event: event } )`
+
+		However, that means that you can also consume the event object properties 
+		directly as part of the same method invocations (as opposed to passing in the 
+		entire $event object).
+	-->
+	<div 
+		ng-click="vm.logClick( $event.pageX, $event.pageY )"
+		ng-keypress="vm.logKey( $event.which, $event.metaKey )"
+		contenteditable="true"
+		class="logger">
+		<!-- Events will be logged to console. -->
+	</div>
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.4.7.min.js"></script>
+	<script type="text/javascript">
+
+		// I control the root of the application.
+		angular.module( "Demo", [] ).controller(
+			"AppController",
+			function AppController( $scope ) {
+
+				var vm = this;
+
+				// Expose public methods.
+				vm.logClick = logClick;
+				vm.logKey = logKey;
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I log the given click coordinates.
+				function logClick( x, y ) {
+
+					console.log( "Click:", x, y );
+
+				}
+
+
+				// I log the given key characters.
+				function logKey( keyCode, isMetaKey ) {
+
+					console.log( "Key:", String.fromCharCode( keyCode ), keyCode, isMetaKey );
+
+				}
+			
+			}
+		);
+
+	</script>
+
+</body>
+</html>
