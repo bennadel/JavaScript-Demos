@@ -35,6 +35,11 @@
 				( {{ friend.id }} ) {{ friend.name }}
 			</a>
 
+			<!-- Indicating the currently-selected friend. -->
+			<span ng-if="( vm.currentRoute == ( '/friends/' + friend.id ) )">
+				*
+			</span>
+
 		</li>
 	</ul>
 
