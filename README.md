@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Conditionally Canceling Href Navigation Using Directives In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/cancel-href-navigation-angularjs/)
 * [Consuming Event Properties From Within The View In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/consuming-event-properties-in-view-angularjs/)
 * [Managing A Shared Global UI Component In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/managing-globally-shared-directive-angularjs/)
 * [Scattering Letters Based On Mouse Movements In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/design-disruptors-letters-angularjs/)

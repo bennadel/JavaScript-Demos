@@ -1,0 +1,192 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Conditionally Canceling Href Navigation Using Directives In AngularJS
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body ng-controller="AppController as vm">
+
+	<h1>
+		Conditionally Canceling Href Navigation Using Directives In AngularJS
+	</h1>
+
+	<p>
+		<strong>Current Route</strong>: <span class="route">{{ vm.currentRoute }}</span>
+	</p>
+
+	<ul>
+		<li ng-repeat="friend in vm.friends track by friend.id">
+
+			<!--
+				Notice that, in addition to the HREF attribute interpolation, I also have
+				a cancelHref directive. This directive takes a scope expression and will
+				cancel the defaultBehavior of the click event object (which will, in turn
+				cancel the navigation) if the cancelHref expression evaluates to TRUE. 
+				This allows the view to be very explicit as to how and why a navigation 
+				might be canceled while, at the same time, still allowing for native 
+				browser behavior like CMD+Click to open the link in another browser tab.
+			-->
+			<a href="#/friends/{{ friend.id }}" cancel-href="! vm.canViewFriend( friend )">
+				( {{ friend.id }} ) {{ friend.name }}
+			</a>
+
+		</li>
+	</ul>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.4.7.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		angular.module( "Demo", [] );
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I control the root of the application.
+		angular.module( "Demo" ).controller(
+			"AppController",
+			function AppController( $scope, $location ) {
+
+				var vm = this;
+
+				// I hold the collection of friends to render.
+				vm.friends = buildFriends( "Sarah", "Kim", "Nina", "Joanna" );
+
+				// I keep track of the current route.
+				vm.currentRoute = "";
+
+				// I synchronize the view-model to the route as the route changes.
+				$scope.$on( "$locationChangeSuccess", handleLocationChange );
+
+				// Expose public methods.
+				vm.canViewFriend = canViewFriend;
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I determine if the given friend can be viewed. This allows the 
+				// navigation to the friend route to be conditionally canceled by the
+				// calling context using the cancelHref directive.
+				function canViewFriend( friend ) {
+
+					console.log( 
+						"%s is %s", 
+						friend.name, 
+						( friend.isFrienemy ? "frienemy, oh noes!!" : "cool." ) 
+					);
+					
+					return( ! friend.isFrienemy );
+					
+				}
+
+	
+				// ---			
+				// PRIVATE METHODS.			
+				// ---
+
+
+				// I build up the collection for friends based on the given arguments.
+				function buildFriends() {
+
+					var collection = [];
+
+					for ( var i = 0, length = arguments.length ; i < length ; i++ ) {
+
+						collection.push({
+							id: ( i + 1 ),
+							name: arguments[ i ],
+							isFrienemy: ( i === 2 )
+						});
+
+					}
+
+					return( collection );
+
+				}
+
+
+				// I update the current route mapping when the location changes.
+				function handleLocationChange() {
+
+					vm.currentRoute = $location.path();
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide a way to conditionally cancel an HREF-based navigation action.
+		angular.module( "Demo" ).directive(
+			"cancelHref",
+			function cancelHrefDirective() {
+
+				// Return the directive configuration object.
+				return({
+					compile: compile,
+					link: link,
+					restrict: "A"
+				});
+
+
+				// I compile the directive. Since this directive is intended to interplay
+				// with the HREF-based navigation, it doesn't make sense to link this 
+				// directive unless there is a sibling HREF on the template element.
+				function compile( tElement, tAttributes ) {
+
+					if ( ! ( tAttributes.href || tAttributes.ngHref ) ) {
+
+						throw( new Error( "cancelHref requires href or ngHref sibling." ) );
+
+					}
+
+					return( this.link );
+
+				}
+
+
+				// I bind the JavaScript events to the view-model.
+				function link( scope, element, attributes ) {
+
+					element.on(
+						"click",
+						function handleClick( event ) {
+
+							// If the expression strictly evaluates to True, we want to
+							// prevent the default behavior. On a click-event, initiated
+							// by an HREF attribute, this will prevent the navigation 
+							// from taking place.
+							if ( scope.$eval( attributes.cancelHref ) === true ) {
+
+								event.preventDefault();
+
+							}
+
+						}
+					);
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
