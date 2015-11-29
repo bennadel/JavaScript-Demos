@@ -1,0 +1,408 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Formatting And Parsing Custom ngModel Bindings In AngularJS
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body ng-controller="AppController as vm">
+
+	<h1>
+		Formatting And Parsing Custom ngModel Bindings In AngularJS
+	</h1>
+
+	<h3>
+		Marky-Mark Input Control (w/ ng-model binding)
+	</h3>
+
+	<!--
+		NOTE: The debounce option here will "throttle" the invocation of the 
+		parsers after the $setViewValue() method is called. This is actually 
+		really cool because it means that you don't have to debounce internally 
+		when you use parsers to transform your ng-model data..
+	-->
+	<marky-mark 
+		ng-model="vm.content" 
+		ng-model-options="{ debounce: 0 }">
+	</marky-mark>
+
+	<h3>
+		Text Input Control (w/ ng-model binding)
+	</h3>
+
+	<input ng-model="vm.content" />
+
+	<hr />
+
+	<p>
+		<strong>Caution:</strong> Only tested in Chrome.
+	</p>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/jquery/jquery-2.1.0.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.4.7.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		angular.module( "Demo", [] );
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I control the root of the application.
+		angular.module( "Demo" ).controller(
+			"AppController",
+			function AppController( $scope ) {
+
+				var vm = this;
+
+				// I am the content being rendered by the ngModel binding(s).
+				vm.content = "Hey Sarah, you been _working out_? Looking *totes buff*!";
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide a super simplistic mark-down input that supports bold and italic.
+		angular.module( "Demo" ).directive(
+			"markyMark",
+			function markyMarkDirective( htmlUtil ) {
+
+				// Return the directive configuration object.
+				return({
+					link: link,
+					require: "ngModel",
+					restrict: "E",
+					template: "<div contenteditable='true' class='content'></div>"
+				});
+
+
+				// I bind the JavaScript events to the view-model.
+				function link( scope, element, attributes, ngModelController ) {
+
+					var content = element.find( "div" );
+
+					// When the ngModel / $modelValue value needs to be synchronized 
+					// into the $viewValue / input control, it is passed through a 
+					// collection of formatters (in reverse order) before the $render() 
+					// method is invoked.
+					// --
+					// ngModel --> $modelValue --> Formatters --> $viewValue --> $render().
+					ngModelController.$formatters.push( formatInput );
+					ngModelController.$render = renderViewValue;
+
+					// When the $viewValue change is emitted, it is run through a 
+					// collection of parsers (in order) before the value is saved to the
+					// $modelValue and synchronized out to the ngModel binding.
+					// --
+					// Widget --> $viewValue --> Parsers --> $modelValue --> ngModel.
+					ngModelController.$parsers.push( parseOutput );
+
+					// To keep this super simple, we're going to prevent paste events 
+					// and line-breaks on the contentEditable area. This is not a robust
+					// demo, so it just keeps the output simple.
+					element.on( "keydown", preventLineBreak );
+					element.on( "paste", preventPaste );
+
+					// We're going to emit the changed $viewValue on each keyup event.
+					// Doing this will push the $viewValue value through the parsers
+					// before it is synchronized out to the $modelValue and the ngModel
+					// binding.
+					element.on( "keyup", emitMarkupChange );
+
+
+					// ---
+					// PRIVATE METHODS.
+					// ---
+
+
+					// As the user types, they are actively changing the DOM structure
+					// of the widget which represents our view-value. As such, we have 
+					// to let the ngModelController know about the updated value.
+					function emitMarkupChange( event ) {
+
+						scope.$apply(
+							function changeModel() {
+
+								// NOTE: Logging to demonstrate debounce options.
+								console.log( "Calling $setViewValue() with:", content.html() );
+
+								// NOTE: This will cause our parsers to be called before
+								// the value is synchronized out to the ngModel.
+								ngModelController.$setViewValue( content.html() );
+
+							}
+						);
+
+					}
+
+
+					// I format the incoming ngModel / $modelValue value that needs to be
+					// synchronized into the $viewValue / widget rendering.
+					// --
+					// ngModel --> $modelValue --> [[[ Formatters ]]] --> $viewValue --> $render().
+					function formatInput( value ) {
+
+						var inItalic = false;
+						var inBold = false;
+
+						// Iterate over the meaningful character matches to replace them
+						// with valid HTML markup tags.
+						value = value.replace(
+							/(?:\\([\\_*]))|([_*])/g,
+							function operator( $0, escapedToken, token ) {
+
+								if ( escapedToken ) {
+
+									return( escapedToken );
+
+								} else if ( token === "*" ) {
+
+									if ( inBold ) {
+
+										inBold = false;
+										return( "</b>" );
+
+									} else {
+
+										inBold = true;
+										return( "<b>" );
+
+									}
+
+								} else if ( token === "_" ) {
+
+									if ( inItalic ) {
+
+										inItalic = false;
+										return( "</i>" );
+
+									} else {
+
+										inItalic = true;
+										return( "<i>" );
+
+									}
+
+								} else {
+
+									return( htmlUtil.escapeHtml( $0 ) );
+
+								}
+
+							}
+						);
+
+						// Close any outstanding tags.
+						// --
+						// CAUTION: For this simplistic demo, we're not going to worry 
+						// about the order of the unclosed tags.
+						( inBold && ( value += "</b>" ) );
+						( inItalic && ( value += "</i>" ) );
+
+						// Return the formatted value. 
+						return( value );
+
+					}
+
+
+					// I parse the outgoing $viewValue for use in the $modelValue / ngModel.
+					// --
+					// Widget --> $viewValue --> [[[ Parsers ]]] --> $modelValue --> ngModel.
+					function parseOutput( value ) {
+
+						// NOTE: Logging to demonstrate debounce options.
+						console.log( "Parser called." );
+
+						return( 
+							domToString(
+								angular.element( "<div />" )
+									.html( value )
+									.prop( "childNodes" )
+							) 
+						);
+
+
+						// I convert the given DOM node collection into an marky-markdown
+						// input value (which is basically a barely-functional markdown).
+						function domToString( nodes ) {
+
+							var buffer = [];
+
+							for ( var i = 0, length = nodes.length ; i < length ; i++ ) {
+
+								var node = nodes[ i ];
+
+								if ( ! htmlUtil.isElement( node ) ) {
+
+									// Escape any embedded special characters.
+									buffer.push( node.nodeValue.replace( /([_*\\])/g, "\\$1" ) );
+
+								} else if (  htmlUtil.isBold( node ) ) {
+
+									buffer.push( "*" );
+									buffer.push( domToString( node.childNodes ) );
+									buffer.push( "*" );
+
+								} else if (  htmlUtil.isItalic( node ) ) {
+
+									buffer.push( "_" );
+									buffer.push( domToString( node.childNodes ) );
+									buffer.push( "_" );
+
+								} else {
+
+									// For the purposes of this demo, we're just going to
+									// keep the parser super super super simple and just
+									// ignore everything but the bold and italic tags.
+									// --
+									// NOTE: Since we also suppressing the line-return and
+									// paste events, this should be totally fine for our
+									// demo purposes.
+									buffer.push( domToString( node.childNodes ) );
+
+								}
+
+							}
+
+							return( buffer.join( "" ) );
+
+						}
+
+					}
+
+
+					// I prevent the paste event on the input.
+					// --
+					// NOTE: Done to keep the demo super simple.
+					function preventPaste( event ) {
+
+						event.preventDefault();
+
+					}
+
+
+					// I prevent line-breaks on the input.
+					// --
+					// NOTE: Done to keep the demo super simple.
+					function preventLineBreak( event ) {
+
+						if ( event.which === 13 ) {
+
+							event.preventDefault();
+
+						}
+
+					}
+
+
+					// I get called when the $viewValue has been changed programmtically
+					// from the outside (ie, via the ngModel binding) and needs to be 
+					// synchronized into the widget. At this point, the formatters have
+					// all been called and the $viewValue should be considered ready to 
+					// consume in the widget.
+					function renderViewValue() {
+
+						content.html( ngModelController.$viewValue );
+
+					}
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide some HTML-based utilities.
+		angular.module( "Demo" ).factory(
+			"htmlUtil",
+			function htmlUtilFactory() {
+
+				// Return the pulic API.
+				return({
+					escapeHtml: escapeHtml,
+					isBold: isBold,
+					isElement: isElement,
+					isItalic: isItalic,
+					isTagType: isTagType
+				});
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I escape the given HTML so that it can be rendered as text.
+				function escapeHtml( html ) {
+
+					html = html.replace( /&(?!amp;)/g, "&amp;" );
+					html = html.replace( /</g, "&lt;" );
+					html = html.replace( />/g, "&gt;" );
+
+					return( html );
+
+				}
+
+
+				// I determine if the given node is a bold(esque) tag.
+				function isBold( node ) {
+
+					return( isTagType( node, [ "b", "strong" ] ) );
+
+				}
+
+
+				// I determine if the given node is an Element node.
+				function isElement( node ) {
+
+					return( node.nodeType === 1 );
+
+				}
+
+
+				// I determine if the given node is an italic(esque) tag.
+				function isItalic( node ) {
+
+					return( isTagType( node, [ "em", "i" ] ) );
+
+				}
+
+
+				// I determine if the given node is one of the given types.
+				function isTagType( node, tagNames ) {
+
+					var isAnyMatch = tagNames.some(
+						function iterator( name ) {
+
+							return( name.toUpperCase() === node.tagName );
+
+						}
+					);
+
+					return( isAnyMatch );
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
