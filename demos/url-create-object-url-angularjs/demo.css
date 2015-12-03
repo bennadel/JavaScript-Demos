@@ -1,0 +1,53 @@
+a[ ng-click ] {
+	color: red ;
+	cursor: pointer ;
+	text-decoration: underline ;
+	user-select: none ;
+		-moz-user-select: none ;
+		-webkit-user-select: none ;
+}
+
+bn-demo {
+	border: 2px dashed #CCCCCC ;
+	border-radius: 4px 4px 4px 4px ;
+	display: block ;
+	height: 245px ;
+	margin: 20px 20px 20px 20px ;
+	overflow: auto ;
+}
+
+bn-demo ul {
+	list-style-type: none ;
+	margin: 20px 20px 20px 20px ;
+	padding: 0px 0px 0px 0px ;
+}
+
+bn-demo li {
+	display: inline-block ;
+	margin: 0px 13px 10px 0px ;
+}
+
+bn-demo figure {
+	background-position: 50% 50% ;
+	background-size: cover ;
+	border: 1px solid #CCCCCC ;
+	border-radius: 4px 4px 4px 4px ;
+	height: 200px ;
+	margin: 0px 0px 0px 0px ;
+	position: relative ;
+	width: 200px ;
+}
+
+bn-demo figcaption {
+	background-color: rgba( 255, 255, 255, 0.85 ) ;
+	border-radius: 0px 0px 3px 3px ;
+	bottom: 0px ;
+	color: #000000 ;
+	left: 0px ;
+	overflow: hidden ;
+	padding: 8px 10px 8px 10px ;
+	position: absolute ;
+	right: 0px ;
+	text-overflow: ellipsis ;
+	white-space: nowrap ;
+}
