@@ -223,7 +223,7 @@
 						localUrlsToDestroy.forEach(
 							function iterator( localUrl ) {
 
-								URL.revokeObjectURL( localUrl );
+								( URL || webkitURL ).revokeObjectURL( localUrl );
 
 							}
 						);
