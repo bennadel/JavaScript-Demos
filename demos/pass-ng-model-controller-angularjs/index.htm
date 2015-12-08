@@ -1,0 +1,276 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Passing ngModelController Into A Component Directive Controller In AngularJS
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body ng-controller="AppController as vm">
+
+	<h1>
+		Passing ngModelController Into A Component Directive Controller In AngularJS
+	</h1>
+
+	<p>
+		<a ng-click="vm.toggleAwesome()">Toggle Awesome</a> -
+		<a ng-click="vm.togglePlaya()">Toggle Playa</a> -
+		<a ng-click="vm.toggleGroovy()">Toggle Groovy</a> -
+		<a ng-click="vm.toggleAll()">Toggle All</a>
+	</p>
+
+	<!--
+		The bnToggle component is a custom component directive that uses the
+		 ngModel binding and the underlying ngModelController to manage the 
+		 two-way data flow. 
+	-->
+
+	<bn-toggle 
+		ng-model="vm.isAwesome"
+		ng-change="vm.logChange( 'Awesome', vm.isAwesome )">
+		Awesome?
+	</bn-toggle>
+
+	<bn-toggle 
+		ng-model="vm.isPlaya" 
+		ng-change="vm.logChange( 'Playa', vm.isPlaya )">
+		Playa?
+	</bn-toggle>
+
+	<bn-toggle 
+		ng-model="vm.isGroovy"
+		ng-change="vm.logChange( 'Groovy', vm.isGroovy )">
+		Groovy?
+	</bn-toggle>
+
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.4.7.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		angular.module( "Demo", [] );
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I control the root of the application.
+		angular.module( "Demo" ).controller(
+			"AppController",
+			function AppController( $scope, $log ) {
+
+				var vm = this;
+
+				// I hold the toggle values.
+				vm.isAwesome = false;
+				vm.isPlaya = false;
+				vm.isGroovy = false;
+
+				// Expose the public methods.
+				vm.logChange = logChange;
+				vm.toggleAll = toggleAll;
+				vm.toggleAwesome = toggleAwesome;
+				vm.toggleGroovy = toggleGroovy;
+				vm.togglePlaya = togglePlaya;
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I log the change to the given ngModel value.
+				// --
+				// NOTE: This is being invoked by the ngChange binding, which will only
+				// be invoked if the change is triggered by an action internal to the 
+				// ngModel implementer. Meaning, it will not be invoked when the change
+				// it precipitated by THIS controller.
+				function logChange( label, value ) {
+
+					$log.info( label, "became", value );
+
+				}
+
+
+				// I toggle all of the values.
+				function toggleAll() {
+
+					toggleAwesome();
+					toggleGroovy();
+					togglePlaya();
+
+				}
+
+
+				// I toggle the awesome value.
+				function toggleAwesome() {
+
+					vm.isAwesome = ! vm.isAwesome;
+
+				}
+
+
+				// I toggle the groovy value.
+				function toggleGroovy() {
+
+					vm.isGroovy = ! vm.isGroovy;
+
+				}
+
+
+				// I toggle the playa value.
+				function togglePlaya() {
+
+					vm.isPlaya = ! vm.isPlaya;
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide a toggle control.
+		angular.module( "Demo" ).directive(
+			"bnToggle",
+			function bnToggleDirective() {
+
+				// Return the directive configuration object.
+				return({
+					controller: ToggleController,
+					controllerAs: "vm",
+					link: link,
+					require: [ "bnToggle", "ngModel" ],
+					restrict: "E",
+					scope: {},
+					transclude: true,
+					template: 
+					`
+						<div ng-click="vm.toggle()" class="inner-dom">
+							<div class="label" ng-transclude>
+								<!-- Transcluded content, like a boss. -->
+							</div>
+							<div class="thumb-track" ng-class="{ checked: vm.isChecked }">
+								<div class="thumb-label on">
+									Yes
+								</div>
+								<div class="thumb-label off">
+									No
+								</div>
+							</div>
+						</div>
+					`
+				});
+
+
+				// I bind the JavaScript events to the view-model.
+				function link( scope, element, attributes, controllers ) {
+
+					// Our component controller.
+					var controller = controllers[ 0 ];
+
+					// The ngModel controller exposed on the DOM.
+					var ngModelController = controllers[ 1 ];
+
+					// Since the available ngModelControllers are a result of the DOM 
+					// structure, we have to get them from the link function. However,
+					// once the DOM has linked, we can pass the available ngModelController
+					// into our component directive controller.
+					controller.setNgModelController( ngModelController );
+
+				}
+
+
+				// I control the toggle view-model.
+				function ToggleController( $scope ) {
+
+					var vm = this;
+
+					// I determine if the toggle is on (checked) or off.
+					vm.isChecked = false;
+
+					// At the time the component controller is instantiated, we don't 
+					// yet have access to the relevant ngModelController. This is only
+					// available after the DOM has been linked and the relevant ngModel
+					// controller instance can be located.
+					var ngModelController = null;
+
+					// Expose public methods.
+					vm.setNgModelController = setNgModelController;
+					vm.toggle = toggle;
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I set the ngModelController to be consumed by this component.
+					function setNgModelController( newNgModelController ) {
+
+						ngModelController = newNgModelController;
+
+						// Setup our formatters to make sure the $viewValue is easy to 
+						// consume by the controller.
+						ngModelController.$formatters.push( formatModelValue );
+
+						// Setup the render method to make sure the toggle is kept in
+						// sync with the externally-changing ngModel binding.
+						ngModelController.$render = renderViewValue;
+
+					}
+
+
+					// I toggle the component state.
+					function toggle() {
+
+						vm.isChecked = ! vm.isChecked;
+
+						// Now that the component directive state has been changed, we 
+						// have to tell the ngModelController that the value has changed
+						// so that the ngModel binding can be synchronized externally.
+						ngModelController.$setViewValue( vm.isChecked );
+
+					}
+
+
+					// ---
+					// PRIVATE METHODS.
+					// ---
+
+
+					// I format the incoming modelValue to be compatible with the toggle
+					// control. Since the toggle deals with booleans, this just makes sure
+					// that the modelValue results in a strict boolean.
+					function formatModelValue( modelValue ) {
+
+						return( !! modelValue );
+
+					}
+
+
+					// I update the toggle rendering to reflect the current $viewValue.
+					function renderViewValue() {
+
+						vm.isChecked = ngModelController.$viewValue;
+
+					}
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>

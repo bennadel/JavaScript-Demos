@@ -1,0 +1,95 @@
+
+a[ ng-click ] {
+	color: red ;
+	cursor: pointer ;
+	text-decoration: underline ;
+	user-select: none ;
+		-moz-user-select: none ;
+		-webkit-user-select: none ;
+}
+
+bn-toggle {
+	border: 1px solid #CCCCCC ;
+	border-radius: 3px 3px 3px 3px ;
+	cursor: pointer ;
+	display: table ;
+	font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif ;
+	margin: 16px 0px 16px 0px ;
+	user-select: none ;
+		-moz-user-select: none ;
+		-webkit-user-select: none ;
+}
+
+bn-toggle div.inner-dom {
+	padding: 13px 13px 13px 13px ;
+}
+
+bn-toggle div.label {
+	font-weight: bold ;
+	margin-bottom: 13px ;
+	text-align: center ;
+}
+
+bn-toggle div.thumb-track {
+	background-color: #F0F0F0 ;
+	border: 1px solid #666666 ;
+	border-radius: 20px 20px 20px 20px ;
+	height: 26px ;
+	min-width: 80px ;
+	position: relative ;
+}
+
+bn-toggle div.thumb-track:after {
+	background-color: #333333 ;
+	border-radius: 18px 18px 18px 18px ;
+	content: "" ;
+	height: 20px ;
+	left: 4px ;
+	position: absolute ;
+	top: 3px ;
+	transition: left 200ms ease, background-color 200ms ease ;
+	width: 20px ;
+	z-index: 2 ;
+}
+
+bn-toggle div.thumb-label {
+	bottom: 0px ;
+	font-size: 13px ;
+	font-weight: bold ;
+	left: 0px ;
+	line-height: 26px ;
+	position: absolute ;
+	right: 0px ;
+	text-transform: uppercase ;
+	transition: opacity 200ms ease ;
+	top: 0px ;
+}
+
+bn-toggle div.thumb-label.on {
+	opacity: 0.0 ;
+	padding-left: 15px ;
+}
+
+bn-toggle div.thumb-label.off {
+	color: #666666 ;
+	padding-right: 15px ;
+	text-align: right ;
+}
+
+bn-toggle div.thumb-track.checked {
+	background-color: #FF0099 ;
+	color: #FFFFFF ;
+}
+
+bn-toggle div.thumb-track.checked:after {
+	background-color: #FFFFFF ;
+	left: calc( 100% - 5px - 20px ) ;
+}
+
+bn-toggle div.thumb-track.checked div.thumb-label.on {
+	opacity: 1.0 ;
+}
+
+bn-toggle div.thumb-track.checked div.thumb-label.off {
+	opacity: 0.0 ;
+}
