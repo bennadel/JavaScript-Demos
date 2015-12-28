@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Synchronizing Magnetic Poetry With Firebase And AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/magnetic-poetry-firebase-angularjs/)
 * [Passing ngModelController Into A Component Directive Controller In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/pass-ng-model-controller-angularjs/)
 * [Rendering Image Previews Using Object URLs vs. Base64 Data URIs In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/url-create-object-url-angularjs/)
 * [Formatting And Parsing Custom ngModel Bindings In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/ng-model-markdown-parsers-angularjs/)

@@ -1,0 +1,142 @@
+
+html,
+body {
+	box-sizing: border-box ;
+	min-height: 100% ;
+}
+
+div.board {
+	bottom: 75px ;
+	left: 0px ;
+	overflow: auto ;
+	position: fixed ;
+	right: 0px ;
+	top: 0px ;
+}
+
+div.board div.loading {
+	background-color: rgba( 255, 255, 255, 0.9 ) ;
+	bottom: 0px ;
+	left: 0px ;
+	position: absolute ;
+	right: 0px ;
+	top: 0px ;
+	z-index: 999999999 ; /* It has to be above all the pieces. */
+}
+
+div.board div.loading span {
+	background-color: #CC0000 ;
+	border-radius: 3px 3px 3px 3px ;
+	color: #FFFFFF ;
+	font-size: 16px ;
+	height: 36px ;
+	left: 50% ;
+	line-height: 36px ;
+	margin: -18px 0px 0px -65px ;
+	position: absolute ;
+	text-align: center ;
+	top: 50% ;
+	width: 130px ;
+}
+
+div.board ul.pieces {
+	left: 0px ;
+	margin: 0px 0px 0px 0px ;
+	padding: 0px 0px 0px 0px ;
+	position: absolute ;
+	top: 0px ;
+}
+
+div.board li.piece {
+	background-color: #F7F7F7 ;
+	border: 1px solid #DADADA ;
+	border-left-color: #999999 ;
+	border-right-color: #999999 ;
+	border-bottom: 2px solid #333333 ;
+	color: #000000 ;
+	cursor: pointer ;
+	display: inline-block ;
+	font-family: "Lora", serif ;
+	font-size: 16px ;
+	line-height: 21px ;
+	padding: 7px 13px 6px 10px ;
+	position: absolute ;
+	user-select: none ;
+		-moz-user-select: none ;
+		-webkit-user-select: none ;
+}
+
+div.board li.piece.cw {
+	border-right-color: #333333 ;
+	transform: rotate( 2deg ) ;
+		-moz-transform: rotate( 2deg ) ;
+		-webkit-transform: rotate( 2deg ) ;
+}
+
+div.board li.piece.ccw {
+	border-left-color: #333333 ;
+	transform: rotate( -2deg ) ;
+		-moz-transform: rotate( -2deg ) ;
+		-webkit-transform: rotate( -2deg ) ;
+}
+
+div.board li.piece.excluded {
+	opacity: 0.2 ;
+}
+
+div.board li.piece.dragging {
+	box-shadow: -2px 7px 15px rgba( 0, 0, 0, 0.3 ) ;
+}
+
+form.controls {
+	background-color: #333333 ;
+	bottom: 0px ;
+	font-family: "Lora", serif ;
+	height: 75px ;
+	left: 0px ;
+	position: fixed ;
+	right: 0px ;
+}
+
+form.controls input {
+	background-color: #454545 ;
+	border-width: 0px 0px 0px 0px ;
+	border-bottom: 1px solid #777777 ;
+	border-radius: 10px 10px 10px 10px ;
+	box-sizing: border-box ;
+	color: #FFFFFF ;
+	display: block ;
+	font-family: inherit ;
+	font-size: 20px ;
+	height: 55px ;
+	line-height: 55px ;
+	margin: 10px auto 0px auto ;
+	padding: 0px 0px 0px 0px ;
+	text-align: center ;
+	width: 400px ;
+}
+
+form.controls div.ratings {
+	bottom: 0px ;
+	color: #999999 ;
+	line-height: 75px ;
+	font-size: 16px ;
+	position: absolute ;
+	right: 20px ;
+	top: 0px ;
+	user-select: none ;
+		-moz-user-select: none ;
+		-webkit-user-select: none ;
+}
+
+form.controls div.ratings a {
+	color: inherit ;
+	cursor: pointer ;
+	display: inline-block ;
+	margin-left: 10px ;
+	text-decoration: underline ;
+}
+
+form.controls div.ratings a.on {
+	color: #FFFFFF ;
+}
