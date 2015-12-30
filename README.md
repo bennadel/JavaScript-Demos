@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Breaking Out Of A Promise Chain In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/break-promise-chain-angularjs/)
 * [Synchronizing Magnetic Poetry With Firebase And AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/magnetic-poetry-firebase-angularjs/)
 * [Passing ngModelController Into A Component Directive Controller In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/pass-ng-model-controller-angularjs/)
 * [Rendering Image Previews Using Object URLs vs. Base64 Data URIs In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/url-create-object-url-angularjs/)

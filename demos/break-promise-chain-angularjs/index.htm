@@ -1,0 +1,330 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Breaking Out Of A Promise Chain In AngularJS
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		Breaking Out Of A Promise Chain In AngularJS
+	</h1>
+
+	<p>
+		<a ng-click="runTestWithNoBranch()">Run Test With No Branch</a>.
+	</p>
+
+	<p>
+		<a ng-click="runTestWithBranchLogic()">Run Test With Branch Logic</a>.
+	</p>
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.4.7.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		angular.module( "Demo", [] );
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I control the root of the application.
+		angular.module( "Demo" ).controller(
+			"AppController",
+			function provideAppController( $scope, $q, $log ) {
+
+				// We are using counters to "randomly" break and branch logic.
+				var i = 0;
+				var j = 0;
+
+				// I execute the asynchronous list of tasks as if the list consisted
+				// of only a single possible "happy path" flow of control. With this 
+				// kind of a mental model, the appropriate way to "break out" of a 
+				// promise chain is to throw or return an error in one of the steps. 
+				// This will skip directly to the next catch() statement, which in our
+				// case, is at the end of the promise chain.
+				// --
+				// CAUTION: This approach makes sense if there truly is ONLY ONE 
+				// "happy path"; but, in this demo, that is not the case. As such, I
+				// think that this particular approach is flawed IN THIS CONTEXT.
+				$scope.runTestWithNoBranch = function() {
+
+					var promise = $q.when()
+						.then( wakeUp )
+						.then( selectFriend )
+						.then( getSignificanceOfDay )
+						.then( determineIfShouldProceedWithPlan )
+						.then( locateFriend )
+						.then( throwWaterBalloons )
+						.then( runAway )
+						.then( gotoSleep ) // CAUTION: This gets skipped-over sometimes.
+						.catch(
+							function handleReject( reason ) {
+
+								// Check to see if the reason for the error is that we
+								// were purposefully "breaking out" of the promise chain.
+								if ( reason.message === "SignificantDay" ) {
+
+									$log.warn( "Skipped to the end of promise chain." );
+
+								}
+
+								$log.warn( "Only Catch:", reason );
+
+							}
+						)
+					;
+
+					return( promise );
+
+					
+					// Individual steps.
+
+
+					function wakeUp() {
+
+						$log.info( "- - - - - - - - - - - - - - - - - - -" );
+						$log.info( "- - - - - !! Staring Day !! - - - - -" );
+						$log.info( "- - - - - - - - - - - - - - - - - - -" );
+						$log.info( "wakeUp()" );
+
+					}
+
+
+					function selectFriend() {
+
+						$log.info( "selectFriend()" );
+
+					}
+
+
+					function getSignificanceOfDay() {
+
+						$log.info( "getSignificanceOfDay()" );
+
+						// Determine if the current day is "significant" for the selected
+						// friend. Meaning, is it something like a Birthday or a wedding
+						// anniversary - something where it would be considered poor taste
+						// to hassle this person.
+						return( ! ( ++i % 3 ) );
+
+					}
+
+
+					function determineIfShouldProceedWithPlan( isSignificantDay ) {
+
+						$log.info( "determineIfShouldProceedWithPlan()" );
+
+						// If this IS a significant day, we DO NOT want to hassle this 
+						// person. As such, return a Rejection so that we can break out
+						// of the current workflow without proceeding with the plan.
+						if ( isSignificantDay ) {
+
+							return( $q.reject( new Error( "SignificantDay" ) ) );
+
+						}
+
+					}
+
+
+					function locateFriend() {
+
+						$log.info( "locateFriend()" );
+
+						// If we couldn't locate the friend, return a rejection to 
+						// indicate a failure to fully execute on the plan.
+						if ( ! ( ++j % 3 ) ) {
+
+							return( $q.reject( new Error( "NotFound" ) ) );
+
+						}
+
+					}
+
+
+					function throwWaterBalloons() {
+
+						$log.info( "throwWaterBalloons()" );
+
+					}
+
+
+					function runAway() {
+
+						$log.info( "runAway()" );
+
+					}
+
+
+					function gotoSleep() {
+
+						$log.info( "gotoSleep()" );
+
+					}
+
+				};
+
+
+				// I execute the asynchronous list of tasks as if the list consisted of
+				// a primary branch of logic and a secondary branch of logic, each of 
+				// which has its own decoupled "happy path" flow of control. With this 
+				// kind of a mental model, we can still throw or return an error when 
+				// we need to break based on a FAILURE TO EXECUTE THE HAPPY PATH; however,
+				// we DO NOT need to use errors or rejection to skip the embedded branch
+				// logic. Branch logic, if inappropriate, is simply skipped in the parent
+				// control flow.
+				$scope.runTestWithBranchLogic = function() {
+
+					var promise = $q.when()
+						.then( wakeUp )
+						.then( selectFriend )
+						.then( getSignificanceOfDay )
+						.then( determineIfShouldProceedWithPlan )
+						.then( gotoSleep )
+						.catch(
+							function handleReject( reason ) {
+
+								$log.warn( "Primary Catch:", reason );
+
+							}
+						)
+					;
+
+					return( promise );
+
+
+					// Individual Steps.
+
+
+					function wakeUp() {
+
+						$log.info( "- - - - - - - - - - - - - - - - - - -" );
+						$log.info( "- - - - - !! Staring Day !! - - - - -" );
+						$log.info( "- - - - - - - - - - - - - - - - - - -" );
+						$log.info( "wakeUp()" );
+
+					}
+
+
+					function selectFriend() {
+
+						$log.info( "selectFriend()" );
+
+					}
+
+
+					function getSignificanceOfDay() {
+
+						$log.info( "getSignificanceOfDay()" );
+
+						// Determine if the current day is "significant" for the selected
+						// friend. Meaning, is it something like a Birthday or a wedding
+						// anniversary - something where it would be considered poor taste
+						// to hassle this person.
+						return( ! ( ++i % 3 ) );
+
+					}
+
+
+					function determineIfShouldProceedWithPlan( isSignificantDay ) {
+
+						$log.info( "determineIfShouldProceedWithPlan()" );
+
+						// If this IS a significant day, we DO NOT want to hassle this 
+						// person. As such, return out without walking down the optional
+						// branch of logic.
+						// --
+						// NOTE: We are NOT considering this an error since it does not 
+						// affect the "happy path" of the primary flow of control; it is
+						// simply skipping the optional, asynchronous branch.
+						if ( isSignificantDay ) {
+
+							$log.warn( "Today is significant - don't punk friend." );
+							return;
+
+						}
+
+						// If this day is NOT significant, let's branch away from the 
+						// main control flow into the "punk your friend" branch of 
+						// asynchronous tasks.
+						return( optionalPunkFriendAsyncBranch() );
+
+					}
+
+
+					// This "step" in the asynchronous control flow is actually an entire
+					// branch of logic that has its own steps and error handler. On its
+					// own, it represents a single "happy path" of actions.
+					function optionalPunkFriendAsyncBranch() {
+
+						$log.info( "optionalPunkFriendAsyncBranch()" );
+
+						var promise = $q.when()
+							.then( locateFriend )
+							.then( throwWaterBalloons )
+							.then( runAway )
+							.catch(
+								function handleReject( reason ) {
+
+									$log.warn( "Branch Catch:", reason );
+
+								}
+							)
+						;
+
+						return( promise );
+
+
+						function locateFriend() {
+
+							$log.info( "locateFriend()" );
+
+							// If we couldn't locate the friend, return a rejection to 
+							// indicate a failure to fully execute on the plan.
+							if ( ! ( ++j % 3 ) ) {
+
+								return( $q.reject( new Error( "NotFound" ) ) );
+
+							}
+
+						}
+
+
+						function throwWaterBalloons() {
+
+							$log.info( "throwWaterBalloons()" );
+
+						}
+
+
+						function runAway() {
+
+							$log.info( "runAway()" );
+
+						}
+
+					} // END: Asynchronous Branch - optionalPunkFriendAsyncBranch.
+
+
+					function gotoSleep() {
+
+						$log.info( "gotoSleep()" );
+
+					}
+
+				};
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
