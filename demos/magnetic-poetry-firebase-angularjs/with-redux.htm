@@ -1,21 +1,1215 @@
 <!doctype html>
-<html>
+<html ng-app="Demo">
 <head>
 	<meta charset="utf-8" />
 
 	<title>
 		Synchronizing Magnetic Poetry With Firebase, AngularJS, And Redux
 	</title>
+
+	<link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Lora:400,700"></link>
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
 </head>
+<!-- CAUTION: Using Body as an element directive. -->
 <body>
 
 	<h1>
 		Synchronizing Magnetic Poetry With Firebase, AngularJS, And Redux
 	</h1>
 
-	<p>
-		<em>Coming soon....</em>
-	</p>
+	<div class="board">
+
+		<ul 
+			class="pieces" 
+			ng-style="{ width: vm.surfaceWidth, height: vm.surfaceHeight }">
+
+			<!-- NOTE: Mouse interactions are handled by the Body directive. -->
+			<li 
+				ng-repeat="piece in vm.pieces track by piece.id" 
+				class="piece {{ piece.modifier }}"
+				ng-class="{ excluded: piece.isExcludedByFilter }"
+				ng-style="{ left: piece.x, top: piece.y, zIndex: piece.stackOrder }">
+				{{ piece.text }}
+			</li>
+
+		</ul>
+
+		<div ng-if="vm.isLoading" class="loading">
+			<span>Loading...</span>
+		</div>
+
+	</div>
+
+	<form class="controls">
+
+		<input 
+			type="text" 
+			ng-model="vm.form.filter" 
+			ng-change="vm.applyFilter()" 
+			placeholder="Search for piece..." 
+		/>
+
+		<div class="ratings">
+			
+			Ratings:
+
+			<a 
+				ng-click="vm.showRating( 'pg' )" 
+				ng-class="{ on: ( vm.rating == 'pg' ) }">
+				PG-13
+			</a>			
+			<a 
+				ng-click="vm.showRating( 'r' )" 
+				ng-class="{ on: ( vm.rating == 'r' ) }">
+				R
+			</a>
+
+		</div>
+
+	</form>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/jquery/jquery-2.1.0.min.js"></script>
+	<script type="text/javascript" src="../../vendor/lodash/lodash-3.9.3.min.js"></script>
+	<script type="text/javascript" src="../../vendor/firebase/firebase-2.3.2.min.js"></script>
+	<script type="text/javascript" src="../../vendor/redux/redux-3.0.5.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.4.7.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		angular.module( "Demo", [] );
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide global configuration values for the demo.
+		angular.module( "Demo" ).value(
+			"config",
+			{
+				firebaseUrl: "https://magnetic-poetry.firebaseio.com/",
+				
+				// CAUTION: These are used for both display as well as for the 
+				// distribution of pieces during board initialization / population.
+				surfaceWidth: 3000,
+				surfaceHeight: 1500
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide the single Redux store for the entire application.
+		angular.module( "Demo" ).factory(
+			"store",
+			function storeFactory( Redux, boardReducer ) {
+
+				// This demo is simple enough to not require a combination of reducers;
+				// however, I wanted to offload the "board" portion of the state to an
+				// external reducer so that I can start playing with the idea of reducer
+				// composition and breaking the state of into segmented responsibilities.
+				var store = Redux.createStore(
+					function rootReducer( state, action ) {
+
+						state = ( state || {} );
+
+						return({
+							board: boardReducer( state.board, action )
+						});
+						
+					}
+				);
+
+				return( store );
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide the reducer for the Board portion of the state tree.
+		angular.module( "Demo" ).factory(
+			"boardReducer",
+			function boardReducerFactory( _ ) {
+
+				return( boardReducer );
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I apply actions to the board state tree, returning the new state. All
+				// reducer actions are SYNCHRONOUS and are PURE in that they only deal 
+				// with the data they are given - no interaction with external systems.
+				function boardReducer( state, action ) {
+
+					// *************************************************************** //
+					// *************************************************************** //
+					// CAUTION: I have made a conscious decision here NOT TO USE 
+					// immutable data. While I know that Immutable data is the new 
+					// "hawtness" and "the way," I found that it added complexity with 
+					// no apparent value-add FOR THIS PARTICULAR DEMO (YOUR MILEAGE 
+					// MAY VARY). At the end of the day, I couldn't point at something
+					// in the code and say "Here - here's why I am using Immutable 
+					// data." As such, I didn't feel comfortable using it.
+					// *************************************************************** //
+					// *************************************************************** //
+
+					// When Redux loads, it initializes the reducers to get the initial
+					// state of the state tree. As such, when it's undefined, we can just
+					// return the default structure.
+					if ( ! state ) {
+
+						return({
+							// I determine if asynchronous data is being loaded.
+							isLoading: false,
+
+							// I hold the dimensions of the magnetic surface.
+							surfaceWidth: 0,
+							surfaceHeight: 0,
+
+							// I hold the query for text-based filtering.
+							filter: "",
+
+							// I am the collection of magnetic pieces.
+							pieces: [],
+
+							// I am the rating of the pieces that are current being displayed.
+							rating: ""
+						});
+
+					}
+
+					switch ( action.type ) {
+
+						case "LOAD_BOARD":
+
+							state.isLoading = true;
+							state.rating = action.payload.rating;
+
+						break;
+
+						case "LOAD_BOARD_RESOLVE":
+
+							state.isLoading = false;
+
+							state.pieces = _.each(
+								action.payload.pieces,
+								function iterator( piece ) {
+
+									piece.isExcludedByFilter = ( piece.text.toLowerCase().indexOf( state.filter ) === -1 );
+
+								}
+							);
+
+						break;
+
+						case "POSITION_PIECE":
+
+							var piece = _.find(
+								state.pieces,
+								{
+									id: action.payload.id
+								}
+							);
+
+							if ( ! piece ) {
+								
+								break;
+
+							}
+
+							piece.x = ( action.payload.x || piece.x );
+							piece.y = ( action.payload.y || piece.y );
+							piece.stackOrder = ( action.payload.stackOrder || piece.stackOrder );
+
+						break;
+
+						case "SET_FILTER":
+
+							state.filter = action.payload.filter.toLowerCase();
+
+							_.each(
+								state.pieces,
+								function operator( piece ) {
+
+									piece.isExcludedByFilter = ( piece.text.toLowerCase().indexOf( action.payload.filter ) === -1 );
+
+								}
+							);
+
+						break;
+
+						case "SET_SURFACE_DIMENTIONS":
+
+							state.surfaceWidth = action.payload.width;
+							state.surfaceHeight = action.payload.height;
+
+						break;
+
+					}
+
+					return( state );
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide a workflow orchestration layer around the board, mapping use cases
+		// onto state mutation and API interactions.
+		angular.module( "Demo" ).factory(
+			"boardWorkflow",
+			function boardWorkflowFactory( $rootScope, store, poetryService, firebaseService, _ ) {
+
+				// I keep track of the subset of pieces that are being monitored for 
+				// remote changes so that the local pieces can be synchronized across 
+				// different experiences.
+				var queryNode = null;
+
+				// Return the public API.
+				return({
+					getBoardState: getBoardState,
+					loadBoard: loadBoard,
+					positionPiece: positionPiece,
+					selectPiece: selectPiece,
+					setFilter: setFilter,
+					setSurfaceDimentions: setSurfaceDimentions
+				});
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I extract the board state out of the application store.
+				function getBoardState() {
+
+					return( store.getState().board );
+
+				}
+
+
+				// I load the board with the collection of pieces under the given rating.
+				function loadBoard( rating ) {
+
+					// Put board into a loading state.
+					store.dispatch({
+						type: "LOAD_BOARD",
+						payload: {
+							rating: rating
+						}
+					});
+
+					// Gather the pieces asynchronously from the API.
+					poetryService.getPieces( rating ).then(
+						function handleResolve( pieces ) {
+
+							store.dispatch({
+								type: "LOAD_BOARD_RESOLVE",
+								payload: {
+									pieces: pieces
+								}
+							});
+
+							// Now that we have our pieces rendered locally, start 
+							// watching for changes in the remote data store (which
+							// is being synchronized via WebSockets).
+							watchForChildChanges();
+
+						},
+						function handleReject( reason ) {
+
+							// If the reason for the rejection is that the board is 
+							// empty, let's populate the board with a new collection 
+							// for the given rating and then try loading it again.
+							if ( reason === "empty" ) {
+								
+								return( populateBoard( rating ) );
+
+							}
+
+							// CAUTION: We should handle some sort of other type of 
+							// rejection here (such as a failure to contact the API);
+							// but, just keeping it simple for the demo.
+
+						}
+					);
+
+				}
+
+
+				// I update the position of the piece with the given ID.
+				function positionPiece( id, x, y ) {
+
+					// Update the local store optimistically.
+					store.dispatch({
+						type: "POSITION_PIECE",
+						payload: {
+							id: id,
+							x: x,
+							y: y
+						}
+					});
+
+					// Synchronize position to the remote data store.
+					poetryService.setPosition( id, x, y );
+
+				}
+
+
+				// I select the piece with the given ID, bringing it to the front.
+				function selectPiece( id ) {
+
+					// Whenever a piece is selected, let's clear the filter. The common
+					// use case is that a filter will be used to help locate the desired
+					// piece; as such, when the piece is selected, we want to clear the
+					// current filter.
+					store.dispatch({
+						type: "SET_FILTER",
+						payload: {
+							filter: ""
+						}
+					});
+
+					// Find the piece with the highest stack order - we're always 
+					// going to move the selected piece to the front (of all pieces).
+					var topPiece = _.max(
+						getBoardState().pieces,
+						function operator( piece ) {
+
+							return( piece.stackOrder );
+
+						}
+					);
+
+					// Only adjust the stack order if the piece is not already at the 
+					// top of the stacked collection.
+					if ( topPiece.id !== id ) {
+
+						var stackOrder = ( topPiece.stackOrder + 1 );
+
+						store.dispatch({
+							type: "POSITION_PIECE",
+							payload: {
+								id: id,
+								stackOrder: stackOrder
+							}
+						});
+
+						// Synchronize position to the remote data store.
+						poetryService.setStackOrder( id, stackOrder );
+
+					}
+
+				}
+
+
+				// I set the current filter.
+				function setFilter( filter ) {
+
+					store.dispatch({
+						type: "SET_FILTER",
+						payload: {
+							filter: filter
+						}
+					});
+
+				}
+
+
+				// I set the dimensions of the surface on which the magnetic pieces 
+				// will be applied.
+				function setSurfaceDimentions( width, height ) {
+
+					store.dispatch({
+						type: "SET_SURFACE_DIMENTIONS",
+						payload: {
+							width: width,
+							height: height
+						}
+					});
+
+				}
+
+
+				// ---
+				// PRIVATE METHODS.
+				// ---
+
+
+				// I handle change events on the pieces in our currently monitored 
+				// collection of pieces.
+				function handleChildChange( snapshot ) {
+
+					// Due to the way Firebase works, we get Firebase node events based
+					// on remote actions AS WELL AS local actions (that we initiated).
+					// As a performance improvement, so as not to trigger more $digest
+					// iterations that we need to, we will ignore any Firebase event that
+					// is triggered DURING AN ACTIVE DIGEST. Active digest events will 
+					// always be the result of a locally-invoked change and therefore 
+					// will already be synchronized through some other means. If there 
+					// is an active digest, just ignore.
+					// --
+					// CAUTION: The $$phase variable is a proprietary variable and is not
+					// really meant for public consumption.
+					if ( $rootScope.$$phase ) {
+						
+						return;
+
+					}
+
+					var value = snapshot.val();
+
+					// When a piece changes, we only care about synchronizing the remote
+					// position with the one locally. 
+					// -- 
+					// NOTE: Since Firebase is not tied into the "Angular Life-Cycle", 
+					// we have to tell AngularJS that the view-model may have just 
+					// changed. And, because these events are not always triggered 
+					// asynchronously (though, see note above), we need to be careful 
+					// about when we tell AngularJS about the change. Do it in the 
+					// future. This performs some implicit debouncing as well.
+					$rootScope.$applyAsync(
+						function changeViewModel() {
+
+							store.dispatch({
+								type: "POSITION_PIECE",
+								payload: {
+									id: snapshot.key(),
+									x: value.x,
+									y: value.y,
+									stackOrder: value.stackOrder
+								}
+							});
+
+						}
+					);
+
+				}
+
+
+				// I generate the new piece data for the board and then try to load it.
+				// --
+				// NOTE: This is really only intended to be called once, per rating, for 
+				// the lifetime of the application. It's a data initialization step.
+				function populateBoard( rating ) {
+
+					var promise = poetryService
+						.populateBoard( rating )
+						.then(
+							function handleResolve() {
+
+								loadBoard( rating );
+
+							}
+						)
+					;
+
+					return( promise );
+
+				}
+
+
+				// I start watch for changes in the subset of pieces that belong to the
+				// current rating system.
+				function watchForChildChanges() {
+
+					// If we were already watching for child changes on a previous query
+					// node, unbind the current handler.
+					if ( queryNode ) {
+
+						queryNode.off( "child_changed", handleChildChange );
+
+					}
+
+					// Start watching the new subset of pieces under the selected rating.
+					queryNode = firebaseService
+						.ref( "pieces/" )
+							.orderByChild( "rating" )
+							.equalTo( getBoardState().rating )
+					;
+
+					queryNode.on( "child_changed", handleChildChange );
+
+				}
+				
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I control the body component.
+		angular.module( "Demo" ).controller(
+			"BodyController",
+			function BodyController( $scope, store, boardWorkflow, config ) {
+
+				var vm = this;
+
+				// When the board it loaded, make sure to initialize the dimensions so
+				// that it knows how to render.
+				boardWorkflow.setSurfaceDimentions( config.surfaceWidth, config.surfaceHeight );
+
+				// Load the initial pieces collection with the given rating.
+				boardWorkflow.loadBoard( "pg" );
+
+				// Subscribe to the store so that state changes can be synchronized to
+				// the local view-model.
+				store.subscribe( renderState );
+
+				// Render the initial state of the store (synchronizes the state into 
+				//the local view-model).
+				renderState();
+
+				// Expose the public methods.
+				vm.applyFilter = applyFilter;
+				vm.positionPiece = positionPiece;
+				vm.selectPiece = selectPiece;
+				vm.showRating = showRating;
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I apply the current filter to the pieces, adjusting exclusion (ie, 
+				// the transparency of excluded pieces).
+				function applyFilter() {
+
+					boardWorkflow.setFilter( vm.form.filter );
+
+				}
+
+
+				// I reposition the given piece to be at the given coordinates.
+				function positionPiece( piece, x, y ) {
+
+					boardWorkflow.positionPiece( piece.id, x, y );
+
+				}
+
+
+				// I select the given piece, bringing it to the front. This will
+				// also clear any filtering.
+				function selectPiece( piece ) {
+
+					boardWorkflow.selectPiece( piece.id );
+
+				}
+
+
+				// I load the pieces with the given rating into the board.
+				function showRating( newRating ) {
+
+					boardWorkflow.loadBoard( newRating );
+
+				}
+				
+
+				// ---
+				// PRIVATE METHODS.
+				// ---
+
+
+				// I synchronize the local view-model with the current state.
+				// --
+				// CAUTION: This assumes that the shape of the state tree is sufficiently
+				// defined with default values for the current view-model requirements.
+				function renderState() {
+
+					var state = boardWorkflow.getBoardState();
+						
+					// I determine if asynchronous data is being loaded.
+					vm.isLoading = state.isLoading;
+
+					// I hold the dimensions of the magnetic surface.
+					vm.surfaceWidth = state.surfaceWidth;
+					vm.surfaceHeight = state.surfaceHeight;
+
+					// I hold the form values for the ng-model bindings.
+					vm.form = {
+						filter: state.filter
+					};
+
+					// I am the collection of magnetic pieces.
+					vm.pieces = state.pieces;
+
+					// I am the rating of the pieces that are currently being displayed.
+					vm.rating = state.rating;
+
+				}
+
+			}
+		);
+
+
+		// I provide the root application component (using the Body tag).
+		angular.module( "Demo" ).directive(
+			"body",
+			function bodyDirective( $document ) {
+
+				// Return the directive configuration object.
+				return({
+					controller: "BodyController",
+					controllerAs: "vm",
+					link: link,
+					restrict: "E"
+				});
+
+
+				// I bind the JavaScript events to the local view-model.
+				function link( scope, element, attributes, controller ) {
+
+					// I keep track of the selected piece and view-model.
+					var selectedTarget = null;
+					var selectedPiece = null;
+
+					// I keep track of the initial click coordinates.
+					var selectedOffset = null;
+					var clickCoordinates = null;
+
+					// I keep track of the scroll-offset of the viewport.
+					var scrollOffset = {
+						x: 0,
+						y: 0
+					};
+
+					// I keep track of DOM element instances.
+					var dom = {
+						board: element.find( "div.board" )
+					};
+
+					// Set up event handlers. 
+					// --
+					// CAUTION: To keep things simple, we're going to keep event bindings
+					// in place even when they are not needed. Then, we'll differentiate
+					// need in the handler itself.
+					$document.on( "mousedown", handleMousedown );
+					$document.on( "mousemove", handleMousemove );
+					$document.on( "mouseup", handleMouseup );
+					dom.board.on( "scroll", handleScroll );
+
+
+					// ---
+					// PRIVATE METHODS.
+					// ---
+
+
+					// I handle the mousedown event, starting to drag the target piece.
+					function handleMousedown( event ) {
+
+						var target = angular.element( event.target );
+
+						if ( target.is( ".piece" ) ) {
+
+							// Keep track of the currently selected DOM element and the
+							// actual view-model piece that it represents.
+							selectedTarget = target;
+							selectedOffset = target.offset();
+							selectedPiece = target.scope().piece;
+
+							// Keep track of the current scroll-offset so that we can 
+							// properly position the target as it is dragged.
+							scrollOffset.x = dom.board.scrollLeft();
+							scrollOffset.y = dom.board.scrollTop();
+							
+							// Keep track of the click coordinates so we can calculate 
+							// the drag-delta.
+							clickCoordinates = {
+								x: event.pageX,
+								y: event.pageY
+							};
+
+							// Tell the controller which piece has been selected.
+							scope.$apply(
+								function changeViewModel() {
+
+									controller.selectPiece( selectedPiece );
+
+								}
+							);
+
+							// Prevent accidental high-lighting of elements.
+							event.preventDefault();
+
+						}
+
+					}
+
+
+					// I handle the mousemove events, potentially updating the position
+					// of the selected target.
+					function handleMousemove( event ) {
+
+						if ( ! selectedTarget ) {
+
+							return;
+
+						}
+
+						// NOTE: Even though the delta, alone, doesn't make sense, it 
+						// will help figure out the translated mouse coordinates when 
+						// used in conjunction with the scrollable viewport.
+						var deltaX = ( event.pageX - clickCoordinates.x );
+						var deltaY = ( event.pageY - clickCoordinates.y );
+
+						// Tell the controller about the updated position of the target.
+						// --
+						// NOTE: This will update the piece via the data-flow - we don't 
+						// update the location of the piece directly.
+						scope.$apply(
+							function changeViewModel() {
+
+								controller.positionPiece(
+									selectedPiece,
+									( scrollOffset.x + selectedOffset.left + deltaX ),
+									( scrollOffset.y + selectedOffset.top + deltaY )
+								);
+
+							}
+						);
+
+					}
+
+
+					// I handle the mouseup event.
+					function handleMouseup( event ) {
+
+						selectedTarget = null;
+						selectedOffset = null;
+						selectedPiece = null;
+						clickCoordinates = null;
+
+					}
+
+
+					// I handle the scroll event, making sure that our drag-offsets
+					// are kept in sync.
+					function handleScroll( event ) {
+
+						scrollOffset.x = dom.board.scrollLeft();
+						scrollOffset.y = dom.board.scrollTop();
+
+					}
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide access and mutation methods for the poetry data.
+		angular.module( "Demo" ).factory(
+			"poetryService",
+			function poetryServiceFactory( $q, config, firebaseService, wordGenerator, _ ) {
+
+				// Return the public API.
+				return({
+					addPiece: addPiece,
+					getPieces: getPieces,
+					populateBoard: populateBoard,
+					setPosition: setPosition,
+					setStackOrder: setStackOrder
+				});
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I add a new piece with the given settings. Returns a promise.
+				function addPiece( settings ) {
+
+					testRating( settings.rating );
+
+					var deferred = $q.defer();
+
+					firebaseService
+						.ref( "pieces/" )
+						.push(
+							{
+								rating: settings.rating,
+								text: settings.text,
+								modifier: settings.modifier,
+								x: settings.x,
+								y: settings.y,
+								stackOrder: ( settings.stackOrder || 1 ),
+							},
+							generateCallbackHandler( deferred )
+						)
+					;
+
+					return( deferred.promise );
+
+				}
+
+
+				// I get the collection of pieces. Returns a promise.
+				function getPieces( rating ) {
+
+					testRating( rating );
+
+					var deferred = $q.defer();
+
+					firebaseService
+						.ref( "pieces/" )
+						.orderByChild( "rating" )
+						.equalTo( rating )
+						.once(
+							"value",
+							function hanldeValue( snapshot ) {
+
+								snapshot.exists()
+									? deferred.resolve( toArray( snapshot.val() ) )
+									: deferred.reject( "empty" )
+								;
+
+							}
+						)
+					;
+
+					return( deferred.promise );
+
+				}
+
+
+				// I populate the board with new pieces.
+				function populateBoard( rating ) {
+
+					testRating( rating );
+
+					// To populate the board, we're going to generate a collection of
+					// words and then add them, individually, to the remote store.
+					var promise = wordGenerator.generate( rating )
+						.then(
+							function hanldeResolve( words ) {
+
+								var promises = words.map(
+									function operator( word ) {
+
+										return(
+											addPiece({
+												rating: rating,
+												text: word,
+												modifier: getRandomModifier(),
+												x: Math.floor( Math.random() * config.surfaceWidth ),
+												y: Math.floor( Math.random() * config.surfaceHeight )
+											})
+										);
+
+									}
+								);
+
+								return( $q.all( promises ) );
+
+							}
+						)
+					;
+
+					return( promise );
+
+				}
+
+
+				// I set the coordinates of the given piece. Returns a promise.
+				function setPosition( id, x, y ) {
+
+					var promise = updatePiece(
+						id,
+						{
+							x: x,
+							y: y
+						}
+					);
+
+					return( promise );
+
+				}
+
+
+				// I set the stack order of the given piece. Returns a promise.
+				function setStackOrder( id, stackOrder ) {
+
+					var promise = updatePiece(
+						id,
+						{
+							stackOrder: stackOrder
+						}
+					);
+
+					return( promise );
+
+				}
+
+
+				// ---
+				// PRIVATE METHODS.
+				// ---
+
+
+				// I generate an onComplete handler that will resolve or reject the given
+				// deferred object depending on the existing of the Firebase error.
+				function generateCallbackHandler( deferred ) {
+
+					return( handleCallback );
+
+					function handleCallback( error ) {
+
+						( error === null )
+							? deferred.resolve()
+							: deferred.reject( error )
+						;
+						
+						deferred = null;
+
+					}
+
+				}
+
+
+				// I get a random modifier for the piece rotation.
+				function getRandomModifier() {
+
+					return( _.sample( [ "h", "cw", "h", "ccw" ] ) );
+
+				}
+
+
+				// I test to make sure the given rating is supported. If it is, I quietly
+				// return out. If not, I throw an error.
+				function testRating( rating ) {
+
+					switch ( rating ) {
+						case "pg":
+						case "r":
+							return;
+						break;
+						default:
+							throw( new Error( "Only [pg,r] ratings are supported." ) );
+						break;
+					}
+
+				}
+
+
+				// I map the given collection of pieces to an array. Since Firebase 
+				// doesn't love using arrays, we're storing the piece data as an object
+				// that is keyed on the unique ID of the object. However, locally, we 
+				// love arrays. So, this maps the object collection into an array 
+				// collection and injects the unique ID of each piece.
+				function toArray( pieces ) {
+
+					var array = _.map(
+						pieces,
+						function operator( value, key ) {
+
+							value.id = key;
+
+							return( value );
+
+						}
+					);
+
+					return( array );
+
+				}
+
+
+				// I update the given piece with the given properties. Returns a promise.
+				// --
+				// CAUTION: Private method - all external updates should provide explicit 
+				// properties or require explicit properties in the .update() so that the
+				// code is self-documenting.
+				function updatePiece( id, properties ) {
+
+					var deferred = $q.defer();
+
+					firebaseService
+						.ref( "pieces/" + id )
+						.update(
+							properties,
+							generateCallbackHandler( deferred )
+						)
+					;
+
+					return( deferred.promise );
+
+				}				
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I generate collections of words.
+		angular.module( "Demo" ).factory(
+			"wordGenerator",
+			function wordGeneratorFactory( $q, $http ) {
+
+				// Return the public API.
+				return({
+					generate: generate
+				});
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I generate a collection of words using the given rating. Returns
+				// a promise.
+				function generate( rating ) {
+
+					var url = ( rating === "r" )
+						? "./words-r.txt"
+						: "./words-pg.txt"
+					;
+
+					var promise = $http.get( url ).then(
+						function handleResolve( response ) {
+
+							// Split file into word tokens on new lines.
+							return( response.data.split( /[\r\n]+/g ) );
+
+						}
+					);
+
+					return( promise );
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide a service that creates Firebase references that are already scoped
+		// to the right Firebase URL for the application.
+		angular.module( "Demo" ).factory( 
+			"firebaseService",
+			function firebaseServiceFactory( $window, config ) {
+
+				var Firebase = $window.Firebase;
+
+				// Return the public API.
+				return({
+					ref: ref,
+					core: Firebase
+				});
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I create a new Firebase reference at the given sub-path.
+				function ref( path ) {
+
+					return( new Firebase( config.firebaseUrl + normalizePath( path ) ) );
+
+				}
+
+
+				// ---
+				// PRIVATE METHODS.
+				// ---
+
+
+				// I normalize the paths so that they never start with a leading slash, 
+				// but always end with a trailing slash.
+				function normalizePath( path ) {
+
+					// Strip off leading of trailing slashes.
+					path = path.replace( /^\/+|\/+$/g, "" );
+
+					// Append a trailing slash, but only if the path has a length. If 
+					// the path is empty, we want to expose the root node.
+					if ( path ) {
+
+						path = ( path + "/" );
+
+					} 
+
+					return( path );
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I expose Redux as an injectable.
+		angular.module( "Demo" ).factory(
+			"Redux",
+			function ReduxFactory( $window ) {
+
+				var Redux = $window.Redux;
+
+				// Remove from the global scope to prevent reference leakage.
+				delete( $window.Redux );
+
+				return( Redux );
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I expose lodash as an injectable.
+		angular.module( "Demo" ).factory(
+			"_",
+			function lodashFactory( $window ) {
+
+				var _ = $window._;
+
+				// Remove from the global scope to prevent reference leakage.
+				delete( $window._ );
+
+				return( _ );
+
+			}
+		);
+
+	</script>
 
 </body>
 </html>
