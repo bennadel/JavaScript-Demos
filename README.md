@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Using Multiple Break Statements In A Single Case Block In JavaScript](http://bennadel.github.io/JavaScript-Demos/demos/switch-case-break/)
 * [Breaking Out Of A Promise Chain In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/break-promise-chain-angularjs/)
 * [Synchronizing Magnetic Poetry With Firebase And AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/magnetic-poetry-firebase-angularjs/)
 * [Passing ngModelController Into A Component Directive Controller In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/pass-ng-model-controller-angularjs/)

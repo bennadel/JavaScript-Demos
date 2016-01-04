@@ -1,0 +1,93 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Using Multiple Break Statements In A Single Case Block In JavaScript
+	</title>
+</head>
+<body>
+
+	<h1>
+		Using Multiple Break Statements In A Single Case Block In JavaScript
+	</h1>
+
+	<script type="text/javascript">
+
+		// Test values against the various ranges.
+		[ "A", "B", "C", "D", "E", "F", "G" ]
+			.forEach( testExpression )
+		;
+
+
+		// I test the given expression across different groups of values to see how 
+		// multiple Break statements behave within a single Case block. This is akin
+		// to using multiple Return statements in a Function (which I happen to think
+		// is a wonderful feature of the language).
+		function testExpression( expression ) {
+
+			switch ( expression ) {
+
+				case "A":
+				case "B":
+				case "C":
+
+					console.log( "Testing " + expression + " in [ A - C ]:" );
+					console.log( "A" );
+
+					// Try to break out of case early.
+					if ( expression === "A" ) {
+						
+						break;
+
+					}
+
+					console.log( "B" );
+
+					// Try to break out of case early.
+					if ( expression === "B" ) {
+
+						break;
+
+					}
+
+					console.log( "C" );
+
+				break;
+
+				case "D":
+				case "E":
+				case "F":
+
+					console.log( "Testing " + expression + " in [ D - F ]:" );
+					console.log( "D" );
+
+					// Try to break out of case early.
+					if ( expression === "D" ) {
+
+						break;
+
+					}
+
+					console.log( "E" );
+
+					// Try to break out of case early.
+					if ( expression === "E" ) {
+
+						break;
+
+					}
+
+					console.log( "F" );
+
+				break;
+
+			}
+
+		}
+
+	</script>
+
+</body>
+</html>
