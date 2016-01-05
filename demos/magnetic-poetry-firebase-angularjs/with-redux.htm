@@ -161,7 +161,9 @@
 
 						case "LOAD_RATING_RESOLVE":
 
-							var pieces = action.payload.pieces.forEach(
+							var pieces = action.payload.pieces;
+
+							pieces.forEach(
 								function iterator( piece ) {
 
 									piece.isExcludedByFilter = ( piece.text.toLowerCase().indexOf( state.filter ) === -1 );
@@ -198,8 +200,8 @@
 							pieces[ index ] = _.extendEmpty(
 								pieces[ index ],
 								{
-									x: action.payload.x,
-									y: action.payload.y,
+									x: ( action.payload.x || pieces[ index ].x ),
+									y: ( action.payload.y || pieces[ index ].y ),
 									stackOrder: ( action.payload.stackOrder || pieces[ index ].stackOrder )
 								}
 							);
@@ -214,6 +216,21 @@
 						break;
 
 						case "SET_FILTER":
+
+							var pieces = state.pieces.map(
+								function operator( oldPiece ) {
+
+									var piece = _.extendEmpty(
+										oldPiece,
+										{
+											isExcludedByFilter: ( oldPiece.text.toLowerCase().indexOf( state.filter ) === -1 )
+										}
+									);
+
+									return( piece );
+
+								}
+							);
 
 							newState = _.extendEmpty(
 								state,
@@ -261,7 +278,8 @@
 
 				// Return the public API.
 				return({
-					loadRating: loadRating,
+					loadBoard: loadBoard,
+					positionPiece: positionPiece,
 					selectPiece: selectPiece,
 					setFilter: setFilter,
 					setSurfaceDimentions: setSurfaceDimentions
@@ -273,7 +291,7 @@
 				// ---
 
 
-				function loadRating( rating ) {
+				function loadBoard( rating ) {
 
 					appStore.dispatch({
 						type: "LOAD_RATING",
@@ -314,7 +332,67 @@
 				}
 
 
-				function selectPiece( ) {
+				function positionPiece( id, x, y ) {
+
+					appStore.dispatch({
+						type: "POSITION_PIECE",
+						payload: {
+							id: id,
+							x: x,
+							y: y
+						}
+					});
+
+					// Synchronize to the remote data store.
+
+					var piece = _.find( 
+						appStore.getState().pieces,
+						{
+							id: id
+						}
+					);
+
+					poetryService.setPosition( piece.id, piece.x, piece.y );
+
+				}
+
+
+				function selectPiece( id ) {
+
+					appStore.dispatch({
+						type: "SET_FILTER",
+						payload: {
+							filter: ""
+						}
+					});
+
+					// Find the piece with the highest stack order - we're always 
+					// going to move the selected piece to the front (of all pieces).
+					var topPiece = _.max(
+						appStore.getState().pieces,
+						function operator( piece ) {
+
+							return( piece.stackOrder );
+
+						}
+					);
+
+					if ( topPiece.id !== id ) {
+
+						var stackOrder = ( topPiece.stackOrder + 1 );
+
+						appStore.dispatch({
+							type: "POSITION_PIECE",
+							payload: {
+								id: id,
+								stackOrder: stackOrder
+							}
+						});
+
+						// Synchronize to the remote data store.
+						poetryService.setStackOrder( id, stackOrder );
+
+					}
 
 				}
 
@@ -429,40 +507,12 @@
 
 				var vm = this;
 
+				// Setup the state with the 
 				appActions.setSurfaceDimentions( config.surfaceWidth, config.surfaceHeight );
-				appActions.loadRating( "pg" );
+				appActions.loadBoard( "pg" );
 
-
-				console.log( appStore.getState() );
-
-
-				// I determine if asynchronous data is being loaded.
-				vm.isLoading = false;
-
-				// I hold the dimensions of the magnetic surface.
-				vm.surfaceWidth = config.surfaceWidth;
-				vm.surfaceHeight = config.surfaceHeight;
-
-				// I hold the form values for the ng-model bindings.
-				vm.form = {
-					filter: ""
-				};
-
-				// I am the collection of magnetic pieces.
-				vm.pieces = [];
-
-				// I am the rating of the pieces that are currently being displayed.
-				vm.rating = "pg";
-
-				// I keep track of the subset of pieces that are being monitored 
-				// for remote changes so that the local pieces can be synchronized
-				// across different experiences.
-				// --
-				// NOTE: I am HOPING that this implementation detail is exactly what
-				// can be removed when using Flux / Redux type data flows.
-				var queryNode = null;
-
-				loadBoard();
+				appStore.subscribe( renderState );
+				renderState();
 
 				// Expose the public methods.
 				vm.applyFilter = applyFilter;
@@ -479,16 +529,7 @@
 				// I apply the current filter to the pieces, adjusting exclusion.
 				function applyFilter() {
 
-					var filter = vm.form.filter.toLowerCase();
-
-					_.each( vm.pieces, applyFilterToPiece );
-
-
-					function applyFilterToPiece( piece ) {
-
-						piece.isExcludedByFilter = ( filter && ( piece.text.indexOf( filter ) === -1 ) );
-
-					}
+					appActions.setFilter( vm.form.filter );
 
 				}
 
@@ -496,19 +537,7 @@
 				// I reposition the given piece to be at the given coordinates.
 				function positionPiece( id, x, y ) {
 
-					var piece = _.find(
-						vm.pieces,
-						{
-							id: id
-						}
-					);
-
-					// Optimistically update the local data.
-					piece.x = x;
-					piece.y = y;
-
-					// Synchronize to the remote data store.
-					poetryService.setPosition( piece.id, piece.x, piece.y );
+					appActions.positionPiece( id, x, y );
 
 				}
 
@@ -517,30 +546,7 @@
 				// also clear any filtering.
 				function selectPiece( piece ) {
 
-					// Find the piece with the highest stack order - we're always 
-					// going to move the selected piece to the front (of all pieces).
-					var topPiece = _.max(
-						vm.pieces,
-						function operator( piece ) {
-
-							return( piece.stackOrder );
-
-						}
-					);
-
-					// Make sure the piece actually needs to be moved.
-					if ( topPiece.id !== piece.id ) {
-
-						// Optimistically update the local data.
-						piece.stackOrder = ( topPiece.stackOrder + 1 );
-
-						// Synchronize to the remote data store.
-						poetryService.setStackOrder( piece.id, piece.stackOrder );
-
-					}
-
-					vm.form.filter = "";
-					applyFilter();
+					appActions.selectPiece( piece.id );
 
 				}
 
@@ -548,8 +554,7 @@
 				// I load the pieces with the given rating into the board.
 				function showRating( newRating ) {
 
-					vm.rating = newRating;
-					loadBoard();
+					appActions.loadBoard( newRating );
 
 				}
 				
@@ -559,115 +564,27 @@
 				// ---
 
 
-				// I augment the given piece for use in the local view-model.
-				function augmentPiece( piece ) {
+				function renderState() {
 
-					piece.isExcludedByFilter = false;
+					var state = appStore.getState();
+						
+					// I determine if asynchronous data is being loaded.
+					vm.isLoading = state.isLoading;
 
-					return( piece );
+					// I hold the dimensions of the magnetic surface.
+					vm.surfaceWidth = state.surfaceWidth;
+					vm.surfaceHeight = state.surfaceHeight;
 
-				}
+					// I hold the form values for the ng-model bindings.
+					vm.form = {
+						filter: state.filter
+					};
 
+					// I am the collection of magnetic pieces.
+					vm.pieces = state.pieces;
 
-				// I augment the given pieces for use in the local view-model.
-				function augmentPieces( pieces ) {
-
-					return( _.each( pieces, augmentPiece ) );
-
-				}
-
-
-				// I handle change events on the pieces in our currently monitored 
-				// collection of pieces.
-				function handleChildChange( snapshot ) {
-
-					var piece = _.find(
-						vm.pieces,
-						{
-							id: snapshot.key()
-						}
-					);
-
-					var value = snapshot.val();
-					
-					piece.x = value.x;
-					piece.y = value.y;
-					piece.snapshot = value.snapshot;
-
-					// Because these event are not always triggered asynchronously,
-					// we need to be careful about when we tell AngularJS about the
-					// change. Do it in the future.
-					// --
-					// NOTE: This performs some implicit debouncing as well.
-					$scope.$applyAsync();
-
-				}
-
-
-				// I load the pieces on to the board.
-				// --
-				// NOTE: If there are no pieces in the remote store, a new collection
-				// of pieces will be generated.
-				function loadBoard() {
-
-					vm.isLoading = true;
-
-					poetryService.getPieces( vm.rating ).then(
-						function handleResolve( pieces ) {
-
-							vm.pieces = augmentPieces( pieces );
-
-							// Apply any existing filtering to the collection.
-							applyFilter();
-
-							// Now that we have our pieces rendered locally, start 
-							// watching for changes in the remote data store.
-							watchForChildChanges();
-
-							// Flag board as loaded.
-							vm.isLoading = false;
-
-						},
-						function handleReject( reason ) {
-
-							// If the reason is that the board is empty, let's populate
-							// the board with a new collection for the current rating 
-							// and then try loading it again.
-							if ( reason === "empty" ) {
-								
-								poetryService
-									.populateBoard( vm.rating )
-									.then( loadBoard )
-								;
-
-							}
-
-						}
-					);
-
-				}
-
-
-				// I watch for changes in the subset of pieces that belong to the 
-				// current rating system.
-				function watchForChildChanges() {
-
-					// If we were already watching for child changes on a previous query
-					// node, unbind the current handler.
-					if ( queryNode ) {
-
-						queryNode.off( "child_changed", handleChildChange );
-
-					}
-
-					// Start watching the new subset of pieces under the selected rating.
-					queryNode = firebaseService
-						.ref( "pieces/" )
-							.orderByChild( "rating" )
-							.equalTo( vm.rating )
-					;
-
-					queryNode.on( "child_changed", handleChildChange );
+					// I am the rating of the pieces that are currently being displayed.
+					vm.rating = state.rating;
 
 				}
 
