@@ -39,6 +39,14 @@
 			function storeFactory( Redux, $log ) {
 
 				// Create the store enhancer that will apply the logging middleware.
+				// --
+				// NOTE: If I were going to use middleware in an actual app, I think 
+				// that I would author the store as a "provider" and then make the 
+				// middleware configurable during the config phase (much like HTTP 
+				// interceptors can be defined during the config phase). This way, 
+				// the store factory would only be concerned with creating the store 
+				// and not with defining the logic of the middleware (maybe a good 
+				// follow-up post, eh?).
 				var storeEnhancer = Redux.applyMiddleware( loggingMiddlewareFactory );
 
 				// Create the enhanced createStore() method. The resulting function
