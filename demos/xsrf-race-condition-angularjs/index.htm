@@ -1,0 +1,61 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Cross-Site Request Forgery (CSRF / XSRF) Race Condition In AngularJS
+	</title>
+</head>
+<body>
+
+	<h1>
+		Cross-Site Request Forgery (CSRF / XSRF) Race Condition In AngularJS
+	</h1>
+
+	<p>
+		<em>Hammering the API (like a boss) - see console logging.</em>
+	</p>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.4.7.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo and run some code!
+		var app = angular.module( "Demo", [] ).run(
+			function run( $interval, $http, $log ) {
+
+				// Start hammering the request to try to find the race-condition.
+				// $interval( makeApiRequest, 100 );
+
+
+				// I make a request to the API and log the response.
+				function makeApiRequest() {
+
+					// When AngularJS makes this request, it's going to look for the 
+					// "XSRF-TOKEN" cookie; and, if it finds it, it's going to append
+					// the "X-XSRF-TOKEN" header, with the same value, to the outgoing
+					// HTTP request.
+					$http.get( "./api/index.cfm" ).then(
+						function handleResolve( response ) {
+
+							$log.log( "Good!" );
+
+						},
+						function handleReject( response ) {
+
+							$log.log( "!! Unauthorized !!", response.data );
+
+						}
+					);
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
