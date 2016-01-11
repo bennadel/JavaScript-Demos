@@ -27,7 +27,7 @@
 			function run( $interval, $http, $log ) {
 
 				// Start hammering the request to try to find the race-condition.
-				// $interval( makeApiRequest, 100 );
+				$interval( makeApiRequest, 100 );
 
 
 				// I make a request to the API and log the response.
