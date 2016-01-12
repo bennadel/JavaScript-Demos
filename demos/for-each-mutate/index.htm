@@ -1,0 +1,90 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Mutating An Array During .forEach() Iteration In JavaScript
+	</title>
+</head>
+<body>
+	
+	<h1>
+		Mutating An Array During .forEach() Iteration In JavaScript
+	</h1>
+
+	<!-- Load scripts. -->
+	<script type="text/javascript">
+		
+		var values = [ "o0", "o1", "o2", "o3", "o4" ];
+
+		values.forEach(
+			function iterator( value, index, collection ) {
+
+				console.log( "Visiting:", value );
+
+				if ( value === "o1" ) {
+
+					// Delete current value.
+					// --
+					// NOTE: We have already logged this value out, so this action will
+					// affect the length of the collection, but not the logging of this
+					// particular item.
+					values.splice( index, 1 );
+
+				}
+
+				if ( index === 3 ) {
+
+					// Append new values.
+					values.push( "n0" );
+					values.push( "n1" );
+					values.push( "n2" );
+					values.push( "n3" );
+					values.push( "n4" );
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		console.log( "- - - - - - - - - - - - - - - -" );
+		// --------------------------------------------------------------------------- //
+
+
+		var values = [ "o0", "o1", "o2", "o3", "o4" ];
+
+		// This time, when iterating over the collection, we're going to iterate over
+		// a DUPLICATE of the original collection using .slice().
+		values.slice().forEach(
+			function iterator( value, index, collection ) {
+
+				console.log( "Visiting:", value );
+
+				if ( value === "o1" ) {
+
+					// Delete current value.
+					values.splice( index, 1 );
+
+				}
+
+				if ( index === 3 ) {
+
+					// Append new values.
+					values.push( "n0" );
+					values.push( "n1" );
+					values.push( "n2" );
+					values.push( "n3" );
+					values.push( "n4" );
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
