@@ -1,0 +1,894 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Managing Cached Data With Redux In AngularJS
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body ng-controller="AppController as vm">
+
+	<h1>
+		Managing Cached Data With Redux In AngularJS
+	</h1>
+
+	<p>
+		<a ng-click="vm.showFriends()">Show Friends</a> 
+		&nbsp;|&nbsp;
+		<a ng-click="vm.showEnemies()">Show Enemies</a>
+	</p>
+
+	<!-- If the data is loading, show loading message. -->
+	<p ng-if="vm.isLoading">
+		<em>Loading your {{ vm.category.toLowerCase() }}...</em>
+	</p>
+
+	<!-- If the data is loaded (or pulled from cache), show list. -->
+	<div ng-if="! vm.isLoading">
+
+		<h2>
+			{{ vm.category }}
+		</h2>
+
+		<ul>
+			<li ng-repeat="person in vm.people track by person.id">
+				{{ person.name }}
+			</li>
+		</ul>
+
+		<form ng-submit="vm.processForm()">
+			<input type="text" ng-model="vm.form.name" ng-change="vm.setName()" />
+			<input type="submit" value="Add Person" />
+		</form>
+
+	</div>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/lodash/lodash-3.9.3.min.js"></script>
+	<script type="text/javascript" src="../../vendor/redux/redux-3.0.5.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.4.7.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		angular.module( "Demo", [] );
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide the single Redux store for the entire application.
+		angular.module( "Demo" ).factory(
+			"store",
+			function storeFactory( Redux, appReducer, cacheReducer ) {
+
+				var store = Redux.createStore(
+					function rootReducer( state, action ) {
+
+						state = ( state || {} );
+
+						return({
+							app: appReducer( state.app, action ),
+							cache: cacheReducer( state.cache, action )
+						});
+						
+					}
+				);
+
+				return( store );
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide the reducer for the Demo portion of the state tree.
+		angular.module( "Demo" ).factory(
+			"appReducer",
+			function appReducerFactory( _ ) {
+
+				return( appReducer );
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I apply actions to the app state tree, returning the new state. All
+				// reducer actions are SYNCHRONOUS and are PURE in that they only deal 
+				// with the data they are given - no interaction with external systems.
+				function appReducer( state, action ) {
+
+					// When Redux loads, it initializes the reducers to get the initial
+					// state of the state tree. As such, when it's undefined, we can just
+					// return the default structure.
+					if ( ! state ) {
+
+						return({
+							// I determine if data is being loaded from an external store.
+							isLoading: false,
+
+							// I hold the selected category.
+							category: "",
+
+							// I hold the people in the current category.
+							people: [],
+
+							// I hold the name of the new person being added to the 
+							// collection (used in the form).
+							name: ""
+						});
+
+					}
+
+					switch ( action.type ) {
+
+						case "ADD_PERSON":
+
+							state.people.push( action.payload.person );
+							state.people.sort( sortOperatorForPeople );
+
+						break;
+
+						case "FINALIZE_PERSON":
+
+							var person = _.find(
+								state.people,
+								{
+									id: action.payload.oldID,
+									isTemp: true
+								}
+							);
+
+							if ( person ) {
+
+								person.id = action.payload.newID;
+								person.isTemp = false;
+
+							}
+
+						break;
+
+						case "LOAD_CATEGORY":
+
+							state.isLoading = true;
+							state.category = action.payload.category;
+
+						break;
+
+						case "LOAD_CATEGORY_RESOLVE":
+
+							state.isLoading = false;
+							state.people = action.payload.people;
+							state.people.sort( sortOperatorForPeople );
+
+						break;
+
+						case "SET_NAME":
+
+							state.name = action.payload.name;
+
+						break;
+
+						case "SET_PEOPLE":
+
+							// When setting people, we don't necessarily want to 
+							// overwrite the temporary people we have in the list. As 
+							// such, let's pull them out and then add them back in with 
+							// the incoming collection.
+							var tempPeople = _.where(
+								state.people,
+								{
+									isTemp: true
+								}
+							);
+
+							state.people = action.payload.people
+								.concat( tempPeople )
+							;
+							state.people.sort( sortOperatorForPeople );
+
+						break;
+
+					}
+
+					return( state );
+
+
+					// ---
+					// PRIVATE METHODS.
+					// ---
+
+
+					// I provide the in-place sort operator for the people collection.
+					function sortOperatorForPeople( a, b ) {
+
+						if ( a.name < b.name ) {
+
+							return( -1 );
+
+						} else if ( a.name > b.name ) {
+
+							return( 1 );
+
+						}
+
+						return( 0 );
+
+					}
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide the reducer for the cache portion of the state tree.
+		// --
+		// NOTE: I am very explicitly moving the cache to its own portion of the state
+		// tree to emphasize that I do NOT believe that caching and the application of
+		// cached data should be the sole responsibility of the store. Meaning, by 
+		// moving it to its own portion of the state tree, it forces the application 
+		// of cached data to be managed by the orchestration layer. And, it should 
+		// mean that removing the use of the cache is an de-optimization, not a 
+		// critical failure.
+		angular.module( "Demo" ).factory(
+			"cacheReducer",
+			function cacheReducerFactory( _ ) {
+
+				return( cacheReducer );
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I apply actions to the cache state tree, returning the new state. All
+				// reducer actions are SYNCHRONOUS and are PURE in that they only deal 
+				// with the data they are given - no interaction with external systems.
+				function cacheReducer( state, action ) {
+
+					// When Redux loads, it initializes the reducers to get the initial
+					// state of the state tree. As such, when it's undefined, we can just
+					// return the default structure.
+					if ( ! state ) {
+
+						return({});
+
+					}
+
+					switch ( action.type ) {
+
+						case "SET_CACHE":
+
+							// NOTE: To completely disable the use of caching in this
+							// application, you can remove it from the orchestration 
+							// layer ... OR... you can just ignore this state mutation.
+							state[ action.payload.category ] = action.payload.people;
+							// console.log( "Request to store CACHE ignored." );
+
+						break;
+
+					}
+
+					return( state );
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide a workflow orchestration layer around the app, mapping use cases
+		// onto state mutation and API interactions. I also protect the controllers 
+		// from having to know too much about the use of the store.
+		angular.module( "Demo" ).factory(
+			"appWorkflow",
+			function appWorkflowFactory( $log, store, peopleService, _ ) {
+
+				// Return the public API.
+				return({
+					getAppState: getAppState,
+					getCategory: getCategory,
+					getIsLoading: getIsLoading,
+					getName: getName,
+					getPeople: getPeople,
+					loadEnemies: loadEnemies,
+					loadFriends: loadFriends,
+					processForm: processForm,
+					setName: setName
+				});
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I extract the app state out of the application store.
+				function getAppState() {
+
+					return( store.getState().app );
+
+				}
+
+
+				// I return the category state.
+				function getCategory() {
+
+					return( getAppState().category );
+
+				}
+
+
+				// I return the isLoading state.
+				function getIsLoading() {
+
+					return( getAppState().isLoading );
+
+				}
+
+
+				// I return the name state.
+				function getName() {
+
+					return( getAppState().name );
+
+				}
+
+
+				// I return the people state.
+				function getPeople() {
+
+					return( getAppState().people );
+
+				}
+
+
+				// I load the list of enemies into the state.
+				function loadEnemies() {
+
+					var category = "Enemies";
+
+					store.dispatch({
+						type: "LOAD_CATEGORY",
+						payload: {
+							category: category
+						}
+					});
+
+
+					// We may have a collection of people cached from a previous fetch.
+					// If so, we can resolve the request early, using the cached data,
+					// while the remote request is running in the background.
+					var cache = getCacheState();
+
+					if ( cache[ category ] ) {
+
+						store.dispatch({
+							type: "LOAD_CATEGORY_RESOLVE",
+							payload: {
+								people: cache[ category ]
+							}
+						});
+
+					}
+
+
+					// Regardless of whether or not we had cached data, we will want to
+					// go to the external service to make sure we have the most up-to-date
+					// collection data.
+					peopleService.getEnemies().then(
+						function handleResolve( enemies ) {
+
+							store.dispatch({
+								type: "SET_CACHE",
+								payload: {
+									category: category,
+									people: enemies
+								}
+							});
+
+							// There's a chance that the user has switched to a new 
+							// category in the time it took for this fetch to return. If
+							// the category has changed, just ignore the resolution.
+							if ( category !== getCategory() ) {
+
+								$log.warn( "Bailing out of resolve, no longer relevant." );
+								return;
+
+							}
+
+							store.dispatch({
+								type: "LOAD_CATEGORY_RESOLVE",
+								payload: {
+									people: enemies
+								}
+							});
+
+						}
+					);
+
+				}
+
+
+				// I load the list of friends into the state.
+				function loadFriends() {
+
+					var category = "Friends";
+
+					store.dispatch({
+						type: "LOAD_CATEGORY",
+						payload: {
+							category: category
+						}
+					});
+
+
+					// We may have a collection of people cached from a previous fetch.
+					// If so, we can resolve the request early, using the cached data,
+					// while the remote request is running in the background.
+					var cache = getCacheState();
+
+					if ( cache[ category ] ) {
+
+						store.dispatch({
+							type: "LOAD_CATEGORY_RESOLVE",
+							payload: {
+								people: cache[ category ]
+							}
+						});
+
+					}
+
+
+					// Regardless of whether or not we had cached data, we will want to
+					// go to the external service to make sure we have the most up-to-date
+					// collection data.
+					peopleService.getFriends().then(
+						function handleResolve( friends ) {
+
+							store.dispatch({
+								type: "SET_CACHE",
+								payload: {
+									category: category,
+									people: friends
+								}
+							});
+
+							// There's a chance that the user has switched to a new 
+							// category in the time it took for this fetch to return. If 
+							// the category has changed, just ignore the resolution.
+							if ( category !== getCategory() ) {
+
+								$log.warn( "Bailing out of resolve, no longer relevant." );
+								return;
+
+							}
+
+							store.dispatch({
+								type: "LOAD_CATEGORY_RESOLVE",
+								payload: {
+									people: friends
+								}
+							});
+
+						}
+					);
+
+				}
+
+
+				// I process the current form, adding a new person with the given name
+				// to the currently selected collection.
+				function processForm() {
+
+					var category = getCategory();
+					var name = getName();
+					var isFriend = ( getCategory() === "Friends" );
+					var isEnemy = ( getCategory() === "Enemies" );
+
+					// Clear the form field.
+					store.dispatch({
+						type: "SET_NAME",
+						payload: {
+							name: ""
+						}
+					});
+
+					// When we add the person to the current collection, we're going to
+					// optimistically add the user to the state before the remote data
+					// comes back. As such, we have to assign a temporary ID to the local
+					// data to ensure the person has a valid structure.
+					var tempID = ( "temp-" + ( new Date() ).getTime() );
+
+					// Optimistically add TEMP person locally.
+					store.dispatch({
+						type: "ADD_PERSON",
+						payload: {
+							person: {
+								id: tempID,
+								name: name,
+								isFriend: isFriend,
+								isEnemy: isEnemy,
+
+								// Flagging this person as true, just in case the 
+								// controller or the state reducers ever needs to know to
+								// prevent certain actions for temp / optimistic changes.
+								isTemp: true
+							}
+						}
+					});
+
+					// CAUTION: While we are optimistically adding the person to the 
+					// active collection, you'll notice that we are not adding it to the 
+					// cache as well. We could do that; but, it comes at the cost of 
+					// increased complexity and maintenance. It can be done later, as a
+					// UX (user experience) optimization; but, for now, I am leaving the
+					// cache alone since it doesn't seem like a big enough use-case.
+
+					peopleService
+						.addPerson( name, isFriend, isEnemy )
+						.then(
+							function handleResolveForAdd( newID ) {
+
+								// Swap out the temp ID with the persisted ID.
+								store.dispatch({
+									type: "FINALIZE_PERSON",
+									payload: {
+										oldID: tempID,
+										newID: newID
+									}
+								});
+
+								// Now that we know the person has been added to the 
+								// external store, let's re-query the data so that we
+								// can make sure that our "optimistic" local addition
+								// is fleshed-out with complete data.
+								var promise = isFriend
+									? peopleService.getFriends()
+									: peopleService.getEnemies()
+								;
+
+								return( promise );
+
+							}
+						)
+						.then(
+							function handleResolveForGet( people ) {
+
+								store.dispatch({
+									type: "SET_CACHE",
+									payload: {
+										category: category,
+										people: people
+									}
+								});
+
+								// There's a chance that the user has switched to a 
+								// new category in the time it took for this save of the 
+								// person and the fetch of the live data to return. If 
+								// the category has changed, just ignore the resolution.
+								if ( category !== getCategory() ) {
+
+									$log.warn( "Bailing out of resolve, no longer relevant." );
+									return;
+
+								}
+
+								store.dispatch({
+									type: "SET_PEOPLE",
+									payload: {
+										people: people
+									}
+								});
+
+							}
+						)
+					;
+
+				}
+
+
+				// I set the name state.
+				function setName( name ) {
+
+					store.dispatch({
+						type: "SET_NAME",
+						payload: {
+							name: name
+						}
+					});
+
+				}
+
+
+				// ---
+				// PRIVATE METHODS.
+				// ---
+
+
+				// I return the cache state, which lives in a different part of 
+				// the state tree than the rest of the application (since it is a 
+				// responsibility) of the orchestration layer.
+				function getCacheState() {
+
+					return( store.getState().cache );
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I control the root of the demo.
+		angular.module( "Demo" ).controller(
+			"AppController",
+			function BodyController( $scope, store, appWorkflow ) {
+
+				var vm = this;
+
+				// Start off by loading the list of friends.
+				appWorkflow.loadFriends();
+
+				// Subscribe to the store so that state changes can be synchronized to
+				// the local view-model.
+				// --
+				// THOUGHT: Maybe I should move the .subscribe() method into the Workflow
+				// layer itself. This call is the only reason the controller even needs
+				// to know about the store. If I remove it, the controller becomes 
+				// completely ignorant of the concept of the store (since I am using 
+				// selectors below instead of direct state references).
+				store.subscribe( renderState );
+
+				// Render the initial state of the store (synchronizes the state into 
+				//the local view-model).
+				renderState();
+
+				// Expose the public methods.
+				vm.processForm = processForm;
+				vm.setName = setName;
+				vm.showEnemies = showEnemies;
+				vm.showFriends = showFriends;
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I process the form, adding the new person to the current list.
+				function processForm() {
+
+					appWorkflow.processForm();
+					
+				}
+
+
+				// I apply the form name to the state.
+				function setName() {
+
+					appWorkflow.setName( vm.form.name );
+
+				}
+
+
+				// I load the enemies list into the view.
+				function showEnemies() {
+
+					appWorkflow.loadEnemies();
+
+				}
+
+
+				// I load the friends list into the view.
+				function showFriends() {
+
+					appWorkflow.loadFriends();
+
+				}
+
+
+				// ---
+				// PRIVATE METHODS.
+				// ---
+
+
+				// I synchronize the local view-model with the current state.
+				function renderState() {
+
+					// When I am accessing the state here, I am using "selector" methods 
+					// exposed by the workflow / orchestration layer. This prevents the
+					// the controller from having to know too much about the shape of 
+					// the state; and, it provides the workflow service with a chance to
+					// run any calculations or setup any derived values.
+					vm.isLoading = appWorkflow.getIsLoading();
+					vm.category = appWorkflow.getCategory();
+					vm.people = appWorkflow.getPeople();
+						
+					// From a mental-model standpoint, I like to keep all my ngModel 
+					// bindings inside of a Form object. However, the state doesn't care
+					// about that. As such, I am choosing to map the state value onto a
+					// form-based structure that I am comfortable working with.
+					vm.form = {
+						name: appWorkflow.getName()
+					};
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide access to the People repository.
+		angular.module( "Demo" ).factory(
+			"peopleService",
+			function peopleServiceFactory( $q, $timeout, _ ) {
+
+				var pkey = 0;
+				var people = buildCollection();
+
+				// Return the public API.
+				return({
+					addPerson: addPerson,
+					getEnemies: getEnemies,
+					getFriends: getFriends
+				});
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I add a new person with the given settings. Promise resolves to the 
+				// ID of the newly added record.
+				function addPerson( name, isFriend, isEnemy ) {
+
+					var id = ++pkey;
+
+					people.push({
+						id: id,
+						name: name,
+						isFriend: isFriend,
+						isEnemy: isEnemy
+					});
+
+					return( afterDelay( id, 1000 ) );
+
+				}
+
+
+				// I get the collection of enemies. Returns promise.
+				function getEnemies() {
+
+					var enemies = _.where(
+						people,
+						{
+							isEnemy: true
+						}
+					);
+
+					return( afterDelay( _.cloneDeep( enemies ), 1000 ) );
+
+				}
+
+
+				// I get the collection of friends. Returns promise.
+				function getFriends() {
+
+					var friends = _.where(
+						people,
+						{
+							isFriend: true
+						}
+					);
+
+					return( afterDelay( _.cloneDeep( friends ), 1000 ) );
+
+				}
+
+
+				// ---
+				// PRIVATE METHODS.
+				// ---
+
+
+				// I resolve to the given value after the given delay in milliseconds.
+				function afterDelay( value, delay ) {
+
+					var promise = $timeout( delay ).then(
+						function handleResolve() {
+
+							return( value );
+
+						}
+					);
+
+					return( promise );
+
+				}
+
+
+				// I build the default collection of people with various Friend and 
+				// Enemy settings.
+				function buildCollection() {
+
+					var collection = [];
+
+					// Add some friends.
+					[ "Sarah", "Tricia", "Joanna", "Kit", "Lisa" ].forEach(
+						function iterator( name ) {
+
+							collection.push({
+								id: ++pkey,
+								name: name,
+								isFriend: true,
+								isEnemy: false
+							});
+
+						}
+					);
+
+					// Add some enemies.
+					[ "Sam", "Turner", "Jenkins", "Ken", "Lenard" ].forEach(
+						function iterator( name ) {
+
+							collection.push({
+								id: ++pkey,
+								name: name,
+								isFriend: false,
+								isEnemy: true
+							});
+
+						}
+					);
+
+					return( collection );
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I expose global vendor libraries as injectables in order to keep the
+		// dependencies within the application cleaner.
+		angular.module( "Demo" )
+			.value( "Redux", Redux )
+			.value( "_", _ )
+		;
+
+	</script>
+
+</body>
+</html>

@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Managing Cached Data With Redux In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/caching-data-in-redux-angularjs/)
 * [Mutating An Array During .forEach() Iteration In JavaScript](http://bennadel.github.io/JavaScript-Demos/demos/for-each-mutate/)
 * [Logging Redux Dispatch Calls Using Middleware And Decorators In AngularJS](http://bennadel.github.io/JavaScript-Demos/demos/redux-logging-angularjs/)
 * [Using Multiple Break Statements In A Single Case Block In JavaScript](http://bennadel.github.io/JavaScript-Demos/demos/switch-case-break/)
