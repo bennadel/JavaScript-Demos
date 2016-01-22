@@ -1,0 +1,260 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		AngularJS 2 Beta 1: Hello World With ES5 And RequireJS
+	</title>
+</head>
+<body>
+
+	<my-app>
+		Loading...
+	</my-app>
+
+	<!-- Load demo scripts. -->
+	<script type="text/javascript" src="./es6-shim.min.js"></script>
+	<script type="text/javascript" src="./Rx.umd.min.js"></script>
+	<script type="text/javascript" src="./angular2-polyfills.min.js"></script>
+	<script type="text/javascript" src="./angular2-all.umd.min.js"></script>
+	<!-- 
+		Putting Almond.js after the external libraries since I am not managing their 
+		loading through Almond. If I move this library up, AngularJS attempts to use 
+		define() (I think) which I am not configured for in this demo.
+		--
+		NOTE: AlmondJS is just a simplified version of RequireJS.
+	-->
+	<script type="text/javascript" src="./almond.js"></script>
+	<script type="text/javascript">
+
+		// In order to have all my code in one page and to not have to care about the
+		// order in which things are defined, I am using AlmondJS (ie, RequireJS) to
+		// manage the registration of "class files" (so to speak). This is more aligned
+		// with how a class loader would work.
+		requirejs(
+			[ "AppComponent", "FriendService" ],
+			function( AppComponent, FriendService ) {
+
+				// When bootstrapping the application, we have to configure the root
+				// injector to be able to provide the given dependencies. 
+				ng.platform.browser.bootstrap( 
+					AppComponent,
+					[ 
+						FriendService
+					]
+				);
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		define(
+			"AppComponent",
+			[ "FriendService", "Friend" ],
+			function( FriendService, Friend ) {
+
+				// Configure the App component definition.
+				var AppComponent = ng.core
+					.Component({
+						selector: "my-app",
+						directives: [ Friend ],
+						template:
+						`
+							<h1>
+								My First AngularJS 2 App!
+							</h1>
+
+							<div *ngIf="! isLoading">
+
+								<h2>
+									You Have {{ friends.length }} Friends!
+								</h2>
+
+								<ul>
+									<li *ngFor="#friend of friends">
+
+										<friend 
+											[id]="friend.id" 
+											[name]="friend.name">
+										</friend>
+
+									</li>
+								</ul>
+
+							</div>
+						`
+					})
+					.Class({
+						constructor: AppController,
+						ngOnInit: function noop() {} /* Will be discussed in another post. */
+					})
+				;
+
+				// We need to add meta-data to the component definition so that the 
+				// AngularJS injector knows how to map injectables on to the Controller
+				// constructor arguments.
+				AppComponent.parameters = [ new ng.core.Inject( FriendService ) ];
+
+				return( AppComponent );
+
+
+				// I control the app component.
+				function AppController( friendService ) {
+
+					var vm = this;
+
+					// I determine if the data is being loaded.
+					vm.isLoading = true;
+
+					// I hold the collection of friends.
+					vm.friends = null;
+
+					// Expose public methods.
+					vm.ngOnInit = ngOnInit;
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I get called once, after the component has been instantiated and 
+					// after the inputs have been bound.
+					function ngOnInit() {
+
+						friendService.getFriends().then(
+							function handleResolve( friends ) {
+
+								vm.isLoading = false;
+								vm.friends = friends;
+
+							}
+						);
+
+					};
+					
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		define(
+			"Friend",
+			function() {
+
+				// Configure the friend component definition.
+				var FriendComponent = ng.core
+					.Component({
+						selector: "friend",
+						inputs: [ "id", "name" ],
+						template:
+						`
+							<span data-id="{{ id }}">
+								{{ name }} is awesome!
+							</span>
+						`
+					})
+					.Class({
+						constructor: FriendController
+					})
+				;
+
+				return( FriendComponent );
+
+
+				// I control the friend component.
+				function FriendController() {
+
+					// ... nothing to do here, really. Just let the inputs "work".
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		define(
+			"FriendService",
+			function() {
+
+				// Configure the friend service definition.
+				var FriendServiceClass = ng.core.Class({
+					constructor: FriendService
+				});
+
+				return( FriendServiceClass );
+				
+
+				// I provide access to the friend repository.
+				function FriendService() {
+
+					// Build the internal cache of friends.
+					var friends = buildFriends( "Sarah", "Joanna", "Tricia" );
+
+					// Return the public API.
+					return({
+						getFriends: getFriends
+					});
+
+
+					// ---
+					// PUBLIC API.
+					// ---
+
+
+					// I get all the friends. Returns a promise.
+					function getFriends() {
+
+						return( Promise.resolve( friends ) );
+
+					}
+
+
+					// ---
+					// PRIVATE API.
+					// ---
+
+
+					// I turn the given list of names into a collection of friend objects.
+					function buildFriends( /* ...names */ ) {
+
+						var id = 0;
+
+						var collection = Array.prototype.slice.call( arguments ).map(
+							function iterator( name ) {
+
+								return({
+									id: ++id,
+									name: name
+								});
+
+							}
+						);
+
+						return( collection );
+
+					}		
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
