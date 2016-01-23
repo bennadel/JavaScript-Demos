@@ -1,0 +1,309 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Component Life-Cycle Methods Need To Be Defined On The Prototype In AngularJS 2 Beta 1
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body>
+
+	<h1>
+		Component Life-Cycle Methods Need To Be Defined On The Prototype In AngularJS 2 Beta 1
+	</h1>
+
+	<my-app>
+		Loading...
+	</my-app>
+
+	<!-- Load demo scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/1/es6-shim.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/1/Rx.umd.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/1/angular2-polyfills.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/1/angular2-all.umd.min.js"></script>
+	<!-- 
+		Putting Almond.js after the external libraries since I am not managing their 
+		loading through Almond. If I move this library up, AngularJS attempts to use 
+		define() (I think) which I am not configured for in this demo.
+		--
+		NOTE: AlmondJS is just a simplified version of RequireJS.
+	-->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/1/almond.js"></script>
+	<script type="text/javascript">
+
+		// In order to have all my code in one page and to not have to care about the
+		// order in which things are defined, I am using AlmondJS (ie, RequireJS) to
+		// manage the registration of "class files" (so to speak). This is more aligned
+		// with how a class loader would work.
+		requirejs(
+			[ "AppComponent" ],
+			function( AppComponent ) {
+
+				ng.platform.browser.bootstrap( AppComponent );
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		define(
+			"AppComponent",
+			[ "LCProto", "LCInstance", "LCBoth" ],
+			function( LCProto, LCInstance, LCBoth ) {
+
+				// Configure the App component definition.
+				var AppComponent = ng.core
+					.Component({
+						selector: "my-app",
+						directives: [ LCProto, LCInstance, LCBoth ],
+						template:
+						`
+							<p>
+								<a (click)="toggleChildren()">Toggle Child Components</a>
+							</p>
+
+							<div *ngIf="isShowingChildren">
+
+								<life-cycle-proto></life-cycle-proto>
+								<life-cycle-instance></life-cycle-instance>
+								<life-cycle-both></life-cycle-both>
+
+							</div>
+						`
+					})
+					.Class({
+						constructor: AppController
+					})
+				;
+
+				return( AppComponent );
+
+
+				// I control the App component.
+				function AppController() {
+
+					var vm = this;
+
+					// I determine if the child components are showing. Since we are 
+					// using ngIf, we are actually toggling the existence of said 
+					// components on the DOM (ie, not just hiding them).
+					vm.isShowingChildren = false;
+
+					// Expose the public methods.
+					vm.toggleChildren = toggleChildren;
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I toggle the existence of the child components.
+					function toggleChildren() {
+
+						console.log( "- - - - - - - - - - - - - -" );
+
+						vm.isShowingChildren = ! vm.isShowingChildren
+
+					};
+					
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide a component in which the life-cycle methods are defined on the
+		// prototype but NOT on the instance.
+		define(
+			"LCProto",
+			function() {
+
+				// Configure the life-cycle component definition.
+				var LCProtoComponent = ng.core
+					.Component({
+						selector: "life-cycle-proto",
+						template:
+						`
+							<p>
+								Life-Cycle methods defined on <strong>constructor prototype</strong>.
+							</p>
+						`
+					})
+					.Class({
+						constructor: LCProtoController
+					})
+				;
+
+				// NOTE: Component is being returned down below in order to allow the
+				// prototype to be fully defined. I could have used .Class() function
+				// above, but would have bade for odd readability.
+				// --
+				// return( LCProtoComponent );
+
+
+				// I control the life-cycle demo component.
+				function LCProtoController() {
+
+					this.bindType = "Defined on constructor prototype.";
+
+				}
+
+				// Define life-cycle methods on the constructor prototype.
+				LCProtoController.prototype = {
+
+					ngOnInit: function() {
+
+						console.log( "ngOnInit:", this.bindType );
+
+					},
+
+					ngOnDestroy: function() {
+
+						console.log( "ngOnDestroy", this.bindType )
+
+					}
+
+				};
+
+				// CAUTION: We have to return out of the enclosure AFTER the prototype
+				// has been defined or it will never get wired to the constructor 
+				// (since only the constructor is hoisted).
+				return( LCProtoComponent );
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide a component in which the life-cycle methods are defined on the
+		// instance but NOT on the prototype.
+		define(
+			"LCInstance",
+			function() {
+
+				// Configure the life-cycle component definition.
+				var LCInstanceComponent = ng.core
+					.Component({
+						selector: "life-cycle-instance",
+						template:
+						`
+							<p>
+								Life-Cycle methods defined on <strong>instance</strong>.
+							</p>
+						`
+					})
+					.Class({
+						constructor: LCInstanceController
+					})
+				;
+
+				return( LCInstanceComponent );
+
+
+				// I control the life-cycle demo component.
+				function LCInstanceController() {
+
+					var bindType = "Defined on instance.";
+
+
+					// Define life-cycle method on instance.
+					this.ngOnInit = function() {
+
+						console.log( "ngOnInit:", bindType );
+
+					};
+
+					// Define life-cycle method on instance.
+					this.ngOnDestroy = function() {
+
+						console.log( "ngOnDestroy:", bindType );
+
+					};
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide a component in which the life-cycle methods are defined on the
+		// prototype (as an interface) and then on the instance (as an implementation).
+		define(
+			"LCBoth",
+			function() {
+
+				// Configure the life-cycle component definition.
+				var LCBothComponent = ng.core
+					.Component({
+						selector: "life-cycle-both",
+						template:
+						`
+							<p>
+								Life-Cycle methods defined on both <strong>prototype and instance</strong>.
+							</p>
+						`
+					})
+					.Class({
+						constructor: LCBothController,
+
+						// It doesn't matter what these references are, as long as they 
+						// are Functions. The actual implementation is handled by the 
+						// instance at runtime; but, the instance methods won't be called
+						// unless there is an existing reference on the prototype.
+						// --
+						// NOTE: "noop" stand for "no-op" or "No operation."
+						ngOnInit: function noop() {},
+						ngOnDestroy: function noop() {}
+					})
+				;
+
+				return( LCBothComponent );
+
+
+				// I control the life-cycle demo component.
+				function LCBothController() {
+
+					var bindType = "Defined on both prototype and instance.";
+
+
+					// Define life-cycle method on instance.
+					this.ngOnInit = function() {
+
+						console.log( "ngOnInit:", bindType );
+
+					};
+
+					// Define life-cycle method on instance.
+					this.ngOnDestroy = function() {
+
+						console.log( "ngOnDestroy:", bindType );
+
+					};
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>

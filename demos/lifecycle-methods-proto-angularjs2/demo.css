@@ -1,0 +1,24 @@
+
+a {
+	color: red ;
+	cursor: pointer ;
+	text-decoration: underline ;
+	user-select: none ;
+		-moz-user-select: none ;
+		-webkit-user-select: none ;
+}
+
+life-cycle-proto,
+life-cycle-instance,
+life-cycle-both {
+	display: block ;
+	margin: 20px 0px 20px 0px ;
+}
+
+life-cycle-proto p,
+life-cycle-instance p,
+life-cycle-both p {
+	border: 2px solid #CCCCCC ;
+	border-radius: 4px 4px 4px 4px ;
+	padding: 10px 10px 10px 10px ;
+}
