@@ -1,0 +1,142 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Inputs Are Pre-Bound To Controllers In AngularJS 1.x
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body ng-controller="AppController as vm">
+
+	<h1>
+		Inputs Are Pre-Bound To Controllers In AngularJS 1.x
+	</h1>
+
+	<p>
+		<a ng-click="vm.toggleComponent()">Toggle Component</a>
+	</p>
+
+	<!-- 
+		Here, we are setting the property expression for message. 
+		This is the equivalent of:
+
+		[message]="messageForInput"
+
+		... in AngularJS 2 Beta 1.
+	-->
+	<widget 
+		ng-if="vm.isShowingComponent" 
+		message="vm.messageForInput">
+	</widget>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.4.7.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I control the root of the application.
+		app.controller(
+			"AppController",
+			function( $scope ) {
+
+				var vm = this;
+
+				// I determine if the widget component is being rendered.
+				vm.isShowingComponent = false;
+
+				// I am the property being passed into the widget.
+				vm.messageForInput = "Woot, passed it in like a Boss!";
+
+				// Expose the public methods.
+				vm.toggleComponent = toggleComponent;
+
+
+				// ---
+				// PUBLIC METHODS.
+				// ---
+
+
+				// I toggle the existence of the widget component.
+				function toggleComponent() {
+
+					console.log( "- - - - - - - - - - - - - -" );
+
+					vm.isShowingComponent = ! vm.isShowingComponent
+
+				};
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide a component for testing input availability.
+		app.directive(
+			"widget",
+			function widgetDirective() {
+
+				// Return the directive configuration object.
+				// --
+				// NOTE: I am binding the inputs directly to the controller. Normally,
+				// in AngularJS 1.x, I would bind to the scope (not the controller) so
+				// that I could differentiate more clearly between "props" and the 
+				// local view-model values. But, I am using bindToController here in 
+				// order to create a tighter similarity to the AngularJS 2 Beta 1 code.
+				return({
+					bindToController: true,
+					controller: WidgetController,
+					controllerAs: "vm",
+					restrict: "E",
+					scope: {
+						message: "="
+					},
+					template: 
+					`
+						<p>
+							{{ vm.message }}
+						</p>
+					`
+				});
+
+
+				// I control the Widget template.
+				function WidgetController( $scope ) {
+
+					console.log( "constructor[ message ]:", this.message );
+
+					
+					// Start watching for initialization or changes in the message input.
+					// --
+					// NOTE: If the message === oldValue, it's the "setup phase".
+					$scope.$watch( 
+						"vm.message",
+						function handleMessage( message, oldValue ) {
+
+							console.log( "$watch[ message ]:", message );
+
+						}
+					);
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>

@@ -1,0 +1,14 @@
+
+a {
+	color: red ;
+	cursor: pointer ;
+	text-decoration: underline ;
+	user-select: none ;
+		-moz-user-select: none ;
+		-webkit-user-select: none ;
+}
+
+widget {
+	display: block ;
+	margin: 20px 0px 20px 0px ;
+}

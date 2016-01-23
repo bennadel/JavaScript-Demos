@@ -1,0 +1,196 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Inputs Are Not Pre-Bound To Component Controllers In AngularJS 2 Beta 1
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body>
+
+	<h1>
+		Inputs Are Not Pre-Bound To Component Controllers In AngularJS 2 Beta 1
+	</h1>
+
+	<my-app>
+		Loading...
+	</my-app>
+
+	<!-- Load demo scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/1/es6-shim.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/1/Rx.umd.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/1/angular2-polyfills.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/1/angular2-all.umd.min.js"></script>
+	<!-- AlmondJS - minimal implementation of RequireJS. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/1/almond.js"></script>
+	<script type="text/javascript">
+
+		// Defer bootstrapping until all of the components have been declared.
+		// --
+		// NOTE: Not all components have to be required here since they will be 
+		// implicitly required by other components.
+		requirejs(
+			[ "AppComponent" ],
+			function run( AppComponent ) {
+
+				ng.platform.browser.bootstrap( AppComponent );
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I control the root of the application.
+		define(
+			"AppComponent",
+			[ "Widget" ],
+			function registerAppComponent( Widget ) {
+
+				// Configure the App component definition.
+				// --
+				// NOTE: I am choosing to use the Template element so as to remove all 
+				// noise from the Widget element, leaving it with nothing but message.
+				var AppComponent = ng.core
+					.Component({
+						selector: "my-app",
+						directives: [ Widget ],
+						template:
+						`
+							<p>
+								<a (click)="toggleComponent()">Toggle Component</a>
+							</p>
+
+							<template [ngIf]="isShowingComponent">
+
+								<widget [message]="messageForInput"></widget>
+
+							</template> 
+						`
+					})
+					.Class({
+						constructor: AppController
+					})
+				;
+
+				return( AppComponent );
+
+
+				// I control the App component.
+				function AppController() {
+
+					var vm = this;
+
+					// I determine if the widget component is being rendered.
+					vm.isShowingComponent = false;
+
+					// I am the property being passed into the widget.
+					vm.messageForInput = "Woot, passed it in like a Boss!";
+
+					// Expose the public methods.
+					vm.toggleComponent = toggleComponent;
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I toggle the existence of the widget component.
+					function toggleComponent() {
+
+						console.log( "- - - - - - - - - - - - - -" );
+
+						vm.isShowingComponent = ! vm.isShowingComponent
+
+					};
+					
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide a widget for testing the integration of inputs into component
+		// life-cycle events.
+		define(
+			"Widget",
+			function registerWidget() {
+
+				// Configure the widget component definition. Notice that we are exposing
+				// the "message" as a settable property.
+				var WidgetComponent = ng.core
+					.Component({
+						selector: "widget",
+						inputs: [ "message" ],
+						template:
+						`
+							<p>
+								{{ message }}
+							</p>
+						`
+					})
+					.Class({
+						constructor: WidgetController,
+
+						// Defining the life-cycle methods on the prototype so that 
+						// AngularJS will pick it up at invocation time.
+						ngOnChanges: function noop() {},
+						ngOnInit: function noop() {}
+					})
+				;
+
+				return( WidgetController );
+
+
+				// I control the widget component.
+				function WidgetController() {
+
+					var vm = this;
+					
+					console.log( "constructor[ message ]:", vm.message );
+
+					// Expose the public methods.
+					vm.ngOnChanges = ngOnChanges;
+					vm.ngOnInit = ngOnInit;
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// The onChanges event is the first event triggered in the component
+					// life-cycle.
+					function ngOnChanges() {
+
+						console.log( "ngOnChanges[ message ]:", vm.message );
+
+					}
+
+					// The onInit event is the second event triggered in the component 
+					// life-cycle.
+					function ngOnInit() {
+
+						console.log( "ngOnInit[ message ]:", vm.message );
+
+					}
+					
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
