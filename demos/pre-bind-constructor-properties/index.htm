@@ -1,0 +1,95 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Pre-Binding Properties To An Object Constructor In JavaScript
+	</title>
+</head>
+<body>
+
+	<h1>
+		Pre-Binding Properties To An Object Constructor In JavaScript
+	</h1>
+
+	<!-- Load scripts. -->
+	<script type="text/javascript">
+
+		// Here, we are defining our object constructor. The constructor takes one 
+		// argument; but, it is also expecting to have a property pre-bound to it
+		// and available within the constructor context.
+		function Widget( name ) {
+
+			// Log the explicit argument.
+			this.log( "constructor", "name", name );
+
+			// Log the injected and pre-bound property.
+			this.log( "constructor", "prebound", this.prebound );
+
+
+			// I am returning a new object just for the sake of demonstrating that
+			// the instance can still be overridden by the result of the constructor,
+			// the same way that any constructor would work in JavaScript.
+			var self = this;
+			return({
+				toString: function() {
+
+					self.log( "toString", "prebound", self.prebound );
+
+					return( "Widget for " + name + "." );
+
+				}
+			});
+
+		}
+
+		// Define the object prototype.
+		Widget.prototype = {
+
+			// I log a message based on the given inputs to echo.
+			log: function( context, key, value ) {
+
+				console.log( "Widget:" + context + "( " + key + " ):", value );
+
+			}
+
+		};
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// Normally, when invoking a constructor, we'd just "new" it into existence. 
+		// However, when pre-binding properties, we actually have to create the instance
+		// before we initialize it. By using Object.create(), we can bypass the 
+		// constructor while still creating an object with the correct prototype chain.
+		var container = Object.create( Widget.prototype || Object.prototype );
+
+		// Now that we have our object instance, we can inject all of the pre-bound 
+		// properties that we want to expose in the constructor.
+		container.prebound = "Such pre-binding, much exciting!";
+
+		// At this point, we have an object with the correct prototype chain and the 
+		// injected properties. Now, all we have to do is invoke the constructor in the 
+		// correct object context (ie, this-binding).
+		// --
+		// NOTE: I am storing the return value into an new variable so as to allow the
+		// constructor and opportunity to return a new object.
+		var instance = ( Widget.call( container, "Thinger" ) || container );
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// Since we know that our constructor is actually returning a different 
+		// reference, let's just test to make sure the .toString() works.
+		console.log( "- - - - - - - - - - " );
+		console.log( instance.toString() );
+
+	</script>
+
+</body>
+</html>

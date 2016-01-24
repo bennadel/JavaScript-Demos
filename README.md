@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Pre-Binding Properties To An Object Constructor In JavaScript](http://bennadel.github.io/JavaScript-Demos/demos/pre-bind-constructor-properties/)
 * [Inputs Are Not Pre-Bound To Component Controllers In AngularJS 2 Beta 1](http://bennadel.github.io/JavaScript-Demos/demos/inputs-timing-angularjs2/)
 * [Component Life-Cycle Methods Need To Be Defined On The Prototype In AngularJS 2 Beta 1](http://bennadel.github.io/JavaScript-Demos/demos/lifecycle-methods-proto-angularjs2/)
 * [AngularJS 2 Beta 1: Hello World With ES5 And RequireJS](http://bennadel.github.io/JavaScript-Demos/demos/angularjs2-es5-hello-world/)
