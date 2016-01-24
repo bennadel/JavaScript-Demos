@@ -1,0 +1,192 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Component Inputs Provide Both Property And Attribute Bindings In AngularJS 2 Beta 1
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body>
+
+	<h1>
+		Component Inputs Provide Both Property And Attribute Bindings In AngularJS 2 Beta 1
+	</h1>
+
+	<my-app>
+		Loading...
+	</my-app>
+
+	<!-- Load demo scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/1/es6-shim.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/1/Rx.umd.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/1/angular2-polyfills.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/1/angular2-all.umd.min.js"></script>
+	<!-- AlmondJS - minimal implementation of RequireJS. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/1/almond.js"></script>
+	<script type="text/javascript">
+
+		// Defer bootstrapping until all of the components have been declared.
+		// --
+		// NOTE: Not all components have to be required here since they will be 
+		// implicitly required by other components.
+		requirejs(
+			[ "AppComponent" ],
+			function run( AppComponent ) {
+
+				ng.platform.browser.bootstrap( AppComponent );
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide the root application component.
+		define(
+			"AppComponent",
+			[ "Echo" ],
+			function registerAppComponent( Echo ) {
+
+				// Configure the App component definition.
+				var AppComponent = ng.core
+					.Component({
+						selector: "my-app",
+						directives: [ Echo ],
+
+						// Notice that we using two instances of the ECHO component in
+						// the template. Both of them are setting the "message" input;
+						// however, one is binding using property syntax while the other
+						// is binding using attribute interpolation syntax.
+						template:
+						`
+							<p>
+								<a (click)="incrementCounter()">Increment Counter</a>
+							</p>
+							
+							<!-- PROPERTY Binding. -->
+							<echo [message]="( messageAsExpression + ' (' + counter + ')' )"></echo>
+
+							<!-- ATTRIBUTE Binding (always converts to a string). -->
+							<echo message="{{ messageAsString }} ({{ counter }})"></echo>
+						`
+					})
+					.Class({
+						constructor: AppController
+					})
+				;
+
+				return( AppComponent );
+
+
+				// I control the App component.
+				function AppController() {
+
+					var vm = this;
+
+					// In order to trigger subsequent changes to the input bindings, the
+					// passed-in value actually has to change. We're using the counter to
+					// keep the bound-inputs dynamic.
+					vm.counter = 1;
+
+					// Both the values in the view-model are strings; the difference lies
+					// in how we are passing the values into the Echo component instances.
+					vm.messageAsExpression = "Such expressions!";
+					vm.messageAsString = "Much interpolation!"
+
+					// Expose the public methods.
+					vm.incrementCounter = incrementCounter;
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I increment the counter, 
+					function incrementCounter() {
+
+						console.log( "- - - - - - - - - - - - - -" );
+						vm.counter++;
+
+					};
+					
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide a component that exposes a [message] input and echoes it back out
+		// in the page rendering
+		define(
+			"Echo",
+			function registerEcho() {
+
+				// Configure the echo component definition.
+				var EchoComponent = ng.core
+					.Component({
+						selector: "echo",
+						inputs: [ "message" ], // <-- Input binding that we're testing.
+						template:
+						`
+							<p>
+								{{ message }}
+							</p>
+						`
+					})
+					.Class({
+						constructor: EchoController,
+
+						// Defining the life-cycle methods on the prototype so that 
+						// AngularJS will pick them up at invocation time.
+						ngOnChanges: function noop() {}
+					})
+				;
+
+				return( EchoController );
+
+
+				// I control the echo component.
+				function EchoController() {
+
+					var vm = this;
+
+					// Expose the public methods.
+					vm.ngOnChanges = ngOnChanges;
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// The onChanges event is the first event triggered in the component
+					// life-cycle. It is fired after the inputs are first bound to the 
+					// component instance. It is then fired whenever the inputs change.
+					function ngOnChanges( event ) {
+
+						console.log( "ngOnChanges[ message ]:", vm.message );
+
+						// console.log( "--> Current:", event.message.currentValue );
+						// console.log( "--> Previous:", event.message.previousValue );
+
+					}
+					
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>

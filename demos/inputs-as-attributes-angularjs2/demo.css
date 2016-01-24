@@ -1,0 +1,22 @@
+
+a {
+	color: red ;
+	cursor: pointer ;
+	text-decoration: underline ;
+	user-select: none ;
+		-moz-user-select: none ;
+		-webkit-user-select: none ;
+}
+
+echo {
+	border: 1px solid #CCCCCC ;
+	border-radius: 4px 4px 4px 4px ;
+	display: block ;
+	margin: 20px 0px 20px 0px ;
+	padding: 13px 13px 13px 13px ;
+}
+
+echo *:first-child,
+echo *:last-child {
+	margin: 0px 0px 0px 0px ;
+}
