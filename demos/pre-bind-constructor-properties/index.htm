@@ -25,6 +25,9 @@
 			this.log( "constructor", "name", name );
 
 			// Log the injected and pre-bound property.
+			// --
+			// NOTE: This property is neither a constructor argument nor part of the
+			// Widget prototype definition - it is being injected as a pre-binding.
 			this.log( "constructor", "prebound", this.prebound );
 
 
