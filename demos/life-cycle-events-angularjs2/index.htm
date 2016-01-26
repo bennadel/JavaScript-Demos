@@ -1,0 +1,309 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Correlating Directive Life-Cycle Events To DOM State In AngularJS 2 Beta 1
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body>
+
+	<h1>
+		Correlating Directive Life-Cycle Events To DOM State In AngularJS 2 Beta 1
+	</h1>
+
+	<my-app>
+		Loading...
+	</my-app>
+
+	<!-- Load demo scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/1/es6-shim.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/1/Rx.umd.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/1/angular2-polyfills.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/1/angular2-all.umd.min.js"></script>
+	<!-- AlmondJS - minimal implementation of RequireJS. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/1/almond.js"></script>
+	<script type="text/javascript">
+
+		// Defer bootstrapping until all of the components have been declared.
+		// --
+		// NOTE: Not all components have to be required here since they will be 
+		// implicitly required by other components.
+		requirejs(
+			[ "AppComponent" ],
+			function run( AppComponent ) {
+
+				ng.platform.browser.bootstrap( AppComponent );
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I control the root of the application.
+		define(
+			"AppComponent",
+			[ "LifeCycleTest" ],
+			function registerAppComponent( LifeCycleTest ) {
+
+				// Define the AppComponent component metadata.
+				var AppComponent = ng.core
+					.Component({
+						selector: "my-app",
+						directives: [ LifeCycleTest ],
+
+						// Note that we are both defining the COUNTER both as an input
+						// property for the test component and as a dynamic portion of
+						// the transcludable content.
+						template:
+						`
+							<p>
+								<a (click)="incrementCounter()">Increment Counter</a>
+								&mdash;
+								<a (click)="0">No-op</a>
+							</p>
+
+							<life-cycle-test [counter]="counter">
+								( {{ counter }} )
+							</life-cycle-test>
+						`
+					})
+					.Class({
+						constructor: AppController
+					})
+				;
+
+				return( AppComponent );
+
+
+				// I control the App component.
+				function AppController() {
+
+					var vm = this;
+
+					// I provide a way to keep the content dynamic.
+					vm.counter = 1;
+
+					// Expose the public methods.
+					vm.incrementCounter = incrementCounter;
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I increment the counter, kicking off a new round of change-detection.
+					function incrementCounter() {
+
+						console.log( "- - - - - - - - - - - - - - - - " );
+						vm.counter++;
+
+					}
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide a test component that logs the HTML of the component during 
+		// various AngularJS component life-cycle events. The component view is composed
+		// of internal content, transcluded content, and nested content.
+		define(
+			"LifeCycleTest",
+			[ "ChildTest" ],
+			function registerLifeCycleTest( ChildTest ) {
+
+				// Define the LifeCycleTest component metadata.
+				var LifeCycleTestComponent = ng.core
+					.Component({
+						selector: "life-cycle-test",
+						inputs: [ "counter" ],
+						directives: [ ChildTest ],
+
+						// Here, we are using the counter in a number of ways. Not only
+						// are we using simple interpolation and transclusion, we're also
+						// generating dynamic markup based on the counter.
+						template:
+						`
+							<span *ngIf="( ( counter % 2 ) == 0 )">Even:</span>
+							<span *ngIf="( ( counter % 2 ) == 1 )">Odd:</span>
+
+							View: {{ counter }},
+							Content: <ng-content></ng-content>,
+
+							<child-test [counter]="counter">
+								( {{ counter }} )
+							</child-test>
+						`
+					})
+					.Class({
+						constructor: LifeCycleTestController,
+
+						// Define life-cycle methods on the prototype so that they'll 
+						// be picked up during runtime execution.
+						ngOnChanges: function noop() {},
+						ngOnInit: function noop() {},
+						// ngDoCheck: function noop() {},
+						ngAfterContentInit: function noop() {},
+						ngAfterContentChecked: function noop() {},
+						ngAfterViewInit: function noop() {},
+						ngAfterViewChecked: function noop() {}
+					})
+				;
+
+				// Configure the dependency-injection for the controller constructor.
+				// We'll need a reference to the host element in order to query its
+				// rendered content.
+				LifeCycleTestComponent.parameters = [ new ng.core.Inject( ng.core.ElementRef ) ];
+
+				return( LifeCycleTestComponent );
+
+
+				// I control the LifeCycleTest component.
+				function LifeCycleTestController( element ) {
+
+					var vm = this;
+
+					// Expose the public methods.
+					vm.ngOnChanges = ngOnChanges;
+					vm.ngOnInit = ngOnInit;
+					vm.ngAfterContentInit = ngAfterContentInit;
+					vm.ngAfterContentChecked = ngAfterContentChecked;
+					vm.ngAfterViewInit = ngAfterViewInit;
+					vm.ngAfterViewChecked = ngAfterViewChecked;
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I get called whenever the input values have changed, before any
+					// of the views are updated.
+					function ngOnChanges( event ) {
+					
+						// NOTE: Outputting state of the counter as well as the content.
+						console.log( "ngOnChanges[", this.counter, "] ...", content() );
+					
+					}
+
+
+					// I get called once after the component has been instantiated 
+					// and the inputs have been bound, but before the views have been
+					// rendered.
+					function ngOnInit() {
+					
+						console.log( "ngOnInit ...", content() );
+					
+					}
+
+
+					// I get called after the directive's content (ie, the transcludable 
+					// content) has been initialized.
+					function ngAfterContentInit() {
+					
+						console.log( "ngAfterContentInit ...", content() );
+					
+					}
+
+
+					// I get called after the directive's content (ie, the transcludable
+					// content) has been updated.
+					function ngAfterContentChecked() {
+					
+						console.log( "ngAfterContentChecked ...", content() );
+					
+					}
+
+
+					// I get called once, after ngAfterContentInit() is called, after
+					// the COMPONENT's view has been initialized.
+					function ngAfterViewInit() {
+					
+						console.log( "ngAfterViewInit ...", content() );
+					
+					}
+
+
+					// I get called after the COMPONENT's view has been updated.
+					function ngAfterViewChecked() {
+					
+						console.log( "ngAfterViewChecked ...", content() );
+					
+					}
+
+
+					// ---
+					// PRIVATE METHODS.
+					// ---
+
+
+					// I return the content text of the host element.
+					function content() {
+
+						var text = element.nativeElement.textContent
+							.replace( /\s+/g, " " )
+							.trim()
+						;
+
+						return( text );
+
+					}
+					
+				}
+
+			}
+		);
+
+
+		
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide a simple, nested Child component to also renders the counter as
+		// both an input and as transcluded content.
+		define(
+			"ChildTest",
+			function registerChildTestTest() {
+
+				// Define the ChildTest component metadata.
+				var ChildTestComponent = ng.core
+					.Component({
+						selector: "child-test",
+						inputs: [ "counter" ],
+
+						// Notice that we are using both the incoming property and the
+						// transcluded content to generate our component view.
+						template:
+						`
+							Child-View: {{ counter }},
+							Child-Content: <ng-content></ng-content>
+						`
+					})
+					.Class({
+						constructor: function noop() {}
+					})
+				;
+
+				return( ChildTestComponent );
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>

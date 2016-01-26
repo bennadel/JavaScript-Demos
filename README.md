@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Correlating Directive Life-Cycle Events To DOM State In AngularJS 2 Beta 1](http://bennadel.github.io/JavaScript-Demos/demos/life-cycle-events-angularjs2/)
 * [Creating A Pseudo "Link Function" For A Component In AngularJS 2 Beta 1](http://bennadel.github.io/JavaScript-Demos/demos/pseudo-link-function-angularjs2/)
 * [Component Inputs Provide Both Property And Attribute Bindings In AngularJS 2 Beta 1](http://bennadel.github.io/JavaScript-Demos/demos/inputs-as-attributes-angularjs2/)
 * [Pre-Binding Properties To An Object Constructor In JavaScript](http://bennadel.github.io/JavaScript-Demos/demos/pre-bind-constructor-properties/)
