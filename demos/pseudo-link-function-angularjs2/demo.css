@@ -1,0 +1,33 @@
+
+friend-list {
+	border: 2px dashed red ;
+	border-radius: 4px 4px 4px 4px ;
+	bottom: 20px ;
+	left: 10px ;
+	overflow: hidden ;
+	padding: 10px 10px 10px 10px ;
+	position: fixed ;
+	right: 10px ;
+	top: 70px ;
+}
+
+friend-list ul {
+	list-style-type: none ;
+	margin: 20px 0px 10px 0px ;
+	padding: 0px 0px 0px 0px ;
+}
+
+friend-list li {
+	border: 1px solid #999999 ;
+	border-radius: 5px 5px 5px 5px ;
+	margin: 10px 0px 10px 0px ;
+	padding: 15px 15px 15px 15px ;
+}
+
+friend-list div.more {
+	background-color: #333333 ;
+	border-radius: 5px 5px 5px 5px ;
+	color: #FFFFFF ;
+	display: inline-block ;
+	padding: 10px 17px 10px 17px ;
+}

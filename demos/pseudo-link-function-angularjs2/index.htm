@@ -1,0 +1,353 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Creating A Pseudo "Link Function" For A Component In AngularJS 2 Beta 1
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body>
+
+	<h1>
+		Creating A Pseudo "Link Function" For A Component In AngularJS 2 Beta 1
+	</h1>
+
+	<my-app>
+		Loading...
+	</my-app>
+
+	<!-- Load demo scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/1/es6-shim.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/1/Rx.umd.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/1/angular2-polyfills.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/1/angular2-all.umd.min.js"></script>
+	<!-- AlmondJS - minimal implementation of RequireJS. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/1/almond.js"></script>
+	<script type="text/javascript">
+
+		// Defer bootstrapping until all of the components have been declared.
+		// --
+		// NOTE: Not all components have to be required here since they will be 
+		// implicitly required by other components.
+		requirejs(
+			[ "AppComponent" ],
+			function run( AppComponent ) {
+
+				ng.platform.browser.bootstrap( AppComponent );
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I control the root of the application.
+		define(
+			"AppComponent",
+			[ "FRIEND_LIST_DIRECTIVES" ],
+			function registerAppComponent( FRIEND_LIST_DIRECTIVES ) {
+
+				// Define the FriendList component metadata.
+				var AppComponent = ng.core
+					.Component({
+						selector: "my-app",
+						directives: [ FRIEND_LIST_DIRECTIVES ],
+						template:
+						`
+							<friend-list [friends]="friends"></friend-list>
+						`
+					})
+					.Class({
+						constructor: AppController
+					})
+				;
+
+				return( AppComponent );
+
+
+				// I control the App component.
+				function AppController() {
+
+					var vm = this;
+
+					// I hold the collection of friends to render.
+					vm.friends = buildFriends( 
+						"Sarah", "Kim", "Kit", "Joanna", "Tricia", "Anna", "Niki", "Heather",
+						"Franzi", "Nicole", "Caroline", "Noami", "Stacy", "Tina", "Kelly"
+					);
+
+
+					// ---
+					// PRIVATE METHODS.
+					// ---
+
+
+					// I build a collection of friends using the given names.
+					function buildFriends( /* ...names */ ) {
+
+						var collection = Array.prototype.slice.call( arguments ).map(
+							function operator( name ) {
+
+								return({
+									name: name
+								});
+
+							}
+						);
+
+						return( collection );
+
+					}
+					
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// The "FriendList" component is actually a symbiotic partnership between a 
+		// component directive and standard directive. However, the calling context 
+		// doesn't want to have know about this; so rather than forcing the calling
+		// context to apply both directives, we're mixing them together behind a 
+		// single directive provider.
+		define(
+			"FRIEND_LIST_DIRECTIVES",
+			[ "FriendList", "FriendListDOM" ],
+			function registerFriendListDirectives( FriendList, FriendListDOM ) {
+
+				// If the page is actually interactive, we can return both the 
+				// "component directive" as well as the "linking directive".
+				return( [ FriendList, FriendListDOM ] );
+
+				// ... however, if all we're doing is rendering the page without the 
+				// interactive, we can return ONLY the "component directive."
+				// --
+				// return( FriendList );
+
+				// ... that said, I am not sure how one would make this differentiation
+				// in AngularJS 2 context yet (for server-side rendering).
+
+			}
+		);
+
+
+		// I provide the core component directive that renders the list of friends.
+		define(
+			"FriendList",
+			function registerTargetA() {
+
+				// Define the FriendList component metadata.
+				var FriendListComponent = ng.core
+					.Component({
+						selector: "friend-list",
+						inputs: [ "friends" ],
+						template:
+						`
+							<h2>
+								You Have {{ friends.length }} Friends!
+							</h2>
+
+							<ul>
+								<li *ngFor="#friend of visibleFriends">
+									{{ friend.name }}
+								</li>
+							</ul>
+
+							<!--
+								If we have more friends that are visible, show a teaser
+								for the number of friends that are being hidden. 
+							-->
+							<div *ngIf="( visibleCount < friends.length )" class="more">
+								+ {{ ( friends.length - visibleCount + 1 ) }} more
+							</div>
+						`
+					})
+					.Class({
+						constructor: FriendListController,
+
+						// Define life-cycle methods on the prototype so that they'll 
+						// be picked up during runtime execution.
+						ngOnChanges: function noop() {},
+						ngOnInit: function noop() {}
+					})
+				;
+
+				return( FriendListComponent );
+
+
+				// I control the FriendList component.
+				function FriendListController() {
+
+					var vm = this;
+
+					// INPUT: I am the incoming collection of friends to show.
+					vm.friends = [];
+
+					// I define how many friends can be seen in the current list.
+					vm.visibleCount = 0;
+
+					// I hold the subset of visible friends to render.
+					vm.visibleFriends = [];
+
+					// Expose the public methods.
+					vm.ngOnChanges = ngOnChanges;
+					vm.ngOnInit = ngOnInit;
+					vm.setVisibleCount = setVisibleCount;
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I get called after every time the input or output values have
+					// changed. In our case, we only have inputs.
+					function ngOnChanges( event ) {
+
+						// If the list of friends has changed, update our visible list
+						// as the visible subset of the core list.
+						if ( event.friends ) {
+
+							vm.visibleFriends = vm.friends.slice( 0, vm.visibleCount );
+
+						}
+
+					}
+
+
+					// I get called after the component has been initialized and the 
+					// inputs have been bound.
+					function ngOnInit() {
+
+						// Default the list to show all friends.
+						setVisibleCount( vm.friends.length );
+
+					}
+
+
+					// I set the number of friends that should be rendered in the list.
+					function setVisibleCount( newVisibleCount ) {
+
+						vm.visibleCount = newVisibleCount;
+
+						// If the visible count is less than then length of the friend
+						// collection, we have to show SIZE-1 in order to make room for
+						// the teaser that gets rendered after the list.
+						vm.visibleFriends = ( vm.visibleCount < vm.friends.length )
+							? vm.friends.slice( 0, ( vm.visibleCount - 1 ) )
+							: vm.friends
+						;
+
+					}
+
+				}
+
+			}
+		);
+
+
+		// I provide the pseudo "link function" counterpart to the component directive.
+		// This "aspect" of the component directive is entirely concerned with the DOM 
+		// and piping interaction behaviors back into the core "component directive". 
+		// This is piggy-backing on the fact that both a Component and a Directive can 
+		// select on the same element.
+		define(
+			"FriendListDOM",
+			[ "FriendList" ],
+			function registerFriendListDOM( FriendList ) {
+
+				// Define the FriendListDOM directive metadata.
+				// --
+				// NOTE: We are using the SAME SELECTOR as the core component. We are
+				// also binding to a global even on the window.
+				var FriendListDOMComponent = ng.core
+					.Directive({
+						selector: "friend-list",
+						host: {
+							"(window:resize)": "applyViewportSize()"
+						}
+					})
+					.Class({
+						constructor: FriendListDOMController,
+
+						// Define life-cycle methods on the prototype so that they'll 
+						// be picked up during runtime execution.
+						ngAfterContentInit: function noop() {}
+					})
+				;
+
+				// The directive needs a reference to the view element (to get its
+				// dimensions) and to the core FriendList component controller. This
+				// is what gives this directive the characteristics of a LINK function
+				// in an AngularJS component directive.
+				FriendListDOMComponent.parameters = [ 
+					new ng.core.Inject( ng.core.ElementRef ),
+					new ng.core.Inject( FriendList ) 
+				];
+
+				return( FriendListDOMComponent );
+
+
+				// I implement the pseudo "link function" for the component directive.
+				function FriendListDOMController( element, friendList ) {
+
+					var vm = this;
+
+					// Expose the public methods.
+					vm.applyViewportSize = applyViewportSize;
+					vm.ngAfterContentInit = ngAfterContentInit;
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I tell the core component controller how many items should be made
+					// visible based on the current dimensions of the host element.
+					function applyViewportSize() {
+
+						// Using a lot of hard-coded values to calculate the number of 
+						// list items that will fit in the current element dimensions. 
+						// --
+						// NOTE: Using non-dynamic values here since the actual algorithm
+						// is not material to the actual demo (just a nice context).
+						var viewportHeight = ( element.nativeElement.clientHeight - 20 );
+						var listHeight = ( viewportHeight - 50 );
+						var itemHeightPlusMargin = ( 50 + 10 );
+						var visibleCount = Math.floor( listHeight / itemHeightPlusMargin );
+
+						// Once we have calculated the number of items that can be 
+						// rendered BASED ON THE DOM, we need tell the core component 
+						// controller so that it can update the internal view-model.
+						friendList.setVisibleCount( Math.max( visibleCount, 1 ) );
+
+					}
+
+
+					// I run after the directive's content has been initialized and should
+					// have physical dimensions (at least for our purposes).
+					function ngAfterContentInit() {
+
+						applyViewportSize();
+
+					}
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
