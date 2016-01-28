@@ -1,0 +1,64 @@
+
+a {
+	color: red ;
+	cursor: pointer ;
+	text-decoration: underline ;
+	user-select: none ;
+		-moz-user-select: none ;
+		-webkit-user-select: none ;
+}
+
+html-menu {
+	cursor: default ;
+	display: inline-block ;
+	position: relative ;
+	user-select: none ;
+		-moz-user-select: none ;
+		-webkit-user-select: none ;
+	width: 300px ;
+}
+
+html-menu div.root-container {
+	border: 2px solid #CCCCCC ;
+	padding: 10px 15px 10px 15px ;
+	position: relative ;
+}
+
+html-menu div.root-container:after {
+	color: #999999 ;
+	content: "\25BC" ;
+	font-size: 11px ;
+	margin-top: -6px ;
+	position: absolute ;
+	right: 15px ;
+	top: 50% ;
+}
+
+html-menu div.items-container {
+	background-color: #FFFFFF ;
+	border: 2px solid #CCCCCC ;
+	border-top-width: 0px ;
+	left: 0px ;
+	position: absolute ;
+	right: 0px ;
+	top: 100% ;
+}
+
+html-menu-item {
+	border-top: 1px dotted #DADADA ;
+	display: block ;
+	padding: 13px 15px 13px 15px ;
+	position: relative ;
+}
+
+html-menu-item:first-child {
+	border-top-width: 0px ;
+}
+
+html-menu-item:hover {
+	background-color: #FAFAFA ;
+}
+
+html-menu.open div.root-container {
+	border-bottom-width: 1px ;
+}

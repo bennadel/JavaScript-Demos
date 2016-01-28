@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Creating An HTML Dropdown Menu Component In AngularJS 2 Beta 11](http://bennadel.github.io/JavaScript-Demos/demos/html-dropdown-menu-angular2/)
 * [Using ngModel With The OnPush Change Detection Strategy In Angular 2 Beta 11](http://bennadel.github.io/JavaScript-Demos/demos/ng-model-change-detection-angular2/)
 * [Manually Triggering ngOnChanges() Inside An NgModel Value Accessor In Angular 2 Beta 11](http://bennadel.github.io/JavaScript-Demos/demos/trigger-ng-on-changes-angular2/)
 * [Host Bindings Are Breaking The ngModel Bridge In Angular 2 Beta 11](http://bennadel.github.io/JavaScript-Demos/demos/ng-model-host-bindings-angular2/)

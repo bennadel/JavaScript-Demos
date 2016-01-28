@@ -1,0 +1,963 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Creating An HTML Dropdown Menu Component In AngularJS 2 Beta 11
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body>
+
+	<h1>
+		Creating An HTML Dropdown Menu Component In AngularJS 2 Beta 11
+	</h1>
+
+	<my-app>
+		Loading...
+	</my-app>
+
+	<!-- Load demo scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/11/es6-shim.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/11/Rx.umd.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/11/angular2-polyfills.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/11/angular2-all.umd.js"></script>
+	<!-- AlmondJS - minimal implementation of RequireJS. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/11/almond.js"></script>
+	<script type="text/javascript">
+
+		// Defer bootstrapping until all of the components have been declared.
+		// --
+		// NOTE: Not all components have to be required here since they will be 
+		// implicitly required by other components.
+		requirejs( 
+			[ /* Using require() for better readability. */ ],
+			function run() {
+
+				ng.platform.browser.bootstrap( require( "App" ) );
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I control the root of the application.
+		define(
+			"App",
+			function registerApp() {
+
+				// Define the App component metadata.
+				ng.core
+					.Component({
+						selector: "my-app",
+
+						// Notice that we are requiring the composite directives 
+						// collection. This way, we don't have to include all the various
+						// menu directives individually.
+						directives: [ require( "HTML_MENU_DIRECTIVES" ) ],
+						template:
+						`
+							<p>
+								<a (click)="selectFirstFriend()">Select first friend</a>
+								&mdash;
+								<a (click)="selectLastFriend()">Select last friend</a>
+								&mdash;
+								<a (click)="setFriends( normalFriends )">Set Normal Friends</a>
+								&mdash;
+								<a (click)="setFriends( famousFriends )">Set Famous Friends</a>
+								&mdash;
+								<a (click)="toggleMenu()">Toggle Menu Existence</a>
+							</p>
+
+							<template [ngIf]="isShowingMenu">
+								
+								<html-menu [(ngModel)]="selectedFriend">
+									
+									<html-menu-item [value]="null">
+										<em>I have no friends :(</em>
+									</html-menu-item>
+									
+									<html-menu-item *ngFor="#friend of friends" [value]="friend">
+										<strong>{{ friend.name }}</strong> is the best!
+									</html-menu-item>
+
+								</html-menu>
+
+							</template>
+
+							<p>
+								{{ selectedFriend | json }}
+							</p>
+						`
+					})
+					.Class({
+						constructor: AppController
+					})
+				;
+
+				return( AppController );
+
+
+				// I control the App component.
+				function AppController() {
+
+					var vm = this;
+
+					// I am one collection of friends used to populate the menu items.
+					vm.normalFriends = [
+						{
+							id: 1,
+							name: "Sarah"
+						},
+						{
+							id: 2,
+							name: "Tricia"
+						},
+						{
+							id: 3,
+							name: "Kim"
+						}
+					];
+
+					// I am another collection of friends used to populate the menu items.
+					vm.famousFriends = [
+						{
+							id: 1,
+							name: "Arnold"
+						},
+						{
+							id: 2,
+							name: "Sly"
+						},
+						{
+							id: 3,
+							name: "Jason"
+						}
+					];
+
+					// Set up the initial selection for the menu.
+					vm.friends = vm.normalFriends;
+					vm.selectedFriend = vm.friends[ 0 ];
+
+					// I determine if we are including the HtmlMenu in the page. This is
+					// here to explore the ngOnDestroy() life-cycle event of the menu.
+					vm.isShowingMenu = true;
+
+					// Expose the public methods.
+					vm.selectFirstFriend = selectFirstFriend;
+					vm.selectLastFriend = selectLastFriend;
+					vm.setFriends = setFriends;
+					vm.toggleMenu = toggleMenu;
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I select the first friend in the current collection.
+					function selectFirstFriend() {
+
+						vm.selectedFriend = vm.friends[ 0 ];
+
+					}
+
+
+					// I select the last friend in the current collection.
+					function selectLastFriend() {
+
+						vm.selectedFriend = vm.friends[ vm.friends.length - 1 ];
+
+					}
+
+
+					// I setup the given collection as the one used to render the menu.
+					function setFriends( newFriends ) {
+
+						vm.friends = newFriends;
+						vm.selectedFriend = null;
+
+					}
+
+
+					// I toggle the existing of the menu component.
+					function toggleMenu() {
+
+						vm.isShowingMenu = ! vm.isShowingMenu;
+
+					}
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// The HtmlMenu is actually a composite of a number of different directives 
+		// working together in harmony towards a single goal. This module makes it easy
+		// to include all the necessary directives at the same time.
+		define(
+			"HTML_MENU_DIRECTIVES",
+			function registerHtmlDropdownDirective() {
+
+				return([
+					require( "HtmlMenu" ), // Core directives.
+					require( "HtmlMenuItem" ), // Core directives.
+					require( "HtmlMenuExternalCloser" ), // Helps close the menu.
+					require( "HtmlMenuForNgModel" ) // Provides ngModel bridge.
+				]);
+
+			}
+		);
+
+
+		// I provide a custom HtmlMenu in which the rendering of the options are provided
+		// by the calling context.
+		define(
+			"HtmlMenu",
+			function registerHtmlMenu() {
+
+				// Define the HtmlMenu component metadata.
+				ng.core
+					.Component({
+						selector: "html-menu",
+						inputs: [ "value" ],
+						outputs: [ "valueChange" ],
+
+						// We need to use the more specific DOM adapter because we need
+						// to start projecting HTML content from the selected item into 
+						// the root of the menu. 
+						// --
+						// CAUTION: This service will have to mocked-out in other 
+						// rendering contexts.
+						providers: [ 
+							ng.platform.browser.BrowserDomAdapter
+						],
+						host: {
+							"[class.open]": "isMenuOpen"
+						},
+						template:
+						`
+							<div [innerHTML]="rootMarkup" (click)="toggleMenu()" class="root-container">
+								<br />
+							</div>
+
+							<div *ngIf="isMenuOpen" class="items-container">
+								<ng-content></ng-content>
+							</div>
+						`
+					})
+					.Class({
+						constructor: HtmlMenuController,
+
+						// Define the life-cycle methods on the prototype so that they
+						// are picked up at run-time.
+						ngAfterViewChecked: function noop() {},
+						ngAfterViewInit: function noop() {},
+						ngOnChanges: function noop() {},
+						ngOnDestroy: function noop() {}
+					})
+				;
+
+				HtmlMenuController.parameters = [
+					new ng.core.Inject( ng.core.ChangeDetectorRef ),
+					new ng.core.Inject( ng.platform.browser.BrowserDomAdapter )
+				];
+
+				return( HtmlMenuController );
+
+
+				// I control the HtmlMenu component.
+				function HtmlMenuController( changeDetectorRef, domAdapter ) {
+
+					var vm = this;
+
+					// I hold the collection of items being rendered in the view. While
+					// the items will render on their own, this collection is needed to
+					// be able to render the selected item in the menu root.
+					var items = [];
+
+					// I determine if the component has been destroyed so that we 
+					// can ignore some method calls made by the menu items during the
+					// teardown phase of the menu components.
+					var isDestroyed = false;
+
+					// I keep track of whether or not the view-model needs to be 
+					// reconciled with the view. This way, we can chunk the changes 
+					// rather than reacting to each change individually.
+					var viewNeedsToBeReconciled = false;
+
+					// I hold the item element to be used in the case when the current 
+					// menu value cannot be matched in the collection of known menu 
+					// items. While we are clearly working with HTML, I'm trying to defer
+					// to the domAdapter as much as possible so we don't make too many
+					// assumptions about the render.
+					var missingNativeElement = domAdapter.createTemplate( "<br />" );
+
+					// I hold the value associated with this menu.
+					// --
+					// NOTE: @Input to be injected.
+					vm.value = null;
+
+					// I hold the event stream of value changes.
+					// --
+					// CAUTION: Due to the one-way data flow, these events are for the 
+					// "suggestion" of value changes; it is up to the calling context to
+					// actually turn around and tell the menu to change the value input.
+					vm.valueChange = new ng.core.EventEmitter();
+
+					// I hold the view markup used to render the menu root. This will 
+					// be pulled out of the selected item or the "missing item."
+					vm.rootMarkup = null;
+
+					// I determine if the menu items are currently visible.
+					vm.isMenuOpen = false;
+
+					// Expose the public methods.
+					vm.addItem = addItem;
+					vm.hideMenu = hideMenu;
+					vm.ngAfterViewChecked = reconcileView; // Caution: Unexpected method reference.
+					vm.ngAfterViewInit = reconcileView; // Caution: Unexpected method reference.
+					vm.ngOnDestroy = ngOnDestroy;
+					vm.ngOnChanges = ngOnChanges;
+					vm.removeItem = removeItem;
+					vm.selectItem = selectItem;
+					vm.showMenu = showMenu;
+					vm.toggleMenu = toggleMenu;
+					vm.updateItem = updateItem;
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I add the given HtmlMenu item to the internal collection.
+					function addItem( newItem ) {
+
+						items.push( newItem );
+						
+						// If the newly added item value matches the menu value, then 
+						// we may need to update the rendering.
+						if ( vm.value === newItem.value ) {
+
+							viewNeedsToBeReconciled = true;
+
+						}
+
+					}
+
+
+					// I close the menu items dropdown.
+					function hideMenu() {
+
+						vm.isMenuOpen = false;
+
+					}
+
+
+					// I get called when the component is being destroyed.
+					function ngOnDestroy() {
+
+						// Flag the component as destroyed so that we can ignore all of
+						// the "remove item" calls that the menu items are about to make.
+						isDestroyed = true;
+
+					}
+
+
+					// I get called whenever the bound inputs change.
+					function ngOnChanges( event ) {
+
+						// Since the value has changed, it means that our root rendering
+						// needs to updated to echo a different option within the menu.
+						viewNeedsToBeReconciled = true;
+
+					}
+
+
+					// I remove the given item from the internal collection.
+					function removeItem( itemToRemove ) {
+
+						// If the component is being destroyed, this method call is just
+						// due to the subsequent destroy calls of each nested item. We 
+						// can safely ignore.
+						if ( isDestroyed ) {
+
+							return;
+
+						}
+
+						// Remove the item from the internal collection.
+						items = items.filter(
+							function operator( item ) {
+
+								return( item !== itemToRemove );
+
+							}
+						);
+
+						// If the item being removed matches the value of the menu, then
+						// we'll need to update the menu root to reflect the loss of a
+						// the selected option.
+						if ( vm.value === itemToRemove.value ) {
+
+							viewNeedsToBeReconciled = true;
+							
+						}
+
+					}
+
+
+					// I ask the menu to select the given menu item.
+					function selectItem( item ) {
+
+						// Due to the nature of a one-way data flow, we can't actually
+						// take this request and change the value binding of the menu.
+						// Instead, we have to emit a change event and then wait for the
+						// consuming context to tell us to change the value.
+						vm.valueChange.next( item.value );
+
+						vm.isMenuOpen = false;
+
+					}
+
+
+					// I open the menu items dropdown.
+					function showMenu() {
+
+						vm.isMenuOpen = true;
+
+					}
+
+
+					// I toggle the menu item dropdown open and close.
+					function toggleMenu() {
+
+						( vm.isMenuOpen ? hideMenu() : showMenu() );
+
+					}
+
+
+					// I tell the menu that the given item's value has changed.
+					function updateItem( item ) {
+
+						// If the item being updated matches the value of the menu, then
+						// we'll need to update the menu root to reflect the possible 
+						// change in the rendered item.
+						if ( vm.value === item.value ) {
+
+							viewNeedsToBeReconciled = true;
+							
+						}
+
+					}
+
+
+					// ---
+					// PRIVATE METHODS.
+					// ---
+
+
+					// I reconcile the view rendering with the current value.
+					function reconcileView() {
+
+						// If the view doesn't have any pending changes, just ignore.
+						if ( ! viewNeedsToBeReconciled ) {
+
+							return;
+
+						}
+
+						// We need to find the nativeElement to "project" into our root.
+						// Assuming we won't find one in the options list, let's start 
+						// out with our missing item element.
+						var selectedNativeElement = missingNativeElement;
+
+						// Search for a matching menu item.
+						for ( var i = 0, length = items.length ; i < length ; i++ ) {
+
+							// If this item value matches the menu item value, we know
+							// that it's the item that needs to be rendered in our root.
+							// Get the nativeElement reference so we can project it.
+							if ( vm.value === items[ i ].value ) {
+
+								selectedNativeElement = items[ i ].getElementRef().nativeElement;
+								break;
+								
+							}
+
+						}
+
+						// Setup the markup to be projected into the root.
+						vm.rootMarkup = domAdapter.getInnerHTML( selectedNativeElement );
+
+						// Flag that we've reconciled the view.
+						viewNeedsToBeReconciled = false
+
+						// Because one part of our view is about to be changed based on 
+						// changes from another part of our view, we're going to run 
+						// into a situation where are view needs to be re-rendered AFTER
+						// change-detection has already been executed. As such, we have 
+						// to explicitly tell Angular to check changes in this component
+						// again after we run this method.
+						changeDetectorRef.detectChanges();
+
+					}
+
+				}
+
+			}
+		);
+
+
+		// I provide the HtmlMenu Item, which houses each option within the HtmlMenu.
+		// Each option can contain arbitrary HTML content from the user (which will be
+		// projected into the menu root when selected).
+		define(
+			"HtmlMenuItem",
+			function registerHtmlMenuItem() {
+
+				// Define the HtmlMenuItem component metadata.
+				ng.core
+					.Directive({
+						selector: "html-menu-item",
+						inputs: [ "value" ],
+						host: {
+							"(click)": "selectItem()"
+						}
+					})
+					.Class({
+						constructor: HtmlMenuItemController,
+
+						// Define the life-cycle methods on the prototype so that they
+						// are picked up at run-time.
+						ngOnChange: function noop() {},
+						ngOnDestroy: function noop() {},
+						ngOnInit: function noop() {}
+					})
+				;
+
+				HtmlMenuItemController.parameters = [
+					new ng.core.Inject( ng.core.ElementRef ),
+					new ng.core.Inject( require( "HtmlMenu" ) )
+				];
+
+				return( HtmlMenuItemController );
+
+
+				// I control the HtmlMenuItem component.
+				function HtmlMenuItemController( elementRef, htmlMenu ) {
+
+					var vm = this;
+
+					// I hold the value associated with this item.
+					// --
+					// NOTE: @Input to be injected.
+					vm.value = null;
+
+					// Expose the public methods.
+					vm.getElementRef = getElementRef;
+					vm.ngOnChanges = ngOnChanges;
+					vm.ngOnDestroy = ngOnDestroy;
+					vm.ngOnInit = ngOnInit;
+					vm.selectItem = selectItem;
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I return the visual representation of the item (which is used by
+					// the HtmlMenu to render the selected item in the HtmlMenu root).
+					function getElementRef() {
+
+						return( elementRef );
+
+					}
+
+
+					// I get called when the inputs change (or are first bound).
+					function ngOnChanges( event ) {
+
+						// Whenever the input value changes on this item, there's a 
+						// chance that the HtmlMenu needs to change its rendering if this
+						// this is the selected item. As such, tell the HtmlMenu that it
+						// may need to re-check its rendering.
+						// --
+						// NOTE: We don't care about the "first change" since that has
+						// been implicitly handled in the ngOnInit() method (which is 
+						// actually called after the first call to ngOnChanges).
+						if ( event.value && ! event.value.isFirstChange() ) {
+
+							htmlMenu.updateItem( this );
+							
+						}
+
+					}
+
+
+					// I get called when then item is being destroyed.
+					function ngOnDestroy() {
+
+						// When the item is destroyed, we need to tell the HtmlMenu to
+						// remove it from its internal collection. This may have to 
+						// affect the rendering of the HtmlMenu if this is the currently
+						// selected item.
+						htmlMenu.removeItem( this );
+						htmlMenu = elementRef = null;
+
+					}
+
+
+					// I get called after the component has been instantiated and its 
+					// inputs have been bound for the first time.
+					function ngOnInit() {
+
+						// Tell the HtmlMenu about this newly-added item so that it can 
+						// be added to the internal collection.
+						htmlMenu.addItem( this );
+
+					}
+
+
+					// I ask the HtmlMenu to select this item.
+					function selectItem() {
+
+						// NOTE: Due to the one-way data flow, this will only cause an
+						// event to be emitted, which may or may not lead to this item
+						// being selected.
+						htmlMenu.selectItem( this );
+
+					}
+
+				}
+
+			}
+		);
+
+
+		// I provide a secondary directive on the HTMLMenu that will close the HtmlMenu
+		// if the user mouses-down outside of the component's click-target.
+		define(
+			"HtmlMenuExternalCloser",
+			function registerHtmlMenuCloser() {
+
+				// Define the HtmlMenuExternalCloser directive metadata.
+				ng.core
+					.Directive({
+						selector: "html-menu",
+						host: {
+							"(mousedown)": "trackEvent( $event )",
+							"(document:mousedown)": "verifyEvent( $event )"
+						}
+					})
+					.Class({
+						constructor: HtmlMenuExternalCloserController
+					})
+				;
+
+				HtmlMenuExternalCloserController.parameters = [
+					new ng.core.Inject( require( "HtmlMenu" ) )
+				];
+
+				return( HtmlMenuExternalCloserController );
+
+
+				// I control the HtmlMenuExternalCloser directive. I am a sibling 
+				// directive to the HtmlMenu component that binds to the same element 
+				// and closes the HtmlMenu if the user mouses-down outside of the 
+				// HtmlMenu component.
+				// --
+				// NOTE: This logic could have been put directly in the HtmlMenu 
+				// component. But, it is being kept here so as to not muddy the waters 
+				// of the HtmlMenu logic.
+				function HtmlMenuExternalCloserController( htmlMenu ) {
+
+					var vm = this;
+
+					// I keep track of the last event that was triggered by a mousedown
+					// within the HtmlMenu component (to be compared to events that reach
+					// the the document root).
+					var lastEvent = null;
+
+					// Expose the public methods.
+					vm.trackEvent = trackEvent;
+					vm.verifyEvent = verifyEvent;
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+					
+					// I keep track of the given event that was triggered by a mousedown
+					// event from within the HtmlMenu component.
+					function trackEvent( event ) {
+
+						lastEvent = event;
+
+					}
+
+
+					// I compare the events that reach the document to the events being
+					// tracked from within the HtmlMenu component.
+					function verifyEvent( event ) {
+
+						// Since the events bubble up through the DOM tree, we know that
+						// an event that originated from within the HtmlMenu component 
+						// will bubble-up through the HtmlMenu component before proceeding
+						// on to the document root. As such, if the tracked event doesn't 
+						// match the event that reached the document, it must mean that 
+						// it originated from outside the HtmlMenu component.
+						if ( lastEvent !== event ) {
+
+							htmlMenu.hideMenu();
+
+						}
+
+						lastEvent = null;
+
+					}
+
+				}
+
+			}
+		);
+
+
+		// I provide an ngModel-enabled bridge for the HtmlMneu component.
+		define(
+			"HtmlMenuForNgModel",
+			function registerHtmlMenuForNgModel() {
+
+				// Configure the HtmlMenuForNgModel directive definition.
+				ng.core
+					.Directive({
+						// Notice that we are only matching on instances of the HtmlMenu
+						// component that also include the ngModel directive.
+						selector: "html-menu[ngModel]",
+						host: {
+							"(valueChange)": "handleValueChange( $event )"
+						},
+
+						// When ngModel is being used, we need to create a bridge between
+						// the ngModel directive and the target component. That bridge 
+						// has to implement the "value accessor" interface. In this case,
+						// we're telling Angular to use THIS DIRECTIVE INSTANCE as that 
+						// value accessor provider. This means that the following 
+						// controller needs to provide the value accessor methods:
+						// --
+						// * registerOnChange
+						// * registerOnTouched
+						// * writeValue
+						// --
+						// NOTE: You don't need the forwardRef() here because we are 
+						// using ES5 instead of TypeScript. ES5 for the win!
+						providers: [
+							ng.core.provide(
+								ng.common.NG_VALUE_ACCESSOR,
+								{
+									useExisting: HtmlMenuForNgModelController,
+									multi: true
+								}
+							)
+						]
+					})
+					.Class({
+						constructor: HtmlMenuForNgModelController
+					})
+				;
+
+				HtmlMenuForNgModelController.parameters = [
+					new ng.core.Inject( require( "HtmlMenu" ) ),
+					new ng.core.Inject( ng.core.ChangeDetectorRef )
+				];
+
+				return( HtmlMenuForNgModelController );
+
+
+				// I control the HtmlMenuForNgModel directive.
+				// --
+				// NOTE: Since this controller is performing double-duty as both the 
+				// directive controller AND the valueAccessor (for ngModel), it is also
+				// implementing the value accessor interface.
+				function HtmlMenuForNgModelController( htmlMenu, changeDetectorRef ) {
+
+					var vm = this;
+
+					// As part of the value accessor "bridge" that this directive is 
+					// providing, we need to be able to manually trigger the ngOnChanges
+					// life-cycle event on the target component. To do that properly, we
+					// need to keep track of when the first value is written so that we
+					// can announce it as the first SimpleChange instance.
+					var isFirstChange = true;
+
+					// Eventually, ngModel will register its own change hander. Until
+					// then, let's start with a no-op to keep the consumption uniform
+					// in the following code.
+					var onChange = function noop() {};
+
+					// Expose the public methods.
+					vm.handleValueChange = handleValueChange;
+					vm.registerOnChange = registerOnChange; // Value accessor interface.
+					vm.registerOnTouched = registerOnTouched; // Value accessor interface.
+					vm.writeValue = writeValue; // Value accessor interface.
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I handle the valueChange event coming out of the HtmlMenu component.
+					// Since ngModel doesn't know about this event, we have to bridge the
+					// gap between the HtmlMenu component and the ngModel directive.
+					function handleValueChange( newValue ) {
+
+						// When we invoke the onChange() value accessor method, ngModel
+						// already assumes that the DOM (Document Object Model) is in the
+						// correct state. As such, we have ensure that the HtmlMenu 
+						// component reflects the change that it just emitted (by piping
+						// the emitted value right back into the HtmlMenu component).
+						// --
+						// NOTE: At this point, we are disregarding the one-way data flow
+						// paradigm. But, that's the WHOLE POINT OF NG-MODEL.
+						applyChangesToTarget( htmlMenu.value, newValue );
+
+						// Tell ngModel so that it can synchronize its own internal model.
+						// --
+						// NOTE: If we wanted to, we could use this as an opportunity to 
+						// "parse" the value into something more "model" oriented (such as 
+						// parsing string values into numbers).
+						onChange( newValue );
+
+					}
+
+
+					// I register the onChange handler provided by ngModel.
+					function registerOnChange( newOnChange ) {
+
+						onChange = newOnChange;
+
+					}
+					
+
+					// I register the onTouched handler provided by ngModel.
+					function registerOnTouched() {
+						
+						// console.log( "registerOnTouched" );
+
+					}
+
+
+					// I implement the value input invoked by ngModel. When ngModel 
+					// wants to update the value of the target component, it doesn't 
+					// know what property to use (or how to transform that value into 
+					// something meaningful for the target component). As such, we have 
+					// to bridge the gap between ngModel and the input property of the 
+					// HtmlMenu component.
+					function writeValue( newValue ) {
+
+						applyChangesToTarget( htmlMenu.value, newValue );
+
+					}
+					
+
+					// ---
+					// PRIVATE METHODS.
+					// ---
+
+
+					// I apply the given previous and next values to the underlying 
+					// component. Part of that process involves making sure all of the 
+					// right work-flows (such as change-detection) are initiated.
+					function applyChangesToTarget( previousValue, nextValue ) {
+
+						// Write the ngModel value to the HtmlMenu component.
+						// --
+						// CAUTION: Because we know that the HtmlMenu component is not
+						// using any host bindings that depend on this value, we can 
+						// safely avoid running into change errors:
+						// --
+						// ExpressionChangedAfterItHasBeenCheckedException
+						// --
+						// Normally, we probably shouldn't make these kinds of assumption.
+						// But, I am trying to keep the [already complex] demo simple.
+						// --
+						// Read more: http://www.bennadel.com/blog/3056-host-bindings-are-breaking-the-ngmodel-bridge-in-angular-2-beta-11.htm
+						htmlMenu.value = nextValue;
+
+						// When we update the component's Inputs programmatically, 
+						// Angular doesn't actually register this as an "Input change".
+						// This creates several complications. First, it means that the
+						// OnChanges() life-cycle event method won't be triggered 
+						// implicitly on the target component. Second, it means that 
+						// any OnPush change detection won't be triggered. As such, we 
+						// have to take care of fulfilling both of those responsibilities
+						// explicitly here within this value accessor bridge.
+
+						// Ensure that the entire ancestor component path is marked for 
+						// change detection so that Angular will know to perform a check
+						// on the HtmlMenu's View template.
+						// --
+						// NOTE: The current version of the HtmlMenu doesn't actually use
+						// the OnPush change detection strategy; but, I'm leaving this in
+						// here for documentation on potential requirements. And, to keep
+						// the value accessor bridge as "naive" as possible.
+						changeDetectorRef.markForCheck();
+
+						// If the HtmlMenu component doesn't provide a hook for the life-
+						// cycle event, there's nothing we need to do.
+						if ( ! htmlMenu.ngOnChanges ) {
+
+							return;
+
+						}
+
+						// If we made it this far, the HtmlMenu component is exposing an
+						// ngOnChanges() method. As such, we have to prepare the changes.
+						var changes = {
+							value: new ng.core.SimpleChange( previousValue, nextValue )
+						};
+
+						// Unfortunately, the Angular API doesn't seem to expose the 
+						// necessary utility library that is used to denote the "first"
+						// simple change. As such, we have to hack this by overwriting
+						// the isFirstChange() instance method when we know that this 
+						// is the first change we are sending to the HtmlMenu.
+						if ( isFirstChange ) {
+
+							isFirstChange = false;
+
+							changes.value.isFirstChange = function() {
+								
+								return( true );
+
+							};
+
+						}
+
+						htmlMenu.ngOnChanges( changes );
+
+					}
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
