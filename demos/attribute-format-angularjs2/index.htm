@@ -6,8 +6,6 @@
 	<title>
 		Attributes Are Not Normalized In AngularJS 2 Beta 1
 	</title>
-
-	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
 </head>
 <body>
 
@@ -60,18 +58,34 @@
 						template:
 						`
 							<p [colorMe]=" '#FF0099' ">
-								Color me pink!
+								1. Color me pink!
 							</p>
 
 							<p bind-colorMe=" '#FF0099' ">
-								Color me pink!
+								2. Color me pink!
 							</p>
 
 							<p bindColorMe=" '#FF0099' ">
-								Color me pink!
+								3. Color me pink!
 							</p>
 
+							<p data-bind-colorMe=" '#FF0099' ">
+								4. Color me pink!
+							</p>
 
+							<p data-bindColorMe=" '#FF0099' ">
+								5. Color me pink!
+							</p>
+
+							<p x-bind-colorMe=" '#FF0099' ">
+								6. Color me pink!
+							</p>
+
+							<p data-[colorMe]=" '#FF0099' ">
+								7. Color me pink!
+							</p>
+
+							
 							<!--
 								If uncommented, these two actually throw an error because
 								they are trying to bind on unknown input properties:
