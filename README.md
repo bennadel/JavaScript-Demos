@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Attributes Are Not Normalized In AngularJS 2 Beta 1](http://bennadel.github.io/JavaScript-Demos/demos/attribute-format-angularjs2/)
 * [Correlating Directive Life-Cycle Events To DOM State In AngularJS 2 Beta 1](http://bennadel.github.io/JavaScript-Demos/demos/life-cycle-events-angularjs2/)
 * [Creating A Pseudo "Link Function" For A Component In AngularJS 2 Beta 1](http://bennadel.github.io/JavaScript-Demos/demos/pseudo-link-function-angularjs2/)
 * [Component Inputs Provide Both Property And Attribute Bindings In AngularJS 2 Beta 1](http://bennadel.github.io/JavaScript-Demos/demos/inputs-as-attributes-angularjs2/)
