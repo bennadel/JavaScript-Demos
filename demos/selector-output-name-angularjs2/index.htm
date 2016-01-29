@@ -1,0 +1,192 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Selectors And Outputs Cannot Have The Same Name In AngularJS 2 Beta 1
+	</title>
+</head>
+<body>
+
+	<h1>
+		Selectors And Outputs Cannot Have The Same Name In AngularJS 2 Beta 1
+	</h1>
+
+	<my-app>
+		Loading...
+	</my-app>
+
+	<!-- Load demo scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/1/es6-shim.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/1/Rx.umd.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/1/angular2-polyfills.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/1/angular2-all.umd.js"></script>
+	<!-- AlmondJS - minimal implementation of RequireJS. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/1/almond.js"></script>
+	<script type="text/javascript">
+
+		// Defer bootstrapping until all of the components have been declared.
+		// --
+		// NOTE: Not all components have to be required here since they will be 
+		// implicitly required by other components.
+		requirejs(
+			[ "AppComponent" ],
+			function run( AppComponent ) {
+
+				ng.platform.browser.bootstrap( AppComponent );
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide the root application component.
+		define(
+			"AppComponent",
+			[ "Giggle" ],
+			function registerAppComponent( Giggle ) {
+
+				// Configure the App component definition.
+				var AppComponent = ng.core
+					.Component({
+						selector: "my-app",
+						directives: [ Giggle ],
+
+						// In the following template, were are attempting to define 
+						// an attribute directive using a selector and an output of
+						// the same name.
+						// --
+						// CAUTION: The syntax we are using in the template DOES NOT WORK.
+						// But, you can get it to work with the following syntax:
+						// --
+						// giggle (giggle)="logGiggle( $event )"
+						// --
+						// ... where the selector and the output can have the same name;
+						// but, they need to be duplicated in the calling context. 
+						template:
+						`
+							<div (giggle)="logGiggle( $event )">
+								
+								Go ahead, tickle me!
+
+							</div>				
+						`
+					})
+					.Class({
+						constructor: AppController
+					})
+				;
+
+				return( AppComponent );
+
+
+				// I control the AppComponent component.
+				function AppController() {
+
+					var vm = this;
+
+					// Expose the public methods.
+					vm.logGiggle = logGiggle;
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I log the giggle event.
+					function logGiggle( message ) {
+
+						console.log( "Thou hast giggled:", message );
+
+					};
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide a directive that emits "giggle" events on an interval.
+		define(
+			"Giggle",
+			function registerGiggle() {
+
+				// Configure the Giggle directive definition.
+				// --
+				// NOTE: Notice that the attribute selector and the output use the same
+				// name. This would have been totally fine in AngularJS 1.x; but, appears
+				// to be invalid in AngularJS 2 Beta 1.
+				var GiggleDirective = ng.core
+					.Directive({
+						selector: "[giggle]",
+						outputs: [ "giggle" ]
+					})
+					.Class({
+						constructor: GiggleController,
+
+						// Define life-cycle events on the prototype so that they will 
+						// be picked-up at link time.
+						ngOnInit: function noop() {}
+					})
+				;
+
+				return( GiggleDirective );
+
+
+				// I control the Giggle directive.
+				function GiggleController() {
+
+					var vm = this;
+
+					console.log( "The giggle constructor has been invoked." );
+
+					// Since "giggle" is an output, we have to set up an event stream
+					// that the calling context can subscribe to.
+					vm.giggle = new ng.core.EventEmitter();
+
+					// Expose the public methods.
+					vm.ngOnInit = ngOnInit;
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I get called once, after the directive has been instantiated and
+					// the inputs have been bound.
+					function ngOnInit() {
+
+						// Set up an interval to start emitting output events.
+						setInterval( 
+							function deferredLaugh() {
+
+								console.log( "- - - - - - - - - - - " );
+								console.log( "Emitting giggle event." );
+
+								vm.giggle.emit( "Te he he" );
+
+							},
+							( 2 * 1000 )
+						);
+
+					}
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>

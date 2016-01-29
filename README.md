@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Selectors And Outputs Cannot Have The Same Name In AngularJS 2 Beta 1](http://bennadel.github.io/JavaScript-Demos/demos/selector-output-name-angularjs2/)
 * [Attributes Are Not Normalized In AngularJS 2 Beta 1](http://bennadel.github.io/JavaScript-Demos/demos/attribute-format-angularjs2/)
 * [Correlating Directive Life-Cycle Events To DOM State In AngularJS 2 Beta 1](http://bennadel.github.io/JavaScript-Demos/demos/life-cycle-events-angularjs2/)
 * [Creating A Pseudo "Link Function" For A Component In AngularJS 2 Beta 1](http://bennadel.github.io/JavaScript-Demos/demos/pseudo-link-function-angularjs2/)
