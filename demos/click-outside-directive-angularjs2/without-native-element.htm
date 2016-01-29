@@ -1,0 +1,252 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Tracking Click Events Outside The Current Component In Angular 2 Beta 1
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body>
+
+	<h1>
+		Tracking Click Events Outside The Current Component In Angular 2 Beta 1
+	</h1>
+
+	<h2>
+		Without Using nativeElement
+	</h2>
+
+	<my-app>
+		Loading...
+	</my-app>
+
+	<!-- Load demo scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/1/es6-shim.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/1/Rx.umd.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/1/angular2-polyfills.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/1/angular2-all.umd.js"></script>
+	<!-- AlmondJS - minimal implementation of RequireJS. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/1/almond.js"></script>
+	<script type="text/javascript">
+
+		// Defer bootstrapping until all of the components have been declared.
+		// --
+		// NOTE: Not all components have to be required here since they will be 
+		// implicitly required by other components.
+		requirejs(
+			[ "AppComponent" ],
+			function run( AppComponent ) {
+
+				ng.platform.browser.bootstrap( AppComponent );
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide the root application component.
+		define(
+			"AppComponent",
+			function registerAppComponent() {
+
+				var ClickTarget = require( "ClickTarget" );
+
+				// Configure the App component definition.
+				var AppComponent = ng.core
+					.Component({
+						selector: "my-app",
+						directives: [ ClickTarget ],
+						template:
+						`
+							<click-target
+								(click)="handleClick()"
+								(clickOutside)="handleClickOutside()"
+								(mousedownOutside)="handleMousedownOutside()"
+								(mouseupOutside)="handleMouseupOutside()">
+
+								Quit staring and mouse me! 
+
+							</click-target>				
+						`
+					})
+					.Class({
+						constructor: AppController
+					})
+				;
+
+				return( AppComponent );
+
+
+				// I control the App component.
+				function AppController() {
+
+					var vm = this;
+
+					// Expose the public methods.
+					vm.handleClick = handleClick;
+					vm.handleClickOutside = handleClickOutside;
+					vm.handleMousedownOutside = handleMousedownOutside;
+					vm.handleMouseupOutside = handleMouseupOutside;
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I log the click events, internal to the target.
+					function handleClick() {
+
+						console.log( "Clicked component!" );
+
+					};
+
+
+					// I log the click events, external to the target.
+					function handleClickOutside() {
+
+						console.warn( "Clicked - outside - component!" );
+
+					};
+
+
+					// I log the mousedown events, external to the target.
+					function handleMousedownOutside() {
+
+						console.warn( "Moused-Down - outside - component!" );
+
+					};
+
+
+					// I log the mouseup events, external to the target.
+					function handleMouseupOutside() {
+
+						console.warn( "Moused-Up - outside - component!" );
+
+					};
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide a component that tracks mouse events (mousedown, mouseup, click)
+		// outside of itself and emits them as they occur.
+		define(
+			"ClickTarget",
+			function registerClickTarget() {
+
+				// Configure the ClickTarget component definition. 
+				// --
+				// NOTE: We are tracking the relevant DOM events at both the host and 
+				// the global level. This will allow us to compare event objects as 
+				// they bubble-up through the DOM tree.
+				var ClickTargetComponent = ng.core
+					.Directive({
+						selector: "click-target",
+						outputs: [ 
+							"clickOutside", 
+							"mousedownOutside", 
+							"mouseupOutside" 
+						],
+						host: {
+							// Track mouse events at the global level.
+							"(document: click)": "compareEvent( $event )",
+							"(document: mousedown)": "compareEvent( $event )",
+							"(document: mouseup)": "compareEvent( $event )",
+
+							// Track mouse events at the host (component) level.
+							"(click)": "trackEvent( $event )",
+							"(mousedown)": "trackEvent( $event )",
+							"(mouseup)": "trackEvent( $event )"
+						}
+					})
+					.Class({
+						constructor: ClickTargetController
+					})
+				;
+
+				return( ClickTargetComponent );
+
+
+				// I control the ClickTarget component.
+				function ClickTargetController() {
+
+					var vm = this;
+
+					// I keep a reference to the most recent host event (ie, the bound-
+					// event triggered on the current host component).
+					var hostEvent = null;
+
+					// Setup the output event streams.
+					// --
+					// NOTE: We are using convention to define the output streams as
+					// ( eventType + "Outside" ). This will make the events easier to
+					// trigger within the compareEvent() method.
+					vm.clickOutside = new ng.core.EventEmitter();
+					vm.mousedownOutside = new ng.core.EventEmitter();
+					vm.mouseupOutside = new ng.core.EventEmitter();
+
+					// Expose the public methods.
+					vm.compareEvent = compareEvent;
+					vm.trackEvent = trackEvent;
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// When the event has bubbled its way up to the global event handler,
+					// I check to see if the given event is the same event that was 
+					// tracked by the host. 
+					function compareEvent( globalEvent ) {
+
+						// If the last known host event and the given global event are 
+						// the same reference, we know that the event originated within
+						// the host (and then bubbled up out of the host and eventually
+						// hit the global binding). As such, it can't be an "outside"
+						// event and therefore we should ignore it.
+						if ( hostEvent === globalEvent ) {
+
+							return;
+
+						}
+
+						// Now that we know the event was initiated outside of the host,
+						// we can emit the output event. By convention above, we know 
+						// that we can simply use the event type to reference the 
+						// correct output event stream.
+						vm[ globalEvent.type + "Outside" ].emit( globalEvent );
+
+					}
+
+
+					// I start tracking the new host event triggered by one of the core
+					// DOM event bindings.
+					function trackEvent( newHostEvent ) {
+
+						hostEvent = newHostEvent;
+
+					}
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>

@@ -1,0 +1,16 @@
+
+click-target {
+	background-color: #FAFAFA ;
+	border: 2px solid #CCCCCC ;
+	border-radius: 4px 4px 4px 4px ;
+	cursor: pointer ;
+	display: inline-block ;
+	padding: 20px 28px 20px 28px ;
+	user-select: none ;
+		-moz-user-select: none ;
+		-webkit-user-select: none ;
+}
+
+click-target:active {
+	color: red ;
+}
