@@ -1,0 +1,227 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Directive Output Bindings Use "$event" For Dependency-Injection In AngularJS 2 Beta 1
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></lin>
+</head>
+<body>
+
+	<h1>
+		Directive Output Bindings Use "$event" For Dependency-Injection In AngularJS 2 Beta 1
+	</h1>
+
+	<my-app>
+		Loading...
+	</my-app>
+
+	<!-- Load demo scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/1/es6-shim.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/1/Rx.umd.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/1/angular2-polyfills.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/1/angular2-all.umd.js"></script>
+	<!-- AlmondJS - minimal implementation of RequireJS. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/1/almond.js"></script>
+	<script type="text/javascript">
+
+		// Defer bootstrapping until all of the components have been declared.
+		// --
+		// NOTE: Not all components have to be required here since they will be 
+		// implicitly required by other components.
+		requirejs(
+			[ "AppComponent" ],
+			function run( AppComponent ) {
+
+				ng.platform.browser.bootstrap( AppComponent );
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide the root application component.
+		define(
+			"AppComponent",
+			[ "Widget" ],
+			function registerAppComponent( Widget ) {
+
+				// Configure the App component definition.
+				var AppComponent = ng.core
+					.Component({
+						selector: "my-app",
+						directives: [ Widget ],
+
+						// When we define this template, we'll create three instances of
+						// our Widget component, each which has a (beep) binding that is
+						// making use of three different values:
+						// --
+						// * A component value.
+						// * A template value.
+						// * An event value.
+						// --
+						// Each binding, however, identifies these values with a 
+						// different argument order in order to demonstrate that the 
+						// expression evaluation is using dependency-injection in which 
+						// "$event" token represents the event "locals" value.
+						template:
+						`
+							<p #p title="Template local value.">
+								The following widgets produce a custom event.
+							</p>
+
+							<widget (beep)="logBeep( $event, message, p.title )">
+								
+								logBeep( <strong>$event</strong>, message, p.title )
+
+							</widget>
+
+							<widget (beep)="logBeep( message, $event, p.title )">
+								
+								logBeep( message, <strong>$event</strong>, p.title )
+
+							</widget>
+
+							<widget (beep)="logBeep( message, p.title, $event )">
+								
+								logBeep( message, p.title, <strong>$event</strong> )
+
+							</widget>
+						`
+					})
+					.Class({
+						constructor: AppController
+					})
+				;
+
+				return( AppComponent );
+
+
+				// I control the App component.
+				function AppController() {
+
+					var vm = this;
+
+					// I am the component property that is being referenced in the 
+					// template as part of the (beep) event bindings.
+					vm.message = "Component property value.";
+
+					// Expose the public methods.
+					vm.logBeep = logBeep;
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I log the beep event to the console, logging-out the event-
+					// handler arguments in the same order in which they were provided
+					// by the method invoker / dependency-injector.
+					function logBeep( a, b, c ) {
+
+						console.log( "- - - - - - - - - - - - - - -" );
+						console.log( "1:", a, decorateLog( a ) );
+						console.log( "2:", b, decorateLog( b ) );
+						console.log( "3:", c, decorateLog( c ) );
+						console.log( "- - - - - - - - - - - - - - -" );
+
+
+						// I add a logging message that helps identify which event-
+						// handler argument is the one from the EventEmitter (ie, the 
+						// output value).
+						function decorateLog( value ) {
+
+							if ( value.indexOf( "EventEmitter" ) === 0 ) {
+
+								return( "<-- $event value!" );
+
+							} else {
+
+								return( "" );
+
+							}
+
+						}
+
+					};
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide a component that produces a "beep" event (output) when clicked.
+		define(
+			"Widget",
+			function registerWidget() {
+
+				// Configure the Widget component definition.
+				var WidgetComponent = ng.core
+					.Component({
+						selector: "widget",
+						outputs: [ "beep" ],
+						host: {
+							"(click)": "triggerBeep()"
+						},
+						template:
+						`
+							<ng-content></ng-content>
+						`
+					})
+					.Class({
+						constructor: WidgetController
+					})
+				;
+
+				return( WidgetComponent );
+
+
+				// I control the Widget component. 
+				function WidgetController() {
+
+					var vm = this;
+
+					// I am the output event stream for the "beep" event. The event
+					// stream has to be a public property so that the calling context
+					// can bind to it.
+					vm.beep = new ng.core.EventEmitter();
+
+					// Expose the public methods.
+					vm.triggerBeep = triggerBeep;
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I trigger the beep event on the output stream.
+					function triggerBeep() {
+
+						// When we emit() a value, the value is made available in the 
+						// template binding's dependency-injection as the token "$event".
+						vm.beep.emit( "EventEmitter output value." );
+
+					}
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>

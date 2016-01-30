@@ -1,0 +1,22 @@
+
+widget {
+	background-color: #FAFAFA ;
+	border: 1px solid #CCCCCC ;
+	border-radius: 4px 4px 4px 4px ;
+	color: #999999 ;
+	cursor: pointer ;
+	display: block ;
+	margin: 20px 0px 20px 0px ;
+	padding: 15px 15px 15px 15px ;
+	user-select: none ;
+		-moz-user-select: none ;
+		-webkit-user-select: none ;
+}
+
+widget strong {
+	color: #000000 ;
+}
+
+widget:active strong {
+	color: #FF0000 ;
+}

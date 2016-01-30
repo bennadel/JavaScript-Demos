@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Directive Output Bindings Use "$event" For Dependency-Injection In AngularJS 2 Beta 1](http://bennadel.github.io/JavaScript-Demos/demos/directive-output-event-angularjs2/)
 * [Selectors And Outputs Cannot Have The Same Name In AngularJS 2 Beta 1](http://bennadel.github.io/JavaScript-Demos/demos/selector-output-name-angularjs2/)
 * [Attributes Are Not Normalized In AngularJS 2 Beta 1](http://bennadel.github.io/JavaScript-Demos/demos/attribute-format-angularjs2/)
 * [Correlating Directive Life-Cycle Events To DOM State In AngularJS 2 Beta 1](http://bennadel.github.io/JavaScript-Demos/demos/life-cycle-events-angularjs2/)
