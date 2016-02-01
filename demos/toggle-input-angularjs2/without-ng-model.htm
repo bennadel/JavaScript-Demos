@@ -1,0 +1,229 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		FAILURE: Using ngModel With A Custom Component In Angular 2 Beta 1
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></lin>
+</head>
+<body>
+
+	<h1>
+		FAILURE: Using ngModel With A Custom Component In Angular 2 Beta 1
+	</h1>
+
+	<h2>
+		Without ngModel - Just The Custom Component
+	</h2>
+
+	<my-app>
+		Loading...
+	</my-app>
+
+	<!-- Load demo scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/1/es6-shim.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/1/Rx.umd.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/1/angular2-polyfills.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/1/angular2-all.umd.js"></script>
+	<!-- AlmondJS - minimal implementation of RequireJS. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/1/almond.js"></script>
+	<script type="text/javascript">
+
+		// Defer bootstrapping until all of the components have been declared.
+		// --
+		// NOTE: Not all components have to be required here since they will be 
+		// implicitly required by other components.
+		requirejs(
+			[ "AppComponent" ],
+			function run( AppComponent ) {
+
+				ng.platform.browser.bootstrap( AppComponent );
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide the root application component.
+		define(
+			"AppComponent",
+			function registerAppComponent() {
+
+				var YesNoToggle = require( "YesNoToggle" );
+
+				// Configure the App component definition.
+				var AppComponent = ng.core
+					.Component({
+						selector: "my-app",
+						directives: [ YesNoToggle ],
+
+						// Notice that our YesNoToggle component takes a [value] property
+						// and emits a (valueChange) event. This allows the calling context
+						// to determine how to mutate data by responding to the events and
+						// updating the inputs as necessary (or not at all).
+						// --
+						// NOTE: By using the "_" and "_Change" pattern of inputs and 
+						// outputs, it means that we could also use the [(value)] syntax
+						// if we wanted to implement two-way data binding without the 
+						// benefit of all the ngModel, ngControl, and ngForm functionality.
+						template:
+						`
+							<p>
+								Can I wheez the juice? 
+							</p>
+
+							<yes-no-toggle
+								[value]="canWheezTheJuice"
+								(valueChange)="handleValueChange( $event )"
+								yes="Yeah buddy &mdash; wheez the ju-uice!"
+								no="No &mdash; no wheezing the ju-uice!">
+							</yes-no-toggle>
+							
+							<p>
+								Current value:
+
+								<strong 
+									class="indicator"
+									[class.can-wheez]="canWheezTheJuice">
+									{{ canWheezTheJuice }}
+								</strong>.
+							</p>
+
+							<p>
+								<a (click)="toggleExternally()">Toggle input</a>
+								outside of component.
+							</p>
+						`
+					})
+					.Class({
+						constructor: AppController
+					})
+				;
+
+				return( AppComponent );
+
+
+				// I control the App component.
+				function AppController() {
+
+					var vm = this;
+
+					// I determine if it's OK to "wheez the juice!".
+					// --
+					// Pop-Culture Reference: https://www.youtube.com/watch?v=nPn6sqGUM5A
+					vm.canWheezTheJuice = true;
+
+					// Expose the public methods.
+					vm.handleValueChange = handleValueChange;
+					vm.toggleExternally = toggleExternally;
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I handle the valueChange event emitted by the YesNoToggle component
+					// and update the inputs accordingly.
+					function handleValueChange( newValue ) {
+
+						vm.canWheezTheJuice = newValue;
+
+					}
+
+
+					// I toggle the flag externally to the YesNoToggle component in an
+					// effort to ensure that the component will synchronize with the
+					// state of its own inputs.
+					function toggleExternally() {
+						
+						vm.canWheezTheJuice = ! vm.canWheezTheJuice;
+
+					}
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide a toggle component that renders "Yes" text or "No" text based
+		// on the state of its input value. When the component is activated, it will
+		// emit a "valueChange" event with what the value of the input WOULD HAVE BEEN
+		// if the value were mutated internally.
+		define(
+			"YesNoToggle",
+			function registerYesNoToggle() {
+
+				// Configure the YesNoToggle component definition.
+				var YesNoToggleComponent = ng.core
+					.Component({
+						selector: "yes-no-toggle",
+						inputs: [ "value", "yes", "no" ],
+						outputs: [ "valueChangeEvents: valueChange" ],
+						host: {
+							"(click)": "toggle()",
+							"[class.for-yes]": "value",
+							"[class.for-no]": "! value"
+						},
+						template:
+						`
+							<span *ngIf="value">{{ yes }}</span>
+							<span *ngIf="! value">{{ no }}</span>
+						`
+					})
+					.Class({
+						constructor: YesNoToggleController
+					})
+				;
+
+				return( YesNoToggleComponent );
+
+
+				// I control the YesNoToggle component. 
+				function YesNoToggleController() {
+
+					var vm = this;
+
+					// I am the event stream for the valueChange output.
+					vm.valueChangeEvents = new ng.core.EventEmitter();
+
+					// Expose the public methods.
+					vm.toggle = toggle;
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I emit the value change event when the user clicks on the host.
+					function toggle() {
+
+						// Notice that we are emitting the value of the input as it would
+						// have been had we implemented the mutation. However, since we 
+						// don't own the value, we can't mutate it - we can only announce
+						// that it maybe should be mutated.
+						vm.valueChangeEvents.emit( ! vm.value );
+
+					}
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>

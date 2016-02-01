@@ -1,0 +1,40 @@
+
+a {
+	color: red ;
+	cursor: pointer ;
+	text-decoration: underline ;
+	user-select: none ;
+		-moz-user-select: none ;
+		-webkit-user-select: none ;
+}
+
+yes-no-toggle {
+	background-color: #FAFAFA ;
+	border: 2px solid #CCCCCC ;
+	border-radius: 5px 5px 5px 5px ;
+	cursor: pointer ;
+	display: table ;
+	margin: 16px 0px 16px 0px ;
+	padding: 15px 23px 15px 23px ;
+	user-select: none ;
+		-moz-user-select: none ;
+		-webkit-user-select: none ;
+}
+
+yes-no-toggle.for-no {
+	border-color: red ;
+	color: red ;
+}
+
+yes-no-toggle.for-yes {
+	border-color: green ;
+	color: green ;
+}
+
+strong.indicator {
+	color: red ;
+}
+
+strong.indicator.can-wheez {
+	color: green ;
+}

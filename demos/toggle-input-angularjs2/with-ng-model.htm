@@ -1,0 +1,427 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		FAILURE: Using ngModel With A Custom Component In Angular 2 Beta 1
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></lin>
+</head>
+<body>
+
+	<h1>
+		FAILURE: Using ngModel With A Custom Component In Angular 2 Beta 1
+	</h1>
+
+	<h2>
+		With ngModel - Bridging The Gap
+	</h2>
+
+	<my-app>
+		Loading...
+	</my-app>
+
+	<!-- Load demo scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/1/es6-shim.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/1/Rx.umd.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/1/angular2-polyfills.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/1/angular2-all.umd.js"></script>
+	<!-- AlmondJS - minimal implementation of RequireJS. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/1/almond.js"></script>
+	<script type="text/javascript">
+
+		// Defer bootstrapping until all of the components have been declared.
+		// --
+		// NOTE: Not all components have to be required here since they will be 
+		// implicitly required by other components.
+		requirejs(
+			[ "AppComponent" ],
+			function run( AppComponent ) {
+
+				// DO NOT DO THIS! There are many answers on the net that say to 
+				// enable "production mode" in order to get rid of the following error:
+				// --
+				// Expression '...' has changed after it was checked.
+				// --
+				// DO NOT DO THIS! It doesn't actually work. Parts of it may look like 
+				// it is working, but part of the data are desynchronizing. This becomes
+				// obvious when you have multiple toggles on the page, one of which is
+				// not using ngModel.
+				// --
+				// ng.core.enableProdMode();
+
+				ng.platform.browser.bootstrap( AppComponent );
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide the root application component.
+		define(
+			"AppComponent",
+			function registerAppComponent() {
+
+				// NOTE: We are including a DIFFERENT DIRECTIVE here.
+				// --
+				// Core directive: YesNoToggle.
+				// NgModel-enabled directive: YesNoToggleForNgModel.
+				var YesNoToggle = require( "YesNoToggleForNgModel" );
+
+				// Configure the App component definition.
+				var AppComponent = ng.core
+					.Component({
+						selector: "my-app",
+						directives: [ YesNoToggle ],
+
+						// In this version, we're putting two instances of the YesNoToggle
+						// component in the view at the same time. The first one uses the
+						// two-way data binding syntax to update the value directly. The
+						// second one uses ngModel to bridge the gap between the value and
+						// the component inputs.
+						template:
+						`
+							<p>
+								Can I wheez the juice? 
+							</p>
+
+							<!-- Uses native two-way data binding. -->
+							<yes-no-toggle
+								[(value)]="canWheezTheJuice"
+								yes="Yeah buddy &mdash; wheez the ju-uice!"
+								no="No &mdash; no wheezing the ju-uice!">
+							</yes-no-toggle>
+
+							<!-- Uses NG-MODEL two-way data binding. -->
+							<yes-no-toggle
+								[(ngModel)]="canWheezTheJuice"
+								yes="Yeah buddy &mdash; wheez the ju-uice!"
+								no="No &mdash; no wheezing the ju-uice!">
+							</yes-no-toggle>
+							
+							<p>
+								Current value:
+
+								<strong 
+									class="indicator"
+									[class.can-wheez]="canWheezTheJuice">
+									{{ canWheezTheJuice }}
+								</strong>.
+							</p>
+
+							<p>
+								<a (click)="toggleExternally()">Toggle input</a>
+								outside of component.
+							</p>
+						`
+					})
+					.Class({
+						constructor: AppController
+					})
+				;
+
+				return( AppComponent );
+
+
+				// I control the App component.
+				function AppController() {
+
+					var vm = this;
+
+					// I determine if it's OK to "wheez the juice!".
+					// --
+					// Pop-Culture Reference: https://www.youtube.com/watch?v=nPn6sqGUM5A
+					vm.canWheezTheJuice = true;
+
+					// Expose the public methods.
+					vm.handleValueChange = handleValueChange;
+					vm.toggleExternally = toggleExternally;
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I handle the valueChange event emitted by the YesNoToggle component
+					// and update the inputs accordingly.
+					function handleValueChange( newValue ) {
+
+						vm.canWheezTheJuice = newValue;
+
+					}
+
+
+					// I toggle the flag externally to the YesNoToggle component in an
+					// effort to ensure that the component will synchronize with the
+					// state of its own inputs.
+					function toggleExternally() {
+						
+						vm.canWheezTheJuice = ! vm.canWheezTheJuice;
+
+					}
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide a toggle component that renders "Yes" text or "No" text based
+		// on the state of its input value. When the component is activated, it will
+		// emit a "valueChange" event with what the value of the input WOULD HAVE BEEN
+		// if the value were mutated internally.
+		define(
+			"YesNoToggle",
+			function registerYesNoToggle() {
+
+				// Configure the YesNoToggle component definition.
+				var YesNoToggleComponent = ng.core
+					.Component({
+						selector: "yes-no-toggle",
+						inputs: [ "value", "yes", "no" ],
+						outputs: [ "valueChangeEvents: valueChange" ],
+						host: {
+							"(click)": "toggle()",
+							"[class.for-yes]": "value",
+							"[class.for-no]": "! value"
+						},
+						template:
+						`
+							<span *ngIf="value">{{ yes }}</span>
+							<span *ngIf="! value">{{ no }}</span>
+						`
+					})
+					.Class({
+						constructor: YesNoToggleController
+					})
+				;
+
+				return( YesNoToggleComponent );
+
+
+				// I control the YesNoToggle component. 
+				function YesNoToggleController() {
+
+					var vm = this;
+
+					// I am the event stream for the valueChange output.
+					vm.valueChangeEvents = new ng.core.EventEmitter();
+
+					// Expose the public methods.
+					vm.toggle = toggle;
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I emit the value change event when the user clicks on the host.
+					function toggle() {
+
+						// Notice that we are emitting the value of the input as it would
+						// have been had we implemented the mutation. However, since we 
+						// don't own the value, we can't mutate it - we can only announce
+						// that it maybe should be mutated.
+						vm.valueChangeEvents.emit( ! vm.value );
+
+					}
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide an ngModel-enabled version of the YesNoToggle.
+		define(
+			"YesNoToggleForNgModel",
+			function registerYesNoToggleForNgModel() {
+
+				var YesNoToggle = require( "YesNoToggle" );
+
+				// When we use the ngModel directive, the ngModel controller needs to 
+				// know how to access and mutate data on the target component. To do 
+				// this, it needs a "Value Accessor" that implements an interface for
+				// writing values and responding to changes. It checks for this accessor
+				// instance in the multi-provider collection, "NG_VALUE_ACCESSOR". In our
+				// case, we're going to use the EXISTING INSTANCE of our 
+				// "YesNoToggleForNgModelDirective" directive as the accessor. This means
+				// that our directive will actually be playing double-duty, both as the
+				// local provider of the accessor as well as the implementer of the 
+				// said accessor.
+				// --
+				// NOTE: We have to use a forwardRef() since the directive isn't actually
+				// defined yet.
+				var valueAccessorProvider = ng.core.provide(
+					ng.common.NG_VALUE_ACCESSOR,
+					{
+						useExisting: ng.core.forwardRef(
+							function resolveDIToken() {
+
+								return( YesNoToggleForNgModelDirective );
+
+							}
+						),
+						multi: true
+					}
+				);
+
+
+				// NOTE: If we wanted to side-step the use of NG_VALUE_ACCESSOR, we could
+				// have had our directive "require" the ngModel instance and then inject
+				// itself into the ngModel by way of:
+				// --
+				// ngModel.valueAccessor = this;
+				// --
+				// However, I am not sure how I feel about this. To me, that approach 
+				// seems to work "by coincidence", and not by intent.
+
+
+				// Configure the YesNoToggleForNgModel directive definition. Notice that 
+				// the selector here only selects on instances of the YesNoToggle 
+				// element that are also using ngModel.
+				// --
+				// NOTE: This directive is also a local provider of the valueAccessor 
+				// collection which is providing the value accessor for the ngModel 
+				// component (which, incidentally, is also this component instance).
+				var YesNoToggleForNgModelDirective = ng.core
+					.Directive({
+						selector: "yes-no-toggle[ngModel]",
+						host: {
+							"(valueChange)": "handleValueChange( $event )"
+						},
+						providers: [ valueAccessorProvider ]
+					})
+					.Class({
+						constructor: YesNoToggleForNgModelController
+					})
+				;
+
+				// Configure the constructor to require the local YesNoToggle instance.
+				// We need it in order to bridge the gap between ngModel and the state
+				// of the toggle.
+				YesNoToggleForNgModelDirective.parameters = [
+					new ng.core.Inject( YesNoToggle )
+				];
+
+				// Notice that we are returning TWO directives here - the core YesNoToggle
+				// component and the ngModel-enabled directive that we just defined. This
+				// way, the calling context doesn't have to explicitly include both 
+				// directives - just "this one", which will implicitly include both.
+				return( [ YesNoToggle, YesNoToggleForNgModelDirective ] );
+
+
+				// I control the YesNoToggleForNgModel directive.
+				// --
+				// NOTE: Since this controller is also acting as double-duty for the
+				// valueAccessor, it is also implementing the value accessor interface.
+				function YesNoToggleForNgModelController( yesNoToggle ) {
+
+					var vm = this;
+
+					var onChange = function noop() {};
+
+					// Expose the public methods.
+					vm.handleValueChange = handleValueChange;
+					vm.registerOnChange = registerOnChange; // Value accessor interface.
+					vm.registerOnTouched = registerOnTouched; // Value accessor interface.
+					vm.writeValue = writeValue; // Value accessor interface.
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I handle the valueChange event coming out of the YesNoToggle
+					// component. Since ngModel doesn't know about this event, we have 
+					// to bridge the gap.
+					function handleValueChange( newValue ) {
+
+						// When we invoke the onChange() value accessor method, ngModel
+						// already assumes that the DOM (Document Object Model) is in the
+						// correct state. As such, we have ensure that the YesNoToggle 
+						// reflects the change that it just emitted.
+						yesNoToggle.value = newValue;
+
+						// Tell ngModel.
+						onChange( newValue );
+
+					}
+
+
+					// I register the onChange handler provided by ngModel.
+					function registerOnChange( newOnChange ) {
+
+						onChange = newOnChange;
+
+					}
+					
+
+					// I register the onTouched handler provided by ngModel.
+					function registerOnTouched() {
+						
+						// console.log( "registerOnTouched" );
+
+					}
+					
+
+					// I implement the value input invoked by ngModel. When ngModel wants
+					// to update the value of the target component, it doesn't know what
+					// property to use. As such, we have to bridge the gap between ngModel
+					// and the input property of the YesNoToggle component.
+					function writeValue( newValue ) {
+
+						// -- GROSS CODE SMELL. SOMETHING HERE IS TERRIBLY WRONG. ---- //
+						// -- GROSS CODE SMELL. SOMETHING HERE IS TERRIBLY WRONG. ---- //
+						// -- GROSS CODE SMELL. SOMETHING HERE IS TERRIBLY WRONG. ---- //
+						// -- GROSS CODE SMELL. SOMETHING HERE IS TERRIBLY WRONG. ---- //
+						setTimeout(
+							function avoidExpressionChangedAfterItHasBeenCheckedException() {
+
+								yesNoToggle.value = !! newValue; // Cast to boolean.
+
+							}
+						);
+						// -- GROSS CODE SMELL. SOMETHING HERE IS TERRIBLY WRONG. ---- //
+						// -- GROSS CODE SMELL. SOMETHING HERE IS TERRIBLY WRONG. ---- //
+						// -- GROSS CODE SMELL. SOMETHING HERE IS TERRIBLY WRONG. ---- //
+						// -- GROSS CODE SMELL. SOMETHING HERE IS TERRIBLY WRONG. ---- //
+
+						// CAUTION: If we don't use the setTimeout() method here, we get
+						// the following Angular error:
+						// --
+						// Expression 'value ...' has changed after it was checked.
+						// --
+						// I do not understand this, but Google shows me that this is a
+						// common problem. Hopefully one day, when I actually understand
+						// how change detection works in Angular 2, I won't need this.
+						// --
+						// NOTE: Enabling PROD mode is NOT A FIX (see note at top).
+
+					}
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
