@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Building A Better Mental Model For Meta-Data In Angular 2 Beta 3](http://bennadel.github.io/JavaScript-Demos/demos/using-classes-without-metadata-angular2/)
 * [Tracking Click Events Outside The Current Component In Angular 2 Beta 1](http://bennadel.github.io/JavaScript-Demos/demos/click-outside-directive-angularjs2/)
 * [FAILURE: Using ngModel With A Custom Component In Angular 2 Beta 1](http://bennadel.github.io/JavaScript-Demos/demos/toggle-input-angularjs2/)
 * [Directive Output Bindings Use "$event" For Dependency-Injection In AngularJS 2 Beta 1](http://bennadel.github.io/JavaScript-Demos/demos/directive-output-event-angularjs2/)

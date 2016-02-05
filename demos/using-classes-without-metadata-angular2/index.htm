@@ -1,0 +1,193 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Building A Better Mental Model For Meta-Data In Angular 2 Beta 3
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></lin>
+</head>
+<body>
+
+	<h1>
+		Building A Better Mental Model For Meta-Data In Angular 2 Beta 3
+	</h1>
+
+	<my-app>
+		Loading...
+	</my-app>
+
+	<!-- Load demo scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/3/es6-shim.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/3/Rx.umd.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/3/angular2-polyfills.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/3/angular2-all.umd.js"></script>
+	<!-- AlmondJS - minimal implementation of RequireJS. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/3/almond.js"></script>
+	<script type="text/javascript">
+
+		// Defer bootstrapping until all of the components have been declared.
+		// --
+		// NOTE: Not all components have to be required here since they will be 
+		// implicitly required by other components.
+		requirejs(
+			[ "AppComponent", "GlobalCounter" ],
+			function run( AppComponent, GlobalCounter ) {
+
+				ng.platform.browser.bootstrap( 
+					AppComponent,
+					[
+						GlobalCounter,
+
+						// Setup the OPTIONAL initial value for the global counter.
+						ng.core.provide(
+							"INITIAL_COUNT",
+							{
+								useValue: 123
+							}
+						)
+					]
+				);
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide the root application component.
+		define(
+			"AppComponent",
+			function registerAppComponent() {
+
+				var GlobalCounter = require( "GlobalCounter" );
+
+				// Configure the App component definition using the .Component() and
+				// .Class() meta-data decorators.
+				var AppComponent = ng.core
+					.Component({
+						selector: "my-app",
+						template:
+						`
+							<a (click)="increment()">You have clicked {{ counter }} times</a>
+						`
+					})
+					.Class({
+						constructor: AppController
+					})
+				;
+
+				// Tell the Dependency-Injector which argument types are needed by the
+				// controller. Notice that the parameters definition is being added to
+				// the result of the meta-data decorators, NOT the controller.
+				AppComponent.parameters = [ new ng.core.Inject( GlobalCounter ) ];
+
+				// .... HOWEVER .... what we discover is that the value returned by the
+				// meta-data decorator is actually the Controller itself. So, in reality,
+				// we are adding the parameters definition to the constructor function,
+				// not some special meta-data object.
+				console.info(
+					"App Component === App Controller :",
+					( AppComponent === AppController )
+				);
+
+				// NOTE: Because ( AppComponent === AppController ) it actually doesn't
+				// matter which one I return - they are the same reference.
+				return( AppComponent );
+
+
+				// I control the App component.
+				function AppController( globalCounter ) {
+
+					var vm = this;
+
+					// I hold the current global counter value.
+					vm.counter = globalCounter.get();
+
+					// Expose the public methods.
+					vm.increment = increment;
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I increment the counter.
+					function increment() {
+
+						vm.counter = globalCounter.incrementAndGet();
+
+					}
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide a global counter that can be shared across the application.
+		define(
+			"GlobalCounter",
+			function registerGlobalCounter() {
+
+				// Tell the Dependency-Injector which arguments types are needed by the
+				// constructor. Notice that the parameters definition is being added 
+				// directly to the service constructor itself (as a static property).
+				GlobalCounter.parameters = [
+					[ new ng.core.Inject( "INITIAL_COUNT" ), new ng.core.Optional() ]
+				];
+
+				return( GlobalCounter );
+
+
+				// I initialize the global counter using the optional default value.
+				function GlobalCounter( defaultValue ) {
+
+					// I hold the global counter value.
+					var counter = ( defaultValue || 0 );
+
+					// Return the public API.
+					return({
+						get: get,
+						incrementAndGet: incrementAndGet
+					});
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I return the current global counter value.
+					function get() {
+
+						return( counter );
+
+					}
+
+
+					// I increment the global counter and return the resultant value.
+					function incrementAndGet() {
+
+						return( ++counter );
+
+					}
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
