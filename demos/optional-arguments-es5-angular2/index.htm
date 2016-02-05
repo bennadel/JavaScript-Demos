@@ -1,0 +1,106 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Defining Optional Dependencies / Arguments Using ES5 In Angular 2 Beta 3
+	</title>
+</head>
+<body>
+
+	<h1>
+		Defining Optional Dependencies / Arguments Using ES5 In Angular 2 Beta 3
+	</h1>
+
+	<!-- Load demo scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/3/es6-shim.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/3/Rx.umd.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/3/angular2-polyfills.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/3/angular2-all.umd.js"></script>
+	<!-- AlmondJS - minimal implementation of RequireJS. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/3/almond.js"></script>
+	<script type="text/javascript">
+
+		// Defer bootstrapping until all of the components have been declared.
+		// --
+		// NOTE: Not all components have to be required here since they will be 
+		// implicitly required by other components.
+		requirejs(
+			[ "MyService" ],
+			function run( MyService ) {
+
+				// Here, we are explicitly creating an Angular 2 injector without 
+				// bootstrapping an entire application.
+				var injector = ng.core.Injector.resolveAndCreate(
+					[
+						MyService,
+						ng.core.provide(
+							"REQUIRED_ARG_A",
+							{
+								useValue: "A"
+							}
+						)
+					]
+				);
+
+				// Get the MyService instance - this will cause the class to be 
+				// instantiated with the optional and required arguments.
+				var myService = injector.get( MyService );
+
+				console.log( "Successfully created MyService instance:" );
+				console.dir( myService );
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide a service that has both optional and required arguments.
+		define(
+			"MyService",
+			function registerMyService() {
+
+				// When we configure the dependency-injection parameters, we're allowing
+				// two of the three arguments to be OPTIONAL. The optionality of each 
+				// argument is defined as meta-data for that argument. And, when we
+				// provide meta-data for an argument, we have to  define the parameter 
+				// entry as an array that contains the injectable type as well as any
+				// modifiers (such as Optional() and Host()).
+				MyService.parameters = [
+
+					// Define required argument.
+					new ng.core.Inject( "REQUIRED_ARG_A" ),
+
+					// Define optional argument. Notice the Optional() meta-data is 
+					// the SECOND item in the array (order doesn't matter).
+					[ new ng.core.Inject( "OPTIONAL_ARG_B" ), new ng.core.Optional() ],
+
+					// Define optional argument. Notice the Optional() meta-data is 
+					// FIRST item in the array (order doesn't matter).
+					[ new ng.core.Optional(), new ng.core.Inject( "OPTIONAL_ARG_C" ) ]
+
+				];
+
+				return( MyService );
+
+
+				// I initialize the service using the required and optional arguments.
+				function MyService( argA, argB, argC ) {
+
+					this.argA = ( argA || "not provided" );
+					this.argB = ( argB || "not provided" );
+					this.argC = ( argC || "not provided" );
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
