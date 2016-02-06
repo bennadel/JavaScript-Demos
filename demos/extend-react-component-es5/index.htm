@@ -1,0 +1,127 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Extending React.Component Using ES5 With ReactJS 0.14
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body>
+	
+	<h1>
+		Extending React.Component Using ES5 With ReactJS 0.14
+	</h1>
+
+	<div id="content">
+		<!-- This content will be replaced with the React rendering. -->
+	</div>
+	
+
+	<!-- Load scripts. -->
+	<script src="../../vendor/reactjs/0.14.7/react.js"></script>
+	<script src="../../vendor/reactjs/0.14.7/react-dom.min.js"></script>
+	<!--
+		CAUTION: Using the JSXTransformer for in-browser transpiling - this is deprecated
+		and not recommended with 0.14.7. But, this should only affect the initial page 
+		load, not the post-rendering performance (my assumption).
+	-->
+	<script src="../../vendor/reactjs/JSXTransformer-0.13.3.js"></script>
+	<script type="text/jsx">
+		
+
+		// Demo has to extend Component since it's a stateful component. In terms of
+		// prototypal inheritance this means that the component's prototype extends
+		// the React.Component prototype.
+		// --
+		// NOTE: We would not actually have to do this if we didn't need the component
+		// to be stateful. If we didn't need state, we could just use a naked render
+		// function or a plain constructor that exposed a public render function.
+		Demo.prototype = Object.create( React.Component.prototype );
+
+		// Configure the prop restrictions for the component.
+		Demo.propTypes = {
+			initialCount: React.PropTypes.number.isRequired
+		};
+
+		// I manage the demo.
+		function Demo( initialProps ) {
+
+			// Call the super constructor in the context of the current instance.
+			React.Component.call( this, initialProps );
+
+			var vm = this;
+
+			// Setup the initial state before the component is mounted.
+			vm.state = {
+				counter: initialProps.initialCount
+			};
+
+			// Expose the public methods.
+			// --
+			// NOTE: If you wanted to, you could also define these methods on the 
+			// Demo prototype (after you extended the React.Component prototype).
+			// Doing so is more memory efficient and may allow the VM to optimize
+			// the use of the "class" behind the scenes. However "memory is cheap,"
+			// most apps don't require that much processing, and the chances are HIGH
+			// that you probably destroy all that "goodness" by calling .bind() on your
+			// methods _anyway_. As such, I prefer using more of a "revealing module"
+			// pattern to just make life a whole lot easier. 
+			// 
+			// .... your mileage may vary.
+			vm.render = render;
+			
+
+			// ---
+			// PUBLIC METHODS.
+			// ---
+
+
+			// I render the view using the current state and properties collections.
+			function render() {
+
+				return(
+					<div>
+						<p>
+							The current count is { vm.state.counter }.
+						</p>
+
+						<p>
+							<a onClick={ increment }>Increment that count</a> like a boss!
+						</p>
+					</div>
+				);
+
+			}
+
+
+			// ---
+			// PRIVATE METHODS.
+			// ---
+
+
+			// I increment the current counter.
+			function increment() {
+
+				vm.setState({
+					counter: ( vm.state.counter + 1 )
+				});
+
+			}
+
+		}
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// Render the root Demo and mount it inside the given element.
+		ReactDOM.render( <Demo initialCount={ 5 } />, document.getElementById( "content" ) );
+
+	</script>
+
+</body>
+</html>
