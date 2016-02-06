@@ -1,0 +1,34 @@
+form {
+	margin-bottom: 15px ;
+}
+
+table {
+	border: 1px solid #666666 ;
+}
+
+td {
+	border: 1px solid #666666 ;
+	padding: 4px 4px 4px 4px ;
+}
+
+td.hidden {
+	border-color: #CCCCCC ;
+	color: #CCCCCC ;
+}
+
+table.filtered td.item {
+	background-color: #FFFFBF ;
+}
+
+table.filtered td.item.hidden {
+	background-color: transparent ;
+}
+
+a {
+	color: red ;
+	cursor: pointer ;
+	text-decoration: underline ;
+	user-select: none ;
+		-moz-user-select: none ;
+		-webkit-user-select: none ;
+}

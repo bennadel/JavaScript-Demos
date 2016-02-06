@@ -1,0 +1,267 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Rendering Large Datasets With Angular 2 Beta 3
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body>
+
+	<h1>
+		Rendering Large Datasets With Angular 2 Beta 3
+	</h1>
+
+	<my-app>
+		Loading...
+	</my-app>
+
+	<!-- Load demo scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/3/es6-shim.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/3/Rx.umd.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/3/angular2-polyfills.min.js"></script>
+	<!-- CAUTION: This demo does not work with the minified UMD code. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/3/angular2-all.umd.js"></script>
+	<!-- AlmondJS - minimal implementation of RequireJS. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/3/almond.js"></script>
+	<script type="text/javascript">
+
+		// Enabling production mode to make sure there's no performance degradation 
+		// due to assertions and other checks the framework might be doing during the
+		// execution of the application.
+		ng.core.enableProdMode();
+
+		// Defer bootstrapping until all of the components have been declared.
+		// --
+		// NOTE: Not all components have to be required here since they will be 
+		// implicitly required by other components.
+		requirejs(
+			[ "AppComponent" ],
+			function run( AppComponent ) {
+
+				ng.platform.browser.bootstrap( AppComponent );
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide the root App component.
+		define(
+			"AppComponent",
+			function registerAppComponent() {
+
+				// Configure the app component definition.
+				ng.core
+					.Component({
+						selector: "my-app",
+						template:
+						`
+							<form>		
+								<strong>Filter Data</strong>:
+								
+								<input 
+									type="text" 
+									[(ngModel)]="form.filter" 
+									(input)="handleFilterChange( $event.target.value )" 
+								/>
+
+								<span *ngIf="form.filter">
+									&mdash;
+									Filtering <strong>{{ form.filter }}</strong> 
+									over {{ dataPoints }} data points,
+									{{ visibleCount }} found.
+								</span>
+
+								<a *ngIf="grid.length" (click)="unmountGrid()">Unmount Grid</a>
+								<a *ngIf="! grid.length" (click)="remountGrid()">Remount Grid</a>
+							</form>
+
+							<table width="100%" cellspacing="2" [class.filtered]="form.filter">
+								<tr *ngFor="#row of grid">
+									<td>
+										{{ row.id }}
+									</td>
+									<td 
+										*ngFor="#item of row.items"
+										class="item"
+										[class.hidden]="item.isHiddenByFilter">
+										{{ item.value }}
+									</td>
+								</tr>
+							</table>
+						`
+					})
+					.Class({
+						constructor: AppController
+					})
+				;
+
+				return( AppController );
+
+
+				// I control the App component.
+				function AppController() {
+
+					var vm = this;
+
+					// We'll start out with a grid with 10,000 items.
+					vm.grid = generateGrid( 1000, 10 );
+
+					// Calculate the number of data-points that may have filtering.
+					vm.dataPoints = ( vm.grid.length * vm.grid[ 0 ].items.length );
+
+					// I hold the number of items that are visible based on filtering.
+					vm.visibleCount = 0;
+
+					// I hold the form data for use with ngModel.
+					vm.form = {
+						filter: ""
+					};
+
+					// Expose the public API.
+					vm.handleFilterChange = handleFilterChange;
+					vm.remountGrid = remountGrid;
+					vm.unmountGrid = unmountGrid;
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I update the visibility of the items when the filter is updated.
+					// --
+					// CAUTION: The actual value of input is being maintained via ngModel.
+					// We're just responding to the change event.
+					function handleFilterChange( newValue ) {
+
+						// Reset the visible count. As we iterate of the items checking
+						// for visibility, we can increment this count as necessary.
+						vm.visibleCount = 0;
+
+						// We are pre-calculating the column count here because we are 
+						// assuming a uniform column distribution in the grid.
+						var rowCount = vm.grid.length;
+						var columnCount = ( vm.grid.length && vm.grid[ 0 ].items.length );
+
+						for ( var r = 0 ; r < rowCount ; r++ ) {
+
+							var row = vm.grid[ r ];
+
+							for ( var c = 0 ; c < columnCount ; c++ ) {
+
+								var item = row.items[ c ];
+
+								// The item is hidden if the given filter text cannot be 
+								// found in the value of the item.
+								item.isHiddenByFilter = ( newValue && ( item.value.indexOf( newValue ) === -1 ) );
+
+								// If the item isn't hidden, track it as part of the visible
+								// set of data.
+								if ( ! item.isHiddenByFilter ) {
+
+									vm.visibleCount++;
+
+								}
+
+							}
+						
+						}
+
+					}
+
+
+					// I repopulate the grid with data. This will help separate processing
+					// performance characteristics from page-load processing.
+					function remountGrid() {
+
+						vm.grid = generateGrid( 1000, 10 );
+						vm.dataPoints = ( vm.grid.length * vm.grid[ 0 ].items.length );
+
+						vm.visibleCount = 0;
+						vm.form.filter = "";
+
+					}
+
+
+					// I clear the grid of data. This will help separate processing 
+					// performance characteristics from page-load processing.
+					function unmountGrid() {
+
+						vm.grid = [];
+						vm.dataPoints = 0;
+
+						vm.visibleCount = 0;
+						vm.form.filter = "";
+
+					}
+
+
+					// ---
+					// PRIVATE METHODS.
+					// ---
+
+					
+					// I generate a grid of items with the given dimensions. The grid is 
+					// represented as a two dimensional grid, of sorts. Each row has an 
+					// object that has an items collection.
+					function generateGrid( rowCount, columnCount ) {
+
+						var valuePoints = [ 
+							"Daenerys", "Jon", "Sansa", "Arya", "Stannis", "Gregor", "Tyrion",
+							"Theon", "Joffrey", "Ramsay", "Cersei", "Bran", "Margaery", 
+							"Melisandre", "Daario", "Jamie", "Eddard", "Myrcella", "Robb", 
+							"Jorah", "Petyr", "Tommen", "Sandor", "Oberyn", "Drogo", "Ygritte"
+						];
+
+						var valueIndex = 0;
+
+						var grid = [];
+
+						for ( var r = 0 ; r < rowCount ; r++ ) {
+
+							var row = {
+								id: r,
+								items: []
+							};
+
+							for ( var c = 0 ; c < columnCount ; c++ ) {
+
+								row.items.push({
+									id: ( r + "-" + c ),
+									value: valuePoints[ valueIndex ],
+									isHiddenByFilter: false
+								});
+
+								if ( ++valueIndex >= valuePoints.length ) {
+
+									valueIndex = 0;
+
+								}
+
+							}
+
+							grid.push( row );
+
+						}
+
+						return( grid );
+
+					}
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
