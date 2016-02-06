@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Rendering Large Datasets With Angular 2 Beta 3 And ReactJS 0.14.7](http://bennadel.github.io/JavaScript-Demos/demos/render-large-datasets-angular2-reactjs/)
 * [Defining Optional Dependencies / Arguments Using ES5 In Angular 2 Beta 3](http://bennadel.github.io/JavaScript-Demos/demos/optional-arguments-es5-angular2/)
 * [Building A Better Mental Model For Meta-Data In Angular 2 Beta 3](http://bennadel.github.io/JavaScript-Demos/demos/using-classes-without-metadata-angular2/)
 * [Tracking Click Events Outside The Current Component In Angular 2 Beta 1](http://bennadel.github.io/JavaScript-Demos/demos/click-outside-directive-angularjs2/)
