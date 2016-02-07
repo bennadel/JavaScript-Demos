@@ -64,7 +64,7 @@
 						// Comment this line out to see the default behavior of Inputs
 						// that use uni-directional data flow.
 						// --
-						directives: [ MaintainInputCursor ],
+						// directives: [ MaintainInputCursor ],
 
 						// Notice that we have two different inputs - one that uses
 						// ngModel for the two-way data-binding sugar on top of the 
@@ -135,7 +135,7 @@
 
 						// If you discard the value emitted from the Input, you will 
 						// find out that the input acts somewhat like a "Controlled 
-						// component" and somewhat like an "Uncontrolled Component" 
+						// Component" and somewhat like an "Uncontrolled Component" 
 						// (in ReactJS terminology).
 						// --
 						// vm.form.nickname = "Discarded...";
@@ -155,13 +155,12 @@
 		// I get Angular to maintain the cursor position for inputs that are using 
 		// uni-directional data-flow. 
 		// --
-		// CAUTION: I have ABSOLUTELY NO IDEA WHY THIS WORKS! I just happened to stumble
-		// upon this solution as I was experimenting with uni-directional data flow. But,
-		// for some reason, if you add a directive to the input that accepts "VALUE" as 
-		// an input binding, Angular will start maintain the cursor position. It looks
-		// like this gets Angular to treat the input like an "Uncontrolled Component,"
-		// ala ReactJS, in which we can read and respond to input changes, but we can't
-		// actually set the value of the input using the property binding.
+		// MY THEORY: By applying an input directive that exposes a [value] binding, 
+		// we are breaking the connection between the view-model and the native DOM
+		// element. Meaning, changes the [value] are now piped into the directive rather
+		// than into the underlying Input DOM element. This allows the directive to act
+		// as a proxy to the Input DOM element, applying value-changes only when the 
+		// value originates externally to the View.
 		define(
 			"MaintainInputCursor",
 			function registerMaintainInputCursor() {
@@ -170,7 +169,12 @@
 				ng.core
 					.Directive({
 						selector: "input[value]:not([ngModel])",
+
+						// CAUTION: Here, we are co-opting the use of the native "value"
+						// property, which gives the directive control over how this
+						// binding gets propagated down to the actual DOM rendering.
 						inputs: [ "value" ],
+
 						host: {
 							"(input)": "trackValue( $event.target.value )"
 						}
