@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Experimenting With Input Cursor Positions In Angular 2 Beta 3](http://bennadel.github.io/JavaScript-Demos/demos/cursor-position-angular2/)
 * [Extending React.Component Using ES5 With ReactJS 0.14](http://bennadel.github.io/JavaScript-Demos/demos/extend-react-component-es5/)
 * [Rendering Large Datasets With Angular 2 Beta 3 And ReactJS 0.14.7](http://bennadel.github.io/JavaScript-Demos/demos/render-large-datasets-angular2-reactjs/)
 * [Defining Optional Dependencies / Arguments Using ES5 In Angular 2 Beta 3](http://bennadel.github.io/JavaScript-Demos/demos/optional-arguments-es5-angular2/)
