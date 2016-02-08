@@ -64,7 +64,7 @@
 
 							<time-label 
 								[value]="currentTime"
-								format="simple">
+								[format]="format">
 							</time-label>
 						`
 					})
@@ -83,6 +83,7 @@
 
 					// I hold the current time-stamp to be formatted.
 					vm.currentTime = new Date();
+					vm.format = "simple";
 
 					// Start incrementing the time-stamp so that we can pass new values
 					// into the time-label component over time.
@@ -93,6 +94,15 @@
 
 						},
 						( 1 * 1000 )
+					);
+
+					setTimeout(
+						function changeFormat() {
+
+							vm.format = "full";
+
+						},
+						( 3 * 1000 )
 					);
 
 				}
@@ -158,7 +168,7 @@
 						// "previousValue", and a method - isFirstChange() - that 
 						// determines whether or not this change represents the first 
 						// change (ie, the initialization values) for the change detector.
-						if ( event.value.isFirstChange() ) {
+						if ( ( "value" in event ) && ( "format" in event ) ) {
 
 							console.log( "Initializing the component inputs." );
 							console.log( "Is first value?:", event.value.isFirstChange() );
@@ -181,11 +191,23 @@
 						// will exist in the change event object. In this demo, since 
 						// "format" is not dynamic, it will never show up again in the 
 						// ngOnChanges change collection.
-						} else { 
+						} else {
 
 							console.log( "Updating the component inputs." );
-							console.log( "Value change present?:", ( "value" in event ) );
-							console.log( "Format change present?:", ( "format" in event ) );
+
+							// Check to see if value changed.
+							if ( "value" in event ) {
+
+								console.log( "Value changed for first time?:", event.value.isFirstChange() );
+
+							}
+
+							// Check to see if format changed.
+							if ( "format" in event ) {
+
+								console.log( "Format changed for first time?:", event.format.isFirstChange() );
+
+							}
 
 						}
 
