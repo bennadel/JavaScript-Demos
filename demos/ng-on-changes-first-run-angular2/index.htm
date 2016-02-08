@@ -81,7 +81,7 @@
 
 					var vm = this;
 
-					// I hold the current time-stamp to be formatted.
+					// I hold the current time-stamp inputs.
 					vm.currentTime = new Date();
 					vm.format = "simple";
 
@@ -96,6 +96,7 @@
 						( 1 * 1000 )
 					);
 
+					// After some time, change the formatting of the time.
 					setTimeout(
 						function changeFormat() {
 
