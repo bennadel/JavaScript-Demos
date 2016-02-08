@@ -177,9 +177,15 @@
 								( event.value.previousValue === event.format.previousValue )
 							);
 
+						// After the first, initializing change, only the updates values
+						// will exist in the change event object. In this demo, since 
+						// "format" is not dynamic, it will never show up again in the 
+						// ngOnChanges change collection.
 						} else { 
 
 							console.log( "Updating the component inputs." );
+							console.log( "Value change present?:", ( "value" in event ) );
+							console.log( "Format change present?:", ( "format" in event ) );
 
 						}
 
