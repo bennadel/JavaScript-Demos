@@ -1,0 +1,221 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Differentiating Between Initialization And Update With ngOnChanges() In Angular 2 Beta 3
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></lin>
+</head>
+<body>
+
+	<h1>
+		Differentiating Between Initialization And Update With ngOnChanges() In Angular 2 Beta 3
+	</h1>
+
+	<my-app>
+		Loading...
+	</my-app>
+
+	<!-- Load demo scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/3/es6-shim.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/3/Rx.umd.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/3/angular2-polyfills.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/3/angular2-all.umd.js"></script>
+	<!-- AlmondJS - minimal implementation of RequireJS. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/3/almond.js"></script>
+	<script type="text/javascript">
+
+		// Defer bootstrapping until all of the components have been declared.
+		// --
+		// NOTE: Not all components have to be required here since they will be 
+		// implicitly required by other components.
+		requirejs(
+			[ "AppComponent" ],
+			function run( AppComponent ) {
+
+				ng.platform.browser.bootstrap( AppComponent );
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide the root application component.
+		define(
+			"AppComponent",
+			function registerAppComponent() {
+
+				var TimeLabel = require( "TimeLabel" );
+
+				// Configure the App component definition.
+				ng.core
+					.Component({
+						selector: "my-app",
+						directives: [ TimeLabel ],
+						template:
+						`
+							Current Time:
+
+							<time-label 
+								[value]="currentTime"
+								format="simple">
+							</time-label>
+						`
+					})
+					.Class({
+						constructor: AppController
+					})
+				;
+
+				return( AppController );
+
+
+				// I control the App component.
+				function AppController() {
+
+					var vm = this;
+
+					// I hold the current time-stamp to be formatted.
+					vm.currentTime = new Date();
+
+					// Start incrementing the time-stamp so that we can pass new values
+					// into the time-label component over time.
+					setInterval(
+						function incrementTime() {
+
+							vm.currentTime = new Date();
+
+						},
+						( 1 * 1000 )
+					);
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide a simple time-label component that formats the given time-stamp 
+		// using the given algorithm.
+		define(
+			"TimeLabel",
+			function registerTimeLabel() {
+
+				// Configure the TimeLabel component definition.
+				ng.core
+					.Component({
+						selector: "time-label",
+						inputs: [ "value", "format" ],
+						template:
+						`
+							{{ timeAsString }}
+						`
+					})
+					.Class({
+						constructor: TimeLabelController,
+
+						// Define the component life-cycle events on the prototype so 
+						// that they get picked up at run-time.
+						ngOnChanges: function noop() {}
+					})
+				;
+
+				return( TimeLabelController );
+
+
+				// I control the TimeLabel component.
+				function TimeLabelController() {
+
+					var vm = this;
+
+					// I hold the formatted time-stamp value.
+					vm.timeAsString = "";
+
+					// Expose the public methods.
+					vm.ngOnChanges = ngOnChanges;
+
+
+					// ---
+					// PUBLIC MEHTODS.
+					// ---
+
+
+					// I handle a change in the component input values.
+					function ngOnChanges( event ) {
+
+						// The event object is a collection of "SimpleChange" change 
+						// detection objects, each of which contains "currentValue", 
+						// "previousValue", and a method - isFirstChange() - that 
+						// determines whether or not this change represents the first 
+						// change (ie, the initialization values) for the change detector.
+						if ( event.value.isFirstChange() ) {
+
+							console.log( "Initializing the component inputs." );
+							console.log( "Is first value?:", event.value.isFirstChange() );
+							console.log( "Is first format?:", event.format.isFirstChange() );
+
+							// Behind the scenes, each SimpleChange references the same
+							// "uninitialized" object reference. In fact, the way  that 
+							// state is determine is through strict-equality reference. 
+							// As such, it just so happens that both of the previous 
+							// values reference the same object.
+							// --
+							// CAUTION: I would never depend on this fact - I'm just 
+							// including it here to get a sense of the mechanics.
+							console.log( 
+								"Previous values match (strict equality):",
+								( event.value.previousValue === event.format.previousValue )
+							);
+
+						} else { 
+
+							console.log( "Updating the component inputs." );
+
+						}
+
+						vm.timeAsString = formatTime( vm.value, vm.format );
+
+					}
+
+
+					// ---
+					// PRIVATE MEHTODS.
+					// ---
+
+
+					// I format the given time-stamp using the given algorithm.
+					function formatTime( timestamp, format ) {
+
+						var raw = new Date( timestamp ).toTimeString();
+
+						if ( format === "simple" ) {
+
+							return( raw.split( " " ).shift() );
+
+						} else {
+
+							return( raw );
+
+						}
+
+					}
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
