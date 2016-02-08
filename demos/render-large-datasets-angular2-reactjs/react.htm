@@ -89,7 +89,8 @@
 							onFilterChange={ setFilter }
 							isMounted={ !! vm.state.grid.length }
 							onUnmount={ unmountGrid }
-							onRemount={ remountGrid }>
+							onRemount={ remountGrid }
+							onReverse={ reverseGrid }>
 						</DemoForm>
 
 						<DemoTable
@@ -111,6 +112,30 @@
 					form: {
 						filter: ""
 					}
+				});
+
+			}
+
+
+			// I reverse the grid, inverting each column and row.
+			function reverseGrid() {
+
+				var newGrid = vm.state.grid.reduce(
+					function operator( reduction, row ) {
+
+						reduction.unshift({
+							id: row.id,
+							items: row.items.slice().reverse()
+						});
+
+						return( reduction );
+
+					},
+					[]
+				);
+
+				vm.setState({
+					grid: newGrid
 				});
 
 			}
@@ -251,6 +276,7 @@
 			// Expose the public methods.
 			vm.handleFilterChange = handleFilterChange;
 			vm.handleRemount = handleRemount;
+			vm.handleReverse = handleReverse;
 			vm.handleUnmount = handleUnmount;
 			vm.render = render;
 
@@ -273,6 +299,14 @@
 			function handleRemount( event ) {
 
 				vm.props.onRemount();
+
+			}
+
+
+			// I handle the user's desire to reverse the data in the grid.
+			function handleReverse( event ) {
+
+				vm.props.onReverse();
 
 			}
 
@@ -313,10 +347,12 @@
 				if ( vm.props.isMounted ) {
 
 					var mountAction = <a onClick={ handleUnmount }>Unmount Grid</a>;
+					var reverseAction = <a onClick={ handleReverse }>Reverse Grid</a>;
 
 				} else {
 
 					var mountAction = <a onClick={ handleRemount }>Remount Grid</a>;
+					var reverseAction = null;
 
 				}
 
@@ -336,7 +372,9 @@
 						{ " " }
 						{ fitlerInsight }
 						{ " " }
-						{ mountAction }
+						{ mountAction } 
+						{ " " }
+						{ reverseAction }
 					</form>
 				);
 

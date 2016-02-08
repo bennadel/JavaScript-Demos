@@ -81,6 +81,7 @@
 
 								<a *ngIf="grid.length" (click)="unmountGrid()">Unmount Grid</a>
 								<a *ngIf="! grid.length" (click)="remountGrid()">Remount Grid</a>
+								<a *ngIf="grid.length" (click)="reverseGrid()">Reverse Grid</a>
 							</form>
 
 							<table width="100%" cellspacing="2" [class.filtered]="form.filter">
@@ -128,6 +129,7 @@
 					// Expose the public API.
 					vm.handleFilterChange = handleFilterChange;
 					vm.remountGrid = remountGrid;
+					vm.reverseGrid = reverseGrid;
 					vm.unmountGrid = unmountGrid;
 
 
@@ -189,6 +191,27 @@
 						vm.form.filter = "";
 
 					}
+
+
+					// I reverse the grid, inverting each column and row.
+					function reverseGrid() {
+
+						vm.grid = vm.grid.reduce(
+							function operator( reduction, row ) {
+
+								reduction.unshift({
+									id: row.id,
+									items: row.items.slice().reverse()
+								});
+
+								return( reduction );
+
+							},
+							[]
+						);
+
+					}
+
 
 
 					// I clear the grid of data. This will help separate processing 
