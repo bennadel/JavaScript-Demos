@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Understanding "Object Identity" With ngFor Loops In Angular 2 Beta 3](http://bennadel.github.io/JavaScript-Demos/demos/object-identity-ng-for-angular2/)
 * [Differentiating Between Initialization And Update With ngOnChanges() In Angular 2 Beta 3](http://bennadel.github.io/JavaScript-Demos/demos/ng-on-changes-first-run-angular2/)
 * [Experimenting With Input Cursor Positions In Angular 2 Beta 3](http://bennadel.github.io/JavaScript-Demos/demos/cursor-position-angular2/)
 * [Extending React.Component Using ES5 With ReactJS 0.14](http://bennadel.github.io/JavaScript-Demos/demos/extend-react-component-es5/)

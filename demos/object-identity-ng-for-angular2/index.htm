@@ -1,0 +1,274 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Understanding "Object Identity" With ngFor Loops In Angular 2 Beta 3
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body>
+
+	<h1>
+		Understanding "Object Identity" With ngFor Loops In Angular 2 Beta 3
+	</h1>
+
+	<my-app>
+		Loading...
+	</my-app>
+
+	<!-- Load demo scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/3/es6-shim.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/3/Rx.umd.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/3/angular2-polyfills.min.js"></script>
+	<!-- CAUTION: Some fatures does no work well with the minified UMD code in Beta 3. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/3/angular2-all.umd.js"></script>
+	<!-- AlmondJS - minimal implementation of RequireJS. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/3/almond.js"></script>
+	<script type="text/javascript">
+
+		// Defer bootstrapping until all of the components have been declared.
+		// --
+		// NOTE: Not all components have to be required here since they will be 
+		// implicitly required by other components.
+		requirejs(
+			[ "AppComponent" ],
+			function run( AppComponent ) {
+
+				ng.platform.browser.bootstrap( AppComponent );
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide the root App component.
+		define(
+			"AppComponent",
+			function registerAppComponent() {
+
+				var NodeLogger = require( "NodeLogger" );
+
+				// Configure the app component definition.
+				ng.core
+					.Component({
+						selector: "my-app",
+						directives: [ NodeLogger ],
+
+						// In this demo, we have two different collections that are 
+						// being rendered using ngFor. Notice that the second one uses
+						// a custom trackBy: [ngForTrackBy] property which uses an 
+						// identity function to help determine item equality rather than
+						// using directive object references (like the first ngFor loop
+						// is doing). This is akin to the "track by" syntax in NG1.
+						// --
+						// NOTE: Each LI element also has a [nodeLogger] directive that
+						// will track (via console.log()) when new DOM nodes are created.
+						template:
+						`
+							<p>
+								<a (click)="shuffleCollections()">Shuffle collections</a>.
+							</p>
+
+							<h3>
+								Friends
+							</h3>
+
+							<ul>
+								<li 
+									*ngFor="#friend of friends ; #index = index"
+									nodeLogger="{{ friend.name }} at index {{ index }}.">
+
+									{{ friend.name }}
+
+								</li>
+							</ul>
+
+							<h3>
+								Enemies
+							</h3>
+
+							<ul>
+								<li 
+									*ngFor="#enemy of enemies ; #index = index ; trackBy:personIdentity"
+									nodeLogger="{{ enemy.name }} at index {{ index }}.">
+
+									{{ enemy.name }}
+
+								</li>
+							</ul>
+						`
+					})
+					.Class({
+						constructor: AppController
+					})
+				;
+
+				return( AppController );
+
+
+				// I control the App component.
+				function AppController() {
+
+					var vm = this;
+
+					// Build the collections. 
+					vm.friends = buildCollection( "Fiona", "Fay", "Franny", "Francis", "Fifi" );
+					vm.enemies = buildCollection( "Ella", "Erin", "Eva", "Ester", "Eveline" );
+
+					// Expose the public API.
+					vm.personIdentity = personIdentity;
+					vm.shuffleCollections = shuffleCollections;
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I provide a custom track-by function that tracks a person based on
+					// the ID, not the object identity (aka object reference).
+					function personIdentity( index, person ) {
+
+						console.log( "TrackBy:", person.name, "at index", index );
+
+						return( person.id );
+
+					}
+
+
+					// I shuffle (reverse) each of the people collection.
+					function shuffleCollections() {
+
+						console.log( "- - - - - - - - - - - - - - - - -" );
+						console.log( "Shuffling both collections." );
+						console.log( "- - - - - - - - - - - - - - - - -" );
+
+						// When we reverse the friends collection, notice that we are
+						// returning a new array; however, the actual items within that 
+						// array are the same OBJECT REFERENCES that they were in the
+						// previous array - we are only affecting the collection.
+						vm.friends = vm.friends.slice().reverse();
+
+						// When we reverse the enemies collection, on the other hand, we
+						// are creating both a NEW ARRAY and creating NEW ITEM references
+						// within that array.
+						vm.enemies = vm.enemies.reverse().map(
+							function operator( enemy ) {
+
+								// CAUTION: Creating a new item object.
+								return({
+									id: enemy.id,
+									name: enemy.name
+								});
+
+							}
+						);
+
+					}
+
+
+					// ---
+					// PRIVATE METHODS.
+					// ---
+
+
+					// I build a collection of People from the given names. Each person
+					// contains a unique id and a name.
+					function buildCollection( /* ...names */ ) {
+
+						var collection = Array.prototype.slice.call( arguments ).map(
+							function operator( name, i ) {
+
+								return({
+									id: ( i + 1 ),
+									name: name
+								});
+
+							}
+						);
+
+						return( collection );
+
+					}
+
+				}
+
+			}
+		);
+
+	
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide a directive that logs the input message, differentiating between 
+		// DOM (Document Object Model) node instantiation and updates.
+		define(
+			"NodeLogger",
+			function registerNodeLogger() {
+
+				// Configure the NodeLogger directive definition.
+				ng.core
+					.Directive({
+						selector: "[nodeLogger]",
+						inputs: [ "nodeLogger" ]
+					})
+					.Class({
+						constructor: NodeLoggerController,
+
+						// Define the directive life-cycle methods on the prototype 
+						// so that they'll be picked up at runtime.
+						ngOnChanges: function noop() {}
+					})
+				;
+
+				return( NodeLoggerController );
+
+
+				// I control the NodeLogger directive.
+				function NodeLoggerController() {
+
+					var vm = this;
+
+					// Expose the public methods.
+					vm.ngOnChanges = ngOnChanges;
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I handle input changes.
+					function ngOnChanges( event ) {
+
+						// If this is the first change of this value, it means that this
+						// is the initial binding of the input after the directive has
+						// just been instantiated for this DOM node.
+						if ( event.nodeLogger.isFirstChange() ) {
+
+							console.log( "Node logger ** instantiated **:", vm.nodeLogger );
+
+						} else {
+
+							console.log( "Node logger __ updated __:", vm.nodeLogger );
+
+						}
+
+					}
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
