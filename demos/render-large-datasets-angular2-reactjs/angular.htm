@@ -57,10 +57,21 @@
 			"AppComponent",
 			function registerAppComponent() {
 
+				var LogTRCreation = require( "LogTRCreation" );
+				var LogTDCreation = require( "LogTDCreation" );
+
 				// Configure the app component definition.
 				ng.core
 					.Component({
 						selector: "my-app",
+
+						// Include these directives if you want to see proof that the 
+						// TR and TD nodes are not being destroyed and re-created on
+						// the shuffling of the grid - they log out the constructor
+						// for the TR and TD dome nodes.
+						// --
+						// directives: [ LogTRCreation, LogTDCreation ],
+
 						template:
 						`
 							<form>		
@@ -196,19 +207,20 @@
 					// I reverse the grid, inverting each column and row.
 					function reverseGrid() {
 
-						vm.grid = vm.grid.reduce(
-							function operator( reduction, row ) {
+						// Reverse each row and column IN-PLACE. We want to do an in-place
+						// reverse so that we don't break the object identity references.
+						// This way, we don't destroy the DOM nodes - we'll just move them
+						// around in the existing DOM tree.
+						vm.grid
+							.reverse()
+							.forEach(
+								function iterator( row, i ) {
 
-								reduction.unshift({
-									id: row.id,
-									items: row.items.slice().reverse()
-								});
+									row.items.reverse();
 
-								return( reduction );
-
-							},
-							[]
-						);
+								}
+							)
+						;
 
 					}
 
@@ -280,6 +292,39 @@
 					}
 
 				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// Create testing directives that log to the console when a particular type of
+		// Element is created and linked to the directive controller.
+		[ "TR", "TD" ].forEach(
+			function createNodeLogger( tagName ) {
+
+				define(
+					( "Log" + tagName + "Creation" ),
+					function registerLogTRCreation() {
+
+						return ng.core
+							.Directive({
+								selector: tagName.toLowerCase()
+							})
+							.Class({
+								constructor: function () {
+
+									console.log( tagName, "node has been created." );
+
+								}
+							})
+						;
+
+					}
+				);
 
 			}
 		);

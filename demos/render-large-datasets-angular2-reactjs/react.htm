@@ -120,19 +120,23 @@
 			// I reverse the grid, inverting each column and row.
 			function reverseGrid() {
 
-				var newGrid = vm.state.grid.reduce(
-					function operator( reduction, row ) {
+				// Create a new top-level grid reference.
+				var newGrid = vm.state.grid.slice();
+				
+				// Reverse each row and column. We are doing it in-place do keep parity
+				// with the Angular app; but, the reality is, we don't need to do this
+				// since React will be using the key={} attributes to track DOM creation
+				// and destruction.
+				newGrid
+					.reverse()
+					.forEach(
+						function iterator( row, i ) {
 
-						reduction.unshift({
-							id: row.id,
-							items: row.items.slice().reverse()
-						});
+							row.items.reverse();
 
-						return( reduction );
-
-					},
-					[]
-				);
+						}
+					)
+				;
 
 				vm.setState({
 					grid: newGrid
