@@ -1,0 +1,318 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Experimenting With Class Delegates And Factories In Angular 2 Beta 3
+	</title>
+</head>
+<body>
+
+	<h1>
+		Experimenting With Class Delegates And Factories In Angular 2 Beta 3
+	</h1>
+
+	<my-app>
+		Loading...
+	</my-app>
+
+	<!-- Load demo scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/3/es6-shim.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/3/Rx.umd.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/3/angular2-polyfills.min.js"></script>
+	<!-- CAUTION: Some features do not work with the minified UMD code. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/3/angular2-all.umd.js"></script>
+	<!-- AlmondJS - minimal implementation of RequireJS. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/3/almond.js"></script>
+	<script type="text/javascript">
+
+		// Defer bootstrapping until all of the components have been declared.
+		// --
+		// NOTE: Not all components have to be required here since they will be 
+		// implicitly required by other components.
+		requirejs(
+			[ "AppComponent", "Greeter", "FriendlyGreeter", "FlirtyGreeter", "delegate" ],
+			function run( AppComponent, Greeter, FriendlyGreeter, FlirtyGreeter, delegate ) {
+
+				ng.platform.browser.bootstrap( 
+					AppComponent,
+					[
+						// For the "core" Greeter, I don't want to instantiate it manually
+						// since I don't "own" it. Instead, I want Angular to handle the 
+						// instantiation including the dependency-injection. BUT, I can't
+						// call it "Greeter" otherwise I'll get a circular dependency. So,
+						// instead, I have to call it a "delegate" Greeter, which is what
+						// the factory will have to depend on.
+						ng.core.provide(
+							delegate( Greeter ),
+							{
+								useClass: Greeter
+							}
+						),
+
+						// Notice that this factory function for "Greeter" depends on the
+						// "delegate" Greeter. This will get Angular to instantiate the
+						// core Greeter and pass it into the factory where we can then 
+						// proceed to overwrite the provider for Greeter.
+						ng.core.provide(
+							Greeter,
+							{
+								useFactory: function( greeter ) {
+
+									// return( greeter );
+									// return( new FriendlyGreeter( greeter ) );
+									return( new FlirtyGreeter( new FriendlyGreeter( greeter ) ) );
+
+								},
+								deps: [ delegate( Greeter ) ]
+							}
+						),
+
+						// Providing these classes, for general use.
+						// Greeter, // -- To revert back to the non-delegate class.						
+						FriendlyGreeter,
+						FlirtyGreeter
+					]
+				);
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide a method that creates delegate tokens using the given class 
+		// reference. This can be used so that coordinating classes only have to agree
+		// on the core class token, not the delegate token.
+		define(
+			"delegate",
+			function registerDelegate() {
+
+				// I hold the collection of delegate token associations.
+				var delegates = [];
+
+				return( delegate );
+
+
+				// I return the delegate token associated with the given class. If one
+				// does not exist, it is created and returned.
+				function delegate( coreClass ) {
+
+					// If we have an existing token for the given class, just return
+					// the existing token.
+					for ( var i = 0, length = delegates.length ; i < length ; i++ ) {
+
+						if ( delegates[ i ].coreClass === coreClass ) {
+
+							return( delegates[ i ].opaqueToken );
+
+						}
+
+					}
+
+					// If we made it this far, this is the first time that a delegate 
+					// token is trying to be registered for this class. Let's create
+					// a new delegate entry and return the new token.
+					var newToken = new ng.core.OpaqueToken( coreClass.toString() );
+
+					delegates.push({
+						coreClass: coreClass,
+						opaqueToken: newToken
+					});
+
+					return( newToken );
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide the root App component.
+		define(
+			"AppComponent",
+			function registerAppComponent() {
+
+				var Greeter = require( "Greeter" );
+
+				// Configure the App component definition.
+				ng.core
+					.Component({
+						selector: "my-app",
+						template:
+						`
+							<strong>Greeting</strong>: {{ greeting }}
+						`
+					})
+					.Class({
+						constructor: AppController
+					})
+				;
+
+				AppController.parameters = [ new ng.core.Inject( Greeter ) ];
+
+				return( AppController );
+
+
+				// I control the App component.
+				function AppController( greeter ) {
+
+					var vm = this;
+
+					// Prepare the greeting for the view. At this point, greeter may be
+					// an instance of Greeter, an instance of FriendlyGreeter, or an
+					// instance of FlirtyGreeter - we don't have to care since they all
+					// use the same API. The decision was made by the registered providers.
+					vm.greeting = greeter.sayHello( "Sarah" );
+					
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide a greeter that can say hello.
+		define(
+			"Greeter",
+			function registerGreeter() {
+
+				return( Greeter );
+
+
+				// I provide an API for greeting people.
+				function Greeter() {
+
+					// Return the public API.
+					return({
+						sayHello: sayHello
+					});
+					
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I return a greeting for the given name.
+					function sayHello( name ) {
+
+						return( "Hello " + name + "." );
+
+					}
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide a friendly greeter that builds on top of the Greeter.
+		// --
+		// NOTE: This class does not have any idea that it is being used as part of a
+		// class delegation workflow - it only knows that it depends on Greeter being
+		// in the provider chain in the case of dependency-injection.
+		define(
+			"FriendlyGreeter",
+			function registerFriendlyGreeter() {
+
+				var Greeter = require( "Greeter" );
+
+				FriendlyGreeter.parameters = [ new ng.core.Inject( Greeter ) ];
+
+				return( FriendlyGreeter );
+
+
+				// I provide an API for greeting people.
+				function FriendlyGreeter( greeter ) {
+
+					// Return the public API.
+					return({
+						sayHello: sayHello
+					});
+					
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I return a greeting for the given name.
+					function sayHello( name ) {
+
+						return( greeter.sayHello( name ) + " I hope you are well." );
+
+					}
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide a flirty greeter that builds on top of the Greeter.
+		// --
+		// NOTE: This class does not have any idea that it is being used as part of a
+		// class delegation workflow - it only knows that it depends on Greeter being
+		// in the provider chain in the case of dependency-injection.
+		define(
+			"FlirtyGreeter",
+			function registerFlirtyGreeter() {
+
+				var Greeter = require( "Greeter" );
+
+				FlirtyGreeter.parameters = [ new ng.core.Inject( Greeter ) ];
+
+				return( FlirtyGreeter );
+
+
+				// I provide an API for greeting people.
+				function FlirtyGreeter( greeter ) {
+
+					var coreSayHello = greeter.sayHello;
+
+					// In this version of the decorator, we are actually altering the
+					// core functionality of the greeter delegate.
+					// --
+					// NOTE: This is more like the $delegate usage you might see in 
+					// AngularJS 1.x.
+					greeter.sayHello = function( name ) {
+
+						var coreResult = coreSayHello.call( greeter, name );
+						
+						return( coreResult + " You sure look lovely this morning." );
+
+					};
+
+					// Return the ORIGINAL greeter as the "flirty" greeter. In JavaScript,
+					// you can return anything from a constructor function and, generally
+					// speaking, return a totally new object instance reference.
+					return( greeter );
+					
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
