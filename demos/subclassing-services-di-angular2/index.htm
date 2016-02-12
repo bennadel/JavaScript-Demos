@@ -1,0 +1,305 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Dependency-Injection With Sub-Classed Services In Angular 2 Beta 3
+	</title>
+</head>
+<body>
+
+	<h1>
+		Dependency-Injection With Sub-Classed Services In Angular 2 Beta 3
+	</h1>
+
+	<my-app>
+		Loading...
+	</my-app>
+
+	<!-- Load demo scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/3/es6-shim.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/3/Rx.umd.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/3/angular2-polyfills.min.js"></script>
+	<!-- CAUTION: Some features do not work with the minified UMD code. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/3/angular2-all.umd.js"></script>
+	<!-- AlmondJS - minimal implementation of RequireJS. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/3/almond.js"></script>
+	<script type="text/javascript">
+
+		// Defer bootstrapping until all of the components have been declared.
+		// --
+		// NOTE: Not all components have to be required here since they will be 
+		// implicitly required by other components.
+		requirejs(
+			[ "AppComponent", "GREETER_PREFIX", "Greeter", "FriendlyGreeter", "FlirtyGreeter" ],
+			function run( AppComponent, GREETER_PREFIX, Greeter, FriendlyGreeter, FlirtyGreeter ) {
+
+				ng.platform.browser.bootstrap( 
+					AppComponent,
+					[
+						ng.core.provide(
+							GREETER_PREFIX,
+							{
+								useValue: GREETER_PREFIX
+
+								// We could have provided any simple value here:
+								// --
+								// useValue: "Whaaaazuuuuuuuuup"
+							}
+						),
+						Greeter,
+						FriendlyGreeter,
+						FlirtyGreeter
+					]
+				);
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide the root App component.
+		define(
+			"AppComponent",
+			function registerAppComponent() {
+
+				var Greeter = require( "Greeter" );
+				var FriendlyGreeter = require( "FriendlyGreeter" );
+				var FlirtyGreeter = require( "FlirtyGreeter" );
+
+				// Configure the App component definition.
+				ng.core
+					.Component({
+						selector: "my-app",
+						template:
+						`
+							<p>
+								<strong>Greeting</strong>: {{ greeting }}
+							</p>
+
+							<p>
+								<strong>Friendly Greeting</strong>: {{ friendlyGreeting }}
+							</p>
+
+							<p>
+								<strong>Flirty Greeting</strong>: {{ flirtyGreeting }}
+							</p>
+						`
+					})
+					.Class({
+						constructor: AppController
+					})
+				;
+
+				// For this demo, we are going to inject an instance of each type of 
+				// greeter so we can compare the various greetings. Remember that:
+				// --
+				// Greeter -> the base class.
+				// FriendlyGreeter -> extends -> Greeter.
+				// FlirtyGreeter -> extends -> FriendlyGreeter -> extends -> Greeter.
+				// --
+				AppController.parameters = [ 
+					new ng.core.Inject( Greeter ),
+					new ng.core.Inject( FriendlyGreeter ),
+					new ng.core.Inject( FlirtyGreeter )
+				];
+
+				return( AppController );
+
+
+				// I control the App component.
+				function AppController( greeter, friendlyGreeter, flirtyGreeter ) {
+
+					var vm = this;
+
+					// Get a greeting from all three of the injected greeters.
+					vm.greeting = greeter.sayHello( "Sarah" );
+					vm.friendlyGreeting = friendlyGreeter.sayHello( "Sarah" );
+					vm.flirtyGreeting = flirtyGreeter.sayHello( "Sarah" );
+					
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide the default prefix that can be used by the various greeter classes.
+		define(
+			"GREETER_PREFIX",
+			function registerGreeterPrefix() {
+
+				return( "Hello" );
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide a greeter that can generate greetings.
+		define(
+			"Greeter",
+			function registerGreeter() {
+
+				var GREETER_PREFIX = require( "GREETER_PREFIX" );
+
+				Greeter.parameters = [ new ng.core.Inject( GREETER_PREFIX ) ];
+
+				
+				// I provide an API for greeting people with the given prefix (ex, Hello).
+				function Greeter( prefix ) {
+
+					this.prefix = prefix;
+
+				}
+
+				// Define the instance methods.
+				Greeter.prototype = {
+
+					// I generate a greeting for the given name.
+					sayHello: function( name ) {
+
+						return( this.prefix + " " + name + "." );
+
+					}
+
+				};
+
+				return( Greeter );
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide a friendly greeter that sub-classes the Greeter.
+		define(
+			"FriendlyGreeter",
+			function registerFriendlyGreeter() {
+
+				var GREETER_PREFIX = require( "GREETER_PREFIX" );
+				var Greeter = require( "Greeter" );
+
+				FriendlyGreeter.parameters = [ new ng.core.Inject( GREETER_PREFIX ) ];
+
+				// Extend the Greeter class.
+				FriendlyGreeter.prototype = Object.create( Greeter.prototype );
+
+
+				// I provide an API for greeting people with the given prefix (ex, Hello).
+				function FriendlyGreeter( prefix ) {
+
+					// When we are implementing a subclass, we always have to call the
+					// super-constructor in order to initialize the inherited portion of
+					// the class. In the context of dependency-injection, this is no 
+					// different. And, regardless of the dependency-injection on the 
+					// current instance, we still have to tell the super-constructor 
+					// about the appropriate constructor arguments.
+					Greeter.call( this, prefix );
+
+				}
+
+				// Define the instance methods.
+				FriendlyGreeter.prototype = {
+
+					// I generate a friendly greeting for the given name.
+					sayHello: function( name ) {
+
+						// In this subclass, we want to build on top of the core 
+						// functionality. As such, we have to invoke the super method in
+						// order to get the base greeting that we are going to augment.
+						var superResult = Greeter.prototype.sayHello.call( this, name );
+
+						// Return the "super" greeting PLUS our variation.
+						return( superResult + " " + "I hope you are doing well." );
+
+					}
+
+				};
+
+				return( FriendlyGreeter );
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide a flirty greeter that sub-classes the FriendlyGreeter.
+		define(
+			"FlirtyGreeter",
+			function registerFlirtyGreeter() {
+
+				var FriendlyGreeter = require( "FriendlyGreeter" );
+
+				// Extend the FriendlyGreeter class.
+				FlirtyGreeter.prototype = Object.create( FriendlyGreeter.prototype );
+
+
+				// I provide an API for greeting people.
+				// --
+				// NOTE: This version of the subclass does not accept a prefix.
+				function FlirtyGreeter() {
+
+					// When we are implementing a subclass, we always have to call the
+					// super-constructor in order to initialize the inherited portion of
+					// the class. In this context, the subclass didn't define any 
+					// constructor arguments and, therefore, the dependency-injection 
+					// framework didn't provide any. However, we STILL HAVE TO INVOKE the
+					// super constructor with the correct argument list. In this case, 
+					// the prefix is hard-coded.
+					// --
+					// NOTE: I'm using a different method signature here to drive home 
+					// the point that the dependency-injection framework DOES NOT CARE 
+					// about your inheritance tree - it only cares about the current 
+					// constructor on the required class.
+					FriendlyGreeter.call( this, "What a lovely morning" );
+
+				}
+
+				// Define the instance methods.
+				FlirtyGreeter.prototype = {
+
+					// I generate a flirty greeting for the given name.
+					sayHello: function( name ) {
+
+						// In this subclass, we want to build on top of the core 
+						// functionality. As such, we have to invoke the super method in
+						// order to get the base greeting that we are going to augment.
+						// --
+						// ASIDE: We are calling the super method. But, the super method
+						// (in FriendlyGreeter) is also calling its super method. So, we
+						// are going to end up "walking" up two different prototypes.
+						var superResult = FriendlyGreeter.prototype.sayHello.call( this, name );
+
+						// Return the "super" greeting PLUS our variation.
+						return( superResult + " " + "Gosh, you sure look nice today." );
+
+					}
+
+				};
+
+				return( FlirtyGreeter );
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>

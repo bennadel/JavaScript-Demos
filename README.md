@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Dependency-Injection With Sub-Classed Services In Angular 2 Beta 3](http://bennadel.github.io/JavaScript-Demos/demos/subclassing-services-di-angular2/)
 * [Experimenting With Class Delegates And Factories In Angular 2 Beta 3](http://bennadel.github.io/JavaScript-Demos/demos/decorate-classes-angular2/)
 * [Understanding "Object Identity" With ngFor Loops In Angular 2 Beta 3](http://bennadel.github.io/JavaScript-Demos/demos/object-identity-ng-for-angular2/)
 * [Differentiating Between Initialization And Update With ngOnChanges() In Angular 2 Beta 3](http://bennadel.github.io/JavaScript-Demos/demos/ng-on-changes-first-run-angular2/)
