@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Provider And Directive Arrays Can Be Mixed-Depth In Angular 2 Beta 6](http://bennadel.github.io/JavaScript-Demos/demos/provider-array-depth-angularj2/)
 * [Dependency-Injection With Sub-Classed Services In Angular 2 Beta 3](http://bennadel.github.io/JavaScript-Demos/demos/subclassing-services-di-angular2/)
 * [Experimenting With Class Delegates And Factories In Angular 2 Beta 3](http://bennadel.github.io/JavaScript-Demos/demos/decorate-classes-angular2/)
 * [Understanding "Object Identity" With ngFor Loops In Angular 2 Beta 3](http://bennadel.github.io/JavaScript-Demos/demos/object-identity-ng-for-angular2/)

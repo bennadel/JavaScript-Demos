@@ -1,0 +1,234 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Provider And Directive Arrays Can Be Mixed-Depth In Angular 2 Beta 6
+	</title>
+</head>
+<body>
+
+	<h1>
+		Provider And Directive Arrays Can Be Mixed-Depth In Angular 2 Beta 6
+	</h1>
+
+	<my-app>
+		Loading...
+	</my-app>
+
+	<!-- Load demo scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/6/es6-shim.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/6/Rx.umd.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/6/angular2-polyfills.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/6/angular2-all.umd.js"></script>
+	<!-- AlmondJS - minimal implementation of RequireJS. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/6/almond.js"></script>
+	<script type="text/javascript">
+
+		// Defer bootstrapping until all of the components have been declared.
+		// --
+		// NOTE: Not all components have to be required here since they will be 
+		// implicitly required by other components.
+		requirejs(
+			[ "AppComponent" ],
+			function run( AppComponent ) {
+
+				ng.platform.browser.bootstrap( 
+					AppComponent,
+
+					// As we define the provider array, notice that we are wrapping each
+					// multi-value instance in an increasingly deep nested array. This 
+					// way, we can test how much the array will be flattened during the
+					// bootstrapping process.
+					[
+						ng.core.provide(
+							"VALUE_COLLECTION",
+							{
+								useValue: "level-0",
+								multi: true
+							}
+						),
+						[
+							ng.core.provide(
+								"VALUE_COLLECTION",
+								{
+									useValue: "level-1",
+									multi: true
+								}
+							)
+						],
+						[
+							[
+								ng.core.provide(
+									"VALUE_COLLECTION",
+									{
+										useValue: "level-2",
+										multi: true
+									}
+								)
+							]
+						],
+						[
+							[
+								[
+									ng.core.provide(
+										"VALUE_COLLECTION",
+										{
+											useValue: "level-3",
+											multi: true
+										}
+									)
+								]
+							]
+						],
+						[
+							[
+								[
+									[
+										ng.core.provide(
+											"VALUE_COLLECTION",
+											{
+												useValue: "level-4",
+												multi: true
+											}
+										)
+									]
+								]
+							]
+						],
+						[
+							[
+								[
+									[
+										[
+											ng.core.provide(
+												"VALUE_COLLECTION",
+												{
+													useValue: "level-5",
+													multi: true
+												}
+											)
+										]
+									]
+								]
+							]
+						]
+					]
+				);
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide the root App component.
+		define(
+			"AppComponent",
+			function registerAppComponent() {
+
+				// All of these directives will select against the "p" element.
+				var PTag0 = require( "PTag0" );
+				var PTag1 = require( "PTag1" );
+				var PTag2 = require( "PTag2" );
+				var PTag3 = require( "PTag3" );
+				var PTag4 = require( "PTag4" );
+				var PTag5 = require( "PTag5" );
+
+				// Configure the App component definition.
+				ng.core
+					.Component({
+						selector: "my-app",
+
+						// As we define the directive array, notice that we are wrapping
+						// each directive class in an increasingly deep nested array. 
+						// This way, we can test how much the array will be flattened 
+						// during the linking process.
+						directives: [
+							PTag0,
+							[ PTag1 ],
+							[ [ PTag2 ] ],
+							[ [ [ PTag3 ] ] ],
+							[ [ [ [ PTag4 ] ] ] ],
+							[ [ [ [ [ PTag5 ] ] ] ] ]
+						],
+						template:
+						`
+							<p>
+								Such arrays! Much deep! So mixed!
+							</p>
+						`
+					})
+					.Class({
+						constructor: AppController
+					})
+				;
+
+				AppController.parameters = [ new ng.core.Inject( "VALUE_COLLECTION" ) ];
+
+				return( AppController );
+
+
+				// I control the App component.
+				function AppController( values ) {
+
+					var vm = this;
+
+					// Let's log-out the values that were collected from our mixed-depth
+					// provider collection.
+					console.log( "Provider Values:" );
+					console.log( values );
+
+				}
+
+			}
+		);
+
+		
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// Let's setup several Directives that all select for "P". This way, we can see
+		// how many of them get instantiated in the App component with the mixed-depth
+		// directive array.
+		[ 0, 1, 2, 3, 4, 5 ].forEach(
+			function iterator( depth ) {
+
+				define(
+					( "PTag" + depth ),
+					function registerPTag() {
+
+						// Configure the PTag directive definition.
+						// --
+						// CAUTION: Normally, I wouldn't return the value of this
+						// method chain. However, I was running into a bug that I didn't
+						// understand in which the wrong directives were being linked
+						// if I returned the constructor reference. I'll investigate that
+						// in a subsequent blog post (if I can figure it out).
+						return ng.core
+							.Directive({
+								selector: "p"
+							})
+							.Class({
+								constructor: function() {
+
+									console.log( "PTag" + depth + " constructed." );
+
+								}
+							})
+						;
+
+					}
+				);
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
