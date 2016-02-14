@@ -1,0 +1,11 @@
+
+p {
+	background-color: #FAFAFA ;
+	border: 2px solid #CCCCCC ;
+	border-radius: 4px 4px 4px 4px ;
+	cursor: pointer ;
+	padding: 20px 20px 20px 20px ;
+	user-select: none ;
+		-moz-user-select: none ;
+		-webkit-user-select: none ;
+}

@@ -1,0 +1,214 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Selectors And Outputs Can Have The Same Name In Angular 2 Beta 6
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body>
+
+	<h1>
+		Selectors And Outputs Can Have The Same Name In Angular 2 Beta 6
+	</h1>
+
+	<my-app>
+		Loading...
+	</my-app>
+
+	<!-- Load demo scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/6/es6-shim.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/6/Rx.umd.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/6/angular2-polyfills.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/6/angular2-all.umd.js"></script>
+	<!-- AlmondJS - minimal implementation of RequireJS. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/6/almond.js"></script>
+	<script type="text/javascript">
+
+		// Defer bootstrapping until all of the components have been declared.
+		// --
+		// NOTE: Not all components have to be required here since they will be 
+		// implicitly required by other components.
+		requirejs(
+			[ "AppComponent" ],
+			function run( AppComponent ) {
+
+				ng.platform.browser.bootstrap( AppComponent );
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide the root App component.
+		define(
+			"AppComponent",
+			function registerAppComponent() {
+
+				var ClickOutside = require( "ClickOutside" );
+
+				// Configure the App component definition.
+				ng.core
+					.Component({
+						selector: "my-app",
+
+						// Here, we are providing the [clickOutside] directive which also
+						// emits an event of the same name (clickOutside) (for when the
+						// user clicks outside of the bound element).
+						directives: [ ClickOutside ],
+						template:
+						`
+							<p 
+								(click)="handleClick( $event.target.tagName )" 
+								(clickOutside)="handleClickOutside( $event.target.tagName )">
+
+								Click, or click not, there is no mouse.
+
+							</p>
+						`
+					})
+					.Class({
+						constructor: AppController
+					})
+				;
+
+				return( AppController );
+
+
+				// I control the App component.
+				function AppController() {
+
+					var vm = this;
+
+					// Expose the public methods.
+					vm.handleClick = handleClick;
+					vm.handleClickOutside = handleClickOutside;
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I handle the click internally to the bound target.
+					function handleClick( tagName ) {
+
+						console.log( "Ouch!", tagName );
+
+					}
+
+
+					// I handle the click externally to the bound target.
+					function handleClickOutside( tagName ) {
+
+						console.log( "Click outside!", tagName );
+
+					}
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide a directive whose selector [clickOutside] and output (clickOutside)
+		// are the same value.
+		// --
+		// CAUTION: This only started working in Beta 6.
+		define(
+			"ClickOutside",
+			function registerClickOutside() {
+
+				// Configure the ClickOutside directive definition.
+				// --
+				// Notice that the value of the attribute selector and the output event
+				// are the same - "clickOutside".
+				ng.core
+					.Directive({
+						selector: "[clickOutside]",
+						outputs: [ "clickOutside" ],
+						host: {
+							"(click)": "trackEvent( $event )",
+							"(document: click)": "compareEvent( $event )"
+						}
+					})
+					.Class({
+						constructor: ClickOutsideController
+					})
+				;
+
+				return( ClickOutsideController );
+
+
+				// I control the ClickOutside directive.
+				function ClickOutsideController() {
+
+					var vm = this;
+
+					// Setup the output event stream.
+					vm.clickOutside = new ng.core.EventEmitter();
+
+					// I keep track of the last internal click event so that we can 
+					// compare target-local events to global events.
+					var localEvent = null;
+
+					// Expose the public methods.
+					vm.compareEvent = compareEvent;
+					vm.trackEvent = trackEvent;
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I track and compare the click event at the document root.
+					function compareEvent( event ) {
+
+						// If the event at the document root is the same reference as the
+						// event at the target, it means that the event originated from 
+						// within the target and bubbled all the way to the root. As such,
+						// if the event at the document root does NOT MATCH the last known
+						// event at the target, the event must have originated from 
+						// outside of the target.
+						if ( event !== localEvent ) {
+
+							vm.clickOutside.emit( event );
+
+						}
+
+						localEvent = null;
+
+					}
+
+
+					// I track the click event on the bound target.
+					function trackEvent( event ) {
+
+						// When the user clicks inside the bound target, we need to start
+						// tracking the event as it bubbles up the DOM tree. This way, 
+						// when a click event hits the document root, we can determine if 
+						// the event originated from within the target.
+						localEvent = event;
+
+					}
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
