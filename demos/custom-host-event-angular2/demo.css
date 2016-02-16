@@ -1,0 +1,30 @@
+
+body {
+	border-bottom: 1px dashed red ;
+}
+
+a {
+	color: red ;
+	cursor: pointer ;
+	text-decoration: underline ;
+	user-select: none ;
+		-moz-user-select: none ;
+		-webkit-user-select: none ;
+}
+
+my-app {
+	display: block ;
+}
+
+widget {
+	background-color: #F0F0F0 ;
+	border: 2px solid #CCCCCC ;
+	border-radius: 4px 4px 4px 4px ;
+	cursor: pointer ;
+	display: inline-block ;
+	margin: 20px 0px 20px 0px ;
+	padding: 20px 20px 20px 20px ;
+	user-select: none ;
+		-moz-user-select: none ;
+		-webkit-user-select: none ;
+}

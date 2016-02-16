@@ -1,0 +1,424 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Creating Custom DOM And Host Event Bindings In Angular 2 Beta 6
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body>
+
+	<h1>
+		Creating Custom DOM And Host Event Bindings In Angular 2 Beta 6
+	</h1>
+
+	<my-app>
+		Loading...
+	</my-app>
+
+	<!--
+		Including extra padding / content to make sure that the BODY tag 
+		is easy to reach as a target. 
+	-->
+	<p style="padding: 50px 0px 50px 0px ; margin-bottom: 50px ;">
+		(body tag)
+	</p>
+
+
+	<!-- Load demo scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/6/es6-shim.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/6/Rx.umd.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/6/angular2-polyfills.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/6/angular2-all.umd.js"></script>
+	<!-- AlmondJS - minimal implementation of RequireJS. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/6/almond.js"></script>
+	<script type="text/javascript">
+
+		// Defer bootstrapping until all of the components have been declared.
+		// --
+		// NOTE: Not all components have to be required here since they will be 
+		// implicitly required by other components.
+		requirejs(
+			[ "AppComponent", "DOMOutsideEventPlugin" ],
+			function run( AppComponent, DOMOutsideEventPlugin ) {
+
+				ng.platform.browser.bootstrap( 
+					AppComponent,
+
+					// All of the DOM events are managed through an Event Manager that
+					// is, itself, backed by a series of plugins. We can add additional, 
+					// custom DOM events and host bindings by providing plugins. While 
+					// the plugins are registered in one order they are actually consumed 
+					// in reverse order. This means that our custom plugins are actually 
+					// given a higher precedence than the ones provided by Angular 2. 
+					// This is why we have a chance to intercept a "native" DOM binding
+					// before it gets bound by Angular 2's core DOM plugin.
+					[
+						ng.core.provide(
+							ng.platform.common_dom.EVENT_MANAGER_PLUGINS,
+							{
+								useClass: DOMOutsideEventPlugin,
+								multi: true
+							}
+						)
+					]
+				);
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide a browser plugin for custom "outside" DOM (Document Object Model)
+		// event bindings. The currently supported events are:
+		// --
+		// * clickOutside
+		// * mousedownOutside
+		// * mouseupOutside
+		// * mousemoveOutside
+		// --
+		// CAUTION: This plugin makes *** direct references *** to the DOCUMENT and BODY
+		// nodes because I could not figure out how to access the DOM Adapter or keep the
+		// DOM reference encapsulated.
+		define(
+			"DOMOutsideEventPlugin",
+			function registerDOMOutsideEventPlugin() {
+
+				return( DOMOutsideEventPlugin );
+
+
+				// I bind and unbind custom "outside" DOM events.
+				function DOMOutsideEventPlugin() {
+
+					var vm = this;
+
+					// Each "outside" event maps to a native event on the document node.
+					// I map the outside event to the document-level event.
+					// --
+					// NOTE: This map is also used to determine event support. Only 
+					// events that are in this map will be flagged as supported.
+					var documentEventMap = {
+						"clickOutside": "click",
+						"mousedownOutside": "mousedown",
+						"mouseupOutside": "mouseup",
+						"mousemoveOutside": "mousemove"
+					};
+
+					// Expose the public methods.
+					// --
+					// CAUTION: Generally, I would return a new object with the exposed
+					// API. However, in this case, I am simply exposing the public methods
+					// so as to remove ambiguity when referencing the "zone", which would
+					// not be present on the method call this-binding otherwise (since it
+					// injected by the Angular 2 framework via "this.manager").
+					vm.addEventListener = addEventListener;
+					vm.addGlobalEventListener = addGlobalEventListener;
+					vm.supports = supports;
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I add the given event handler to the given element and return the 
+					// event de-registration method.
+					function addEventListener( element, eventName, handler ) {
+
+						// NOTE: The "manager" is injected by the Angular framework (via
+						// the Event Manager that aggregates the event plugins).
+						var zone = vm.manager.getZone();
+
+						// Each "outside" event is captured by an "inside" event at the 
+						// document level. Translate the element-local event type to the
+						// document-local event type.
+						var documentEvent = documentEventMap[ eventName ];
+
+						// Zone.js patches event-target code. As such, when we attach the
+						// the document-level event handler, we want to do so outside of
+						// the change-detection zone so that our checkEventTarget() 
+						// doesn't trigger more change-detection than it has to. Once we
+						// know that we have to parle the document-level event into an
+						// element-local event, we'll re-enter the Angular zone.
+						zone.runOutsideAngular( addDocumentEventListener );
+
+						return( removeDocumentEventListener );
+
+
+						// I attach the document-local event listener which will determine
+						// the origin of the bubbled-up events.
+						function addDocumentEventListener() {
+
+							document.addEventListener( documentEvent, checkEventTarget, true );
+
+						}
+
+						// I detach the document-local event listener, tearing down the
+						// "outside" event binding.
+						function removeDocumentEventListener() {
+
+							document.removeEventListener( documentEvent, checkEventTarget, true );
+
+						}
+
+						// I check to see if the given event originated from within the 
+						// host element. If it did, the event is ignored. If it did NOT,
+						// then the "outside" event binding is invoked with the given event.
+						function checkEventTarget( event ) {
+
+							var current = event.target;
+
+							do {
+
+								if ( current === element ) {
+
+									return;
+
+								}
+
+							} while ( current.parentNode && ( current = current.parentNode ) );
+
+							// If we made it this far, we didn't bubble past the host 
+							// element. As such, we know that the event was initiated
+							// from outside the host element. It is therefore an 
+							// "outside" event and needs to be translated into a host-
+							// local event that integrates with change-detection.
+							triggerDOMEventInZone( event );
+
+						}
+
+						// I invoke the host event handler with the given event.
+						function triggerDOMEventInZone( event ) {
+
+							// Now that we know that the document-local event has to be
+							// translated into an element-local host binding event, we 
+							// need to re-enter the Angular 2 change-detection zone so
+							// that view-model changes made within the event handler will
+							// trigger a new round of change-detection.
+							zone.run(
+								function runInZone() {
+
+									handler( event );
+
+								}
+							);
+
+						};
+					
+					} // END: addEventListener().
+
+
+					// I register the event on the global target and return the event
+					// de-registration method.
+					function addGlobalEventListener( target, eventName, handler ) {
+
+						// For the purposes of an "outside" event, it will never be 
+						// possible to actually click / mouse outside of the document
+						// or the window object. As such, simply ignore these global 
+						// context, providing a no-op binding.
+						if ( ( target === "document" ) || ( target === "window" ) ) {
+
+							return( noop );
+
+						}
+
+						// If the target was not "document" or "window", it must be body
+						// (the only other "global" host binding). While not very likely,
+						// it is possible to click outside of the body tag (by clicking 
+						// on the HTML tag). As such, let's add the event listener to the
+						// body tag directly.
+						return( addEventListener( document.body, eventName, handler ) );
+
+					}
+
+
+					// I check to see if the given event is supported by the plugin.
+					function supports( eventName ) {
+
+						// If the event can be mapped to a native event on the document,
+						// then we can support the event.
+						return( documentEventMap.hasOwnProperty( eventName ) );
+
+					}
+
+
+					// ---
+					// PRIVATE METHODS.
+					// ---
+
+
+					// I perform a no-operation instruction.
+					function noop() {
+
+						// Nothing to see here, folks.
+
+					}
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide the root App component.
+		define(
+			"AppComponent",
+			function registerAppComponent() {
+
+				var Widget = require( "Widget" );
+
+				// Configure the App component definition.
+				ng.core
+					.Component({
+						selector: "my-app",
+						directives: [ Widget ],
+
+						// Here, we are going to toggle the Widget into and out of 
+						// existence in order to ensure that the custom events can be
+						// bound, unbound, and re-bound properly.
+						template:
+						`
+							<p>
+								<a (click)="toggleWidget()">Toggle widget</a>.
+							</p>
+
+							<widget *ngIf="isShowingWidget">
+								Click, or click not, there is no mouse.
+							</widget>
+						`
+					})
+					.Class({
+						constructor: AppController
+					})
+				;
+
+				return( AppController );
+
+
+				// I control the App component.
+				function AppController() {
+
+					var vm = this;
+
+					// I determine if the Widget is being linked in the DOM. The Widget
+					// is the element that is consuming the custom events.
+					vm.isShowingWidget = false;
+
+					// Expose the public methods.
+					vm.toggleWidget = toggleWidget;
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I toggle the existence of the Widget component.
+					function toggleWidget( tagName ) {
+
+						vm.isShowingWidget = ! vm.isShowingWidget;
+
+					}
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide a Widget component that binds to custom DOM host events.
+		define(
+			"Widget",
+			function registerWidget() {
+
+				// Configure the Widget component definition.
+				ng.core
+					.Component({
+						selector: "widget",
+
+						// Notice that we are using a native event - click - alongside
+						// the custom DOM host event - clickOutside. We can bind the 
+						// clickOutside event at both the local and the global levels.
+						host: {
+							"(click)": "handleClick( $event.target.tagName )",
+
+							// Provided by custom event plugin.
+							"(clickOutside)": "handleClickOutside( $event.target.tagName )",
+							"(body: clickOutside)": "handleClickOutsideBody()",
+						},
+						template:
+						`
+							<ng-content></ng-content>
+						`
+					})
+					.Class({
+						constructor: WidgetController
+					})
+				;
+
+				return( WidgetController );
+
+
+				// I control the Widget component.
+				function WidgetController() {
+
+					var vm = this;
+
+					// Expose the public methods.
+					vm.handleClick = handleClick;
+					vm.handleClickOutside = handleClickOutside;
+					vm.handleClickOutsideBody = handleClickOutsideBody;
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I handle the click internally to the bound target.
+					function handleClick( tagName ) {
+
+						console.log( "(click) -> Ouch!", tagName );
+
+					}
+
+
+					// I handle the click externally to the bound target.
+					function handleClickOutside( tagName ) {
+
+						console.log( "(clickOutside) -> Click outside!", tagName );
+
+					}
+
+
+					// I handle the global click externally to the BODY tag. This is here
+					// to test the global-host bindings.
+					function handleClickOutsideBody() {
+
+						console.log( "(body: clickOutside) -> You clicked outside the BODY tag!" );
+
+					}
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
