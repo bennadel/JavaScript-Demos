@@ -1,0 +1,179 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Directive Conflict When Classes Export The Same Name In Angular 2 Beta 6
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body>
+
+	<h1>
+		Directive Conflict When Classes Export The Same Name In Angular 2 Beta 6
+	</h1>
+
+	<my-app>
+		Loading...
+	</my-app>
+
+	<!-- Load demo scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/6/es6-shim.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/6/Rx.umd.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/6/angular2-polyfills.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/6/angular2-all.umd.js"></script>
+	<!-- AlmondJS - minimal implementation of RequireJS. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/6/almond.js"></script>
+	<script type="text/javascript">
+
+		// Defer bootstrapping until all of the components have been declared.
+		// --
+		// NOTE: Not all components have to be required here since they will be 
+		// implicitly required by other components.
+		requirejs(
+			[ "AppComponent" ],
+			function run( AppComponent ) {
+
+				ng.platform.browser.bootstrap( AppComponent );
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide the root App component.
+		define(
+			"AppComponent",
+			function registerAppComponent() {
+
+				var PTag = require( "PTag" );
+				var SectionTag = require( "SectionTag" );
+
+				// Confirm that these two directives do, in fact, have different and
+				// unique object identities.
+				console.log( "( PTag === SectionTag ):", ( PTag === SectionTag ) );
+
+				// Configure the App component definition.
+				ng.core
+					.Component({
+						selector: "my-app",
+						directives: [ PTag, SectionTag ],
+						template:
+						`
+							<p>
+								This is a P-tag. Woot!
+							</p>
+
+							<section>
+								<strong>Note:</strong> This works "as expected" in 
+								Angular 2 Beta 1, but not Beta 3 or Beta 6.
+							</section>
+						`
+					})
+					.Class({
+						constructor: AppController
+					})
+				;
+
+				return( AppController );
+
+
+				// I control the App component.
+				function AppController() {
+
+					// Nothing to do here.
+
+				}
+
+			}
+		);
+
+		
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide a directive that selects against P tags and logs its own creation.
+		define(
+			"PTag",
+			function registerPTag() {
+
+				// Configure the PTag directive definition.
+				ng.core
+					.Directive({
+						selector: "p" // <----- UNIQUE SELECTOR.
+					})
+					.Class({
+						constructor: Pay_Attention_To_The_Name_Of_This_Controller
+					})
+				;
+
+				return( Pay_Attention_To_The_Name_Of_This_Controller );
+
+
+				// I control the PTag directive.
+				// --
+				// CAUTION: This function just so happens to have the same NAME as 
+				// another function that may also be applied to the same view context.
+				// If this happens, it looks like Angular 2 Beta 6 (and Beta 3) gets 
+				// confused about which directive to use. Keep in mind, this function 
+				// is a totally UNIQUE REFERENCE and has a UNIQUE OBJECT IDENTITY 
+				// despite coincidentally having the same name.
+				function Pay_Attention_To_The_Name_Of_This_Controller() {
+
+					console.log( "PTag constructed." );
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide a directive that selects against SECTION tags and logs its own creation.
+		define(
+			"SectionTag",
+			function registerSectionTag() {
+
+				// Configure the SectionTag directive definition.
+				ng.core
+					.Directive({
+						selector: "section" // <----- UNIQUE SELECTOR.
+					})
+					.Class({
+						constructor: Pay_Attention_To_The_Name_Of_This_Controller
+					})
+				;
+
+				return( Pay_Attention_To_The_Name_Of_This_Controller );
+
+
+				// I control the SectionTag directive.
+				// --
+				// CAUTION: This function just so happens to have the same NAME as 
+				// another function that may also be applied to the same view context.
+				// If this happens, it looks like Angular 2 Beta 6 (and Beta 3) gets 
+				// confused about which directive to use. Keep in mind, this function 
+				// is a totally UNIQUE REFERENCE and has a UNIQUE OBJECT IDENTITY 
+				// despite coincidentally having the same name.
+				function Pay_Attention_To_The_Name_Of_This_Controller() {
+
+					console.log( "SectionTag constructed." );
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>

@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Directive Conflict When Classes Export The Same Name In Angular 2 Beta 6](http://bennadel.github.io/JavaScript-Demos/demos/directive-conflict-class-name-angular2/)
 * [Creating Custom DOM And Host Event Bindings In Angular 2 Beta 6](http://bennadel.github.io/JavaScript-Demos/demos/custom-host-event-angular2/)
 * [Selectors And Outputs Can Have The Same Name In Angular 2 Beta 6](http://bennadel.github.io/JavaScript-Demos/demos/directive-selector-event-angular2/)
 * [Provider And Directive Arrays Can Be Mixed-Depth In Angular 2 Beta 6](http://bennadel.github.io/JavaScript-Demos/demos/provider-array-depth-angularj2/)

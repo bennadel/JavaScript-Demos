@@ -1,0 +1,38 @@
+
+p {
+	border: 1px dashed red ;
+	border-radius: 4px 4px 4px 4px ;
+	padding: 20px 20px 20px 20px ;
+	position: relative ;
+}
+
+p:before {
+	background-color: red ;
+	border-radius: 0px 4px 0px 0px ;
+	color: white ;
+	content: "p-tag" ;
+	font-size: 14px ;
+	right: 0px ;
+	padding: 6px 12px 4px 8px ;
+	position: absolute ;
+	top: 0px ;
+}
+
+section {
+	border: 1px dashed blue ;
+	border-radius: 4px 4px 4px 4px ;
+	padding: 20px 20px 20px 20px ;
+	position: relative ;
+}
+
+section:before {
+	background-color: blue ;
+	border-radius: 0px 4px 0px 0px ;
+	color: white ;
+	content: "section-tag" ;
+	font-size: 14px ;
+	right: 0px ;
+	padding: 6px 12px 6px 12px ;
+	position: absolute ;
+	top: 0px ;
+}
