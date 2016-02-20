@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Canceling RxJS Observables With ngOnDestroy In Angular 2 Beta 6](http://bennadel.github.io/JavaScript-Demos/demos/cancel-observable-angular2/)
 * [RxJS Streams Are Inconsistently Asynchronous In Angular 2 Beta 6](http://bennadel.github.io/JavaScript-Demos/demos/rxjs-sync-async-angular2/)
 * [Throwing Errors In The Future Using RxJS In Angular 2 Beta 6](http://bennadel.github.io/JavaScript-Demos/demos/rxjs-error-delay-angular2/)
 * [Directive Conflict When Classes Export The Same Name In Angular 2 Beta 6](http://bennadel.github.io/JavaScript-Demos/demos/directive-conflict-class-name-angular2/)

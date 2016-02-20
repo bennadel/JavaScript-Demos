@@ -1,0 +1,480 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Canceling RxJS Observables With ngOnDestroy In Angular 2 Beta 6
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body>
+
+	<h1>
+		Canceling RxJS Observables With ngOnDestroy In Angular 2 Beta 6
+	</h1>
+
+	<my-app>
+		Loading...
+	</my-app>
+
+	<!-- Load demo scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/6/es6-shim.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/6/Rx.umd.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/6/angular2-polyfills.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/6/angular2-all.umd.js"></script>
+	<!-- AlmondJS - minimal implementation of RequireJS. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/6/almond.js"></script>
+	<script type="text/javascript">
+
+		// Defer bootstrapping until all of the components have been declared.
+		// --
+		// NOTE: Not all components have to be required here since they will be 
+		// implicitly required by other components.
+		requirejs(
+			[ "AppComponent", "PeopleService" ],
+			function run( AppComponent, PeopleService ) {
+
+				ng.platform.browser.bootstrap( 
+					AppComponent,
+					[
+						PeopleService
+					]
+				);
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide the root App component.
+		define(
+			"AppComponent",
+			function registerAppComponent() {
+
+				var FriendList = require( "FriendList" );
+				var EnemyList = require( "EnemyList" );
+
+				// Configure the App component definition.
+				ng.core
+					.Component({
+						selector: "my-app",
+						directives: [ FriendList, EnemyList ],
+
+						// Both the friend-list and the enemy-list components know how to
+						// load their own internal data. The point of this exercise is to
+						// see how to cancel that underlying data fetch as we toggle 
+						// back-and-forth between the two components.
+						template:
+						`
+							<p>
+								<a (click)="showList( 'friends' )">Friends</a>
+								&nbsp;|&nbsp;
+								<a (click)="showList( 'enemies' )">Enemies</a>
+							</p>
+
+							<div [ngSwitch]="list">
+								<friend-list *ngSwitchWhen=" 'friends' "></friend-list>
+								<enemy-list *ngSwitchWhen=" 'enemies' "></enemy-list>
+							</div>
+						`
+					})
+					.Class({
+						constructor: AppController
+					})
+				;
+
+				return( AppController );
+
+
+				// I control the App component.
+				function AppController() {
+
+					var vm = this;
+
+					// Determine which list is being rendered.
+					vm.list = "friends";
+
+					// Expose the public methods.
+					vm.showList = showList;
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I switch over to rendering the given list.
+					function showList( newList ) {
+
+						vm.list = newList;
+
+					}
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide a list of friends. Rather than accepting Inputs, this component 
+		// knows how to go fetch its down data.
+		// --
+		// NOTE: The FriendList and the EnemyList could have probably been combined
+		// and parameterized with an Input; however, I wanted to have two distinct 
+		// components so that I could actually destroy one when I switch rendered lists.
+		define(
+			"FriendList",
+			function registerFriendList() {
+
+				var PeopleService = require( "PeopleService" );
+
+				ng.core
+					.Component({
+						selector: "friend-list",
+						template:
+						`
+							<h2>
+								Friends
+							</h2>
+
+							<p *ngIf="! friends">
+								<em>Loading...</em>
+							</p>
+
+							<div *ngIf="friends">
+
+								<p>
+									Oh sweet, you have {{ friends.length }} friends!
+								</p>
+
+								<ul>
+									<li *ngFor="#friend of friends">
+										{{ friend.name }}
+									</li>
+								</ul>
+
+							</div>
+						`
+					})
+					.Class({
+						constructor: FriendListController,
+
+						// Register the directive life-cycle methods on the prototype
+						// so that they will be picked-up at runtime.
+						ngOnInit: function noop() {},
+						ngOnDestroy: function noop() {}
+					})
+				;
+
+				FriendListController.parameters = [ new ng.core.Inject( PeopleService ) ];
+
+				return( FriendListController );
+
+
+				// I control the FriendList component.
+				function FriendListController( peopleService ) {
+
+					var vm = this;
+
+					// I hold the latest subscription to the RxJS Observable stream that
+					// is being used to access the friends. This will provide us with a 
+					// means to "cancel" the sequence if the user exits out of the 
+					// component before the sequence has completed.
+					var peopleSubscription = null;
+
+					// I hold the collection of friends to render.
+					vm.friends = null;
+
+					// Expose the public methods.
+					vm.ngOnDestroy = ngOnDestroy;
+					vm.ngOnInit = ngOnInit;
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I get called when the component has been unmounted. This provides
+					// the perfect hook to cancel any pending timers or requests.
+					function ngOnDestroy() {
+
+						console.warn( "Destroying friend-list" );
+						console.info( "Canceling any hot Rx subscriptions." );
+
+						// If the component had a chance to initiate the request for 
+						// friend data, we need "cancel" the sequence. What we don't want
+						// is something like the Error handler to show an Alert() modal
+						// after the component has been destroyed (at least not in our 
+						// particular use-case). When we unsubscribe, it will prevent 
+						// the Value, Error, and Complete handlers from being invoked.
+						// Even if the sequence had already completed, this will be safe
+						// to call.
+						if ( peopleSubscription ) {
+
+							peopleSubscription.unsubscribe();
+							
+						}
+
+					}
+
+
+					// I get called after the component has been instantiated and the 
+					// inputs have been bound.
+					function ngOnInit() {
+
+						peopleSubscription = peopleService.getFriends()
+							.subscribe(
+								function handleValue( friends ) {
+
+									vm.friends = friends;
+
+								},
+								function handleError( error ) {
+
+									console.error( "Error in getFriends():", error );
+									alert( "Oops: We couldn't load friend data." );
+
+								},
+								function handleComplete() {
+
+									console.debug( "Completed getFriends()." );
+
+								}
+							)
+						;
+
+					}
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide a list of enemies. Rather than accepting Inputs, this component 
+		// knows how to go fetch its down data.
+		// --
+		// NOTE: The FriendList and the EnemyList could have probably been combined
+		// and parameterized with an Input; however, I wanted to have two distinct 
+		// components so that I could actually destroy one when I switch rendered lists.
+		define(
+			"EnemyList",
+			function registerEnemyList() {
+
+				var PeopleService = require( "PeopleService" );
+
+				ng.core
+					.Component({
+						selector: "enemy-list",
+						template:
+						`
+							<h2>
+								Enemies
+							</h2>
+
+							<p *ngIf="! enemies">
+								<em>Loading...</em>
+							</p>
+
+							<div *ngIf="enemies">
+
+								<p>
+									Oh chickens, you have {{ enemies.length }} enemies!
+								</p>
+
+								<ul>
+									<li *ngFor="#enemy of enemies">
+										{{ enemy.name }}
+									</li>
+								</ul>
+
+							</div>
+						`
+					})
+					.Class({
+						constructor: EnemyListController,
+
+						// Register the directive life-cycle methods on the prototype
+						// so that they will be picked-up at runtime.
+						ngOnInit: function noop() {},
+						ngOnDestroy: function noop() {}
+					})
+				;
+
+				EnemyListController.parameters = [ new ng.core.Inject( PeopleService ) ];
+
+				return( EnemyListController );
+
+
+				// I control the EnemyList component.
+				function EnemyListController( peopleService ) {
+
+					var vm = this;
+
+					// I hold the latest subscription to the RxJS Observable stream that
+					// is being used to access the enemies. This will provide us with a 
+					// means to "cancel" the sequence if the user exits out of the 
+					// component before the sequence has completed.
+					var peopleSubscription = null;
+
+					// I hold the collection of enemies to render.
+					vm.enemies = null;
+
+					// Expose the public methods.
+					vm.ngOnDestroy = ngOnDestroy;
+					vm.ngOnInit = ngOnInit;
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I get called when the component has been unmounted. This provides
+					// the perfect hook to cancel any pending timers or requests.
+					function ngOnDestroy() {
+
+						console.warn( "Destroying enemy-list" );
+						console.info( "Canceling any hot Rx subscriptions." );
+
+						// If the component had a chance to initiate the request for 
+						// enemy data, we need "cancel" the sequence. What we don't want
+						// is something like the Error handler to show an Alert() modal
+						// after the component has been destroyed (at least not in our 
+						// particular use-case). When we unsubscribe, it will prevent 
+						// the Value, Error, and Complete handlers from being invoked.
+						// Even if the sequence had already completed, this will be safe
+						// to call.
+						if ( peopleSubscription ) {
+
+							peopleSubscription.unsubscribe();
+							
+						}
+
+					}
+
+
+					// I get called after the component has been instantiated and the 
+					// inputs have been bound.
+					function ngOnInit() {
+
+						peopleSubscription = peopleService.getEnemies()
+							.subscribe(
+								function handleValue( enemies ) {
+
+									vm.enemies = enemies;
+
+								},
+								function handleError( error ) {
+
+									console.error( "Error in getEnemies():", error );
+									alert( "Oops: We couldn't load enemy data." );
+
+								},
+								function handleComplete() {
+
+									console.debug( "Completed getEnemies()." );
+
+								}
+							)
+						;
+
+					}
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide access to the people repository. People collections are returned
+		// as RxJS Observable streams.
+		define(
+			"PeopleService",
+			function registerPeopleService() {
+
+				return( PeopleService );
+
+
+				// I provide access to the people repository.
+				function PeopleService() {
+
+					var simulatedNetworkLatency = ( 2 * 1000 ); // In milliseconds.
+
+					// Return the public API.
+					return({
+						getEnemies: getEnemies,
+						getFriends: getFriends
+					});
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I return the collection of enemies (as a stream).
+					function getEnemies() {
+
+						// NOTE: This will throw an error "in the future" after the 
+						// simulated network activity has completed. 
+						var stream = Rx.Observable
+							.timer( simulatedNetworkLatency )
+							.concat( Rx.Observable.throw( new Error( "Server Error" ) ) )
+							.last()
+						;
+
+						return( stream );
+
+					}
+
+
+					// I return the collection of friends (as a stream).
+					function getFriends() {
+
+						var friends = [
+							{
+								id: 1,
+								name: "Sarah"
+							},
+							{
+								id: 2,
+								name: "Kim"
+							},
+							{
+								id: 3,
+								name: "Joanna"
+							}
+						];
+
+						return( Rx.Observable.of( friends ).delay( simulatedNetworkLatency ) );
+
+					}
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
