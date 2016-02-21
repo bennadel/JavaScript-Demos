@@ -1,0 +1,82 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+</head>
+<body>
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.4.7.js"></script>
+	<script type="text/javascript">
+
+		angular.module( "Demo", [] ).run(
+			function test( $timeout, $q ) {
+
+				getDataSafe().then(
+					function handleResolve( value ) {
+
+						console.log( "Success!", value );
+
+					}
+				);
+
+				getDataUnsafe().catch(
+					function handleReject( reason ) {
+
+						console.log( "Failure!", reason );
+
+					}
+				);
+
+
+				// ---
+				// PRIVATE METHODS.
+				// ---
+				
+
+				function getDataSafe() {
+
+					// In 1-second, resolve the promise.
+					// --
+					// NOTE: Using $timeout() to simulate network latency.
+					var promise = $timeout( 1000, angular.noop )
+						.then(
+							function handleResolve() {
+
+								return( "For the win!" );
+
+							}
+						)
+					;
+					
+					return( promise );
+
+				}
+
+
+				function getDataUnsafe() {
+
+					// In 2-seconds, reject the promise.
+					// --
+					// NOTE: Using $timeout() to simulate network latency.
+					var promise = $timeout( 2000, angular.noop )
+						.then(
+							function handleResolve() {
+
+								return( $q.reject( "Uh-oh!" ) );
+
+							}
+						)
+					;
+					
+					return( promise );
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
