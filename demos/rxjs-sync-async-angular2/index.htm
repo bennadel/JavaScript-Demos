@@ -1,0 +1,74 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		RxJS Streams Are Inconsistently Asynchronous In Angular 2 Beta 6
+	</title>
+</head>
+<body>
+
+	<h1>
+		RxJS Streams Are Inconsistently Asynchronous In Angular 2 Beta 6
+	</h1>
+
+	<!-- Load demo scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/6/es6-shim.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/6/Rx.umd.min.js"></script>
+	<script type="text/javascript">
+
+		// NOTE: While this demo is not Angular 2 Beta 6 specific, it is using the version
+		// of RxJS that ships with the Angular 2 Betas. As such, I am referring to this 
+		// demo as having an Angular 2 Beta 6 context.
+
+		// Here, we are subscribing to two different RxJS streams and simply logging the
+		// observed values in the context of the general execution of the page to get a
+		// sense of where, in time, sequences emit events.
+
+		console.warn( "RxJS - Script - Begin." );
+
+		getStreamA().subscribe(
+			function handleNext( value ) {
+
+				console.info( "Stream A value:", value );
+
+			}
+		);
+
+		console.log( "In between A and B." );
+
+		getStreamB().subscribe(
+			function handleNext( value ) {
+
+				console.info( "Stream B value:", value );
+
+			}
+		);
+
+		console.warn( "RxJS - Script - End." );
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I return an RxJS observable sequence that happens to be synchronous.
+		function getStreamA() {
+
+			return( Rx.Observable.of( "stream" ) );
+
+		}
+
+
+		// I return an RxJS observable sequence that happens to include a delay.
+		function getStreamB() {
+
+			return( Rx.Observable.of( "stream" ).delay( 10 ) );
+
+		}
+
+	</script>
+
+</body>
+</html>

@@ -1,0 +1,85 @@
+<!doctype html>
+<html ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Promises Are Always Asynchronous In Angular 1.x
+	</title>
+</head>
+<body>
+
+	<h1>
+		Promises Are Always Asynchronous In Angular 1.x
+	</h1>
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.4.7.js"></script>
+	<script type="text/javascript">
+
+		angular.module( "Demo", [] ).run(
+			function testPromises( $timeout, $q ) {
+
+				// Here, we are binding to two different Promise chains and simply 
+				// logging the resolved values in the context of the general execution
+				// of the page to get a sense of where, in time, promises emit values.
+
+				console.warn( "Promise - Script - Begin." );
+
+				getPromiseA().then(
+					function handleResolve( value ) {
+
+						console.info( "Promise A value:", value );
+
+					}
+				);
+
+				console.log( "In between A and B." );
+
+				getPromiseB().then(
+					function handleResolve( value ) {
+
+						console.info( "Promise B value:", value );
+
+					}
+				);
+
+				console.warn( "Promise - Script - End." );
+
+
+				// ------------------------------------------------------------------- //
+				// ------------------------------------------------------------------- //
+
+
+				// I return a Promise that resolves immediately.
+				function getPromiseA() {
+
+					return( $q.when( "promise" ) );
+
+				}
+
+
+				// I return a Promise that happens to include a delay before resolving.
+				function getPromiseB() {
+
+					var promise = $timeout( angular.noop, 10 )
+						.then(
+							function handleResolve() {
+
+								return( "promise" );
+
+							}
+						)
+					;
+
+					return( promise );
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
