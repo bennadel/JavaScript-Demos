@@ -1,0 +1,430 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Unwrapping HTTP Responses Using RxJS Observables In Angular 2 Beta 6
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body>
+
+	<h1>
+		Unwrapping HTTP Responses Using RxJS Observables In Angular 2 Beta 6
+	</h1>
+
+	<my-app>
+		Loading...
+	</my-app>
+
+	<!-- Load demo scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/6/es6-shim.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/6/Rx.umd.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/6/angular2-polyfills.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/6/angular2-all.umd.js"></script>
+	<!-- AlmondJS - minimal implementation of RequireJS. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/6/almond.js"></script>
+	<script type="text/javascript">
+
+		// Defer bootstrapping until all of the components have been declared.
+		// --
+		// NOTE: Not all components have to be required here since they will be 
+		// implicitly required by other components.
+		requirejs(
+			[ "AppComponent", "PeopleService" ],
+			function run( AppComponent, PeopleService ) {
+
+				ng.platform.browser.bootstrap( 
+					AppComponent,
+					[
+						ng.http.HTTP_PROVIDERS,
+						PeopleService
+					]
+				);
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide the root App component.
+		define(
+			"AppComponent",
+			function registerAppComponent() {
+
+				var PeopleService = require( "PeopleService" );
+
+				// Configure the App component definition.
+				ng.core
+					.Component({
+						selector: "my-app",
+						template:
+						`
+							<p>
+								<a (click)="showFriends()">Friends</a>
+								&nbsp;|&nbsp;
+								<a (click)="showEnemies()">Enemies</a>
+							</p>
+
+							<p *ngIf="isLoading">
+								<em>Loading...</em>
+							</p>
+
+							<div *ngIf="! isLoading">
+
+								<h2 [ngSwitch]="listType">
+									<span *ngSwitchWhen=" 'friends' ">Friends</span>
+									<span *ngSwitchWhen=" 'enemies' ">Enemies</span>
+								</h2>
+
+								<ul>
+									<li *ngFor="#person of people">
+										{{ person.name }}
+									</li>
+								</ul>
+
+							</div>
+						`
+					})
+					.Class({
+						constructor: AppController,
+
+						// Register the component life-cycle methods on the prototype
+						// so that they're picked up at runtime.
+						ngOnInit: function noop() {}
+					})
+				;
+
+				AppController.parameters = [ new ng.core.Inject( PeopleService ) ];
+
+				return( AppController );
+
+
+				// I control the App component.
+				function AppController( peopleService ) {
+
+					var vm = this;
+
+					// I hold the most recent subscription to a people request.
+					var recentRequest = null;
+
+					// I determine if the local data is currently being loaded from the
+					// remote repository.
+					vm.isLoading = true;
+
+					// I determine which list of people is being rendered.
+					vm.listType = null;
+
+					// I hold the collection of people to be rendered.
+					vm.people = null;
+
+					// Expose the public methods.
+					vm.ngOnInit = ngOnInit;
+					vm.showEnemies = showEnemies;
+					vm.showFriends = showFriends;
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I get called once after the component has been initialized and the
+					// inputs have been bound.
+					function ngOnInit() {
+
+						showFriends();
+
+					}
+
+
+					// I switch over to rendering the enemies list.
+					function showEnemies() {
+
+						vm.isLoading = true;
+						vm.listType = "enemies";
+
+						handlePeopleStream( peopleService.getEnemies() );
+
+					}
+
+
+					// I switch over to rendering the friends list.
+					function showFriends() {
+
+						vm.isLoading = true;
+						vm.listType = "friends";
+
+						handlePeopleStream( peopleService.getFriends() );
+
+					}
+
+
+					// ---
+					// PRIVATE METHODS.
+					// ---
+
+
+					// I cancel the subscription to the most recent people request so 
+					// that any data piped back over the stream will be ignored.
+					function cancelRecentRequest() {
+
+						if ( recentRequest ) {
+
+							console.info( "Canceling recent request." );
+
+							// CAUTION: While this will stop our local value and error 
+							// handlers from responding to the stream, if the underlying
+							// stream is HOT, it won't actually cancel the stream - that 
+							// ship has sailed, those wheels have been set in motion, 
+							// things have been done that cannot be undone. Mwww ha ha!
+							recentRequest.unsubscribe();
+							
+						}
+
+					}
+
+
+					// Since requests to Friends and Enemies are both people streams, I
+					// can handle them uniformly.
+					function handlePeopleStream( stream ) {
+
+						// Cancel the subscription to any pending request - this way, we
+						// don't respond to the data once it comes back (if it has not 
+						// yet returned to the client).
+						cancelRecentRequest();
+
+						// Subscribe to the people stream and keep track of the 
+						// subscription so that we can cancel it if we need to.
+						recentRequest = stream.subscribe(
+							function handleValue( people ) {
+
+								vm.isLoading = false;
+								vm.people = people;
+
+							},
+							function handleError( error ) {
+
+								console.warn( "People request failed." );
+								console.log( error );
+
+							}
+						);
+
+					}
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide access to the people repository. People collections are returned
+		// as RxJS Observable streams.
+		define(
+			"PeopleService",
+			function registerPeopleService() {
+
+				PeopleService.parameters = [ new ng.core.Inject( ng.http.Http ) ];
+
+				return( PeopleService );
+
+
+				// I provide access to the people repository.
+				function PeopleService( http ) {
+
+					// Return the public API.
+					return({
+						getEnemies: getEnemies,
+						getFriends: getFriends
+					});
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I return the collection of enemies (as a stream).
+					function getEnemies() {
+
+						var stream = Rx.Observable
+							// Since GitHub Pages (where this demo is hosted) are crazy
+							// fast, we're injecting a 2,000 millisecond simulated network
+							// delay before the HTTP request actually goes out.
+							// --
+							// NOTE: This actually makes the demo way more interesting
+							// because we can see how unsubscribing from the resulting 
+							// stream affects the HTTP request.
+							.timer( 2 * 1000 )
+
+							// Once the timer is complete, kick off the AJAX request.
+							.flatMap(
+								function addNetworkLatency() {
+
+									return( http.get( "./enemies.json" ) );
+
+								}
+							)
+
+							// We don't want the calling context to know anything about
+							// the HTTP transport being used. As such, we want to unwrap
+							// the successful HTTP response body to be just the naked JSON.
+							.map(
+								function unwrapValue( value ) {
+
+									return( value.json() );
+
+								}
+							)
+
+							// The same is true for failed HTTP responses. We still don't
+							// want to return an HTTP response to the calling context; so, 
+							// we're going to try and normalize the body, assuming it was 
+							// JSON sent from the server.
+							.catch(
+								function unwrapError( error ) {
+
+									try {
+
+										var response = error.json();
+
+									// If the body wasn't JSON, something else went wrong -
+									// provide a normalized default error body.
+									} catch ( jsonError ) {
+
+										var response = {
+											code: -1,
+											message: "Something went horribly wrong."
+										};
+
+									}
+
+									return( Rx.Observable.throw( response ) );
+
+								}
+							)
+							.finally(
+								function handleFinally() {
+
+									console.debug( "Finally called for Enemies request." );
+
+								}
+							)
+						;
+						
+						// CAUTION: This next little bit really has NOTHING to do with 
+						// the core concept of the demo - this is just Me trying to 
+						// understand streams a bit better.
+						// --
+						// To make this demo a little more interesting, we going to make
+						// the simulated network timer a "hot stream" so that it is 
+						// initiated before the calling context even has a chance to 
+						// subscribe to the published stream. This will create a proxy 
+						// to the timer that will unify the event source.
+						var hotStream = stream.publish()
+
+						// Since we are creating a "hot stream," we have to tell the
+						// publisher to connect to the underlying source (the simulated
+						// network latency timer) in order to kick-off the timer stream.
+						hotStream.connect();
+
+						return( hotStream );
+
+					}
+
+
+					// I return the collection of friends (as a stream).
+					function getFriends() {
+
+						var stream = Rx.Observable
+							// Since GitHub Pages (where this demo is hosted) are crazy
+							// fast, we're injecting a 2,000 millisecond simulated network
+							// delay before the HTTP request actually goes out.
+							// --
+							// NOTE: This actually makes the demo way more interesting
+							// because we can see how unsubscribing from the resulting 
+							// stream affects the HTTP request.
+							.timer( 2 * 1000 )
+
+							// Once the timer is complete, kick off the AJAX request.
+							.flatMap(
+								function addNetworkLatency() {
+
+									return( http.get( "./friends.json" ) );
+
+								}
+							)
+
+							// We don't want the calling context to know anything about
+							// the HTTP transport being used. As such, we want to unwrap
+							// the successful HTTP response body to be just the naked JSON.
+							.map(
+								function unwrapValue( value ) {
+
+									return( value.json() );
+
+								}
+							)
+
+							// The same is true for failed HTTP responses. We still don't
+							// want to return an HTTP response to the calling context; so, 
+							// we're going to try and normalize the body, assuming it was 
+							// JSON sent from the server.
+							.catch(
+								function unwrapError( error ) {
+
+									try {
+
+										var response = error.json();
+
+									// If the body wasn't JSON, something else went wrong -
+									// provide a normalized default error body.
+									} catch ( jsonError ) {
+
+										var response = {
+											code: -1,
+											message: "Something went horribly wrong."
+										};
+
+									}
+
+									return( Rx.Observable.throw( response ) );								
+
+								}
+							)
+							.finally(
+								function handleFinally() {
+
+									console.debug( "Finally called for Friends request." );
+
+								}
+							)
+						;
+
+						// CAUTION: We are purposefully NOT CREATING A HOT STREAM for 
+						// the friends request. This way, we can see some diversity in 
+						// the RxJS observable behaviors.
+
+						return( stream );
+
+					}
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
