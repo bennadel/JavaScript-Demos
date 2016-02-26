@@ -1,0 +1,53 @@
+
+stop-timer {
+	background-color: #FAFAFA ;
+	border: 1px solid #AAAAAA ;
+	border-bottom-color: #666666 ;
+	border-right-color: #666666 ;
+	border-radius: 8px 8px 8px 8px ;
+	display: inline-block ;
+	min-width: 200px ;
+	padding: 20px 25px 20px 25px ;
+}
+
+stop-timer div.time {
+	background-color: #333333 ;
+	border: 1px solid #FFFFFF ;
+	border-radius: 4px 4px 4px 4px ;
+	color: #FFFFFF ;
+	display: block ;
+	font-family: "courier new" ;
+	font-size: 30px ;
+	margin-bottom: 22px ;
+	padding: 12px 0px 10px 0px ;
+	text-align: center ;
+}
+
+stop-timer div.actions {
+	text-align:  center ;
+}
+
+stop-timer div.actions a {
+	border-radius: 4px 4px 4px 4px ;
+	color: #FFFFFF ;
+	cursor: pointer ;
+	display: inline-block ;
+	font-size: 18px ;
+	padding: 10px 0px 10px 0px ;
+	user-select: none ;
+		-moz-user-select: none ;
+		-webkit-user-select: none ;
+	width: 80px ;
+}
+
+stop-timer div.actions a:first-child {
+	margin-right: 15px ;
+}
+
+stop-timer div.actions a.toggle {
+	background-color: green ;
+}
+
+stop-timer div.actions a.reset {
+	background-color: red ;	
+}

@@ -1,0 +1,246 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Proving Custom View Templates For Components In Angular 2 Beta 6
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body>
+
+	<h1>
+		Proving Custom View Templates For Components In Angular 2 Beta 6
+	</h1>
+
+	<my-app>
+		Loading...
+	</my-app>
+
+	<!-- Load demo scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/6/es6-shim.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/6/Rx.umd.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/6/angular2-polyfills.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/6/angular2-all.umd.js"></script>
+	<!-- AlmondJS - minimal implementation of RequireJS. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/6/almond.js"></script>
+	<script type="text/javascript">
+
+		// Defer bootstrapping until all of the components have been declared.
+		// --
+		// NOTE: Not all components have to be required here since they will be 
+		// implicitly required by other components.
+		requirejs(
+			[ "AppComponent" ],
+			function run( AppComponent ) {
+
+				ng.platform.browser.bootstrap( AppComponent );
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide the root App component.
+		define(
+			"AppComponent",
+			function registerAppComponent() {
+
+				var StopTimer = require( "StopTimer" );
+
+				// Configure the App component definition.
+				ng.core
+					.Component({
+						selector: "my-app",
+						directives: [ StopTimer ],
+
+						// The StopTimer component doesn't provide its own template. 
+						// But, it does provide a public API. In order to consume that 
+						// API, we have to store a VIEW-LOCAL reference to the component
+						// instance using the "#var" syntax. This will give us access
+						// to the public properties and pubic methods of the StopTimer 
+						// instance, which we can use to render our own view.
+						template:
+						`
+							<stop-timer #timer>
+								<div class="time">
+									{{ timer.timeString }}
+								</div>
+								<div class="actions">
+									<a (click)="timer.toggle()" class="toggle">Toggle</a>
+									<a (click)="timer.reset()" class="reset">Reset</a>
+								</div>
+							</stop-timer>
+						`
+					})
+					.Class({
+						constructor: AppController
+					})
+				;
+
+				return( AppController );
+
+
+				// I control the App component.
+				function AppController() {
+
+					// ... noting to do here.
+
+				}
+
+			}
+		);
+
+		
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide the StopTimer component. 
+		// --
+		// CAUTION: The StopTimer component doesn't actually provide any view of its
+		// own - it just exposes a public API that the calling context can use to build
+		// and render a component interface.
+		define(
+			"StopTimer",
+			function registerStopTimer() {
+
+				// Configure the StopTimer component definition.
+				ng.core
+					.Component({
+						selector: "stop-timer",
+
+						// Since the component isn't really providing its own interface,
+						// we're just going to transclude any view content that was 
+						// provided by the calling context.
+						template:
+						`
+							<ng-content></ng-content>
+						`
+					})
+					.Class({
+						constructor: StopTimerController
+					})
+				;
+
+				return( StopTimerController );
+
+
+				// I control the StopTimer component.
+				function StopTimerController() {
+
+					var vm = this;
+
+					// I hold information about the running timer interval.
+					var interval = null;
+					var intervalDuration = 10;
+					
+					// I hold the raw time value, in milliseconds.
+					vm.time = 0
+
+					// I hold the formatting time value, for display (00:00.000).
+					vm.timeString = formatTime( vm.time );
+
+					// Expose the public methods.
+					vm.reset = reset;
+					vm.toggle = toggle;
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I start or stop the timer depending on its current state.
+					function toggle() {
+
+						// If the timer is running, stop it.
+						if ( interval ) {
+
+							interval = clearInterval( interval );
+
+						// Otherwise, if the timer is stopped, start it.
+						} else {
+
+							interval = setInterval( increment, intervalDuration );
+
+						}
+
+					}
+
+
+					// I reset the timer value.
+					// --
+					// NOTE: If the time is currently running, it will continue to run
+					// even as the value is reset.
+					function reset() {
+
+						vm.time = 0
+						vm.timeString = formatTime( vm.time );
+
+					}
+
+
+					// ---
+					// PRIVATE METHODS.
+					// ---
+
+
+					// I increment the internal time value of the timer.
+					function increment() {
+
+						vm.time += intervalDuration;
+						vm.timeString = formatTime( vm.time );
+
+						// CAUTION: We are keeping this super simple for the purposes 
+						// of the demo. This approach is actually problematic for two 
+						// reasons:
+						// --
+						// 1. We can't guarantee that interval actually executes with 
+						// the current duration.
+						// 2. The browser may actually stop the interval while the page
+						// isn't focused.
+
+					}
+
+
+					// I take the given time in milliseconds and return it as an 
+					// easy-to-read time string with a breakdown of minutes, seconds, 
+					// and milliseconds.
+					function formatTime( timeInMilliseconds ) {
+
+						var milliseconds = ( timeInMilliseconds % 1000 );
+						var seconds = ( Math.floor( timeInMilliseconds / 1000 ) % 60 );
+						var minutes = ( Math.floor( timeInMilliseconds / 60000 ) % 60 );
+
+						return( 
+							padTimeSlot( minutes, 2 ) + ":" + 
+							padTimeSlot( seconds, 2 ) + "." + 
+							padTimeSlot( milliseconds, 3 ) 
+						);
+
+					}
+
+
+					// I ensure that the value is left-padded with enough zeros to 
+					// ensure an output with the given length.
+					function padTimeSlot( value, length ) {
+
+						return( ( "00" + value ).slice( -length ) );
+
+					}
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
