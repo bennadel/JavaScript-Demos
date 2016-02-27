@@ -183,8 +183,18 @@
 								// for stopping the heartbeat on error (which we don't
 								// currently have logic for).
 								http.get( url );
-
+								
 								// CAUTION: ^ This doesn't actually work!!!!!!
+
+								// Side-note: If you convert the stream to a Promise, 
+								// this will initiate the HTTP request as the underlying
+								// operator has to subscribe to the stream in order to 
+								// fulfill the promise. But, at that point, you might as
+								// well just use a no-op subscription.
+								// --
+								// http.get( url ).toPromise();
+								// --
+								// http.get( url ).subscribe();
 
 							},
 							intervalTime
