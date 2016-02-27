@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [HTTP Requests Are Cold / Lazy Streams In Angular 2 Beta 6](http://bennadel.github.io/JavaScript-Demos/demos/lazy-http-stream-angular2/)
 * [Proving Custom View Templates For Components In Angular 2 Beta 6](http://bennadel.github.io/JavaScript-Demos/demos/consuming-component-api-view-angular2/)
 * [Unwrapping HTTP Responses Using RxJS Observables In Angular 2 Beta 6](http://bennadel.github.io/JavaScript-Demos/demos/unwrapping-http-responses-angular2/)
 * [Canceling RxJS Observables With ngOnDestroy In Angular 2 Beta 6](http://bennadel.github.io/JavaScript-Demos/demos/cancel-observable-angular2/)

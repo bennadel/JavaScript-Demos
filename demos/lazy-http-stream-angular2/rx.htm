@@ -1,0 +1,222 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		HTTP Requests Are Cold / Lazy Streams In Angular 2 Beta 6
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body>
+
+	<h1>
+		HTTP Requests Are Cold / Lazy Streams In Angular 2 Beta 6
+	</h1>
+
+	<my-app>
+		Loading...
+	</my-app>
+
+	<!-- Load demo scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/6/es6-shim.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/6/Rx.umd.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/6/angular2-polyfills.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/6/angular2-all.umd.js"></script>
+	<!-- AlmondJS - minimal implementation of RequireJS. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/6/almond.js"></script>
+	<script type="text/javascript">
+
+		// Defer bootstrapping until all of the components have been declared.
+		// --
+		// NOTE: Not all components have to be required here since they will be 
+		// implicitly required by other components.
+		requirejs( 
+			[ /* Using require() for better readability. */ ],
+			function run() {
+
+				var App = require( "App" );
+				var HeartBeatService = require( "HeartBeatService" );
+
+				ng.platform.browser.bootstrap( 
+					App,
+					[
+						ng.http.HTTP_PROVIDERS,
+						HeartBeatService
+					]
+				);
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide the root App component.
+		define(
+			"App",
+			function registerApp() {
+
+				var HeartBeatService = require( "HeartBeatService" );
+
+				// Configure the App component definition.
+				ng.core
+					.Component({
+						selector: "my-app",
+						template:
+						`
+							<p>
+								<a (click)="startHeartbeat()">Start heartbeat</a>
+								&mdash;
+								<a (click)="stopHeartbeat()">Stop heartbeat</a>
+							</p>
+
+							<p>
+								The heartbeat will start pinging a URL on an interval
+								to ensure that the users session does not die.
+							</p>
+						`
+					})
+					.Class({
+						constructor: AppController
+					})
+				;
+
+				AppController.parameters = [ new ng.core.Inject( HeartBeatService ) ];
+
+				return( AppController );
+
+
+				// I control the App component.
+				function AppController( heartbeat ) {
+
+					var vm = this;
+
+					// Expose the public methods.
+					vm.startHeartbeat = startHeartbeat;
+					vm.stopHeartbeat = stopHeartbeat;
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I start pinging the heartbeat URL to keep the user's session alive.
+					function startHeartbeat() {
+
+						heartbeat.start( "./heartbeat.json", 1000 );
+
+					}
+
+
+					// I stop pinging the heartbeat URL.
+					function stopHeartbeat() {
+
+						heartbeat.stop();
+
+					}
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide a heartbeat service that will make an HTTP request to a given 
+		// URL on an interval so as to keep a user's session alive.
+		define(
+			"HeartBeatService",
+			function registerHeartBeatService() {
+
+				HeartBeatService.parameters = [ new ng.core.Inject( ng.http.Http ) ];
+
+				return( HeartBeatService );
+
+
+				// I make an HTTP request to a given URL on an interval so as to keep a
+				// user's session alive. Only one heartbeat URL can be pinged at a time.
+				// Any attempt to ping a new URL will result in the previous heartbeat
+				// being stopped.
+				function HeartBeatService( http ) {
+
+					// I keep track of the active heartbeat stream.
+					var subscription = null;
+
+					// Return the public API.
+					return({
+						start: start,
+						stop: stop
+					});
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I start pinging the given URL on the given interval. Any existing
+					// heartbeat will be stopped before the new one is started.
+					function start( url, intervalTime ) {
+
+						// Stop any active heartbeat before we start a new interval.
+						stop();
+
+						console.warn( "Starting session heartbeat" );
+						console.info( "You should start seeing HTTP requests being made." );
+
+						// NOTE: We are holding onto the stream subscription so that we 
+						// cancel the subscription when the heartbeat is terminated.
+						subscription = Rx.Observable
+							.interval( intervalTime )
+							.switchMap(
+								function ping() {
+
+									// Here, we are actually initiating the HTTP request 
+									// to the heartbeat URL.
+									return( http.get( url ) );
+
+								}
+							)
+
+							// In order to get the interval stream to start emitting 
+							// next values (which, in turn, will trigger HTTP requests), 
+							// we have to subscribe to it.
+							.subscribe()
+						;
+
+					}
+
+
+					// I stop pinging the current heartbeat URL.
+					function stop() {
+
+						if ( ! subscription ) {
+
+							return;
+
+						}
+
+						console.warn( "Stopping session heartbeat" );
+
+						subscription.unsubscribe();
+						subscription = null;
+					
+					}
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
