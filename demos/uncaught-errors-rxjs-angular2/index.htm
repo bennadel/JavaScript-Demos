@@ -1,0 +1,134 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Unhandled Errors In RxJS Observable Streams Will Throw Errors In Angular 2 Beta 6
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body>
+
+	<h1>
+		Unhandled Errors In RxJS Observable Streams Will Throw Errors In Angular 2 Beta 6
+	</h1>
+
+	<my-app>
+		Loading...
+	</my-app>
+
+	<!-- Load demo scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/6/es6-shim.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/6/Rx.umd.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/6/angular2-polyfills.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/6/angular2-all.umd.js"></script>
+	<!-- AlmondJS - minimal implementation of RequireJS. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/6/almond.js"></script>
+	<script type="text/javascript">
+
+		// Defer bootstrapping until all of the components have been declared.
+		// --
+		// NOTE: Not all components have to be required here since they will be 
+		// implicitly required by other components.
+		requirejs( 
+			[ /* Using require() for better readability. */ ],
+			function run() {
+
+				var App = require( "App" );
+
+				ng.platform.browser.bootstrap( App );
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide the root App component.
+		define(
+			"App",
+			function registerApp() {
+
+				// Configure the App component definition.
+				ng.core
+					.Component({
+						selector: "my-app",
+						template:
+						`
+							<p>
+								<a (click)="createErrorStream()">Create error stream</a>.
+							</p>
+						`
+					})
+					.Class({
+						constructor: AppController
+					})
+				;
+
+				return( AppController );
+
+
+				// I control the App component.
+				function AppController() {
+
+					var vm = this;
+
+					// Expose the public methods.
+					vm.createErrorStream = createErrorStream;
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I create an RxJS Observable error stream.
+					function createErrorStream() {
+
+						Rx.Observable
+							.throw( new Error( "Oops: Something went wrong." ) )
+							.subscribe(
+								function handleValue( value ) {
+
+									console.log( "handleValue:", value );
+
+								}
+
+								// NOTE: Uncomment this to handle the upstream error 
+								// and prevent the error from being thrown.
+								// --
+								// , handleError
+
+								// Notice that we are not providing a CATCH handler in
+								// our subscriber configuration. As such, the underlying
+								// Subscriber class is automatically providing one for 
+								// us, which basically implements: 
+								// --
+								// function handleError( e ) { throw( e ); }
+							)
+						;
+
+
+						// I log errors.
+						function handleError( error ) {
+
+							console.warn( "Caught an error in the stream." );
+							console.log( error );
+
+						}
+
+					}
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
