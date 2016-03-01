@@ -1,0 +1,184 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		EventEmitter Is An RxJS Observable Stream In Angular 2 Beta 6
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body>
+
+	<h1>
+		EventEmitter Is An RxJS Observable Stream In Angular 2 Beta 6
+	</h1>
+
+	<my-app>
+		Loading...
+	</my-app>
+
+	<!-- Load demo scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/6/es6-shim.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/6/Rx.umd.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/6/angular2-polyfills.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/6/angular2-all.umd.js"></script>
+	<!-- AlmondJS - minimal implementation of RequireJS. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/6/almond.js"></script>
+	<script type="text/javascript">
+
+		// Defer bootstrapping until all of the components have been declared.
+		// --
+		// NOTE: Not all components have to be required here since they will be 
+		// implicitly required by other components.
+		requirejs( 
+			[ /* Using require() for better readability. */ ],
+			function run() {
+
+				var App = require( "App" );
+
+				ng.platform.browser.bootstrap( App );
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide the root App component.
+		define(
+			"App",
+			function registerApp() {
+
+				// Configure the App component definition.
+				ng.core
+					.Component({
+						selector: "my-app",
+						// Instead of invoking a callback in our host binding, we're 
+						// actually just piping the local event coordinates directly
+						// into the mouse stream (which we are subscribing to within
+						// the component controller).
+						host: {
+							"(mousemove)": "mouseStream.next({ x: $event.pageX, y: $event.pageY });"
+						},
+						template:
+						`
+							<div 
+								class="dot"
+								[style.left.px]="position.left"
+								[style.top.px]="position.top">
+							</div>
+						`
+					})
+					.Class({
+						constructor: AppController
+					})
+				;
+
+				return( AppController );
+
+
+				// I control the App component.
+				function AppController() {
+
+					var vm = this;
+
+					// I hold the position of the dot within the bounds of the component.
+					vm.position = {
+						left: -50,
+						top: -50
+					};
+
+					// As the user moves the mouse, we are going to pipe those (x,y)
+					// coordinates into this EventEmitter instance.
+					// --
+					// NOTE: This is populated with .next() values by the host-binding 
+					// on the app component host element.
+					vm.mouseStream = new ng.core.EventEmitter();
+
+					// Since EventEmitter inherits from RxJS.Subject, which in turn
+					// inherits from RxJS.Observable, it means that the EventEmitter, in
+					// Angular 2, is actually an Observable sequence. Which, of course, 
+					// means that we can operate on it and subscribe to it. In this 
+					// stream, we're going to transform the raw mouse coordinates into 
+					// coordinates that can be used to update the view.
+					// --
+					// NOTE: This stream is far more complicated than it needs to be - I
+					// am simply seizing this as an opportunity to experiment with stream
+					// mechanics and operators.
+					vm.mouseStream
+						// Offset the coordinates away from the mouse.
+						.map(
+							function offsetFromCursor( coordinate ) {
+
+								return({
+									x: ( coordinate.x - 25 ),
+									y: ( coordinate.y - 20 )
+								});
+
+							}
+						)
+						// Snap the coordinates to a 25x25 grid system.
+						.map(
+							function snapToGrid( coordinate ) {
+
+								var gridSize = 25;
+
+								return({
+									x: ( coordinate.x - ( coordinate.x % gridSize ) ),
+									y: ( coordinate.y - ( coordinate.y % gridSize ) )
+								});
+
+							}
+						)
+						// Don't pass on the next coordinate value until it has moved 
+						// to another box in the grid system (this one really isn't 
+						// necessary, I'm just experimenting with streams).
+						.distinctUntilChanged(
+							function comparator( a, b ) {
+
+								return( ( a.x === b.x ) && ( a.y === b.y ) );
+
+							}
+						)
+						// Log out the value that is being passed onto the subscriber.
+						// This does not affect the outcome of the value chain.
+						.do(
+							function asideNext( value ) {
+
+								console.log( "Passing through (%s,%s).", value.x, value.y );
+
+							}
+						)
+
+						// Here, we are actually subscribing to the stream of 
+						// coordinates which we are using to update the position of the 
+						// Dot in the view.
+						// --
+						// CAUTION: If this were a real-world scenario, we'd have to 
+						// capture this subscription and then unsubscribe to it in the 
+						// ngOnDestroy() life-cycle event handler.
+						.subscribe(
+							function handleNext( coordinate ) {
+
+								vm.position = {
+									left: coordinate.x,
+									top: coordinate.y
+								};
+
+							}
+						)
+					;
+					
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>

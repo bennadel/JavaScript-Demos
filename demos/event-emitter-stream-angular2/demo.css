@@ -1,0 +1,17 @@
+
+my-app {
+	bottom: 0px ;
+	left: 0px ;
+	position: fixed ;
+	right: 0px ;
+	top: 0px ;
+}
+
+my-app div.dot {
+	background-color: #FF0099 ;
+	border-radius: 20px 20px 20px 20px ;
+	box-shadow: 1px 1px 3px #CCCCCC ;
+	height: 20px ;
+	position: absolute ;
+	width: 20px ;
+}
