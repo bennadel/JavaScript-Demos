@@ -1,0 +1,349 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Logging Error Streams To The Server In Angular 2 Beta 6
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body>
+
+	<h1>
+		Logging Error Streams To The Server In Angular 2 Beta 6
+	</h1>
+
+	<my-app>
+		Loading...
+	</my-app>
+
+	<!-- Load demo scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/6/es6-shim.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/6/Rx.umd.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/6/angular2-polyfills.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/6/angular2-all.umd.js"></script>
+	<!-- AlmondJS - minimal implementation of RequireJS. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/6/almond.js"></script>
+	<script type="text/javascript">
+
+		// Defer bootstrapping until all of the components have been declared.
+		// --
+		// NOTE: Not all components have to be required here since they will be 
+		// implicitly required by other components.
+		requirejs( 
+			[ /* Using require() for better readability. */ ],
+			function run() {
+
+				var App = require( "App" );
+				var LoggingExceptionHandler = require( "LoggingExceptionHandler" );
+
+				ng.platform.browser.bootstrap( 
+					App,
+					[
+						ng.http.HTTP_PROVIDERS,
+
+						// Here, we are overriding the core implementation of the 
+						// ExceptionHandler service with our own implementation. In this
+						// case, we have to override the core implementation rather than 
+						// using some sort of class composition because we need AngularJS
+						// to pick up our version of the ExceptionHandler service and use
+						// it internally within its own Zone.js error handling.
+						ng.core.provide(
+							ng.core.ExceptionHandler,
+							{
+								useClass: LoggingExceptionHandler
+							}
+						)
+					]
+				);
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide the root App component.
+		define(
+			"App",
+			function registerApp() {
+
+				// Configure the App component definition.
+				ng.core
+					.Component({
+						selector: "my-app",
+						template:
+						`
+							<p>
+								<a (click)="triggerError( 1 )">Trigger Error One</a>
+								&mdash;
+								<a (click)="triggerError( 2 )">Trigger Error Two</a>
+							</p>
+						`
+					})
+					.Class({
+						constructor: AppController
+					})
+				;
+
+				return( AppController );
+
+
+				// I control the App component.
+				function AppController() {
+
+					var vm = this;
+
+					// Expose the public methods.
+					vm.triggerError = triggerError;
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I trigger the given type of error.
+					function triggerError( which ) {
+
+						// In this demo, we are using two different types of errors so
+						// that we can see how subsequent errors of the same type are
+						// consumed by custom ExceptionHandler implementation (which 
+						// depends on its own internal RxJS stream configuration).
+						if ( which === 1 ) {
+
+							var x = y; // Undefined y reference.
+
+						} else {
+
+							var foo = bar; // Undefined bar reference.
+
+						}
+
+					}
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+		// I provide a custom ExceptionHandler implementation that logs the errors to 
+		// the server using HTTP.
+		define(
+			"LoggingExceptionHandler",
+			function registerLoggingExceptionHandler() {
+
+				LoggingExceptionHandler.parameters = [ new ng.core.Inject( ng.http.Http ) ];
+
+				return( LoggingExceptionHandler );
+
+
+				// I provide a custom implementation of the ExceptionHandler service
+				// that logs the errors to the server using the core HTTP service.
+				// --
+				// NOTE: While the core ExceptionHandler service has both a static and
+				// an instance method, the "service contract" only pertains to the 
+				// instance methods. As such, we are only providing a .call() method in
+				// our custom version.
+				function LoggingExceptionHandler( http ) {
+
+					// I index the errors by their strinigified value 
+					// --
+					// NOTE: This collection is only used when we are restricting the 
+					// logging to UNIQUE errors - see the errorStream configuration below.
+					var uniqueErrorIndex = {};
+
+					// As errors come into our ExceptionHandler implementation, we going
+					// to pipe them into this error stream EventEmitter. We're using an 
+					// error stream, instead of a making direct HTTP requests, so that we
+					// can take advantage of some of the RxJS operators.
+					var errorStream = new ng.core.EventEmitter();
+
+					// In user-land, it's quite easy for a user to trigger the same error
+					// over and over again. While there is some value to seeing EVERY 
+					// error, for the sake of this demo we're going to limit the logging
+					// of errors to unique patterns (or unique instances -- see video). 
+					// Meaning, if the same error gets triggered more than once in a 
+					// row, we're going to log the first instance and then ignore the 
+					// subsequent instances.
+					errorStream
+						.distinctUntilChanged()
+						// Uncomment this part to only let unique errors go to the sever.
+						// --
+						// NOTE: If you are using this, you don't need the "distinct" 
+						// operator above - the filter will subsume that functionality.
+						// .filter(
+						// 	function filterUniqueErrors( value ) {
+						// 
+						// 		if ( value in uniqueErrorIndex ) {
+						//
+						// 			return( false );
+						// 
+						// 		}
+						// 
+						// 		return( uniqueErrorIndex[ value ] = true );
+						// 
+						// 	}
+						// )
+						.flatMap( sendToServer )
+						.subscribe(
+							function handleValue( value ) {
+
+								// Nothing to do here, but WE DO NEED TO SUBSCRIBE to 
+								// the stream in order for the event emitter to pass its
+								// values downstream to the HTTP flat-mapper.
+								console.debug( "Error logging success.", value );
+
+							},
+							function handleError( error ) {
+
+								console.debug( "Error logging error.", error );
+
+							}
+						)
+					;
+
+					// Return the public API.
+					return({
+						call: call
+					});
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I handle the given exception data.
+					function call( exception, stackTrace, reason ) {
+
+						// While we are override the ExceptionHandler service in the 
+						// context of the local provider chain, we can still leverage 
+						// the STATIC METHODS of the core ExceptionHandler. And, in this
+						// case, the core ExceptionHandler provides a convenience method
+						// for converting error data into a normalized string. Since this
+						// can be a complicated process, we might as well hand it off to
+						// the method that already knows how to get it done right.
+						var stringified = ng.core.ExceptionHandler.exceptionToString( exception, stackTrace, reason );
+
+						// If the console is available, log the error to the console.
+						if ( window.console ) {
+
+							console.error( stringified );
+							
+						}
+
+						// And, pipe the error into the next EventEmitter value so that
+						// we can [possibly] log it to the server.
+						errorStream.next( stringified );
+
+					}
+
+
+					// ---
+					// PRIVATE METHODS.
+					// ---
+
+
+					// I determine if the given hostname is running locally or live.
+					// When running locally (on my sweet-ass ColdFusion server), we can 
+					// get a better (ie, more dynamic) API response object.
+					function isLocalHostname( hostname ) {
+
+						return( hostname.indexOf( "github.io" ) === -1 );
+
+					}
+
+
+					// I send the given stringified error to the server and return the 
+					// normalized response sequence.
+					function sendToServer( stringifiedError ) {
+
+						// When we log the error, we want to log it along with the current
+						// browser location so that the developers can know where in the 
+						// app "experience" the error occurred.
+						var body = {
+							location: window.location.href,
+							stackTrace: stringifiedError
+						};
+
+						// When running on GitHub pages, we can only use a static API 
+						// response. However, locally, we can use a more dynamic API
+						// since we are running on ColdFusion.
+						var apiLocation = isLocalHostname( window.location.hostname )
+							? "./api/log-error.cfm" // ColdFusion.
+							: "./api/log-error.json" // Static JSON.
+						;
+
+						// Post the error payload as a JSON (JavaScript Object Notation)
+						// request. 
+						// --
+						// NOTE: We are not returning the raw HTTP response. Instead, we
+						// are unwrapping both successful and failure responses so that
+						// the consuming context does not have to know about the HTTP
+						// transportation mechanism.
+						var response = http
+							.post(
+								apiLocation,
+								JSON.stringify( body ),
+								{
+									headers: {
+										"Content-Type": "application/json; charset=utf-8"
+									}
+								}
+							)
+							.map(
+								function unwrapSuccess( value ) {
+
+									return( value.json() );
+
+								}
+							)
+							.catch(
+								function unwrapError( error ) {
+
+									try {
+
+										return( Rx.Observable.throw( error.json() ) );
+
+									} catch ( jsonError ) {
+
+										// If the error couldn't be parsed as JSON data
+										// then it's possible the API is down or something
+										// went wrong with the parsing of the successful
+										// response. In any case, to keep things simple, 
+										// we'll just create a minimum representation of
+										// a parsed error.
+										var minimumViableError = {
+											success: false
+										};
+
+										return( Rx.Observable.throw( minimumViableError ) );
+
+									}
+
+								}
+							)
+						;
+
+						return( response );
+
+					}
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>

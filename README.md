@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Logging Error Streams To The Server In Angular 2 Beta 6](http://bennadel.github.io/JavaScript-Demos/demos/error-stream-logging-angular2/)
 * [EventEmitter Is An RxJS Observable Stream In Angular 2 Beta 6](http://bennadel.github.io/JavaScript-Demos/demos/event-emitter-stream-angular2/)
 * [Unhandled Errors In RxJS Observable Streams Will Throw Errors In Angular 2 Beta 6](http://bennadel.github.io/JavaScript-Demos/demos/uncaught-errors-rxjs-angular2/)
 * [HTTP Requests Are Cold / Lazy Streams In Angular 2 Beta 6](http://bennadel.github.io/JavaScript-Demos/demos/lazy-http-stream-angular2/)

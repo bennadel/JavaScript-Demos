@@ -1,0 +1,7 @@
+{
+	"success": true,
+	"echo": {
+		"location": "... static response ...",
+		"stackTrace": "... static response ..."
+	}
+}
