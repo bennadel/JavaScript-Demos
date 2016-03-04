@@ -1,0 +1,136 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		I Have A Fundamental Misunderstanding Of Change Detection In Angular 2 Beta 8
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body>
+
+	<h1>
+		I Have A Fundamental Misunderstanding Of Change Detection In Angular 2 Beta 8
+	</h1>
+
+	<my-app>
+		Loading...
+	</my-app>
+
+	<!-- Load demo scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/8/es6-shim.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/8/Rx.umd.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/8/angular2-polyfills.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/8/angular2-all.umd.js"></script>
+	<!-- AlmondJS - minimal implementation of RequireJS. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/8/almond.js"></script>
+	<script type="text/javascript">
+
+		// Defer bootstrapping until all of the components have been declared.
+		// --
+		// NOTE: Not all components have to be required here since they will be 
+		// implicitly required by other components.
+		requirejs( 
+			[ /* Using require() for better readability. */ ],
+			function run() {
+
+				var App = require( "App" );
+
+				ng.platform.browser.bootstrap( App );
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide the root App component.
+		define(
+			"App",
+			function registerApp() {
+
+				var Item = require( "Item" );
+
+				// Configure the App component definition.
+				ng.core
+					.Component({
+						selector: "my-app",
+						directives: [ Item ],
+
+						// Here, we are asking Angular to inject a QueryList for the
+						// collection of Item directives rendered within our component
+						// view. This will inject `itemList` as a public property on
+						// the App component instance.
+						// --
+						// CAUTION: View queries are set before the ngAfterViewInit()
+						// life-cycle method is called, but after the ngOnInit() life-
+						// cycle method is called. As such, the `itemList` property will
+						// not exist until the View is initialized.
+						queries: {
+							itemList: new ng.core.ViewChildren( Item )
+						},
+
+						// Notice that our view has 2 Item instances. And, that we are
+						// using the injected `itemList` property to display the count
+						// of items currently rendered in the view.
+						template:
+						`
+							<h2>
+								Item Count: {{ itemList?.length }}
+							</h2>
+
+							<item></item>
+							<item></item>
+						`
+					})
+					.Class({
+						constructor: AppController
+					})
+				;
+
+				return( AppController );
+
+
+				// I control the App component.
+				function AppController() {
+
+					// ... nothing to do here.
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide a super simple Component for no other purpose than to have a 
+		// directive that can be rendered in the App component.
+		define(
+			"Item",
+			function registerItem() {
+
+				// Configure the Item component definition.
+				return ng.core
+					.Component({
+						selector: "item",
+						template: "This is an Item!"
+					})
+					.Class({
+						constructor: function ItemController() { /* Nothing to do. */ }
+					})
+				;
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
