@@ -1,0 +1,187 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		How Injection Method Affects ViewChild Queries In Angular 2 Beta 8
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body>
+
+	<h1>
+		How Injection Method Affects ViewChild Queries In Angular 2 Beta 8
+	</h1>
+
+	<my-app>
+		Loading...
+	</my-app>
+
+	<!-- Load demo scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/8/es6-shim.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/8/Rx.umd.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/8/angular2-polyfills.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/8/angular2-all.umd.js"></script>
+	<!-- AlmondJS - minimal implementation of RequireJS. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/8/almond.js"></script>
+	<script type="text/javascript">
+
+		// Defer bootstrapping until all of the components have been declared.
+		// --
+		// NOTE: Not all components have to be required here since they will be 
+		// implicitly required by other components.
+		requirejs( 
+			[ /* Using require() for better readability. */ ],
+			function run() {
+
+				var App = require( "App" );
+
+				ng.platform.browser.bootstrap( App );
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide the root App component.
+		define(
+			"App",
+			function registerApp() {
+
+				var Item = require( "Item" );
+
+				// Configure the App component definition.
+				ng.core
+					.Component({
+						selector: "my-app",
+						directives: [ Item ],
+
+						// Here, we are asking Angular to provide two different queries
+						// as INJECTED PROPERTIES. For the ViewChildren, we want to get
+						// an iterable list of all matches. For the ViewChild, we only 
+						// want to get the first matched instance as a direct reference.
+						queries: {
+							propertyChildren: new ng.core.ViewChildren( Item ),
+							propertyChild: new ng.core.ViewChild( Item )
+						},
+						template:
+						`
+							<item></item>
+							<item></item>
+							<item></item>
+						`
+					})
+					.Class({
+						constructor: AppController,
+
+						// Define life-cycle methods on the prototype so that they are
+						// picked up at runtime.
+						ngAfterViewInit: function noop() {}
+					})
+				;
+
+				// Here, we are asking Angular to provide two different queries as 
+				// INJECTED CONSTRUCTOR ARGUMENTS. For the ViewChildren, we want to get
+				// an iterable list of all matches. For the ViewChild, we only want to 
+				// get the first matched instance as a direct reference. 
+				AppController.parameters = [
+					[
+						new ng.core.Inject( ng.core.ViewChildren ),
+						new ng.core.ViewChildren( Item )
+					],
+					[
+						new ng.core.Inject( ng.core.ViewChild ),
+						new ng.core.ViewChild( Item )
+					]
+				];
+
+				return( AppController );
+
+
+				// I control the App component.
+				function AppController( constructorChildren, constructorChild ) {
+
+					var vm = this;
+
+					// Expose the public methods.
+					vm.ngAfterViewInit = ngAfterViewInit;
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I get called once after the component's view has been initialized.
+					// --
+					// NOTE: At this point, we should have access to both the set of 
+					// queries that were injected constructor arguments (which we already 
+					// had) and the injected properties (which just became available on 
+					// the public scope).
+					function ngAfterViewInit() {
+
+						// Check to see how the injected PROPERTIES were resolved.
+						console.group( "Property Injection" );
+						console.log( "ViewChildren:", vm.propertyChildren );
+						console.log( "ViewChild:", vm.propertyChild );
+						console.groupEnd();
+
+						// Check to see how the injected ARGUMENTS were resolved.
+						console.group( "Constructor Injection" );
+						console.log( "ViewChildren:", constructorChildren );
+						console.log( "ViewChild:", constructorChild );
+						console.groupEnd();
+
+					}
+					
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide a super simple Component for no other purpose than to have a 
+		// component that can be rendered in the App component.
+		define(
+			"Item",
+			function registerItem() {
+
+				var instanceID = 0;
+
+				// Configure the Item component definition.
+				ng.core
+					.Component({
+						selector: "item",
+						template: "This is an Item!"
+					})
+					.Class({
+						constructor: ItemController
+					})
+				;
+
+				return( ItemController );
+
+
+				// I control the Item component.
+				function ItemController() {
+
+					this.instanceID = ++instanceID;
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
