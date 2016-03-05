@@ -1,0 +1,275 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Constructor vs. Property QueryList Injection In Angular 2 Beta 8
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body>
+
+	<h1>
+		Constructor vs. Property QueryList Injection In Angular 2 Beta 8
+	</h1>
+
+	<my-app>
+		Loading...
+	</my-app>
+
+	<!-- Load demo scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/8/es6-shim.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/8/Rx.umd.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/8/angular2-polyfills.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/8/angular2-all.umd.js"></script>
+	<!-- AlmondJS - minimal implementation of RequireJS. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/8/almond.js"></script>
+	<script type="text/javascript">
+
+		// Defer bootstrapping until all of the components have been declared.
+		// --
+		// NOTE: Not all components have to be required here since they will be 
+		// implicitly required by other components.
+		requirejs( 
+			[ /* Using require() for better readability. */ ],
+			function run() {
+
+				var App = require( "App" );
+
+				ng.platform.browser.bootstrap( App );
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide the root App component.
+		define(
+			"App",
+			function registerApp() {
+
+				var ItemA = require( "ItemA" );
+				var ItemB = require( "ItemB" );
+
+				// Configure the App component definition.
+				ng.core
+					.Component({
+						selector: "my-app",
+						directives: [ ItemA, ItemB ],
+
+						// Here, we are asking Angular to inject a query list for the
+						// collection of ItemA components rendered within our component
+						// view. This will inject `itemAList` as a public property on
+						// the App component instance.
+						// --
+						// CAUTION: View queries are set before the ngAfterViewInit()
+						// life-cycle method is called, but after the ngOnInit() life-
+						// cycle method is called. As such, the `itemAList` property will
+						// not exist until the View is initialized.
+						queries: {
+							itemAList: new ng.core.ViewChildren( ItemA )
+						},
+
+						// Notice that our view has two different sets of components - 
+						// ItemA and ItemB instances. Each of these will be monitored 
+						// using a different live query.
+						template:
+						`
+							<item-a></item-a>
+							<item-a></item-a>
+							<br />
+							<item-b></item-b>
+							<item-b></item-b>
+							<item-b></item-b>
+
+							<div *ngIf="showMore">
+								<item-a></item-a>
+								<item-b></item-b>
+							</div>
+						`
+					})
+					.Class({
+						constructor: AppController,
+
+						// Define life-cycle methods on the prototype so that they are
+						// picked up at runtime.
+						ngOnInit: function noop() {},
+						ngAfterViewInit: function noop() {}
+					})
+				;
+
+				// Here, we're asking Angular to inject a live query of the ItemB view
+				// children as a constructor argument for the component instance. Just 
+				// like the live query defined in the component meta-data, this one will
+				// not contain items until the view has been initialized. However, unlike 
+				// the other live query, we can at least reference this variable before 
+				// the view has been initialized (where we can subscribe to the changes).
+				AppController.parameters = [ 
+					[
+						new ng.core.Inject( ng.core.ViewChildren ), 
+						new ng.core.ViewChildren( ItemB ) 
+					]
+				];
+
+				return( AppController );
+
+
+				// I control the App component.
+				function AppController( itemBList ) {
+
+					var vm = this;
+
+					// I determine if we are showing the extra components.
+					vm.showMore = false;
+
+					// The ViewChildren construct is a live query of the components in
+					// the view. So, in order to see how this live query changes over 
+					// time, we're going to reveal more components after a short delay.
+					setTimeout(
+						function revealMore() {
+
+							console.info( "- - - - Reveal More Components - - - -" );
+							vm.showMore = true;
+
+						},
+						( 5 * 1000 )
+					);
+
+					// While the itemBList was provided via constructor injection, the
+					// view still has not yet been initialized. As such, this list will
+					// be empty. But, since we have a reference to it, we can subscribe
+					// to changes (that will be triggered after the view is initialized).
+					itemBList.changes.subscribe(
+						function handleValue( queryList ) {
+
+							console.warn( "itemBList Change Detection (constructor)" );
+							console.log( "itemBList:", itemBList.length );
+
+						}
+					);
+
+					// Expose the public methods.
+					vm.ngAfterViewInit = ngAfterViewInit;
+					vm.ngOnInit = ngOnInit;
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I get called once after the component's view has been initialized.
+					function ngAfterViewInit() {
+
+						// At this point, after the view has been initialized, both of the
+						// query list values are available - both itemBList, which was 
+						// injected via the constructor, and itemAList, which was just 
+						// injected as a property.
+						console.warn( "ngAfterViewInit()" );
+						console.log( "itemAList:", vm.itemAList.length );
+						console.log( "itemBList:", itemBList.length );
+
+						// Now that we finally have a reference to the itemAList, let's 
+						// subscribe to the changes of the list (which updates the current
+						// instance but also provides a reference to the query list).
+						vm.itemAList.changes.subscribe(
+							function handleValue( queryList ) {
+
+								console.warn( "itemAList Change Detection (ngAfterViewInit)" );
+								console.log( "itemAList:", vm.itemAList.length );
+
+							}
+						);
+
+						// We've already subscribed to the changes on this list; but, 
+						// let's do it again so we can see if it would pick up the initial
+						// length of the list.
+						itemBList.changes.subscribe(
+							function handleValue( queryList ) {
+
+								console.warn( "itemBList Change Detection (ngAfterViewInit)" );
+								console.log( "itemBList:", itemBList.length );
+
+							}
+						);
+
+					}
+
+
+					// I get called once after the component has been instantiated and
+					// the inputs have been bound (and observed once).
+					function ngOnInit() {
+
+						// While the itemBList was injected in the constructor, the 
+						// itemAList, which was part of the component meta-data, has not
+						// been injected.
+						console.warn( "ngOnInit()" );
+						console.log( "itemAList:", ( vm.itemAList && vm.itemAList.length ) );
+						console.log( "itemBList:", itemBList.length );
+
+					}
+					
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide a super simple Component for no other purpose than to have a 
+		// component that can be rendered in the App component.
+		define(
+			"ItemA",
+			function registerItemA() {
+
+				// Configure the Item component definition.
+				return ng.core
+					.Component({
+						selector: "item-a",
+						template: "This is an ItemA!"
+					})
+					.Class({
+						constructor: function ItemControllerA() { /* Nothing to do. */ }
+					})
+				;
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide a super simple Component for no other purpose than to have a 
+		// component that can be rendered in the App component.
+		define(
+			"ItemB",
+			function registerItemB() {
+
+				// Configure the Item component definition.
+				return ng.core
+					.Component({
+						selector: "item-b",
+						template: "This is an ItemB!"
+					})
+					.Class({
+						constructor: function ItemControllerB() { /* Nothing to do. */ }
+					})
+				;
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>

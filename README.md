@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Constructor vs. Property QueryList Injection In Angular 2 Beta 8](http://bennadel.github.io/JavaScript-Demos/demos/query-list-injection-angular2/)
 * [I Have A Fundamental Misunderstanding Of Change Detection In Angular 2 Beta 8](http://bennadel.github.io/JavaScript-Demos/demos/fundamental-misunderstanding-change-detection-angular2/)
 * [Logging Error Streams To The Server In Angular 2 Beta 6](http://bennadel.github.io/JavaScript-Demos/demos/error-stream-logging-angular2/)
 * [EventEmitter Is An RxJS Observable Stream In Angular 2 Beta 6](http://bennadel.github.io/JavaScript-Demos/demos/event-emitter-stream-angular2/)
