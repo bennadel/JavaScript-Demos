@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Providing Default Values For The Safe Navigation Operator In Angular 2 Beta 8](http://bennadel.github.io/JavaScript-Demos/demos/safe-navigation-default-value-angular2/)
 * [How Injection Method Affects ViewChild Queries In Angular 2 Beta 8](http://bennadel.github.io/JavaScript-Demos/demos/view-child-injection-angular2/)
 * [Constructor vs. Property QueryList Injection In Angular 2 Beta 8](http://bennadel.github.io/JavaScript-Demos/demos/query-list-injection-angular2/)
 * [I Have A Fundamental Misunderstanding Of Change Detection In Angular 2 Beta 8](http://bennadel.github.io/JavaScript-Demos/demos/fundamental-misunderstanding-change-detection-angular2/)

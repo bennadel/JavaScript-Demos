@@ -1,0 +1,214 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Providing Default Values For The Safe Navigation Operator In Angular 2 Beta 8
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body>
+
+	<h1>
+		Providing Default Values For The Safe Navigation Operator In Angular 2 Beta 8
+	</h1>
+
+	<my-app>
+		Loading...
+	</my-app>
+
+	<!-- Load demo scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/8/es6-shim.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/8/Rx.umd.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/8/angular2-polyfills.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/8/angular2-all.umd.js"></script>
+	<!-- AlmondJS - minimal implementation of RequireJS. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/8/almond.js"></script>
+	<script type="text/javascript">
+
+		// Defer bootstrapping until all of the components have been declared.
+		// --
+		// NOTE: Not all components have to be required here since they will be 
+		// implicitly required by other components.
+		requirejs( 
+			[ /* Using require() for better readability. */ ],
+			function run() {
+
+				var App = require( "App" );
+
+				ng.platform.browser.bootstrap( App );
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide the root App component.
+		define(
+			"App",
+			function registerApp() {
+
+				var DefaultPipe = require( "DefaultPipe" );
+
+				// Configure the App component definition.
+				ng.core
+					.Component({
+						selector: "my-app",
+						pipes: [ DefaultPipe ],
+
+						// In this template, notice that we are using the "safe navigation"
+						// operator when outputting the values. If the safe navigation 
+						// operator cannot return a value, it returns "undefined", which 
+						// we are then piping into our Default Pipe, which will return the 
+						// given default value if it receives "undefined".
+						template:
+						`
+							<h3>
+								{{ friend.name }}
+							</h3>
+
+							<ul>
+								<li>
+									ID: {{ friend.id }}
+								</li>
+								<li>
+									Name: {{ friend.name }}
+								</li>
+								<li>
+									Best Friend: {{ friend?.isBFF | default: "not provided" }}
+								</li>
+								<li>
+									Likes Dogs: {{ friend?.likesDogs | default: "not provided" }}
+								</li>
+								<li>
+									Likes Cats: {{ friend?.likesCats | default: false }}
+								</li>
+							</ul>
+
+							<p>
+								<a (click)="makeBFF()">Make best friends</a>.
+							</p>
+						`
+					})
+					.Class({
+						constructor: AppController
+					})
+				;
+
+				return( AppController );
+
+
+				// I control the App component.
+				function AppController() {
+
+					var vm = this;
+
+					// Setup the friend. Notice that we are purposefully leaving out 
+					// some keys in the data structure so that we can fill in some 
+					// default values in the view.
+					vm.friend = {
+						id: 1,
+						name: "Kim",
+						// isBFF: true
+						likesDogs: true
+						// likesCats: false
+					};
+
+					// Expose the public methods.
+					vm.makeBFF = makeBFF;
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I flag the friend as a Best Friend Forever (totes magotes)!
+					function makeBFF() {
+
+						vm.friend.isBFF = true;
+
+					}
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide a pipe operator that will return a given default value if, and 
+		// only if, it receives an undefined value.
+		define(
+			"DefaultPipe",
+			function registerDefaultPipe() {
+
+				// Configure the DefaultPipe pipe definition.
+				ng.core
+					.Pipe({
+						name: "default",
+
+						// By default, pipes are "pure." However, I am explicitly 
+						// defining the "pure" properly since I am still learning. A pure
+						// pipe is only re-evaluated when either the input or any of the 
+						// arguments change.
+						pure: true
+					})
+					.Class({
+						constructor: DefaultPipeController
+					})
+				;
+
+				return( DefaultPipeController );
+
+
+				// I control the DefaultPipe transformer.
+				function DefaultPipeController() {
+
+					var UNDEFINED_VALUE = void( 0 );
+
+					// Return the public API.
+					return({
+						transform: transform
+					});
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I transform the given value. If the given value is undefined, 
+					// and a default value was provided, the default value is returned. 
+					// Otherwise, the given value is returned.
+					function transform( value, args ) {
+
+						if ( ( value === UNDEFINED_VALUE ) && args.length ) {
+
+							return( args[ 0 ] );
+
+						} else {
+
+							return( value );
+
+						}
+
+					}
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
