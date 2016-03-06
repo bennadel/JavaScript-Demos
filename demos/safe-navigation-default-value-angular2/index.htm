@@ -63,9 +63,9 @@
 
 						// In this template, notice that we are using the "safe navigation"
 						// operator when outputting the values. If the safe navigation 
-						// operator cannot return a value, it returns "undefined", which 
-						// we are then piping into our Default Pipe, which will return the 
-						// given default value if it receives "undefined".
+						// operator cannot return a value, it returns "null", which we 
+						// are then piping into our Default Pipe, which will return the 
+						// given default value if it receives "null".
 						template:
 						`
 							<h3>
@@ -80,19 +80,15 @@
 									Name: {{ friend.name }}
 								</li>
 								<li>
-									Best Friend: {{ friend?.isBFF | default: "not provided" }}
+									Best Friend: {{ friend.traits?.isBFF | default: "not provided" }}
 								</li>
 								<li>
-									Likes Dogs: {{ friend?.likesDogs | default: "not provided" }}
+									Likes Dogs: {{ friend.likes?.dogs | default: "not provided" }}
 								</li>
 								<li>
-									Likes Cats: {{ friend?.likesCats | default: false }}
+									Likes Cats: {{ friend.likes?.cats | default: false }}
 								</li>
 							</ul>
-
-							<p>
-								<a (click)="makeBFF()">Make best friends</a>.
-							</p>
 						`
 					})
 					.Class({
@@ -114,26 +110,14 @@
 					vm.friend = {
 						id: 1,
 						name: "Kim",
-						// isBFF: true
-						likesDogs: true
-						// likesCats: false
+						traits: {
+							isBFF: true
+						}
+						// likes: {
+						// 	cats: false,
+						// 	dogs: true
+						// }
 					};
-
-					// Expose the public methods.
-					vm.makeBFF = makeBFF;
-
-
-					// ---
-					// PUBLIC METHODS.
-					// ---
-
-
-					// I flag the friend as a Best Friend Forever (totes magotes)!
-					function makeBFF() {
-
-						vm.friend.isBFF = true;
-
-					}
 
 				}
 
@@ -146,7 +130,7 @@
 
 
 		// I provide a pipe operator that will return a given default value if, and 
-		// only if, it receives an undefined value.
+		// only if, it receives a null value.
 		define(
 			"DefaultPipe",
 			function registerDefaultPipe() {
@@ -173,8 +157,6 @@
 				// I control the DefaultPipe transformer.
 				function DefaultPipeController() {
 
-					var UNDEFINED_VALUE = void( 0 );
-
 					// Return the public API.
 					return({
 						transform: transform
@@ -186,12 +168,12 @@
 					// ---
 
 
-					// I transform the given value. If the given value is undefined, 
-					// and a default value was provided, the default value is returned. 
+					// I transform the given value. If the given value is null, and a 
+					// default value was provided, the default value is returned. 
 					// Otherwise, the given value is returned.
 					function transform( value, args ) {
 
-						if ( ( value === UNDEFINED_VALUE ) && args.length ) {
+						if ( ( value === null ) && args.length ) {
 
 							return( args[ 0 ] );
 
