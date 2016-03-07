@@ -1,0 +1,159 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Creating A "Run Block" In AngularJS 2 Beta 8
+	</title>
+</head>
+<body>
+
+	<h1>
+		Creating A "Run Block" In AngularJS 2 Beta 8
+	</h1>
+
+	<my-app>
+		Loading...
+	</my-app>
+
+	<!-- Load demo scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/8/es6-shim.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/8/Rx.umd.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/8/angular2-polyfills.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/8/angular2-all.umd.js"></script>
+	<!-- AlmondJS - minimal implementation of RequireJS. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/8/almond.js"></script>
+	<script type="text/javascript">
+
+		// Defer bootstrapping until all of the components have been declared.
+		// --
+		// NOTE: Not all components have to be required here since they will be 
+		// implicitly required by other components.
+		requirejs( 
+			[ /* Using require() for better readability. */ ],
+			function run() {
+
+				var App = require( "App" );
+				var MyService = require( "MyService" );
+
+				ng.platform.browser.bootstrap( 
+					App,
+					[
+						// MyService is just a service like any other - we are telling
+						// Angular to use the MyService class any time another context
+						// requires the MyService dependency-injection token.
+						// --
+						// NOTE: Due to its nature, none of the components within the 
+						// component tree require this service; nor do any of the other
+						// services within the component tree. As such, this service 
+						// would normally never get instantiated within the Application.
+						// But........
+						MyService,
+
+						// Here, we're using the APP_INITIALIZER multi-token to provide
+						// additional factory functions that can be run after the app is
+						// initialized, but before the root component is mounted. Much 
+						// like the .run() blocks in AngularJS 1.x, this allows us to 
+						// instantiate services that may otherwise not be required by
+						// any particular component.
+						ng.core.provide(
+							ng.core.APP_INITIALIZER,
+							{
+								// The factory function plays two roles. On the one 
+								// hand, it forces the MyService class to be instantiated
+								// as a service. And, on the other hand, it returns the 
+								// "run block" that Angular will invoke before the root 
+								// component is mounted.
+								useFactory: function( myService ) {
+
+									console.log( "Run block factory method executed." );
+
+									return(
+										function runBlock() {
+
+											console.log( "Run block invoked." );
+
+										}
+									);
+
+								},
+								deps: [ MyService ],
+								multi: true
+							}
+						)
+					]
+				);
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I control the root of the application.
+		define(
+			"App",
+			function registerApp() {
+
+				// Define the App component metadata.
+				ng.core
+					.Component({
+						selector: "my-app",
+						template:
+						`
+							Spooooon!
+						`
+					})
+					.Class({
+						constructor: AppController
+					})
+				;
+
+				return( AppController );
+
+
+				// I control the App component.
+				function AppController() {
+
+					console.log( "App component instantiated." );
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide the MyService service. 
+		define(
+			"MyService",
+			function registerMyService() {
+
+				MyService.parameters = [
+					new ng.core.Inject( ng.core.ExceptionHandler )
+				];
+
+				return( MyService );
+
+
+				// Notice that the service accepts another service that is going to be
+				// provided by the Angular dependency-injection system. 
+				function MyService( exceptionHandler ) {
+
+					console.log( "MyService instantiated with", exceptionHandler );
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
