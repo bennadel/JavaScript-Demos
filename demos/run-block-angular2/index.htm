@@ -52,11 +52,11 @@
 						MyService,
 
 						// Here, we're using the APP_INITIALIZER multi-token to provide
-						// additional factory functions that can be run after the app is
-						// initialized, but before the root component is mounted. Much 
-						// like the .run() blocks in AngularJS 1.x, this allows us to 
-						// instantiate services that may otherwise not be required by
-						// any particular component.
+						// additional factory functions that can be run during the 
+						// application bootstrapping, but finish before the root 
+						// component is mounted. Much like the .run() blocks in AngularJS
+						// 1.x, this allows us to instantiate services that may otherwise
+						// not be required by any particular component.
 						ng.core.provide(
 							ng.core.APP_INITIALIZER,
 							{
