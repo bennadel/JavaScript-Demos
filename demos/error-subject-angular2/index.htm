@@ -1,0 +1,354 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Ward Bell: Do Not Expect EventEmitter To Be Observable In Angular 2
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body>
+
+	<h1>
+		Ward Bell: Do Not Expect EventEmitter To Be Observable In Angular 2
+	</h1>
+
+	<my-app>
+		Loading...
+	</my-app>
+
+	<!-- Load demo scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/8/es6-shim.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/8/Rx.umd.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/8/angular2-polyfills.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/8/angular2-all.umd.js"></script>
+	<!-- AlmondJS - minimal implementation of RequireJS. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/8/almond.js"></script>
+	<script type="text/javascript">
+
+		// Defer bootstrapping until all of the components have been declared.
+		// --
+		// NOTE: Not all components have to be required here since they will be 
+		// implicitly required by other components.
+		requirejs( 
+			[ /* Using require() for better readability. */ ],
+			function run() {
+
+				var App = require( "App" );
+				var EmittingExceptionHandler = require( "EmittingExceptionHandler" );
+				var ErrorLogger = require( "ErrorLogger" );
+
+				ng.platform.browser.bootstrap( 
+					App,
+					[
+						// Here, we are overriding the core implementation of the 
+						// ExceptionHandler service with our own implementation. In this
+						// case, we have to override the core implementation rather than 
+						// using some sort of class composition because we need AngularJS
+						// to pick up our version of the ExceptionHandler service and use
+						// it internally within its own Zone.js error handling.
+						ng.core.provide(
+							ng.core.ExceptionHandler,
+							{
+								useClass: EmittingExceptionHandler
+							}
+						),
+
+						// Provide our error logger class token.
+						ErrorLogger
+					]
+				);
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide the root App component.
+		define(
+			"App",
+			function registerApp() {
+
+				var ErrorLogger = require( "ErrorLogger" );
+
+				// Configure the App component definition.
+				ng.core
+					.Component({
+						selector: "my-app",
+						template:
+						`
+							<p>
+								<a (click)="triggerError( 1 )">Trigger Error One</a>
+								&mdash;
+								<a (click)="triggerError( 2 )">Trigger Error Two</a>
+								&mdash;
+								<a (click)="triggerError( 3 )">Trigger Error Three</a>
+							</p>
+						`
+					})
+					.Class({
+						constructor: AppController
+					})
+				;
+
+				AppController.parameters = [
+					new ng.core.Inject( ErrorLogger )
+				];
+
+				return( AppController );
+
+
+				// I control the App component.
+				function AppController( errorLogger ) {
+
+					var vm = this;
+
+					// Expose the public methods.
+					vm.triggerError = triggerError;
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I trigger the given type of error.
+					function triggerError( which ) {
+
+						// In this demo, we are using two different types of errors so
+						// that we can see how subsequent errors of the same type are
+						// consumed by both the custom ExceptionHandler implementation 
+						// and the EventLogger, which depends on its own internal RxJS 
+						// stream configuration.
+						if ( which === 1 ) {
+
+							var x = y; // Undefined y reference.
+
+						} else if ( which === 2 ) {
+
+							var foo = bar; // Undefined bar reference.
+
+						} else {
+
+							// For this error, rather than letting the error bubble up,
+							// we're going to catch it and log it explicitly to the 
+							// ErrorLogger instance (bypassing ExceptionHandler).
+							try {
+
+								var hello = world; // Undefined world reference.
+
+							} catch ( error ) {
+
+								errorLogger.logError( error );
+
+							}
+
+						}
+
+					}
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide a custom ExceptionHandler that emits errors in addition to logging
+		// them to the console.
+		define(
+			"EmittingExceptionHandler",
+			function registerEmittingExceptionHandler() {
+
+				return( EmittingExceptionHandler );
+
+
+				// I provide a custom implementation of the ExceptionHandler service
+				// that exposes an error stream that other services can subscribe to 
+				// (via the public property).
+				function EmittingExceptionHandler() {
+
+					// As the application tells the ExceptionHandler about the errors,
+					// we are going to emit both the raw errors and the stringified 
+					// errors on the public streams so that other services can consume
+					// the errors as well.
+					var errors = new Rx.Subject();
+					var stringifiedErrors = new Rx.Subject();
+
+					// Return the public API.
+					// --
+					// NOTE: Instead of exposing the error streams directly, I am exposing
+					// new streams that are based on the error streams. This will hide the
+					// "Observer" portion of the "Subject" class and expose only the 
+					// "Observable" portion of the API (at least, I think so).
+					return({
+						call: call,
+						errors: Rx.Observable.from( errors ),
+						stringifiedErrors: Rx.Observable.from( stringifiedErrors )
+					});
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I handle the given exception data.
+					function call( exception, stackTrace, reason ) {
+
+						// While we are overriding the ExceptionHandler service in the
+						// context of the local provider chain, we can still leverage 
+						// the STATIC METHODS of the core ExceptionHandler. And, in this
+						// case, the core ExceptionHandler provides a convenience method
+						// for converting error data into a normalized string. Since this
+						// can be a complicated process, we might as well hand it off to
+						// the method that already knows how to get it done right.
+						var stringified = ng.core.ExceptionHandler.exceptionToString( exception, stackTrace, reason );
+
+						// If the console is available, log the error to the console.
+						if ( window.console ) {
+
+							console.error( stringified );
+							
+						}
+
+						// Pass the error versions off to the streams where they can be
+						// consumed by the subscribers.
+						errors.next( exception );
+						stringifiedErrors.next( stringified );
+
+					}
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide an error logger.
+		define(
+			"ErrorLogger",
+			function registerErrorLogger() {
+
+				ErrorLogger.parameters = [ 
+					new ng.core.Inject( ng.core.ExceptionHandler )
+				];
+
+				return( ErrorLogger );
+
+
+				// I provide error logging that will log errors to the server (simulated 
+				// in this case). Errors can either be explicitly passed in via the 
+				// .logError() method or implicitly via the ExceptionHandler error event
+				// stream.
+				function ErrorLogger( exceptionHandler ) {
+
+					// Since we are going to log errors from two different sources - the
+					// explicit logError() calls and the implicit ExceptionHandler error
+					// stream - we need a way to merge the two streams together so that
+					// we can treat them uniformly. This error stream will act as our 
+					// internal entry point, into which we will merge the ExceptionHandler
+					// error stream.
+					var errorStream = new Rx.Subject();
+
+					// Merge in the ExceptionHandler stringified error stream and log the
+					// resultant errors to the server (simulated).
+					// --
+					// NOTE: We are using the .distinctUntilChanged() operator in order 
+					// to prevent repetitive errors from being logged.
+					errorStream
+						// Since internal method calls will send over Error objects, we
+						// want to map those errors to strings before we merged in the
+						// stringified errors that come from the ExceptionHandler.
+						.map( mapToString )
+
+						// Now, merge both "stringified" streams together and handle
+						// the errors in uniformity.
+						.merge( exceptionHandler.stringifiedErrors )				
+						.distinctUntilChanged()
+						.flatMap( sendToServer )
+						.subscribe(
+							function handleValue( value ) {
+
+								// Nothing to do here, but WE DO NEED TO SUBSCRIBE to 
+								// the stream in order for the event emitter to pass its
+								// values downstream to the HTTP flat-mapper.
+								console.debug( "Error logging success.", value );
+
+							},
+							function handleError( error ) {
+
+								// CAUTION: If we ever get this, our stream has broken 
+								// and will no longer log errors.
+								console.debug( "Error logging error.", error );
+
+							}
+						)
+					;
+
+					// Return the public API.
+					return({
+						logError: logError	
+					});
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I log the given exception data.
+					// --
+					// NOTE: The error, in this case, is an Error instance and will be 
+					// stringified in the error stream.
+					function logError( error ) {
+
+						errorStream.next( error );
+
+					}
+
+
+					// ---
+					// PRIVATE METHODS.
+					// ---
+
+
+					// I convert the given error object to a string.
+					function mapToString( error ) {
+
+						console.warn( "Mapping to string:", error );
+
+						return( error.toString() );
+
+					}
+
+
+					// I send the given stringified error to the server and return the 
+					// normalized response sequence.
+					function sendToServer( stringifiedError ) {
+
+						return( Rx.Observable.of( "SIMULATED_HTTP_RESPONSE" ) );
+
+					}
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
