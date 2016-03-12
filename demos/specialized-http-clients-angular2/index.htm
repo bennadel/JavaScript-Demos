@@ -215,7 +215,10 @@
 							// We don't really care about the response for this demo; 
 							// but, we have to subscribe in order to actually trigger the
 							// underlying HTTP request.
-							.subscribe( function noop() {} )
+							.subscribe( 
+								function noop() {},
+								function noop() {}
+							)
 						;
 
 					}
