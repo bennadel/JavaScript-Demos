@@ -1,0 +1,84 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Converting A Subject To An Observable Using RxJS In Angular 2 Beta 9
+	</title>
+</head>
+<body>
+
+	<h1>
+		Converting A Subject To An Observable Using RxJS In Angular 2 Beta 9
+	</h1>
+
+	<h2>
+		Using Rx.Observable.prototype.asObservable()
+	</h2>
+
+	<!-- Load demo scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/9/es6-shim.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/9/Rx.umd.min.js"></script>
+	<script type="text/javascript">
+
+		// I return a "hot" observable sequence that emits a value every 1,000 ms.
+		function getObservable() {
+
+			var source = new Rx.Subject();
+
+			setInterval(
+				function emitNextValue() {
+
+					source.next( new Date().getTime() );
+
+				},
+				1000
+			);
+
+			// In an attempt to protect the "Subject" from the calling context (such that
+			// the calling context cannot corrupt the Subject by explicitly invoking the 
+			// .next(), .complete(), or error() methods), we are going to try to create 
+			// an Observable from the Subject.
+			return( source.asObservable() );
+
+		}
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		var stream = getObservable();
+
+		// Subscribe to the observable sequence so we can debug the values.
+		stream
+			.take( 3 )
+			.subscribe(
+				function handleValue( value ) {
+
+					console.log( "Observable value:", value );
+
+				}
+			)
+		;
+
+		// The value returned from getObservable() is supposed to be an Observable,
+		// which means that we SHOULD NOT BE ABLE to call the .next() method on it. 
+		// Let's test it out!
+		try {
+
+			stream.next( "foo" ); // Expecting this to throw an undefined method error.
+
+			console.warn( "Not good! You were able to call .next() on the stream." );
+
+		} catch ( error ) {
+
+			console.info( "Thank goodness! You weren't able to call .next() on the stream." );
+
+		}
+
+	</script>
+
+</body>
+</html>
