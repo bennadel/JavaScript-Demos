@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Creating Specialized HTTP Clients In Angular 2 Beta 8](http://bennadel.github.io/JavaScript-Demos/demos/specialized-http-clients-angular2/)
 * [Experimenting With The .catch() Operator And Stream Continuation In RxJS And Angular 2](http://bennadel.github.io/JavaScript-Demos/demos/catching-errors-rxjs-angular2/)
 * [Ward Bell: Do Not Expect EventEmitter To Be Observable In Angular 2](http://bennadel.github.io/JavaScript-Demos/demos/error-subject-angular2/)
 * [Creating A "Run Block" In AngularJS 2 Beta 8](http://bennadel.github.io/JavaScript-Demos/demos/run-block-angular2/)

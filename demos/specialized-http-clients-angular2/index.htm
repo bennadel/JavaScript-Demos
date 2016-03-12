@@ -1,0 +1,776 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Creating Specialized HTTP Clients In Angular 2 Beta 8
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body>
+
+	<h1>
+		Creating Specialized HTTP Clients In Angular 2 Beta 8
+	</h1>
+
+	<my-app>
+		Loading...
+	</my-app>
+
+	<!-- Load demo scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/8/es6-shim.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/8/Rx.umd.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/8/angular2-polyfills.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/8/angular2-all.umd.js"></script>
+	<!-- AlmondJS - minimal implementation of RequireJS. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/8/almond.js"></script>
+	<script type="text/javascript">
+
+		// Here, we're programmatically adding the XSRF Token cookie so that it will be
+		// reflected in the outgoing HTTP requests in the API Gateway.
+		document.cookie = "XSRF-TOKEN=Dont-Tase-Me-Bro";
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// Defer bootstrapping until all of the components have been declared.
+		// --
+		// NOTE: Not all components have to be required here since they will be 
+		// implicitly required by other components.
+		requirejs( 
+			[ /* Using require() for better readability. */ ],
+			function run() {
+
+				ng.platform.browser.bootstrap( 
+					require( "App" ),
+					[
+						ng.http.HTTP_PROVIDERS,
+						require( "FriendService" ),
+						require( "ApiGateway" ),
+						require( "HTTP_ERROR_HANDLER_PROVIDERS" )						
+					]
+				);
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide the root App component.
+		define(
+			"App",
+			function registerApp() {
+
+				// Configure the App component definition.
+				ng.core
+					.Component({
+						selector: "my-app",
+						template:
+						`
+							<p>
+								<a (click)="loadFriend( 1 )">Load Friend 1</a>
+								&nbsp;|&nbsp;
+								<a (click)="loadFriend( 2 )">Load Friend 2</a>
+								&nbsp;|&nbsp;
+								<a (click)="loadFriend( 3 )">Load Friend 3</a>
+								&nbsp;|&nbsp;
+								<a (click)="loadFriend( 4 )">Load Friend 4 (Not Found)</a>
+								&nbsp;|&nbsp;
+								<a (click)="updateFriend( 1 )">Update Friend 1</a>
+							</p>
+
+							<div *ngIf="friend">
+
+								<h3>
+									{{ friend.name }}
+								</h3>
+
+								<ul>
+									<li>
+										<strong>ID</strong>: {{ friend.id }}
+									</li>
+									<li>
+										<strong>Name</strong>: {{ friend.name }}
+									</li>
+									<li>
+										<strong>Description</strong>: {{ friend.description }}
+									</li>
+								</ul>
+
+							</div>
+						`
+					})
+					.Class({
+						constructor: AppController,
+
+						// Configure life-cycle methods on the prototype so that they
+						// are picked up at runtime.
+						ngOnInit: function noop() {}
+					})
+				;
+
+				AppController.parameters = [
+					new ng.core.Inject( require( "FriendService" ) ),
+					new ng.core.Inject( require( "ApiGateway" ) )
+				];
+
+				return( AppController );
+
+
+				// I control the App component.
+				function AppController( friendService, apiGateway ) {
+
+					var vm = this;
+
+					// I hold on the current friend-request subscription. This way, we 
+					// can cancel this request if it has not completed by the time we 
+					// need to initiate a new one (or destroy the component).
+					var currentSubscription = null;
+
+					// I hold the currently-loaded friend.
+					vm.friend = null;
+
+					// Expose the public methods.
+					vm.loadFriend = loadFriend;
+					vm.ngOnInit = ngOnInit;
+					vm.updateFriend = updateFriend;
+					
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I load the friend with the given ID.
+					function loadFriend( id ) {
+
+						// If we have an existing request subscription, cancel it.
+						// --
+						// NOTE: If the request already completed, there is no harm here.
+						if ( currentSubscription ) {
+
+							currentSubscription.unsubscribe();
+
+						}
+
+						// Request the new friend and keep track of the response 
+						// subscription so that we can cancel it in the future.
+						currentSubscription = friendService
+							.getFriend( id )
+							.subscribe(
+								function handleValue( newFriend ) {
+
+									vm.friend = newFriend;
+
+								},
+								function handleError( error ) {
+
+									console.warn( "Could not load friend." );
+									console.dir( error );
+
+								}
+							)
+						;
+
+					}
+
+
+					// I initialize the component, called after the inputs have been 
+					// bound for the first time.
+					function ngOnInit() {
+
+						// Let's start listening for pending commands (ie, non-GET 
+						// requests) so that we can show some sort of "activity" 
+						// indicator if we wanted to.
+						apiGateway.pendingCommands.subscribe(
+							function handleValue( pendingCount ) {
+
+								console.debug( "Pending commands:", pendingCount );
+
+							}
+						);
+
+					}
+
+
+					// I update the friend with the given ID.
+					// --
+					// CAUTION: This won't work on GitHub pages - they don't allow 
+					// posts. But, it should still manage the count of "pending commands"
+					// properly.
+					function updateFriend( id ) {
+
+						console.warn( "We are about to try a POST (this may not work in your environment)." );
+
+						friendService
+							.updateFriend( id, "Lisa" )
+
+							// We don't really care about the response for this demo; 
+							// but, we have to subscribe in order to actually trigger the
+							// underlying HTTP request.
+							.subscribe( function noop() {} )
+						;
+
+					}
+
+				}
+
+			}
+		);
+
+		
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide the friend service.
+		define(
+			"FriendService",
+			function registerFriendService() {
+
+				FriendService.parameters = [
+					new ng.core.Inject( require( "ApiGateway" ) )
+				];
+
+				return( FriendService );
+
+
+				// I provide access to the friend repository by way of the API gateway.
+				// --
+				// NOTE: All internal access to the API is performed by the API gateway
+				// which encapsulates the HTTP mechanism and common configuration needed
+				// to communicate with the application's internal API.
+				function FriendService( apiGateway ) {
+
+					// Return the public API.
+					return({
+						getFriend: getFriend,
+						updateFriend: updateFriend
+					});
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I retrieve the friend with the given ID.
+					function getFriend( id ) {
+
+						// NOTE: I could have hard-coded the "friends" token in the URL,
+						// but I wanted to demonstrate the URL interpolation that is 
+						// being provided by the API gateway.
+						var stream = apiGateway.get(
+							"./api/:type/:id.json",
+							{
+								type: "friends",
+								id: id,
+
+								// Adding this to get more data in the query string for
+								// the purposes of the demo.
+								_cache: ( new Date() ).getTime()
+							}
+						);
+
+						return( stream );
+
+					}
+
+
+					// I update the friend with the given ID (with a new name).
+					function updateFriend( id, name ) {
+
+						// CAUTION: A post won't work in GitHub pages. But, it should 
+						// still manage the changing count of pending requests.
+						var stream = apiGateway.post(
+							"./api/:type/:id.json",
+							{
+								type: "friends",
+								id: id,
+
+								// Adding this to get more data in the query string for
+								// the purposes of the demo.
+								_cache: ( new Date() ).getTime()
+							},
+							{
+								name: name
+							}
+						);
+
+						return( stream );
+
+					}
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide a custom HTTP gateway, specifically designed for consumption of 
+		// the application's API. This gateway encapsulates the HTTP transportation 
+		// mechanism and applies common configuration requirements such as JSON
+		// (JavaScript Object Notation) serialization and deserialization, XSRF token
+		// protection, and URL interpolation.
+		define(
+			"ApiGateway",
+			function registerApiGateway() {
+
+				ApiGateway.parameters = [
+					new ng.core.Inject( ng.http.Http )
+				];
+
+				return( ApiGateway );
+
+
+				// I provide a custom implementation of the ExceptionHandler service
+				// that exposes an error stream that other services can subscribe to 
+				// (via the public property).
+				function ApiGateway( http ) {
+
+					// I provide a beacon of HTTP errors that other parts of the 
+					// application can listen to (and respond to if necessary).
+					var errors = new Rx.Subject();
+
+					// Keep track of all the non-GET requests that are being executed.
+					// This can be used to setup request indicators in the rest of 
+					// the application.
+					var pendingCommandCount = 0;
+					var pendingCommands = new Rx.Subject();
+
+					// Return the public API.
+					return({
+						// Properties.
+						errors: Rx.Observable.from( errors ),
+						pendingCommands: Rx.Observable.from( pendingCommands ),
+
+						// Methods.
+						get: get,
+						post: post,
+						request: request
+					});
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I perform a GET request to the API, appending the given params
+					// as URL search parameters. Returns a stream.
+					function get( url, params ) {
+
+						var stream = request({
+							method: ng.http.RequestMethod.Get,
+							url: url,
+							params: params
+						});
+
+						return( stream );
+
+					}
+
+
+					// I perform a POST request to the API. If both the params and data
+					// are present, the params will be appended as URL search parameters
+					// and the data will be serialized as a JSON payload. If only the 
+					// data is present, it will be serialized as a JSON payload. Returns
+					// a stream.
+					function post( url, params, data ) {
+
+						if ( ! data ) {
+
+							data = params;
+							params = {};
+
+						}
+
+						var stream = request({
+							method: ng.http.RequestMethod.Post,
+							url: url,
+							params: params,
+							data: data
+						});
+
+						return( stream );
+
+					}
+
+
+					// I perform a request to the API using the given configuration 
+					// options. The options can have the given format:
+					// --
+					// - options.method : string
+					// - options.url : string
+					// - options.headers : [{key: value},]
+					// - options.params : [{key: value},]
+					// - options.data : [{key: value},]
+					// --
+					// Returns a stream.
+					function request( options ) {
+
+						// Normalize the options config to ensure key exist.
+						// --
+						// CAUTION: This does not validate the keys, only makes sure
+						// they are added to the options if they didn't already exist.
+						options.method = ( options.method || ng.http.RequestMethod.Get );
+						options.url = ( options.url || "" );
+						options.headers = ( options.headers || {} );
+						options.params = ( options.params || {} );
+						options.data = ( options.data || {} );
+
+						// Move values from the PARAMS and DATA object into the URL where
+						// ever there are matching ":TOKEN" values. Any non-matching 
+						// token (in the URL) will be replaced with the empty string.
+						// --
+						// Example: /users/:userID/friends/:friendID.json
+						interpolateUrl( options );
+
+						// Add the XSRF token header if the XSRF cookie is present.
+						addXsrfToken( options );
+
+						// For requests that might have a JSON body, we need to set the 
+						// appropriate content-type header.
+						addContentType( options );
+
+						// Translate the ApiGateway options into actual HTTP request 
+						// options that the Http client can consume.
+						var requestConfig = new ng.http.Request({
+							method: options.method,
+							url: options.url,
+							headers: options.headers,
+							search: buildUrlSearchParams( options.params ),
+							body: JSON.stringify( options.data )
+						});
+
+						// Before we initiate the request, let's determine if this 
+						// request should to be considered a "command" that we need to 
+						// keep track of.
+						var isCommand = ( options.method !== ng.http.RequestMethod.Get );
+
+						// If the request is a command, let's emit the new pending 
+						// command count.
+						if ( isCommand ) {
+
+							pendingCommands.next( ++pendingCommandCount );
+
+						}
+
+						// Initiate API request.
+						var stream = http.request( requestConfig )
+							// While the ApiGateway will do nothing more than unwrap 
+							// errors for the current request, it's likely that certain
+							// errors (such as 401 Unauthorized errors or 500 Server 
+							// Errors) may require more "business logic" attention. As 
+							// such, we're going to emit any error that comes through.
+							// --
+							// NOTE: The reason this gets its own catch-handler is to 
+							// ensure that it is only dealing with HTTP errors and never
+							// with errors that may be thrown during response parsing.
+							.catch(
+								function handleHttpError( error ) {
+
+									errors.next( error );
+
+									return( Rx.Observable.throw( error ) );
+
+								}
+							)
+							// When the response comes back, we don't want to return 
+							// the raw HTTP response. Instead, we want to unwrap both 
+							// successful and error values, ensuring a normalized response.
+							.map( unwrapHttpValue )
+							.catch(
+								function handleError( error ) {
+
+									return( Rx.Observable.throw( unwrapHttpError( error ) ) );
+
+								}
+							)
+							// After the request is done, we need to clean up our pending
+							// command count (if this request was a command).
+							.finally(
+								function cleanup() {
+
+									if ( isCommand ) {
+
+										pendingCommands.next( --pendingCommandCount );
+
+									}
+
+								}
+							)
+						;
+
+						return( stream );
+
+					}
+
+
+					// ---
+					// PRIVATE METHODS.
+					// ---
+
+
+					// I add the appropriate "Content-Type" header based on the type of
+					// request being performed.
+					function addContentType( options ) {
+
+						if ( options.method !== ng.http.RequestMethod.Get ) {
+
+							options.headers[ "Content-Type" ] = "application/json; charset=UTF-8";
+
+						}
+
+						return( options );
+
+					}
+
+
+					// I add the "X-XSRF-TOKEN" header if the "XSRF-TOKEN" cookie is 
+					// present. 
+					// --
+					// CAUTION: The name of the cookie is case-sensitive.
+					function addXsrfToken( options ) {
+
+						var xsrfToken = getXsrfCookie();
+
+						if ( xsrfToken ) {
+
+							options.headers[ "X-XSRF-TOKEN" ] = xsrfToken;
+
+						}
+
+						return( options );
+
+					}
+
+
+					// I build the URLSearchParams instance from simple key-value pairs.
+					function buildUrlSearchParams( params ) {
+
+						var searchParams = new ng.http.URLSearchParams();
+
+						for ( var key in params ) {
+
+							searchParams.append( key, params[ key ] )
+
+						}
+
+						return( searchParams );
+
+					}
+
+
+					// I delete the given key from the given collection and return the 
+					// associated value.
+					function extractValue( collection, key ) {
+
+						var value = collection[ key ];
+
+						delete( collection[ key ] );
+
+						return( value );
+
+					}
+
+
+					// I extract the XSRF-TOKEN cookie (or empty string).
+					function getXsrfCookie() {
+
+						var matches = document.cookie.match( /\bXSRF-TOKEN=([^\s;]+)/ );
+
+						try {
+
+							return( matches && decodeURIComponent( matches[ 1 ] ) );
+
+						} catch ( decodeError ) {
+
+							return( "" );
+
+						}
+
+					}
+
+
+					// I interpolate the URL option, replacing ":TOKEN" patterns with 
+					// matching values from the params and data structure. Any matching
+					// value is MOVED from the given hash to the URL.
+					function interpolateUrl( options ) {
+
+						options.url = options.url.replace(
+							/:([a-zA-Z]+[\w-]*)/g,
+							function replaceToken( $0, token ) {
+
+								// Try to move matching token from the params collection.
+								if ( options.params.hasOwnProperty( token ) ) {
+
+									return( extractValue( options.params, token ) );
+
+								}
+
+								// Try to move matching token from the data collection.
+								if ( options.data.hasOwnProperty( token ) ) {
+
+									return( extractValue( options.data, token ) );
+
+								}
+
+								// If a matching value couldn't be found, just replace
+								// the token with the empty string.
+								return( "" );
+
+							}
+						);
+
+						// Clean up any repeating slashes.
+						options.url = options.url.replace( /\/{2,}/g, "/" );
+
+						// Clean up any trailing slashes.
+						options.url = options.url.replace( /\/+$/g, "" );
+
+						return( options );
+
+					}
+
+
+					// I unwrap the HTTP error response, ensuring that a normalized JSON
+					// object is available to represent the error.
+					function unwrapHttpError( error ) {
+
+						try {
+
+							return( error.json() );
+
+						} catch ( jsonError ) {
+
+							return({
+								code: -1,
+								message: "An unexpected error occurred."
+							});
+
+						}
+
+					}
+
+
+					// I unwrap the HTTP value response, returning the application-
+					// specific payload.
+					function unwrapHttpValue( value ) {
+
+						return( value.json() );
+
+					}
+
+				}
+
+			}
+		);
+	
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide all of the services necessary to handle HTTP errors coming out of 
+		// the ApiGateway, including the application initialization script that wires
+		// the HttpErrorHandler to the ApiGateway.
+		define(
+			"HTTP_ERROR_HANDLER_PROVIDERS",
+			function registerHttpErrorHandlerProviders() {
+
+				return([
+					require( "HttpErrorHandler" ),
+
+					// If the ApiGateway emits an error, we want to handle that using
+					// the HttpErrorHandler. However, we don't have any reason for a 
+					// "component" in the rendered component tree to know about this 
+					// service (at this time). As such, we'll force the loading of the
+					// HttpErrorHandler using the APP_INITIALIZER multi-collection 
+					// (which is kind of like a "run block" from AngularJS 1.x).
+					ng.core.provide(
+						ng.core.APP_INITIALIZER,
+						{
+							useFactory: function( httpErrorHandler ) {
+								
+								return(
+									function runBlock() {
+
+										console.info( "HttpErrorHandler initialized." );
+
+									}
+								);
+
+							},
+							deps: [ require( "HttpErrorHandler" ) ],
+							multi: true
+						}
+					)
+				]);
+
+			}
+		);
+
+
+		// I provide the HttpErrorHandler (which is like an Http interceptor specifically
+		// for the ApiGateway).
+		define(
+			"HttpErrorHandler",
+			function registerHttpErrorHandler() {
+
+				HttpErrorHandler.parameters = [
+					new ng.core.Inject( require( "ApiGateway" ) )
+				];
+
+				return( HttpErrorHandler );
+
+
+				// I handle HTTP errors coming out of the ApiGateway service. This way, 
+				// we can apply special business rules to HTTP errors that may evolve
+				// independently of the ApiGateway.
+				function HttpErrorHandler( apiGateway ) {
+
+					// Subscribe to the errors stream coming from the ApiGateway.
+					// --
+					// NOTE: These the actual HTTP responses, not the unwrapped values.
+					apiGateway.errors.subscribe(
+						function handleValue( value ) {
+
+							console.group( "HttpErrorHandler" );
+							console.log( value.status, "status code detected." );
+							console.dir( value );
+							console.groupEnd();
+
+							// If the user made a request that they were not authorized
+							// to, it's possible that their session has expired. Let's
+							// refresh the page and let the server-side routing move the
+							// user to a more appropriate landing page.
+							if ( value.status === 401 ) {
+
+								window.location.reload();
+
+							}
+
+						}
+					);
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
