@@ -1,0 +1,173 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Setting The Window / Document Title In Angular 2 Beta 9
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body>
+
+	<h1>
+		Setting The Window / Document Title In Angular 2 Beta 9
+	</h1>
+
+	<my-app>
+		Loading...
+	</my-app>
+
+	<!-- Load demo scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/9/es6-shim.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/9/Rx.umd.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/9/angular2-polyfills.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/9/angular2-all.umd.js"></script>
+	<!-- AlmondJS - minimal implementation of RequireJS. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/9/almond.js"></script>
+	<script type="text/javascript">
+
+		// Defer bootstrapping until all of the components have been declared.
+		// --
+		// NOTE: Not all components have to be required here since they will be 
+		// implicitly required by other components.
+		requirejs( 
+			[ /* Using require() for better readability. */ ],
+			function run() {
+
+				ng.platform.browser.bootstrap( 
+					require( "App" ),
+					[
+						// As turns out, neither the Title service nor the 
+						// BrowserDomAdapter service is included in any of the browser /
+						// platform providers. As such, if we want to use either of these
+						// services in our Angular 2 application, we have to explicitly
+						// tell the bootstrapping mechanism where to find these tokens.
+						ng.platform.browser.Title,
+						ng.platform.browser.BrowserDomAdapter
+
+						// NOTE: From what I can see in the source code, you cannot use 
+						// ng.platform.common_dom.DOM service directly because it is not
+						// set until the platform is initialized. And, by that point, the
+						// original NULL value has already been exported and the subsequent
+						// change is not "re-exported".
+					]
+				);
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide the root App component.
+		define(
+			"App",
+			function registerApp() {
+
+				// Configure the App component definition.
+				ng.core
+					.Component({
+						selector: "my-app",
+						template:
+						`
+							<h2>
+								Using Title Service
+							</h2>
+
+							<p>
+								<a (click)="setTitle( 1, 'Hello' )">Set Title One</a>
+								&mdash;
+								<a (click)="setTitle( 1, 'Goodbye' )">Set Title Two</a>
+							</p>
+
+
+							<h2>
+								Using BrowserDomAdapter Service
+							</h2>
+
+							<p>
+								<a (click)="setTitle( 2, 'Hello' )">Set Title One</a>
+								&mdash;
+								<a (click)="setTitle( 2, 'Goodbye' )">Set Title Two</a>
+							</p>
+
+
+							<h2>
+								Using Injected Document Reference
+							</h2>
+
+							<p>
+								<a (click)="setTitle( 3, 'Hello' )">Set Title One</a>
+								&mdash;
+								<a (click)="setTitle( 3, 'Goodbye' )">Set Title Two</a>
+							</p>
+						`
+					})
+					.Class({
+						constructor: AppController
+					})
+				;
+
+				AppController.parameters = [
+					new ng.core.Inject( ng.platform.browser.Title ),
+					new ng.core.Inject( ng.platform.browser.BrowserDomAdapter ),
+					new ng.core.Inject( ng.platform.browser.DOCUMENT )
+				];
+
+				return( AppController );
+
+
+				// I control the App component.
+				function AppController( documentTitle, browserDomAdapter, doc ) {
+
+					var vm = this;
+
+					// Expose the public methods.
+					vm.setTitle = setTitle;
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I set the current document title using the desired service.
+					function setTitle( whichService, newTitle ) {
+
+						// Using title service.
+						if ( whichService === 1 ) {
+
+							// Internally, this service uses the root DOM adapter.
+							documentTitle.setTitle( "1: " + newTitle );
+
+						// Using browserDomAdapter service.
+						} else if ( whichService === 2 ) {
+
+							// Internally, this service just references the document 
+							// object directly.
+							browserDomAdapter.setTitle( "2: " + newTitle );
+
+						// Using the injected document reference (which is the native
+						// default document object on the browser platform but may be
+						// different objects in different platforms).
+						} else {
+
+							doc.title = ( "3: " + newTitle );
+
+						}
+
+					}
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>

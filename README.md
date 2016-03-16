@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Setting The Window / Document Title In Angular 2 Beta 9](http://bennadel.github.io/JavaScript-Demos/demos/title-angular2/)
 * [Converting A Subject To An Observable Using RxJS In Angular 2 Beta 9](http://bennadel.github.io/JavaScript-Demos/demos/subject-to-observable-angular2/)
 * [Creating Specialized HTTP Clients In Angular 2 Beta 8](http://bennadel.github.io/JavaScript-Demos/demos/specialized-http-clients-angular2/)
 * [Experimenting With The .catch() Operator And Stream Continuation In RxJS And Angular 2](http://bennadel.github.io/JavaScript-Demos/demos/catching-errors-rxjs-angular2/)
