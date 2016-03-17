@@ -1,0 +1,118 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Setting The Document Title Using Platform-Agnostic Methods In Angular 2 Beta 9
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body>
+
+	<h1>
+		Setting The Document Title Using Platform-Agnostic Methods In Angular 2 Beta 9
+	</h1>
+
+	<my-app>
+		Loading...
+	</my-app>
+
+	<!-- Load demo scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/9/es6-shim.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/9/Rx.umd.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/9/angular2-polyfills.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/9/angular2-all.umd.js"></script>
+	<!-- AlmondJS - minimal implementation of RequireJS. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/9/almond.js"></script>
+	<script type="text/javascript">
+
+		// Defer bootstrapping until all of the components have been declared.
+		// --
+		// NOTE: Not all components have to be required here since they will be 
+		// implicitly required by other components.
+		requirejs( 
+			[ /* Using require() for better readability. */ ],
+			function run() {
+
+				ng.platform.browser.bootstrap( require( "App" ) );
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide the root App component.
+		define(
+			"App",
+			function registerApp() {
+
+				// Configure the App component definition.
+				ng.core
+					.Component({
+						selector: "my-app",
+						template:
+						`
+							<p>
+								<a (click)="setTitle( 'Hello' )">Set Title One</a>
+								&mdash;
+								<a (click)="setTitle( 'Goodbye' )">Set Title Two</a>
+							</p>
+						`
+					})
+					.Class({
+						constructor: AppController
+					})
+				;
+
+				// Notice that when we are injecting the services that we need in order
+				// to interact with the DOM, none of them are platform-specific (meaning,
+				// there's no mention of the "Browser" anywhere).
+				AppController.parameters = [
+					new ng.core.Inject( ng.core.Renderer ),
+					new ng.core.Inject( ng.platform.common_dom.DOCUMENT )
+				];
+
+				return( AppController );
+
+
+				// I control the App component.
+				function AppController( renderer, contextDocument ) {
+
+					var vm = this;
+
+					// Expose the public methods.
+					vm.setTitle = setTitle;
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I set the title of the context document.
+					function setTitle( newTitle ) {
+
+						// Instead of assuming that we have a "browser" document, we are 
+						// going to assume nothing. We know that we have a context 
+						// document. And, we know that we have a rendering engine. So, 
+						// we're just going to let the rendering engine take care of 
+						// translating the property "title" into something the makes 
+						// sense in the current context.
+						renderer.setElementProperty( contextDocument, "title", newTitle );
+
+					}
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
