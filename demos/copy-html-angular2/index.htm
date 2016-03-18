@@ -1,0 +1,277 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Injecting HTML With The BrowserDomAdapter In AngularJS 2 Beta 9
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body>
+
+	<h1>
+		Injecting HTML With The BrowserDomAdapter In AngularJS 2 Beta 9
+	</h1>
+
+	<my-app>
+		Loading...
+	</my-app>
+
+	<!-- Load demo scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/9/es6-shim.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/9/Rx.umd.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/9/angular2-polyfills.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/9/angular2-all.umd.js"></script>
+	<!-- AlmondJS - minimal implementation of RequireJS. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/9/almond.js"></script>
+	<script type="text/javascript">
+
+		// Defer bootstrapping until all of the components have been declared.
+		// --
+		// NOTE: Not all components have to be required here since they will be 
+		// implicitly required by other components.
+		requirejs( 
+			[ /* Using require() for better readability. */ ],
+			function run() {
+
+				ng.platform.browser.bootstrap( require( "App" ) );
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I control the root of the application.
+		define(
+			"App",
+			function registerApp() {
+
+				// Define the App component metadata.
+				ng.core
+					.Component({
+						selector: "my-app",
+						directives: [ 
+							require( "SelectList" ),
+							require( "SelectItem" ) 
+						],
+						template:
+						`
+							<select-list>
+								<select-item>As if!</select-item>
+								<select-item>Totes magotes!</select-item>
+								<select-item>So inappropes!</select-item>
+								<select-item>Much wow!</select-item>
+							</select-list>
+						`
+					})
+					.Class({
+						constructor: AppController
+					})
+				;
+
+				return( AppController );
+
+
+				// I control the App component.
+				function AppController() {
+
+					// ... nothing to do there.
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide the SelectList component.
+		define(
+			"SelectList",
+			function registerSelectList() {
+
+				// Define the SelectList component metadata.
+				ng.core
+					.Component({
+						selector: "select-list",
+
+						// CAUTION: We are providing the BrowserDomAdapter to the 
+						// component. At this point, we are making a very strong 
+						// assertion about which environments this component can run in 
+						// (which I think - but am not sure - means that this component 
+						// can never be rendered on the server; or at least not without 
+						// first mocking out the BrowserDomAdapter to work without a 
+						// native HTML DOM implementation).
+						providers: [ ng.platform.browser.BrowserDomAdapter ],
+
+						// When an item is selected, we are going represent it in the 
+						// component by injecting its HTML into the snapshot. To make
+						// this easier, let's get a live query to the snapshot element
+						// reference.
+						queries: {
+							"snapshotElementRef": new ng.core.ViewChild( "snapshot" )
+						},
+						template:
+						`
+							<div #snapshot class="snapshot">
+								<em class="default">Nothing selected</em>
+							</div>
+
+							<ng-content></ng-content>
+						`
+					})
+					.Class({
+						constructor: SelectListController
+					})
+				;
+
+				SelectListController.parameters = [
+					new ng.core.Inject( ng.platform.browser.BrowserDomAdapter )
+				];
+
+				return( SelectListController );
+
+
+				// I control the SelectList component.
+				function SelectListController( domAdapter ) {
+
+					var vm = this;
+
+					// Expose the public methods.
+					vm.selectItem = selectItem;
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I use the given item as the selected item.
+					function selectItem( item ) {
+
+						// When an item in the list wants to be the selected item, we
+						// are going to represent it in the component by projecting
+						// its HTML content into the snapshot container. In order to do
+						// that, we need to get elementRef of the item.
+						var itemElementRef = item.getElementRef();
+
+						// At this point, we have to reach down past the generic DOM
+						// abstraction and make many assumptions that we are working with
+						// the BrowserDomAdapter, which makes it possible to actually grab
+						// the innerHTML content of one element and inject it into another
+						// element. Not only does this require the BrowserDomAdapter, it 
+						// also requires us to reach into the ElementRef instances and 
+						// consume the underlying nativeElement.
+						// --
+						// NOTE: I am really not sure that this is good. I hate the fact
+						// that we have to start assuming things about the DOM. If anyone
+						// knows of a generic way to do this, please share!
+						domAdapter.setInnerHTML(
+							vm.snapshotElementRef.nativeElement,
+							domAdapter.getInnerHTML( itemElementRef.nativeElement )
+						);
+
+						// ASIDE: At this point, you may be wondering, if we're already 
+						// making assumptions about the DOM, why not just use the native
+						// .innerHTML property and skip the BrowserDomAdpater altogether?
+						// Well, if we go through the BrowserDomAdpater, we still have 
+						// option to *mock out* the BrowserDomAdapter. If we start 
+						// reaching into the native properties, we lose the ability to 
+						// mock out or override the adapter in other rendering contexts.
+
+					}
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide the SelectItem component.
+		define(
+			"SelectItem",
+			function registerSelectItem() {
+
+				// Define the SelectItem component metadata.
+				ng.core
+					.Component({
+						selector: "select-item",
+						host: {
+							"(click)": "selectItem()"
+						},
+						template:
+						`
+							<ng-content></ng-content>
+						`
+					})
+					.Class({
+						constructor: SelectItemController
+					})
+				;
+
+				// Here, were injecting the components host element reference and the 
+				// SelectList component. The SelectList component will be provided by
+				// the hierarchy of parent components.
+				SelectItemController.parameters = [
+					new ng.core.Inject( ng.core.ElementRef ),
+					new ng.core.Inject( require( "SelectList" ) )
+				];
+
+				return( SelectItemController );
+
+
+				// I control the SelectItem component. The item really only has one 
+				// behavior and that is to tell the parent list when the item has been
+				// selected (ie, clicked) by the user.
+				function SelectItemController( elementRef, selectList ) {
+
+					var vm = this;
+						
+					// Expose the public methods.
+					vm.getElementRef = getElementRef;
+					vm.selectItem = selectItem;
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I return the element wrapper for this component instance.
+					function getElementRef() {
+
+						// NOTE: At this point, we still make no assumptions about the 
+						// platform. The ElementRef is the Angular 2 wrapper around 
+						// whatever the platform uses to represent its object model.
+						return( elementRef );
+
+					}
+
+
+					// I tell the parent list to use this item as the selected item.
+					function selectItem() {
+
+						selectList.selectItem( this );
+
+					}
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>

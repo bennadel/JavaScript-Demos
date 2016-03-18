@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Injecting HTML With The BrowserDomAdapter In AngularJS 2 Beta 9](http://bennadel.github.io/JavaScript-Demos/demos/title-platform-agnostic-angular2/)
 * [Setting The Document Title Using Platform-Agnostic Methods In Angular 2 Beta 9](http://bennadel.github.io/JavaScript-Demos/demos/title-platform-agnostic-angular2/)
 * [Setting The Window / Document Title In Angular 2 Beta 9](http://bennadel.github.io/JavaScript-Demos/demos/title-angular2/)
 * [Converting A Subject To An Observable Using RxJS In Angular 2 Beta 9](http://bennadel.github.io/JavaScript-Demos/demos/subject-to-observable-angular2/)
