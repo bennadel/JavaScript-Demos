@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Changing Inputs Programmatically Won't Trigger ngOnChanges In AngularJS 2 Beta 9](http://bennadel.github.io/JavaScript-Demos/demos/ng-on-changes-programmatically-angular2/)
 * [Injecting HTML With The BrowserDomAdapter In AngularJS 2 Beta 9](http://bennadel.github.io/JavaScript-Demos/demos/copy-html-angular2/)
 * [Setting The Document Title Using Platform-Agnostic Methods In Angular 2 Beta 9](http://bennadel.github.io/JavaScript-Demos/demos/title-platform-agnostic-angular2/)
 * [Setting The Window / Document Title In Angular 2 Beta 9](http://bennadel.github.io/JavaScript-Demos/demos/title-angular2/)

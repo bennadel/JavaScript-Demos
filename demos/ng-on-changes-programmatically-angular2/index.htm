@@ -1,0 +1,175 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Changing Inputs Programmatically Won't Trigger ngOnChanges In AngularJS 2 Beta 9
+	</title>
+</head>
+<body>
+
+	<h1>
+		Changing Inputs Programmatically Won't Trigger ngOnChanges In AngularJS 2 Beta 9
+	</h1>
+
+	<my-app>
+		Loading...
+	</my-app>
+
+	<!-- Load demo scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/9/es6-shim.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/9/Rx.umd.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/9/angular2-polyfills.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/9/angular2-all.umd.js"></script>
+	<!-- AlmondJS - minimal implementation of RequireJS. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/9/almond.js"></script>
+	<script type="text/javascript">
+
+		// Defer bootstrapping until all of the components have been declared.
+		requirejs( 
+			[ /* Using require() for better readability. */ ],
+			function run() {
+
+				ng.platform.browser.bootstrap( require( "App" ) );
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I control the root of the application.
+		define(
+			"App",
+			function registerApp() {
+
+				// Define the App component metadata.
+				ng.core
+					.Component({
+						selector: "my-app",
+						directives: [ require( "Counter" ) ],
+
+						// Let's configure a live query for the Counter component so that
+						// we can change the [value] programmatically.
+						queries: {
+							"counter": new ng.core.ViewChild( require( "Counter" ) )
+						},
+
+						// In this template, notice that we are binding a static value
+						// to the [value] property using the template syntax. Then, we
+						// are going to continue to update the value programmatically.
+						template:
+						`
+							<counter [value]="0"></counter>
+						`
+					})
+					.Class({
+						constructor: AppController,
+
+						// Define the life-cycle methods on the prototype so that they
+						// are picked up an run-time.
+						ngAfterViewInit: function noop() {}
+					})
+				;
+
+				return( AppController );
+
+
+				// I control the App component.
+				function AppController() {
+
+					var vm = this;
+
+					// I hold the value that will be piped into the Counter input.
+					var counterValue = 0;
+
+					// Expose the public methods.
+					vm.ngAfterViewInit = ngAfterViewInit;
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I get called after the view has been initialized and the live
+					// queries have been bound.
+					function ngAfterViewInit() {
+
+						// Now that we have an injected reference to the Counter 
+						// component instance, lets set up an interval to start 
+						// incrementing the [value] property.
+						// --
+						// CAUTION: We can't set the initial value directly inside the
+						// ngAfterViewInit() method or we'll run into a change-detection
+						// error in which the View is changed as a side-effect of the 
+						// view-init event. As such, we have to wrap any change inside
+						// some sort of timeout / interval.
+						setInterval(
+							function updateCounter() {
+
+								vm.counter.value = ++counterValue;
+								
+							},
+							1000
+						);
+
+					}
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide a counter that outputs the bound value.
+		define(
+			"Counter",
+			function registerCounter() {
+
+				// Define the Counter component metadata and return the constructor.
+				return ng.core
+					.Component({
+						selector: "counter",
+						inputs: [ "value" ],
+						template:
+						`
+							<strong>Current Count:</strong> {{ value }}
+						`
+					})
+					.Class({
+						// Leaving the constructor as a no-op since it doesn't have to 
+						// do anything.
+						constructor: function noop() {},
+
+						// I get called whenever the bound inputs change.
+						ngOnChanges: function( event ) {
+
+							// Here, we are simply going to output every input change
+							// and determine whether or not it is the first change, or
+							// some subsequent change.
+							console.log( 
+								"ngOnChanges [first]:", 
+								event.value.isFirstChange(),
+								"-",
+								event.value.currentValue
+							);
+
+						}
+					})
+				;
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
