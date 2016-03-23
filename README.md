@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Host Bindings Are Breaking The ngModel Bridge In Angular 2 Beta 11](http://bennadel.github.io/JavaScript-Demos/demos/ng-model-host-bindings-angular2/)
 * [Changing Inputs Programmatically Won't Trigger ngOnChanges In AngularJS 2 Beta 9](http://bennadel.github.io/JavaScript-Demos/demos/ng-on-changes-programmatically-angular2/)
 * [Injecting HTML With The BrowserDomAdapter In AngularJS 2 Beta 9](http://bennadel.github.io/JavaScript-Demos/demos/copy-html-angular2/)
 * [Setting The Document Title Using Platform-Agnostic Methods In Angular 2 Beta 9](http://bennadel.github.io/JavaScript-Demos/demos/title-platform-agnostic-angular2/)
