@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Manually Triggering ngOnChanges() Inside An NgModel Value Accessor In Angular 2 Beta 11](http://bennadel.github.io/JavaScript-Demos/demos/trigger-ng-on-changes-angular2/)
 * [Host Bindings Are Breaking The ngModel Bridge In Angular 2 Beta 11](http://bennadel.github.io/JavaScript-Demos/demos/ng-model-host-bindings-angular2/)
 * [Changing Inputs Programmatically Won't Trigger ngOnChanges In AngularJS 2 Beta 9](http://bennadel.github.io/JavaScript-Demos/demos/ng-on-changes-programmatically-angular2/)
 * [Injecting HTML With The BrowserDomAdapter In AngularJS 2 Beta 9](http://bennadel.github.io/JavaScript-Demos/demos/copy-html-angular2/)

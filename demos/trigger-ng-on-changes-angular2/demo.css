@@ -1,0 +1,11 @@
+
+toggle {
+	border: 2px solid #CCCCCC ;
+	border-radius: 3px 3px 3px 3px ;
+	cursor: pointer ;
+	display: inline-block ;
+	padding: 13px 22px 13px 22px ;
+	user-select: none ;
+		-moz-user-select: none ;
+		-webkit-user-select: none ;
+}

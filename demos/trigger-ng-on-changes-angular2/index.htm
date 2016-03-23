@@ -1,0 +1,414 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Manually Triggering ngOnChanges() Inside An NgModel Value Accessor In Angular 2 Beta 11
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></lin>
+</head>
+<body>
+
+	<h1>
+		Manually Triggering ngOnChanges() Inside An NgModel Value Accessor In Angular 2 Beta 11
+	</h1>
+
+	<my-app>
+		Loading...
+	</my-app>
+
+	<!-- Load demo scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/11/es6-shim.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/11/Rx.umd.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/11/angular2-polyfills.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/11/angular2-all.umd.js"></script>
+	<!-- AlmondJS - minimal implementation of RequireJS. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/11/almond.js"></script>
+	<script type="text/javascript">
+
+		// Defer bootstrapping until all of the components have been declared.
+		requirejs( 
+			[ /* Using require() for better readability. */ ],
+			function run() {
+
+				ng.platform.browser.bootstrap( require( "App" ) );
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide the root application component.
+		define(
+			"App",
+			function registerApp() {
+
+				// Configure the App component definition.
+				ng.core
+					.Component({
+						selector: "my-app",
+						directives: [ require( "TOGGLE_DIRECTIVES" ) ],
+						template:
+						`
+							<toggle [(ngModel)]="toggleIsOn"></toggle>
+
+							<p>
+								Toggle value: {{ ( toggleIsOn ? "Yes" : "No" ) }}
+							</p>
+						`
+					})
+					.Class({
+						constructor: AppController
+					})
+				;
+
+				return( AppController );
+
+
+				// I control the App component.
+				function AppController() {
+
+					var vm = this;
+
+					// I determine whether or not the toggle is currently on.
+					// --
+					// NOTE: We are using ngModel to bypass the one-way data flow and
+					// allow the Toggle component to update this value (so to speak).
+					vm.toggleIsOn = true;
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide all of the directives need to work the Toggle, including the 
+		// ngModel variations.
+		define(
+			"TOGGLE_DIRECTIVES",
+			function registerToggleDirectives() {
+
+				return([
+					require( "Toggle" ),
+					require( "ToggleForNgModel" )
+				]);
+
+			}
+		);
+
+
+		// I provide a Yes / No toggle component.
+		// --
+		// NOTE: Notice that the core Toggle component DOESN'T KNOW ANYTHING ABOUT 
+		// NGMODEL or the concept of "value accessors." That's a good thing - it goes
+		// beyond the scope of responsibility for this component.
+		define(
+			"Toggle",
+			function registerToggle() {
+
+				// Configure the Toggle component definition.
+				ng.core
+					.Component({
+						selector: "toggle",
+						inputs: [ "value" ],
+						outputs: [ "valueChange" ],
+						host: {
+							"(click)": "handleClick()"
+						},
+						template:
+						`
+							{{ ( value ? "Yes" : "No" ) }} 
+							&mdash; 
+							toggled {{ changeCount }} times.
+						`
+					})
+					.Class({
+						constructor: ToggleController,
+
+						// Define the life-cycle methods on the prototype so that they 
+						// are picked up at run-time.
+						ngOnChanges: function noop() {}
+					})
+				;
+
+				return( ToggleController );
+
+
+				// I control the Toggle component. 
+				function ToggleController() {
+
+					var vm = this;
+
+					// I am the event stream for the valueChange output.
+					vm.valueChange = new ng.core.EventEmitter();
+
+					// I keep track of how many times the toggle value has been changed.
+					vm.changeCount = 0;
+
+					// Expose the public methods.
+					vm.handleClick = handleClick;
+					vm.ngOnChanges = ngOnChanges;
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I handle the internal click event on the component. 
+					function handleClick() {
+
+						// When the user clicks on the toggle, we can't change the value
+						// directly - that would mess up the one-way data flow. Instead,
+						// we have to emit the value change event and let the calling
+						// context decide if it wants to respond by updating the inputs.
+						vm.valueChange.next( ! vm.value );
+
+					}
+
+
+					// I get called whenever the bound inputs have changed.
+					function ngOnChanges( changes ) {
+
+						// We're using the ngOnChanges() event to track how many times
+						// the toggle component has been toggled.
+						vm.changeCount++;
+
+						console.log( 
+							"Changes [first: %s]: %s.",
+							changes.value.isFirstChange(),
+							changes.value.currentValue 
+						);
+
+					}
+
+				}
+
+			}
+		);
+
+
+		// I provide an ngModel-enabled bridge for the Toggle component.
+		define(
+			"ToggleForNgModel",
+			function registerToggleForNgModel() {
+
+				// Configure the ToggleForNgModel directive definition.
+				ng.core
+					.Directive({
+						// Notice that we are only matching on instances of the Toggle
+						// component that also include the ngModel directive.
+						selector: "toggle[ngModel]",
+						host: {
+							"(valueChange)": "handleValueChange( $event )"
+						},
+
+						// When ngModel is being used, we need to create a bridge between
+						// the ngModel directive and the target component. That bridge 
+						// has to implement the "value accessor" interface. In this case,
+						// we're telling Angular to use THIS DIRECTIVE INSTANCE as that 
+						// value accessor provider. This means that the following 
+						// controller needs to provide the value accessor methods:
+						// --
+						// * registerOnChange
+						// * registerOnTouched
+						// * writeValue
+						// --
+						// NOTE: You don't need the forwardRef() here because we are 
+						// using ES5 instead of TypeScript. ES5 for the win!
+						providers: [
+							ng.core.provide(
+								ng.common.NG_VALUE_ACCESSOR,
+								{
+									useExisting: ToggleForNgModelController,
+									multi: true
+								}
+							)
+						]
+					})
+					.Class({
+						constructor: ToggleForNgModelController
+					})
+				;
+
+				ToggleForNgModelController.parameters = [
+					new ng.core.Inject( require( "Toggle" ) )
+				];
+
+				return( ToggleForNgModelController );
+
+
+				// I control the ToggleForNgModel directive.
+				// --
+				// NOTE: Since this controller is performing double-duty as both the 
+				// directive controller AND the valueAccessor (for ngModel), it is also
+				// implementing the value accessor interface.
+				function ToggleForNgModelController( toggle ) {
+
+					var vm = this;
+
+					// As part of the value accessor "bridge" that this directive is 
+					// providing, we need to be able to manually trigger the ngOnChanges
+					// life-cycle event on the target component. To do that properly, we
+					// need to keep track of when the first value is written so that we
+					// can announce it as the first SimpleChange instance.
+					var isFirstChange = true;
+
+					// Eventually, ngModel will register its own change hander. Until
+					// then, let's start with a no-op to keep the consumption uniform
+					// in the following code.
+					var onChange = function noop() {};
+
+					// Expose the public methods.
+					vm.handleValueChange = handleValueChange;
+					vm.registerOnChange = registerOnChange; // Value accessor interface.
+					vm.registerOnTouched = registerOnTouched; // Value accessor interface.
+					vm.writeValue = writeValue; // Value accessor interface.
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I handle the valueChange event coming out of the Toggle component.
+					// Since ngModel doesn't know about this event, we have to bridge the
+					// gap between the Toggle component and the ngModel directive.
+					function handleValueChange( newValue ) {
+
+						// Keep track of the values to be used in the ngOnChanges() event.
+						var previousValue = toggle.value;
+						var nextValue = newValue;
+
+						// When we invoke the onChange() value accessor method, ngModel
+						// already assumes that the DOM (Document Object Model) is in the
+						// correct state. As such, we have ensure that the Toggle 
+						// component reflects the change that it just emitted.
+						// --
+						// NOTE: At this point, we are disregarding the one-way data flow
+						// paradigm. But, that's the WHOLE POINT OF NG-MODEL.
+						toggle.value = newValue;
+
+						// Angular won't trigger the ngOnChanges() life-cycle method if 
+						// the mutated value is not bound through a template property. As 
+						// such, the value accessor bridge has to manually trigger the
+						// life-cycle event handler.
+						triggerNgOnChanges( previousValue, nextValue );
+
+						// Tell ngModel so that it can synchronize its own internal model.
+						onChange( newValue );
+
+					}
+
+
+					// I register the onChange handler provided by ngModel.
+					function registerOnChange( newOnChange ) {
+
+						onChange = newOnChange;
+
+					}
+					
+
+					// I register the onTouched handler provided by ngModel.
+					function registerOnTouched() {
+						
+						// console.log( "registerOnTouched" );
+
+					}
+					
+
+					// I implement the value input invoked by ngModel. When ngModel 
+					// wants to update the value of the target component, it doesn't 
+					// know what property to use (or how to transform that value to 
+					// something meaningful for the target component). As such, we have 
+					// to bridge the gap between ngModel and the input property of the 
+					// Toggle component.
+					function writeValue( newValue ) {
+
+						// Keep track of the values to be used in the ngOnChanges() event.
+						var previousValue = toggle.value;
+						var nextValue = !! newValue; // Cast to boolean.
+
+						// Write the ngModel value to the toggle component.
+						// --
+						// CAUTION: Because we know that the Toggle component is not 
+						// using any host bindings that depend on this value, we can 
+						// safely avoid running into change errors:
+						// --
+						// ExpressionChangedAfterItHasBeenCheckedException
+						// --
+						// Normally, we probably shouldn't make these kinds of assumption.
+						// But, I am trying to keep the [already complex] demo simple.
+						// --
+						// Read more: http://www.bennadel.com/blog/3056-host-bindings-are-breaking-the-ngmodel-bridge-in-angular-2-beta-11.htm
+						toggle.value = nextValue;
+
+						// Angular won't trigger the ngOnChanges() life-cycle method if 
+						// the mutated value is not bound through a template property. As 
+						// such, the value accessor bridge has to manually trigger the
+						// life-cycle event handler.
+						triggerNgOnChanges( previousValue, nextValue );
+
+					}
+
+
+					// ---
+					// PRIVATE METHODS.
+					// ---
+
+
+					// I trigger the ngOnChanges() life-cycle event on the toggle 
+					// component using the given values.
+					function triggerNgOnChanges( previousValue, nextValue ) {
+
+						// If the toggle component doesn't provide a hook for the life-
+						// cycle event, there's nothing we need to do.
+						if ( ! toggle.ngOnChanges ) {
+
+							return;
+
+						}
+
+						var changes = {
+							value: new ng.core.SimpleChange( previousValue, nextValue )
+						};
+
+						// Unfortunately, the Angular API doesn't seem to expose the 
+						// necessary utility library that is used to denote the "first"
+						// simple change. As such, we have to hack this by overwriting
+						// the isFirstChange() instance method when we know that this 
+						// is the first change we are sending to the toggle.
+						if ( isFirstChange ) {
+
+							isFirstChange = false;
+
+							changes.value.isFirstChange = function() {
+								
+								return( true );
+
+							};
+
+						}
+
+						toggle.ngOnChanges( changes );
+
+					}
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
