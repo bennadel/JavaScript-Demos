@@ -1,0 +1,296 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Experimenting With Controlled Inputs (ala ReactJS) In Angular 2 Beta 11
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></lin>
+</head>
+<body>
+
+	<h1>
+		Experimenting With Controlled Inputs (ala ReactJS) In Angular 2 Beta 11
+	</h1>
+
+	<my-app>
+		Loading...
+	</my-app>
+
+	<!-- Load demo scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/11/es6-shim.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/11/Rx.umd.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/11/angular2-polyfills.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/11/angular2-all.umd.js"></script>
+	<!-- AlmondJS - minimal implementation of RequireJS. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/11/almond.js"></script>
+	<script type="text/javascript">
+
+		// Defer bootstrapping until all of the components have been declared.
+		requirejs( 
+			[ /* Using require() for better readability. */ ],
+			function run() {
+
+				ng.platform.browser.bootstrap( require( "App" ) );
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide the root application component.
+		define(
+			"App",
+			function registerApp() {
+
+				// Configure the App component definition.
+				ng.core
+					.Component({
+						selector: "my-app",
+
+						// Here, we're providing a directive that turns the input and 
+						// the textarea into "controlled inputs".
+						directives: [ require( "ControlledInput" ) ],
+
+						// In this template, we have two different Controller Inputs 
+						// that are going to be rendered using the same value. While the
+						// user can type into the two inputs, the value won't actually
+						// change unless the [value] input property is updated.
+						template:
+						`
+							<input
+								[value]="message" 
+								(valueChange)="handleMessage( $event )" 
+							/>
+
+							<textarea 
+								[value]="message" 
+								(valueChange)="handleMessage( $event )">
+							</textarea>
+
+							<p>
+								<strong>Note:</strong> Inputs ignore numeric characters.
+							</p>
+						`
+					})
+					.Class({
+						constructor: AppController
+					})
+				;
+
+				return( AppController );
+
+
+				// I control the App component.
+				function AppController() {
+
+					var vm = this;
+
+					// I am the message being rendered in the two inputs. I "control" the
+					// value of the input, regardless of what the user types.
+					vm.message = "Hello world!";
+
+					// Expose the public methods.
+					vm.handleMessage = handleMessage;
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I handle the "valueChange" event emitted by the controlled inputs.
+					// This event gives us a chance to pipe the emitted value back into
+					// the property that controls the input.
+					function handleMessage( newMessage ) {
+
+						// In this case, we're going to prevent the user from entering
+						// numeric digits into the input.
+						// --
+						// NOTE: If the user enters a numeric character, it means that 
+						// the [value] won't actually change, which means that the
+						// ngOnChanges() event handler in the controlled input won't 
+						// actually be invoked.
+						vm.message = newMessage.replace( /[0-9]+/g, "" );
+
+					}
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I turn non-ngModel inputs and textareas into "controlled inputs."
+		// --
+		// CAUTION: This is NOT a COMPLETE SOLUTION. This is just an experiment, looking
+		// at what a "controlled input" might look like in Angular 2. Take this with a
+		// grain of one-way salt.
+		define(
+			"ControlledInput",
+			function registerControlledInput() {
+
+				// Configure the ControlledInput directive definition.
+				ng.core
+					.Directive({
+						// Notice that our selector will fail on inputs that have 
+						// [ngModel] bindings. This is because [ngModel] already breaks
+						// the one-way data flow, creating an "uncontrolled" component.
+						selector: "input[value]:not([ngModel]) , textarea[value]:not([ngModel])",
+						inputs: [ "value" ],
+						outputs: [ "valueChange" ],
+						host: {
+							"(input)": "handleInput( $event.target.value )"
+						}
+					})
+					.Class({
+						constructor: ControlledInputController,
+
+						// Define the life-cycle methods on the prototype so that they
+						// are picked up at run-time.
+						ngOnChanges: function noop() {}
+					})
+				;
+
+				ControlledInputController.parameters = [
+					new ng.core.Inject( ng.core.ElementRef )
+				];
+
+				return( ControlledInputController );
+
+
+				// I control the ControlledInput component. 
+				function ControlledInputController( elementRef ) {
+
+					var vm = this;
+
+					// As the user enters text into the controlled input, we want to keep
+					// track of the cursor selection so that we can try to re-implement 
+					// it once the value input property is updated. The pendingValue will
+					// help us massage the selection for unexpected values.
+					var pendingValue = "";
+					var pendingSelectionStart = null;
+
+					// I hold the value for the controlled input. I determine what is 
+					// rendered, regardless of what the user types.
+					vm.value = ""; // @Input to be injected.
+
+					// I am the event stream for the valueChange output.
+					vm.valueChange = new ng.core.EventEmitter();
+
+					// Expose the public methods.
+					vm.handleInput = handleInput;
+					vm.ngOnChanges = ngOnChanges;
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I handle the input event for the controlled input. This is a 
+					// synchronous event that happens as the input value is changing.
+					function handleInput( newValue ) {
+
+						// CAUTION: The Renderer service doesn't have methods for 
+						// accessing the values of the nativeElement. As such, I am 
+						// skipping the Renderer altogether and just accessing the 
+						// nativeElement directly. I don't think I have a better choice
+						// in the matter.
+						pendingValue = newValue;
+						pendingSelectionStart = elementRef.nativeElement.selectionStart;
+
+						// Since we can't let the input change internally (otherwise it
+						// wouldn't be a "controlled" input) we're about to reset the 
+						// value. But, the browser doesn't care about that - it will move
+						// the cursor to wherever the user stopped typing. As such, we
+						// need to compare the new / existing lengths in order to help
+						// keep the cursor in the appropriate place after the reset.
+						var newLength = elementRef.nativeElement.value.length;
+						var oldLength = vm.value.length;
+
+						// Reset the value - the value must be driven by the [value] 
+						// input property binding.
+						elementRef.nativeElement.value = vm.value;
+
+						// Guestimate the right cursor position.
+						var restoredSelectionStart = ( newLength >= oldLength )
+							? ( pendingSelectionStart - 1 )
+							: pendingSelectionStart
+						;
+
+						// Reset the cursor.
+						elementRef.nativeElement.selectionStart = restoredSelectionStart;
+						elementRef.nativeElement.selectionEnd = restoredSelectionStart;
+
+						// Emit the value change so that the calling context has an 
+						// opportunity to pipe the value change back into the controlled
+						// input component.
+						vm.valueChange.next( pendingValue = newValue );
+
+					}
+
+
+					// I get called whenever the input bindings change (or are set for 
+					// the first time).
+					function ngOnChanges( changes ) {
+
+						// CAUTION: We are going to be messing with the nativeElement 
+						// directly. I don't have a choice here - there is nothing in
+						// the Angular API (that I can see) that will allow me to READ
+						// the "selectionStart" property (which I have to do above). As
+						// such, I don't see any point in using the Renderer to SET the
+						// "selectionStart" or the "value" property. It would be extra
+						// effort for no reason. For this reason, I'm also grabbing the
+						// GLOBAL DOCUMENT OBJECT - I've already coupled myself to the
+						// browser DOM - no need to deny what this is.
+
+						// Push the value to the actual input control.
+						elementRef.nativeElement.value = vm.value;
+
+						// Only set the cursor if the element is currently focused 
+						// (setting the selection will accidentally assign focus).
+						if ( 
+							( pendingSelectionStart !== null ) &&
+							( document.activeElement === elementRef.nativeElement )
+							) {
+
+							// Because this is an input property binding, there's no 
+							// reason to assume that the value we emitted is the same
+							// value that is being piped back in. As such, we're going 
+							// to try an massage the cursor position based on any 
+							// "unexpected" difference in value lengths.
+							var lengthDelta = ( changes.value.currentValue.length - pendingValue.length );
+							var selectionStart = ( pendingSelectionStart + lengthDelta );
+
+							// Try to maintain the correct cursor position after the
+							// input has been updated.
+							elementRef.nativeElement.selectionStart = selectionStart;
+							elementRef.nativeElement.selectionEnd = selectionStart;
+
+							// Reset our pending values.
+							pendingValue = "";
+							pendingSelectionStart = null;
+
+						}
+
+					}
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
