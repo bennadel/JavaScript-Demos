@@ -1,0 +1,271 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Ng-Content Life-Cycle Is Controlled By The Parent View Not The Consumer In Angular 2 Beta 11
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></lin>
+</head>
+<body>
+
+	<h1>
+		Ng-Content Life-Cycle Is Controlled By The Parent View Not The Consumer In Angular 2 Beta 11
+	</h1>
+
+	<my-app>
+		Loading...
+	</my-app>
+
+	<!-- Load demo scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/11/es6-shim.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/11/Rx.umd.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/11/angular2-polyfills.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/11/angular2-all.umd.js"></script>
+	<!-- AlmondJS - minimal implementation of RequireJS. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/11/almond.js"></script>
+	<script type="text/javascript">
+
+		// Defer bootstrapping until all of the components have been declared.
+		requirejs( 
+			[ /* Using require() for better readability. */ ],
+			function run() {
+
+				ng.platform.browser.bootstrap( require( "App" ) );
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide the root application component.
+		define(
+			"App",
+			function registerApp() {
+
+				// Configure the App component definition.
+				ng.core
+					.Component({
+						selector: "my-app",
+						directives: [ 
+							require( "ContentConsumer" ), 
+							require( "ContentItem" )
+						],
+
+						// In this demo, we have two components - the Content Consumer
+						// and the Content Item. We're going to be projecting the Content
+						// Item into the Content Consumer (via ng-content) in order to 
+						// demonstrate which context (the parent or the consumer) can 
+						// affect the ng-content life-cycle events.
+						template:
+						`
+							<p>
+								<a (click)="toggleContainer()">Toggle Countainer</a>
+								&mdash;
+								<a (click)="toggleContent()">Toggle Content</a>
+							</p>
+
+							<content-consumer 
+								*ngIf="isShowingContainer" 
+								[isShowingContent]="isShowingContent">
+
+								<content-item>
+									... Now, plain zero!
+								</content-item>
+
+							</content-consumer>
+						`
+					})
+					.Class({
+						constructor: AppController
+					})
+				;
+
+				return( AppController );
+
+
+				// I control the App component.
+				function AppController() {
+
+					var vm = this;
+
+					// I determine which parts of the view are being rendered. While
+					// this component directly controls the visibility of the consumer,
+					// we are deferring to the consumer to show the projected content.
+					vm.isShowingContainer = false;
+					vm.isShowingContent = false;
+
+					// Expose the public methods.
+					vm.toggleContainer = toggleContainer;
+					vm.toggleContent = toggleContent;
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I toggle the existence of the content consumer.
+					function toggleContainer() {
+					
+						vm.isShowingContainer = ! vm.isShowingContainer;
+
+					}
+
+
+					// I toggle the existence of the content item.
+					// --
+					// NOTE: This property is being passed into the consumer which will
+					// be using the [ngIf] to toggle the ng-content internally.
+					function toggleContent() {
+					
+						vm.isShowingContent = ! vm.isShowingContent;
+
+					}
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+		
+		// I provide the ng-content consumer.
+		define(
+			"ContentConsumer",
+			function registerContentConsumer() {
+
+				// Configure the ContentConsumer component definition.
+				ng.core
+					.Component({
+						selector: "content-consumer",
+						inputs: [ "isShowingContent" ],
+
+						// Notice that we are toggling the projection of the ng-content
+						// block based on the [isShowingContent] input property.
+						template:
+						`
+							Here is Sub-Zero:
+							
+							<div *ngIf="isShowingContent">
+								<ng-content></ng-content>
+							</div>
+						`
+					})
+					.Class({
+						constructor: ContentConsumerController,
+
+						// Define the life-cycle event methods on the prototype so that
+						// they are picked up at run-time.
+						ngOnChanges: function noop() {}
+					})
+				;
+
+				return( ContentConsumerController );
+
+
+				// I control the ContentConsumer component.
+				function ContentConsumerController() {
+
+					var vm = this;
+
+					// Expose the public methods.
+					vm.ngOnChanges = ngOnChanges;
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I get called any time at least one of the bound inputs is changed.
+					function ngOnChanges( changes ) {
+
+						console.log( "[isShowingContent]:", vm.isShowingContent );
+
+					}
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+		
+		// I provide the ng-content item that logs its own life-cycle events.
+		define(
+			"ContentItem",
+			function registerContentItem() {
+
+				// Configure the ContentItem component definition.
+				ng.core
+					.Component({
+						selector: "content-item",
+						template:
+						`
+							<ng-content></ng-content>
+						`
+					})
+					.Class({
+						constructor: ContentItemController,
+
+						// Define the life-cycle event methods on the prototype so that
+						// they are picked up at run-time.
+						ngOnDestroy: function noop() {},
+						ngOnInit: function noop() {}
+					})
+				;
+
+				return( ContentItemController );
+
+
+				// I control the ContentItem component. 
+				function ContentItemController() {
+
+					var vm = this;
+
+					// Expose the public methods.
+					vm.ngOnDestroy = ngOnDestroy;
+					vm.ngOnInit = ngOnInit;
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I get called once when the component is destroyed.
+					function ngOnDestroy() {
+
+						console.warn( "Content Item destroyed!" );
+
+					}
+
+
+					// I get called once when the component is initialized.
+					function ngOnInit() {
+
+						console.warn( "Content Item initialized!" );
+
+					}
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
