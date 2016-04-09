@@ -1,0 +1,17 @@
+
+counter {
+	background-color: #FAFAFA ;
+	border: 1px solid #CCCCCC ;
+	border-radius: 3px 3px 3px 3px ;
+	cursor: pointer ;
+	display: inline-block ;
+	font-size: 18px ;
+	padding: 13px 20px 13px 20px ;
+	user-select: none ;
+		-moz-user-select: none ;
+		-webkit-user-select: none ;
+}
+
+counter:hover {
+	border-color: #999999 ;
+}

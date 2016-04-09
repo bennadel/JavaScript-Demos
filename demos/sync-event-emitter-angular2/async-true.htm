@@ -1,0 +1,226 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Synchronous vs. Asynchronous EventEmitters In Angular 2 Beta 14
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></lin>
+</head>
+<body>
+
+	<h1>
+		Synchronous vs. Asynchronous EventEmitters In Angular 2 Beta 14
+	</h1>
+
+	<h2>
+		EventEmitter( isAsync = true ) &mdash; Default Behavior
+	</h2>
+
+	<my-app>
+		Loading...
+	</my-app>
+
+	<!-- Load demo scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/14/es6-shim.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/14/Rx.umd.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/14/angular2-polyfills.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/14/angular2-all.umd.js"></script>
+	<!-- AlmondJS - minimal implementation of RequireJS. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/14/almond.js"></script>
+	<script type="text/javascript">
+
+		// Defer bootstrapping until all of the components have been declared.
+		requirejs( 
+			[ /* Using require() for better readability. */ ],
+			function run() {
+
+				ng.platform.browser.bootstrap( require( "App" ) );
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide the root application component.
+		define(
+			"App",
+			function registerApp() {
+
+				// Configure the App component definition.
+				ng.core
+					.Component({
+						selector: "my-app",
+						directives: [ require( "Counter" ) ],
+						template:
+						`
+							<counter
+								[value]="count"
+								(valueChange)="handleCounter( $event )">
+							</counter>
+						`
+					})
+					.Class({
+						constructor: AppController
+					})
+				;
+
+				return( AppController );
+
+
+				// I control the App component.
+				function AppController() {
+
+					var vm = this;
+
+					// I hold the current count rendered by the counter component.
+					vm.count = 0;
+
+					// Expose the public methods.
+					vm.handleCounter = handleCounter;
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I handle the valueChange event from the counter component.
+					function handleCounter( newCount ) {
+
+						console.info( "handleCounter - calling context." );
+
+						// For this demo, we're just going to store the emitted value
+						// back into the input binding so the component will update its
+						// internal value.
+						vm.count = newCount;
+
+					}
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide a counter component that renders the provided value and emits a
+		// valueChange event.
+		define(
+			"Counter",
+			function registerCounter() {
+
+				// Configure the Counter component definition.
+				ng.core
+					.Component({
+						selector: "counter",
+						inputs: [ "value" ],
+						outputs: [ "valueChange" ],
+						host: {
+							"(click)": "handleClick()"
+						},
+						template:
+						`
+							Counter: {{ value }}
+						`
+					})
+					.Class({
+						constructor: CounterController,
+
+						// Define the life-cycle methods on the prototype so that they
+						// are picked up at run-time.
+						ngAfterContentChecked: function noop() {},
+						ngAfterViewChecked: function noop() {},
+						ngOnChanges: function noop() {}
+					})
+				;
+
+				return( CounterController );
+
+
+				// I control the Counter component. 
+				function CounterController() {
+
+					var vm = this;
+
+					// I hold the value for the current count.
+					vm.value = 0; // @Input to be injected.
+
+					// I am the event stream for the valueChange output.
+					// --
+					// By default, the EventEmitter() class is asynchronous. Which means,
+					// subscribers are alerted to the emitted event in a future tick of 
+					// the event loop. However, you can create synchronous EventEmitter
+					// instances by passing `false` into the constructor.
+					vm.valueChange = new ng.core.EventEmitter( /* isAsync = */ true );
+
+					// Expose the public methods.
+					vm.handleClick = handleClick;
+					vm.ngAfterContentChecked = ngAfterContentChecked;
+					vm.ngAfterViewChecked = ngAfterViewChecked;
+					vm.ngOnChanges = ngOnChanges;
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I handle the click event and emit the desired value change.
+					function handleClick() {
+
+						// CAUTION: Accessing PRIVATE PROPERTY of EventEmitter for 
+						// demonstration purposes only! Never do this for realz.
+						console.warn( "User clicked component ( isAsync = %s ).", vm.valueChange._isAsync );
+
+						// In order to adhere to a one-way data flow architecture, we
+						// have to emit a valueChange event rather than updating the 
+						// count value internally. This way, it's up to the calling 
+						// context as to whether or not the value is actually mutated.
+						vm.valueChange.next( vm.value + 1 );
+
+					}
+
+
+					// I get called after the component's content has been checked during
+					// the digest life-cycle.
+					function ngAfterContentChecked() {
+
+						console.log( "ngAfterContentChecked:", vm.value );
+
+					}
+
+
+					// I get called after the component's view has been checked during
+					// the digest life-cycle.
+					function ngAfterViewChecked() {
+
+						console.log( "ngAfterViewChecked:", vm.value );
+
+					}
+
+
+					// I get called any time the input bindings are updated.
+					function ngOnChanges() {
+
+						console.log( "ngOnChanges:", vm.value );
+
+					}
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
