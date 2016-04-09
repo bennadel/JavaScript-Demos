@@ -1,0 +1,12 @@
+
+input,
+textarea {
+	display: block ;
+	font-size: 18px ;
+	margin-bottom: 20px ;
+	width: 400px ;
+}
+
+textarea {
+	height: 100px ;
+}
