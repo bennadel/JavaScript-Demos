@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Synchronous vs. Asynchronous EventEmitters In Angular 2 Beta 14](http://bennadel.github.io/JavaScript-Demos/demos/sync-event-emitter-angular2/)
 * [Second Experiment With Controlled Inputs (ala ReactJS) In Angular 2 Beta 11](http://bennadel.github.io/JavaScript-Demos/demos/controlled-input-sync-angular2/)
 * [Experimenting With Controlled Inputs (ala ReactJS) In Angular 2 Beta 11](http://bennadel.github.io/JavaScript-Demos/demos/controlled-input-angular2/)
 * [Ng-Content Life-Cycle Is Controlled By The Parent View Not The Consumer In Angular 2 Beta 11](http://bennadel.github.io/JavaScript-Demos/demos/ng-content-lifecycle-angular2/)
