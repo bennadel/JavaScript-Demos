@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Implementing Publish And Subscribe (Pub/Sub) In Angular 2 Beta 14](http://bennadel.github.io/JavaScript-Demos/demos/pubsub-angular2/)
 * [Synchronous vs. Asynchronous EventEmitters In Angular 2 Beta 14](http://bennadel.github.io/JavaScript-Demos/demos/sync-event-emitter-angular2/)
 * [Second Experiment With Controlled Inputs (ala ReactJS) In Angular 2 Beta 11](http://bennadel.github.io/JavaScript-Demos/demos/controlled-input-sync-angular2/)
 * [Experimenting With Controlled Inputs (ala ReactJS) In Angular 2 Beta 11](http://bennadel.github.io/JavaScript-Demos/demos/controlled-input-angular2/)

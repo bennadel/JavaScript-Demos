@@ -1,0 +1,409 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Implementing Publish And Subscribe (Pub/Sub) In Angular 2 Beta 14
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></lin>
+</head>
+<body>
+
+	<h1>
+		Implementing Publish And Subscribe (Pub/Sub) In Angular 2 Beta 14
+	</h1>
+
+	<my-app>
+		Loading...
+	</my-app>
+
+	<!-- Load demo scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/14/es6-shim.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/14/Rx.umd.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/14/angular2-polyfills.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/14/angular2-all.umd.js"></script>
+	<!-- AlmondJS - minimal implementation of RequireJS. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/14/almond.js"></script>
+	<script type="text/javascript">
+
+		// Defer bootstrapping until all of the components have been declared.
+		requirejs( 
+			[ /* Using require() for better readability. */ ],
+			function run() {
+
+				ng.platform.browser.bootstrap( 
+					require( "App" ),
+					[
+						require( "PubSub" )
+					]
+				);
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide the root application component.
+		define(
+			"App",
+			function registerApp() {
+
+				// Configure the App component definition.
+				ng.core
+					.Component({
+						selector: "my-app",
+						directives: [ require( "PubChild" ) ],
+						template:
+						`
+							<p>
+								<a (click)="addChild()">Add child</a> &mdash;
+								<a (click)="removeChild()">Remove child</a>
+							</p>
+
+							<pub-child *ngFor="#i of childCount" [index]="i"></pub-child>
+						`
+					})
+					.Class({
+						constructor: AppController
+					})
+				;
+
+				return( AppController );
+
+
+				// I control the App component.
+				function AppController() {
+
+					var vm = this;
+
+					// I hold the INDICES for the child components. This is just a HACK
+					// to get [ngFor] to execute an index-loop as opposed to an array 
+					// loop (array -> [ 0, 1, 2, 3, ... ]).
+					vm.childCount = [];
+
+					// Expose the public methods.
+					vm.addChild = addChild;
+					vm.removeChild = removeChild;
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I add a child component index.
+					function addChild() {
+
+						vm.childCount.push( vm.childCount.length );
+
+					}
+
+
+					// I remove the last child component index.
+					function removeChild() {
+
+						vm.childCount.pop();
+
+					}
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide the PubChild component. This component both emits PubSub events 
+		// and listens for PubSub events.
+		define(
+			"PubChild",
+			function registerPubChild() {
+
+				// Configure the PubChild component definition.
+				ng.core
+					.Component({
+						selector: "pub-child",
+						inputs: [ "index" ],
+						template:
+						`
+							<strong>Child {{ index }}</strong>
+							&mdash; <a (click)="triggerEvent( 'foo' )">Trigger Foo</a>
+							&mdash; <a (click)="triggerEvent( 'bar' )">Trigger Bar</a>
+						`
+					})
+					.Class({
+						constructor: PubChildController,
+
+						// Define the life-cycle methods on the prototype so that they
+						// are picked up at runtime.
+						ngOnDestroy: function noop() {}
+					})
+				;
+
+				PubChildController.parameters = [
+					new ng.core.Inject( require( "PubSub" ) )
+				];
+
+				return( PubChildController );
+
+
+				// I control the PubChild component.
+				function PubChildController( pubsub ) {
+
+					var vm = this;
+
+					// When setting up the PubSub event handlers, we're going to use the
+					// .bind() method to create an instance of the API that auto-binds
+					// all of the subsequent event handlers to the given context (this 
+					// component). This allows us to simplify our .on() method calls as 
+					// well as setting us up to call .unbind() during the DESTROY event.
+					pubsub.bind( vm )
+						.on( "foo", handlePubSubEvent /* , implicit vm via .bind() */ )
+						.on( "bar", handlePubSubEvent /* , implicit vm via .bind() */ )
+					;
+
+					// Expose the public methods.
+					vm.ngOnDestroy = ngOnDestroy;
+					vm.triggerEvent = triggerEvent;
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I get called when the component is being destroyed.
+					function ngOnDestroy() {
+
+						// When the component is destroyed, we need to unbind its PubSub
+						// event handlers so they don't create a memory leak or lead to
+						// unexpected behavior. And, since we used the .bind() call to
+						// set up the bindings, we ensured that all of our event handlers
+						// were bound to the current component context. As such, we can
+						// quickly and easily unbind ALL event handlers related to this
+						// component using .unbind().
+						pubsub.unbind( vm );
+
+						// NOTE: If we had not bound the handlers to a specific context,
+						// we could have still destroyed them individually.
+						// --
+						// pubsub.off( "foo", handlePubSubEvent );
+						// pubsub.off( "bar", handlePubSubEvent );
+
+					}
+
+
+					// I trigger the given PubSub event.
+					function triggerEvent( eventType ) {
+
+						console.warn( "PubChild-%s about to trigger [%s].", vm.index, eventType );
+
+						pubsub.trigger( eventType, ( "PubChild-" + vm.index ) );
+
+					}
+
+
+					// ---
+					// PRIVATE METHODS.
+					// ---
+
+
+					// I handle PubSub events.
+					// --
+					// NOTE: For this demo, we're only logging the event type, so we 
+					// don't actually need an event-specific handler.
+					function handlePubSubEvent( event, originChild, anotherArg ) {
+
+						console.log( "PubChild-%s handling [%s] from %s.", vm.index, event.type, originChild );
+
+					}
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide a simple publish and subscribe (pub/sub) service.
+		define(
+			"PubSub",
+			function registerPubSub() {
+
+				return( PubSub );
+
+
+				// I am a simple Publish and Subscribe (pub/sub) service that is geared
+				// for use in the Angular component life-cycle in which event handlers 
+				// need to be associated with a component at init time; then, all of 
+				// those same event handlers need to be unbound at destroy time.
+				function PubSub() {
+
+					// I hold all of the event bindings. 
+					// --
+					// NOTE: I am using a simple array rather than a hash of objects
+					// based on event types (which is more commonly done) in order to
+					// keep the code as simple as possible.
+					var bindings = [];
+
+					// Return the public API.
+					return({
+						bind: bind,
+						off: off,
+						on: on,
+						trigger: trigger,
+						unbind: unbind
+					});
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I return a version of the API in which all of the [relevant] 
+					// methods are pre-bound to the given context. This allows you to 
+					// bind all event handlers to the given context; but, perhaps more
+					// conveniently, unbind all event handlers for a given context with
+					// one .unbind( context ) method invocation.
+					function bind( context ) {
+
+						return({
+							// Simple pass-through methods.
+							bind: bind,
+							trigger: trigger,
+
+							// Bound version of the API methods.
+							// --
+							// CAUTION: All of these methods return [this] which points 
+							// to the pre-bound version of the API, not the original API.
+							off: function boundOff( eventType, eventHandler ) {
+
+								off( eventType, eventHandler, context );
+								return( this );
+
+							},
+							on: function boundOn( eventType, eventHandler ) {
+
+								on( eventType, eventHandler, context );
+								return( this );
+
+							},
+							unbind: function boundUnbind() {
+
+								unbind( context );
+								return( this );
+
+							}
+						});
+
+					}
+
+
+					// I remove the given event binding configuration.
+					function off( eventType, eventHandler, context ) {
+						
+						bindings = bindings.filter(
+							function operator( binding ) {
+
+								return(
+									( binding.eventType !== eventType ) ||
+									( binding.eventHandler !== eventHandler ) ||
+									( binding.context !== ( context || null ) )
+								);
+
+							}
+						);
+
+						// CAUTION: [this] is the publicly exposed API object.
+						return( this );
+
+					}
+
+
+					// I add the given event binding configuration.
+					function on( eventType, eventHandler, context ) {
+
+						bindings.push({
+							eventType: eventType,
+							eventHandler: eventHandler,
+							context: ( context || null )
+						});
+
+						// CAUTION: [this] is the publicly exposed API object.
+						return( this );
+
+					}
+
+
+					// I trigger the given event with the given arguments. An event can 
+					// be triggered with any number of arguments that are all passed to
+					// the event handlers in the same order.
+					function trigger( eventType /*, eventArguments 1..N */ ) {
+
+						var eventArguments = Array.prototype.slice.call( arguments );
+
+						// Replace the first argument, which is currently a simple 
+						// eventType string, with an event object which composes the 
+						// eventType. This way, when we trigger the event handlers, the
+						// first trigger argument will be the event object. While we are
+						// not using it now, this gives us an opportunity to add event
+						// methods like .stopPropagation().
+						var event = eventArguments[ 0 ] = {
+							type: eventType,
+							createdAt: new Date()
+						};
+
+						bindings.forEach(
+							function iterator( binding ) {
+
+								if ( binding.eventType == eventType ) {
+
+									binding.eventHandler.apply( binding.context, eventArguments );
+
+								}
+
+							}
+						);
+
+						return( event );
+
+					}
+
+
+					// I unbind all of the event handlers for the given context.
+					function unbind( context ) {
+
+						bindings = bindings.filter(
+							function operator( binding ) {
+
+								return( binding.context !== context );
+
+							}
+						);
+
+						// CAUTION: [this] is the publicly exposed API object.
+						return( this );
+
+					}
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>

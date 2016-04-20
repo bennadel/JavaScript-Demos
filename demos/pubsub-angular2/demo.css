@@ -1,0 +1,17 @@
+
+a {
+	color: red ;
+	cursor: pointer ;
+	text-decoration: underline ;
+	user-select: none ;
+		-moz-user-select: none ;
+		-webkit-user-select: none ;
+}
+
+pub-child {
+	border: 1px solid #CCCCCC ;
+	border-radius: 4px 4px 4px 4px ;
+	display: block ;
+	margin: 16px 0px 16px 0px ;
+	padding: 15px 15px 15px 15px ;
+}
