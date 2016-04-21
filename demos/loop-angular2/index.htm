@@ -1,0 +1,440 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Creating An Index Loop Structural Directive In Angular 2 Beta 14
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></lin>
+</head>
+<body>
+
+	<h1>
+		Creating An Index Loop Structural Directive In Angular 2 Beta 14
+	</h1>
+
+	<my-app>
+		Loading...
+	</my-app>
+
+	<!-- Load demo scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/14/es6-shim.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/14/Rx.umd.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/14/angular2-polyfills.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/14/angular2-all.umd.js"></script>
+	<!-- AlmondJS - minimal implementation of RequireJS. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/14/almond.js"></script>
+	<script type="text/javascript">
+
+		// Defer bootstrapping until all of the components have been declared.
+		requirejs( 
+			[ /* Using require() for better readability. */ ],
+			function run() {
+
+				ng.platform.browser.bootstrap( require( "App" ) );
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide the root application component.
+		define(
+			"App",
+			function registerApp() {
+
+				// Configure the App component definition.
+				ng.core
+					.Component({
+						selector: "my-app",
+						directives: [ 
+							require( "Loop" ),
+							require( "LogLifeCycle") 
+						],
+						template:
+						`	
+							<p>
+								<strong>From ( {{ lowerBound }} ):</strong>
+
+								<!-- Using the sweet sweet syntax sugar. -->
+								<a *bnLoop="#i from 1 to 20 step 1" (click)="setFrom( i )">{{ i }}</a>
+							</p>
+
+							<p>
+								<strong>To ( {{ upperBound }} ):</strong>
+
+								<!-- Using an explicit Template. --> 
+								<template bnLoop #i [bnLoopFrom]="1" [bnLoopTo]="20" [bnLoopStep]="2">
+
+									<a (click)="setTo( i )">{{ i }}</a>
+
+								</template>
+							</p>
+
+							<hr />
+
+							<p 
+								*bnLoop="#i from lowerBound to upperBound step increment ; #first = first ; #last = last ;" 
+								[lifeCycleLabel]="i">
+
+								{{ i }}
+								<span *ngIf="first">- First</span>
+								<span *ngIf="last">- Last</span>
+
+							</p>
+						`
+					})
+					.Class({
+						constructor: AppController
+					})
+				;
+
+				return( AppController );
+
+
+				// I control the App component.
+				function AppController() {
+
+					var vm = this;
+
+					// I hold the range configuration for the loop.
+					vm.lowerBound = 1;
+					vm.upperBound = 10;
+					vm.increment = 1;
+
+					// Expose the public methods.
+					vm.setFrom = setFrom;
+					vm.setTo = setTo;
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I set the lower bound of the range (inclusive).
+					function setFrom( newFrom ) {
+
+						vm.lowerBound = newFrom;
+						vm.increment = calculateIncrement( vm.lowerBound, vm.upperBound );
+
+					}
+
+
+					// I set the upper bound of the range (inclusive).
+					function setTo( newTo ) {
+
+						vm.upperBound = newTo;
+						vm.increment = calculateIncrement( vm.lowerBound, vm.upperBound );
+
+					}
+
+
+					// ---
+					// PRIVATE METHODS.
+					// ---
+
+
+					// I calculate an increment value that makes the most sense for the
+					// given range. We want an increment that won't lead to an infinite
+					// series of values.
+					function calculateIncrement( from, to ) {
+
+						return( ( from <= to ) ? 1 : -1 );
+
+					}
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide a structure directive that creates elements over an inclusive range.
+		// The range can be ascending or descending with an optional step (that defaults 
+		// to 1 or -1 if not provided). For each iteration, the following local variables
+		// are exposed:
+		// --
+		// * first
+		// * last
+		// * middle
+		// * even
+		// * odd
+		define(
+			"Loop",
+			function registerLoop() {
+
+				// Configure the Loop directive definition.
+				// --
+				// NOTE: Add Chrome developer-tools break-point to "return bindings;" 
+				// to see how these are being parsed out of the template syntax tree.
+				ng.core
+					.Directive({
+						selector: "[bnLoop]",
+
+						// Because we are using the "*" template syntax, our expression
+						// is parsed into a number of individual inputs that are all 
+						// prefixed with the directive name. So, given the expression:
+						// --
+						// #i from 1 to 10 step 1
+						// --
+						// ... we are given the following inputs:
+						// --
+						// bnLoopFrom ( parsed "from" sub-attribute )
+						// bnLoopTo ( parsed "to" sub-attribute )
+						// bnLoopStep ( parsed "step" sub-attribute )
+						// --
+						// NOTE: The "#i" portion is an "output", so to speak, that we
+						// have to set on each instance of the template that we clone.
+						inputs: [ "from: bnLoopFrom", "to: bnLoopTo", "step: bnLoopStep" ]
+					})
+					.Class({
+						constructor: LoopController,
+
+						// Define the 
+						ngOnChanges: function noop() {}
+					})
+				;
+
+				LoopController.parameters = [
+					new ng.core.Inject( ng.core.ViewContainerRef ),
+					new ng.core.Inject( ng.core.TemplateRef )
+				];
+
+				return( LoopController );
+
+
+				// I control the Loop directive.
+				function LoopController( viewContainerRef, templateRef ) {
+
+					var vm = this;
+
+					// I hold the actual range values for the loop iteration.
+					var renderedRange = [];
+
+					// I hold the metadata about each rendered view in the range. This 
+					// object is keyed on the range indices. 
+					var renderedViews = {};
+
+					// Expose the public methods.
+					vm.ngOnChanges = ngOnChanges;
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I get called anyone the bound input values change.
+					function ngOnChanges( changes ) {
+
+						// Test the range values.
+						if ( ! isNumeric( vm.from ) || ! isNumeric( vm.to ) ) {
+
+							throw( new Error( "bnLoop requires numeric From and To values." ) );
+
+						}
+
+						// Default the step value.
+						if ( ! vm.hasOwnProperty( "step" ) ) {
+
+							vm.step = 1;
+
+						}
+
+						// Test the step value.
+						if ( ! isNumeric( vm.step ) ) {
+
+							throw( new Error( "bnLoop requires a numeric Step value." ) );
+
+						}
+
+						// Test the range values against the step value - we need to 
+						// ensure the step value won't create an infinite range.
+						if ( 
+							( ( vm.from < vm.to ) && ( vm.step < 0 ) ) ||
+							( ( vm.from > vm.to ) && ( vm.step > 0 ) )
+							) {
+
+							throw( new Error( "bnLoop Step will cause infinite loop." ) );
+
+						}
+
+						var range = generateRange( vm.from, vm.to, vm.step );
+						var views = {};
+
+						// First, let's populate the view metadata for the new range. This
+						// step will pick up existing viewRef instances created by previous
+						// ranges; but, it will not create new viewRef clones.
+						for ( var domIndex = 0, domLength = range.length ; domIndex < domLength ; domIndex++ ) {
+
+							var i = range[ domIndex ];
+
+							var existingViewRef = ( renderedViews[ i ] && renderedViews[ i ].viewRef );
+
+							views[ i ] = {
+								index: i,
+								viewRef: ( existingViewRef || null ),
+								first: ( domIndex === 0 ),
+								last: ( domIndex === ( domLength - 1 ) ),
+								middle: ( ( domIndex !== 0 ) && ( domIndex !== ( domLength - 1 ) ) ),
+								even: ! ( i % 2 ),
+								odd: ( i % 2 )
+							};
+
+						}
+
+						// Next, let's delete the views that are no longer relevant in 
+						// new range.
+						for ( var domIndex = 0 ; domIndex < renderedRange.length ; domIndex++ ) {
+
+							var i = renderedRange[ domIndex ];
+
+							if ( ! views.hasOwnProperty( i ) ) {
+
+								viewContainerRef.remove( viewContainerRef.indexOf( renderedViews[ i ].viewRef ) );
+
+							}
+
+						}
+
+						// Finally, let's update existing views and render any new ones.
+						for ( var domIndex = 0 ; domIndex < range.length ; domIndex++ ) {
+
+							var i = range[ domIndex ];
+							var view = views[ i ];
+
+							// If this view didn't pull an existing viewRef from the 
+							// previous range, let's create a new clone.
+							if ( ! view.viewRef ) {
+
+								view.viewRef = viewContainerRef.createEmbeddedView( templateRef, domIndex );
+
+							}
+
+							// Set up all the local variable bindings.
+							// --
+							// NOTE: The "$implicit" variable is the first #var in the 
+							// template syntax.
+							view.viewRef.setLocal( "$implicit", i );
+							view.viewRef.setLocal( "first", view.first );
+							view.viewRef.setLocal( "last", view.last );
+							view.viewRef.setLocal( "middle", view.middle );
+							view.viewRef.setLocal( "even", view.even );
+							view.viewRef.setLocal( "odd", view.odd );
+
+						}
+
+						// Store the new range configuration for comparison in the next 
+						// change event.
+						renderedRange = range;
+						renderedViews = views;
+
+					}
+
+
+					// ---
+					// PRIVATE METHODS.
+					// ---
+
+
+					// I generate the range of indices that will be used in the given 
+					// loop configuration.
+					// --
+					// NOTE: The resultant array should be rendered in top-down order,
+					// regardless of whether the range is incrementing or decrementing.
+					function generateRange( from, to, step ) {
+
+						var range = [];
+
+						// Incrementing range.
+						if ( from <= to ) {
+
+							for ( var i = from ; i <= to ; i += step ) {
+
+								range.push( i );
+
+							}
+
+						// Decrementing range.
+						} else {
+
+							for ( var i = from ; i >= to ; i += step ) {
+
+								range.push( i );
+
+							}
+
+						}
+
+						return( range );
+
+					}
+
+
+					// I determine if the given value is a number.
+					function isNumeric( value ) {
+
+						return( Object.prototype.toString.call( value ) == "[object Number]" );
+
+					}
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide a directive that logs the initialization and destruction of the 
+		// context element, using the given label in the logging statement.
+		define(
+			"LogLifeCycle",
+			function registerLogLifeCycle() {
+
+				// Configure the LogLifeCycle directive definition.
+				return ng.core
+					.Directive({
+						selector: "[lifeCycleLabel]",
+						inputs: [ "label: lifeCycleLabel" ]
+					})
+					.Class({
+						constructor: function LogLifeCycle() { /* No-op. */ },
+
+
+						// I get called once when the directive is destroyed.
+						ngOnDestroy: function() {
+
+							console.warn( "Destroyed:", this.label );
+
+						},
+
+
+						// I get called once when the directive is initialized.
+						ngOnInit: function() {
+
+							console.info( "Created:", this.label );
+
+						}
+					})
+				;
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
