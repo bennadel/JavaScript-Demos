@@ -1,0 +1,197 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		The Flexible Syntax Of Structural Directive Expressions In Angular 2 Beta 14
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></lin>
+</head>
+<body>
+
+	<h1>
+		The Flexible Syntax Of Structural Directive Expressions In Angular 2 Beta 14
+	</h1>
+
+	<my-app>
+		Loading...
+	</my-app>
+
+	<!-- Load demo scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/14/es6-shim.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/14/Rx.umd.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/14/angular2-polyfills.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/14/angular2-all.umd.js"></script>
+	<!-- AlmondJS - minimal implementation of RequireJS. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/14/almond.js"></script>
+	<script type="text/javascript">
+
+		// Defer bootstrapping until all of the components have been declared.
+		requirejs( 
+			[ /* Using require() for better readability. */ ],
+			function run() {
+
+				ng.platform.browser.bootstrap( require( "App" ) );
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide the root application component.
+		define(
+			"App",
+			function registerApp() {
+
+				// Configure the App component definition.
+				ng.core
+					.Component({
+						selector: "my-app",
+						directives: [ require( "Test" ) ],
+
+						// The "*" syntactic sugar for structural directives in Angular 2
+						// affords a lot of optional syntax for enhanced readability (and 
+						// personal preference). All five of the following *bnTest 
+						// expressions are functionally equivalent. Notice the swappable 
+						// and optional use of " " and ";" and "," as statement delimiters
+						// and the optional use of ":" as the assignment operator.
+						// --
+						// NOTE: View-local variables (ex, #first) are different than 
+						// input bindings and have to use the "=" assignment operator. 
+						// And, when expressions have an implicit view-local variable 
+						// (such as #i in this case), it always has to go first.
+						template:
+						`	
+							<section *bnTest="#i from 1 to 11 step 2 #first = first #last = last">
+								{{ i }} - {{ first }} - {{ last }}
+							</section>
+
+							<section *bnTest="#i from:2 to:12 step:2 #first=first #last=last">
+								{{ i }} - {{ first }} - {{ last }}
+							</section>
+
+							<section *bnTest="#i from 3 ; to 13 ; step 2 ; #first = first ; #last = last ;">
+								{{ i }} - {{ first }} - {{ last }}
+							</section>
+
+							<section *bnTest="#i ; from:4 ; to:14 ; step:2 ; #first = first ; #last = last ;">
+								{{ i }} - {{ first }} - {{ last }}
+							</section>
+
+							<section *bnTest="#i , from:5 , to:15 , step:2 , #first = first , #last = last">
+								{{ i }} - {{ first }} - {{ last }}
+							</section>
+						`
+					})
+					.Class({
+						constructor: AppController
+					})
+				;
+
+				return( AppController );
+
+
+				// I control the App component.
+				function AppController() {
+
+					// Nothing to do here...
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide a test structure directive that logs out its input bindings just
+		// to demonstrate that they were bound properly.
+		define(
+			"Test",
+			function registerTest() {
+
+				ng.core
+					.Directive({
+						selector: "[bnTest]",
+
+						// Because we are using the "*" template syntax, our expression
+						// is parsed into a number of individual inputs that are all 
+						// prefixed with the directive name. So, given the expression:
+						// --
+						// #i from 1 to 10 step 1
+						// --
+						// ... we are given the following inputs:
+						// --
+						// bnTestFrom ( parsed "from" sub-attribute )
+						// bnTestTo ( parsed "to" sub-attribute )
+						// bnTestStep ( parsed "step" sub-attribute )
+						// --
+						// NOTE: The "#i" portion is a view-local variable that we have
+						// to setup on each instance of the template that we clone.
+						inputs: [ "from: bnTestFrom", "to: bnTestTo", "step: bnTestStep" ]
+					})
+					.Class({
+						constructor: LoopController,
+
+						// Define the 
+						ngOnChanges: function noop() {}
+					})
+				;
+
+				LoopController.parameters = [
+					new ng.core.Inject( ng.core.ViewContainerRef ),
+					new ng.core.Inject( ng.core.TemplateRef )
+				];
+
+				return( LoopController );
+
+
+				// I control the Loop directive.
+				function LoopController( viewContainerRef, templateRef ) {
+
+					var vm = this;
+
+					// Expose the public methods.
+					vm.ngOnChanges = ngOnChanges;
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I get called whenever any one of the bound input values change.
+					function ngOnChanges( changes ) {
+
+						var viewRef = viewContainerRef.createEmbeddedView( templateRef );
+
+						console.log( 
+							"ngOnChanges( from: %s, to: %s, step: %s )", 
+							vm.from, 
+							vm.to, 
+							vm.step
+						);
+
+						// Set up all the local variable bindings.
+						viewRef.setLocal( "$implicit", vm.from );
+						viewRef.setLocal( "first", true );
+						viewRef.setLocal( "last", false );
+
+					}
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
