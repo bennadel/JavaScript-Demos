@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Multi-Providers Do Not Aggregate Value Across Hierarchical Injectors In Angular 2 Beta 14](http://bennadel.github.io/JavaScript-Demos/demos/multi-hierarchy-angular2/)
 * [The Flexible Syntax Of Structural Directive Expressions In Angular 2 Beta 14](http://bennadel.github.io/JavaScript-Demos/demos/structural-directive-delimiters-angular2/)
 * [Creating An Index Loop Structural Directive In Angular 2 Beta 14](http://bennadel.github.io/JavaScript-Demos/demos/loop-angular2/)
 * [Implementing Publish And Subscribe (Pub/Sub) In Angular 2 Beta 14](http://bennadel.github.io/JavaScript-Demos/demos/pubsub-angular2/)

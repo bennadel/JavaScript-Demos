@@ -1,0 +1,220 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Multi-Providers Do Not Aggregate Value Across Hierarchical Injectors In Angular 2 Beta 14
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body>
+
+	<h1>
+		Multi-Providers Do Not Aggregate Value Across Hierarchical Injectors In Angular 2 Beta 14
+	</h1>
+
+	<my-app>
+		Loading...
+	</my-app>
+
+	<!-- Load demo scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/14/es6-shim.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/14/Rx.umd.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/14/angular2-polyfills.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/14/angular2-all.umd.js"></script>
+	<!-- AlmondJS - minimal implementation of RequireJS. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/14/almond.js"></script>
+	<script type="text/javascript">
+
+		// Defer bootstrapping until all of the components have been declared.
+		requirejs( 
+			[ /* Using require() for better readability. */ ],
+			function run() {
+
+				ng.platform.browser.bootstrap( 
+					require( "App" ),
+					[
+						// Here, we are going to define a "multi:true" provider that 
+						// will aggregate simple values in the current injector (the 
+						// root injector). The goal of this test is to see how this
+						// set of values is then further aggregates as we move down
+						// through the hierarchical injectors in the component tree.
+						ng.core.provide(
+							"MULTI_TEST_VALUES",
+							{
+								useValue: "Provided by Bootstrap (ONE).",
+								multi: true
+							}
+						),
+						ng.core.provide(
+							"MULTI_TEST_VALUES",
+							{
+								useValue: "Provided by Bootstrap (TWO).",
+								multi: true
+							}
+						),
+
+						// Let's create a "run block" to see what values get injected
+						// at the top of the injector tree.
+						ng.core.provide(
+							ng.core.APP_INITIALIZER,
+							{
+								useFactory: function( values ) {
+									return(
+										function runBlock() {
+											
+											console.group( "Bootstrap Run Block" );
+											console.log( values );
+											console.groupEnd();
+							
+										}
+									);
+								},
+								deps: [ "MULTI_TEST_VALUES" ],
+								multi: true
+							}
+						)
+					]
+				);
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide the root application component.
+		define(
+			"App",
+			function registerApp() {
+
+				// Configure the App component definition.
+				ng.core
+					.Component({
+						selector: "my-app",
+
+						// In Angular 2, the injectors are hierarchical. By using 
+						// the providers meta-data, we are creating another injector 
+						// instance for this component. Let's try to add more test 
+						// values to see how these "multi" values are aggregated 
+						// across injectors.
+						providers: [
+							ng.core.provide(
+								"MULTI_TEST_VALUES",
+								{
+									useValue: "Provided by Root Component (ONE).",
+									multi: true
+								}
+							),
+							ng.core.provide(
+								"MULTI_TEST_VALUES",
+								{
+									useValue: "Provided by Root Component (TWO).",
+									multi: true
+								}
+							)
+						],
+						directives: [ require( "SubChild" ) ],
+						template:
+						`	
+							This is the root component! Woot.
+
+							<sub-child></sub-child>
+						`
+					})
+					.Class({
+						constructor: AppController
+					})
+				;
+
+				AppController.parameters = [
+					new ng.core.Inject( "MULTI_TEST_VALUES" )
+				];
+
+				return( AppController );
+
+
+				// I control the App component.
+				function AppController( values ) {
+
+					console.group( "AppController" );
+					console.log( values );
+					console.groupEnd();
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide a child component. This component has no functionality other than
+		// to test the injected provider values.
+		define(
+			"SubChild",
+			function registerSubChild() {
+
+				// Configure the SubChild component definition.
+				ng.core
+					.Component({
+						selector: "sub-child",
+
+						// Again, by defining the providers meta-data, we're getting 
+						// Angular 2 to create a new hierarchical injector for this 
+						// component sub-tree.
+						providers: [
+							ng.core.provide(
+								"MULTI_TEST_VALUES",
+								{
+									useValue: "Provided by SubChild component (ONE).",
+									multi: true
+								}
+							),
+							ng.core.provide(
+								"MULTI_TEST_VALUES",
+								{
+									useValue: "Provided by SubChild component (TWO).",
+									multi: true
+								}
+							)
+						],
+						template:
+						`
+							This is the sub-child! Woot.
+						`
+					})
+					.Class({
+						constructor: SubChildController
+					})
+				;
+
+				SubChildController.parameters = [
+					new ng.core.Inject( "MULTI_TEST_VALUES" )
+				];
+
+				return( SubChildController );
+
+
+				// I control the SubChild component.
+				function SubChildController( values ) {
+
+					console.group( "SubChildController" );
+					console.log( values );
+					console.groupEnd();
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
