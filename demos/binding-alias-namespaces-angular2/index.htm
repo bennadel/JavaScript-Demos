@@ -4,7 +4,7 @@
 	<meta charset="utf-8" />
 
 	<title>
-		Input And Output Bindings Can Be Namespaced In Angular 2 Beta 14
+		Input And Output Aliases Can Be Namespaced In Angular 2 Beta 14
 	</title>
 
 	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
@@ -12,7 +12,7 @@
 <body>
 
 	<h1>
-		Input And Output Bindings Can Be Namespaced In Angular 2 Beta 14
+		Input And Output Aliases Can Be Namespaced In Angular 2 Beta 14
 	</h1>
 
 	<my-app>
@@ -54,18 +54,20 @@
 						selector: "my-app",
 						directives: [ require( "Friend" ) ],
 
-						// When we configure out input and output bindings on the Friend
-						// component, notice that they are all being namespaced on 
-						// either "virtues." or "behaviors.". 
+						// Notice that when we bind to the input and output properties
+						// on the Friend component, we are NOT USING ANY ALIASING - we
+						// are just using plain property names (as we normally would). 
+						// All of the aliasing for these bindings will be done internally
+						// to the Friend component instance.
 						template:
 						`	
 							<my-friend 
-								[virtues.honesty]="hasHonesty"
-								[virtues.compassion]="hasCompassion"
-								[virtues.kindness]="hasKindness"
-								(behaviors.laugh)="handleLaugh( $event )"
-								(behaviors.hug)="handleHug( $event )"
-								(behaviors.cry)="handleCry( $event )">
+								[honesty]="hasHonesty"
+								[compassion]="hasCompassion"
+								[kindness]="hasKindness"
+								(laugh)="handleLaugh( $event )"
+								(hug)="handleHug( $event )"
+								(cry)="handleCry( $event )">
 							</my-friend>
 						`
 					})
@@ -131,7 +133,7 @@
 		// --------------------------------------------------------------------------- //
 
 
-		// I provide a Friend component that has namespaces inputs and outputs.
+		// I provide a Friend component that aliases inputs and outputs internally.
 		define(
 			"Friend",
 			function registerFriend() {
@@ -140,23 +142,25 @@
 				ng.core
 					.Component({
 						selector: "my-friend",
+
+						// When we define the input bindings notice that we are aliasing
+						// the attributes in a "VIRTUES" namespace locally. This will 
+						// cause Angular to treat the alias as an "object path" in the 
+						// component instance (ex, this.virtues.honesty).
 						inputs: [ 
-							"virtues.honesty", 
-							"virtues.compassion", 
-
-							// In this last input, notice that we are aliasing the input
-							// binding. This approach turns the namespace into a literal
-							// string rather than an object path.
-							"kindness: virtues.kindness" 
+							"virtues.honesty: honesty", 
+							"virtues.compassion: compassion", 
+							"virtues.kindness: kindness" 
 						],
-						outputs: [ 
-							"behaviors.cry", 
-							"behaviors.hug", 
 
-							// In this last output, notice that we are aliasing the output
-							// binding. This approach turns the namespace into a literal
-							// string rather than an object path.
-							"laugh: behaviors.laugh" 
+						// When we define the output bindings notice that we are aliasing
+						// the attributes in a "BEHAVIORS" namespace locally. This will 
+						// cause Angular to treat the alias as an "object path" in the 
+						// component instance (ex, this.behaviors.cry).
+						outputs: [
+							"behaviors.cry: cry", 
+							"behaviors.hug: hug", 
+							"behaviors.laugh: laugh" 
 						],
 						template:
 						`
@@ -180,30 +184,22 @@
 
 					var vm = this;
 
-					// Setup the Virtues namespace for inputs.
+					// Setup the Virtues namespace for input bindings.
 					vm.virtues = {
 						honesty: false,
-						compassion: false
+						compassion: false,
+						kindness: false
 					};
 
-					// Setup the aliased input. Since the configuration for this input 
-					// used an alias, the namespace became a string literal and is only
-					// used to match template tokens to the component meta-data.
-					vm.kindness = false;
-
-					// Setup the Behaviors namespace for outputs.
+					// Setup the Behaviors namespace for output bindings.
 					// --
 					// CAUTION: Using (isAsync=false) in order to make the console-logging
 					// a little bit easier to follow with the groups.
 					vm.behaviors = {
 						cry: new ng.core.EventEmitter( false ),
-						hug: new ng.core.EventEmitter( false )
+						hug: new ng.core.EventEmitter( false ),
+						laugh: new ng.core.EventEmitter( false )
 					};
-
-					// Setup the aliased output. Since the configuration for this output
-					// used an alias, the namespace became a string literal and is only
-					// used to match template tokens to the component meta-data.
-					vm.laugh = new ng.core.EventEmitter( false );
 
 					// After a delay, trigger some events.
 					setTimeout(
@@ -211,15 +207,10 @@
 
 							console.group( "Emitted Behaviors" );
 
-							// Emit the namespaced events.
 							vm.behaviors.cry.next( "Weep" );
 							vm.behaviors.hug.next( "Squeeze" );
-
-							// Emit the aliased event. Again, since this one was aliased,
-							// the bound output is stored in the root of the component, 
-							// not in the namespace object.
-							vm.laugh.next( "Ha ha ha, lol." );
-
+							vm.behaviors.laugh.next( "Ha ha ha, lol." );
+							
 							console.groupEnd();
 
 						},
@@ -240,14 +231,13 @@
 
 						console.group( "Virtues" );
 
-						// Check the two namespaced inputs.
 						console.log( "Honesty:", vm.virtues.honesty );
 						console.log( "Compassion:", vm.virtues.compassion );
+						console.log( "Kindness:", vm.virtues.kindness );
 
-						// Check the aliased input. Again, since this one was aliased,
-						// the bound input is stored in the root of the component, not
-						// in the namespace object.
-						console.log( "Kindness:", vm.kindness );
+						// Let's log out the changes object to see how binding paths
+						// are recorded.
+						console.dir( changes );
 
 						console.groupEnd();
 

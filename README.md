@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Input And Output Aliases Can Be Namespaced In Angular 2 Beta 14](http://bennadel.github.io/JavaScript-Demos/demos/binding-alias-namespaces-angular2/)
 * [Input And Output Bindings Can Be Namespaced In Angular 2 Beta 14](http://bennadel.github.io/JavaScript-Demos/demos/binding-namespaces-angular2/)
 * [Multi-Providers Do Not Aggregate Value Across Hierarchical Injectors In Angular 2 Beta 14](http://bennadel.github.io/JavaScript-Demos/demos/multi-hierarchy-angular2/)
 * [The Flexible Syntax Of Structural Directive Expressions In Angular 2 Beta 14](http://bennadel.github.io/JavaScript-Demos/demos/structural-directive-delimiters-angular2/)
