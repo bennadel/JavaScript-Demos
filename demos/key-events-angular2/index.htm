@@ -4,7 +4,7 @@
 	<meta charset="utf-8" />
 
 	<title>
-		.... In Angular 2 Beta 14
+		Attaching Key Handlers With Dynamically-Parsed Host Event Bindings In Angular 2 Beta 14
 	</title>
 
 	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
@@ -12,7 +12,7 @@
 <body>
 
 	<h1>
-		.... In Angular 2 Beta 14
+		Attaching Key Handlers With Dynamically-Parsed Host Event Bindings In Angular 2 Beta 14
 	</h1>
 
 	<my-app>
@@ -35,11 +35,20 @@
 
 				ng.platform.browser.bootstrap( 
 					require( "App" ),
+
+					// All of the DOM events are managed through an Event Manager that
+					// is, itself, backed by a series of plugins. We can add additional, 
+					// custom DOM events and host bindings by providing plugins. While 
+					// the plugins are registered in one order they are actually consumed 
+					// in reverse order. This means that our custom plugins are given a
+					// higher precedence than the ones provided by Angular 2. This is why
+					// we have a chance to intercept a "native" DOM binding before it 
+					// gets bound by Angular 2's core DOM plugin.
 					[
 						ng.core.provide(
 							ng.platform.common_dom.EVENT_MANAGER_PLUGINS,
 							{
-								useClass: require( "KeyEventPlugin" ),
+								useClass: require( "DynamicKeyEventPlugin" ),
 								multi: true
 							}
 						)
@@ -63,12 +72,77 @@
 				ng.core
 					.Component({
 						selector: "my-app",
-						directives: [ require( "SubChild" ) ],
+
+						// Here, we are using the custom DOM event plugin in order to 
+						// dynamically bind key events based on token sequences.
+						host: {
+							"(document: key.Escape)": "handleKeyEvent( $event, 'Escape' )",
+							"(document: key.Enter)": "handleKeyEvent( $event, 'Enter' )",
+							"(document: key.CMD)": "handleKeyEvent( $event, 'Command' )",
+							"(document: key.ALT)": "handleKeyEvent( $event, 'Alt' )",
+							"(document: key.SHIFT)": "handleKeyEvent( $event, 'Shift' )",
+							"(document: key.CTRL)": "handleKeyEvent( $event, 'Control' )",
+							"(document: key.CMD.Enter)": "handleKeyEvent( $event, 'Command + Enter' )",
+							"(document: key.CMD.SHIFT.Enter)": "handleKeyEvent( $event, 'Command + Shift + Enter' )",
+							"(document: key.ALT.Enter)": "handleKeyEvent( $event, 'Alt + Enter' )",
+							"(document: key.Space)": "handleKeyEvent( $event, 'Space' )",
+							"(document: key.Tab)": "handleKeyEvent( $event, 'Tab' )",
+							"(document: key.ALT.Tab)": "handleKeyEvent( $event, 'Alt + Tab' )",
+							"(document: key.ArrowLeft)": "handleKeyEvent( $event, 'Arrow Left' )",
+							"(document: key.ArrowUp)": "handleKeyEvent( $event, 'Arrow Up' )",
+							"(document: key.ArrowRight)": "handleKeyEvent( $event, 'Arrow Right' )",
+							"(document: key.ArrowDown)": "handleKeyEvent( $event, 'Arrow Down' )",
+							"(document: key.CMD.ALT.ArrowUp)": "handleKeyEvent( $event, 'Command + Alt + Arrow Up' )",
+							"(document: key.CMD.ALT.ArrowDown)": "handleKeyEvent( $event, 'Command + Alt + Arrow Down' )",
+							"(document: key.QuestionMark)": "handleKeyEvent( $event, 'Question Mark (?)' )",
+							"(document: key.CMD.b)": "handleKeyEvent( $event, 'Command + b' )",
+							"(document: key.CMD.i)": "handleKeyEvent( $event, 'Command + i' )",
+							"(document: key.CMD.f)": "handleKeyEvent( $event, 'Command + f' )",
+							"(document: key.CMD.o)": "handleKeyEvent( $event, 'Command + o' )",
+							"(document: key.CMD.p)": "handleKeyEvent( $event, 'Command + p' )",
+							"(document: key.CMD.s)": "handleKeyEvent( $event, 'Command + s' )",
+							"(document: key.h)": "handleKeyEvent( $event, 'LowerCase h' )",
+							"(document: key.e)": "handleKeyEvent( $event, 'LowerCase e' )",
+							"(document: key.l)": "handleKeyEvent( $event, 'LowerCase l' )",
+							"(document: key.o)": "handleKeyEvent( $event, 'LowerCase o' )"
+						},
 						template:
 						`	
-							This is the root component! Woot.
+							<p>
+								<strong>Focus the document</strong> and type some stuff!
+							</p>
 
-							<sub-child [foo.bar]="4" (key.cmd+enter)="doSomething( $event )"></sub-child>
+							<ul>
+								<li>Escape</li>
+								<li>Enter</li>
+								<li>CMD</li>
+								<li>ALT</li>
+								<li>SHIFT</li>
+								<li>CTRL</li>
+								<li>CMD.Enter</li>
+								<li>CMD.SHIFT.Enter</li>
+								<li>ALT.Enter</li>
+								<li>Space</li>
+								<li>Tab</li>
+								<li>ALT.Tab</li>
+								<li>ArrowLeft</li>
+								<li>ArrowUp</li>
+								<li>ArrowRight</li>
+								<li>ArrowDown</li>
+								<li>CMD.ALT.ArrowUp</li>
+								<li>CMD.ALT.ArrowDown</li>
+								<li>QuestionMark</li>
+								<li>CMD.b</li>
+								<li>CMD.i</li>
+								<li>CMD.f</li>
+								<li>CMD.o</li>
+								<li>CMD.p</li>
+								<li>CMD.s</li>
+								<li>h</li>
+								<li>e</li>
+								<li>l</li>
+								<li>o</li>
+							</ul>
 						`
 					})
 					.Class({
@@ -84,16 +158,38 @@
 
 					var vm = this;
 
-					vm.doSomething = doSomething;
+					// Expose the public events.
+					vm.handleKeyEvent = handleKeyEvent;
 
 
-					function doSomething( e ) {
+					// ---
+					// PUBLIC METHODS.
+					// ---
 
-						console.log ( "EVENt:", e );
+
+					// I handle the key event, logging the value.
+					function handleKeyEvent( event, value ) {
+
+						console.log( "Recorded Key Event:", value );
+
+						// In order to keep focus on the page, we're going to override 
+						// some of the key events.
+						switch ( value ) {
+							case "Command + b": // Override Bookmarks.
+							case "Command + i": // Override Info.
+							case "Command + f": // Override Find.
+							case "Command + o": // Override Open.
+							case "Command + p": // Override Print.
+							case "Command + s": // Override Save.
+							case "Tab":
+
+								event.preventDefault();
+
+							break;
+						}
 
 					}
 
-
 				}
 
 			}
@@ -104,69 +200,47 @@
 		// --------------------------------------------------------------------------- //
 
 
+		// I provide a Browser platform plugin that will bind dynamically defined key
+		// events (like key.CMD.Enter) to host elements.
 		define(
-			"SubChild",
-			function registerSubChild() {
+			"DynamicKeyEventPlugin",
+			function registerDynamicKeyEventPlugin() {
 
-				// Configure the SubChild component definition.
-				ng.core
-					.Component({
-						selector: "sub-child",
-						inputs: [ "foo.bar" ],
-						outputs: [ "key.cmd" ],
-						template:
-						`
-							This is the sub-child! Woot.
-						`
-					})
-					.Class({
-						constructor: SubChildController
-					})
-				;
-
-				return( SubChildController );
+				return( DynamicKeyEventPlugin );
 
 
-				// I control the SubChild component.
-				function SubChildController() {
+				// I bind and unbind custom "key" DOM events. 
+				function DynamicKeyEventPlugin() {
 
 					var vm = this;
-					vm.key = {
-						cmd: new ng.core.EventEmitter()
+
+					// These roughly correspond to special "keypress" events.
+					var charMap = {
+						One: "1",
+						Two: "2",
+						Three: "3",
+						Four: "4",
+						Five: "5",
+						Six: "6",
+						Seven: "7",
+						Eight: "8",
+						Nine: "9",
+						Period: ".",
+						QuestionMark: "?",
+						Space: " "
 					};
 
-					vm.test = new ng.core.EventEmitter();
+					// These roughly correspond to special "keydown" events.
+					var charCodeMap = {
+						ArrowLeft: 37,
+						ArrowRight: 39,
+						ArrowUp: 38,
+						ArrowDown: 40,
+						Enter: 13,
+						Escape: 27,
+						Tab: 9
+					}
 
-					vm.foo = {};
-					
-					setTimeout(function(){
-						vm.key.cmd.next( "sub-path" );
-						vm.test.next( "test" );
-
-						console.log( vm.foo.bar );
-					},500);
-
-
-
-				}
-
-			}
-		);
-
-
-
-
-		define(
-			"KeyEventPlugin",
-			function registerKeyEventPlugin() {
-
-				return( KeyEventPlugin );
-
-
-				// I bind and unbind custom "outside" DOM events.
-				function KeyEventPlugin() {
-
-					var vm = this;
 
 					// Expose the public methods.
 					// --
@@ -174,7 +248,7 @@
 					// API. However, in this case, I am simply exposing the public methods
 					// so as to remove ambiguity when referencing the "zone", which would
 					// not be present on the method call this-binding otherwise (since it
-					// injected by the Angular 2 framework via "this.manager").
+					// is injected by the Angular 2 framework via "this.manager").
 					vm.addEventListener = addEventListener;
 					vm.addGlobalEventListener = addGlobalEventListener;
 					vm.supports = supports;
@@ -189,86 +263,97 @@
 					// event de-registration method.
 					function addEventListener( element, eventName, handler ) {
 
+						var config = parseEventName( eventName );
+
 						// NOTE: The "manager" is injected by the Angular framework (via
 						// the Event Manager that aggregates the event plugins).
 						var zone = vm.manager.getZone();
 
-						// Each "outside" event is captured by an "inside" event at the 
-						// document level. Translate the element-local event type to the
-						// document-local event type.
-						var documentEvent = documentEventMap[ eventName ];
+						// Zone.js patches event-target code to make change-detection 
+						// easier to manage. As such, when we attach the the event 
+						// handler, we want to do so outside of the core zone so that we
+						// don't automatically trigger change-detection for every key 
+						// event. Only when we know that we need to invoke our callback 
+						// handler do we want to route back into the core zone so that we
+						// can integrate with the change-detection mechanism.
+						zone.runOutsideAngular( addKeyEventListener );
 
-						// Zone.js patches event-target code. As such, when we attach the
-						// the document-level event handler, we want to do so outside of
-						// the change-detection zone so that our checkEventTarget() 
-						// doesn't trigger more change-detection than it has to. Once we
-						// know that we have to parle the document-level event into an
-						// element-local event, we'll re-enter the Angular zone.
-						zone.runOutsideAngular( addDocumentEventListener );
-
-						return( removeDocumentEventListener );
+						return( removeKeyEventListener );
 
 
-						// I attach the document-local event listener which will determine
-						// the origin of the bubbled-up events.
-						function addDocumentEventListener() {
+						// I add the appropriate key event handler.
+						function addKeyEventListener() {
 
-							document.addEventListener( documentEvent, checkEventTarget, true );
+							element.addEventListener( config.eventType, handleKeyEvent, true );
 
 						}
 
-						// I detach the document-local event listener, tearing down the
-						// "outside" event binding.
-						function removeDocumentEventListener() {
 
-							document.removeEventListener( documentEvent, checkEventTarget, true );
+						// I remove the key event handler.
+						function removeKeyEventListener() {
 
-						}
-
-						// I check to see if the given event originated from within the 
-						// host element. If it did, the event is ignored. If it did NOT,
-						// then the "outside" event binding is invoked with the given event.
-						function checkEventTarget( event ) {
-
-							var current = event.target;
-
-							do {
-
-								if ( current === element ) {
-
-									return;
-
-								}
-
-							} while ( current.parentNode && ( current = current.parentNode ) );
-
-							// If we made it this far, we didn't bubble past the host 
-							// element. As such, we know that the event was initiated
-							// from outside the host element. It is therefore an 
-							// "outside" event and needs to be translated into a host-
-							// local event that integrates with change-detection.
-							triggerDOMEventInZone( event );
+							element.removeEventListener( config.eventType, handleKeyEvent, true );
 
 						}
 
-						// I invoke the host event handler with the given event.
-						function triggerDOMEventInZone( event ) {
 
-							// Now that we know that the document-local event has to be
-							// translated into an element-local host binding event, we 
-							// need to re-enter the Angular 2 change-detection zone so
-							// that view-model changes made within the event handler will
-							// trigger a new round of change-detection.
+						// I handle all key events. But, I only invoke the callback 
+						// handler for key events that match the current configuration.
+						function handleKeyEvent( event ) {
+
+							// For debugging:
+							// --
+							// console.group( "Event: " + event.type );
+							// console.log( "Which:", event.which );
+							// console.log( "Char:", String.fromCharCode( event.which ) );
+							// console.log( "CTRL:", event.ctrlKey );
+							// console.log( "ALT:", event.altKey );
+							// console.log( "SHIFT:", event.shiftKey );
+							// console.log( "META:", event.metaKey );
+							// console.log( config );
+							// console.groupEnd();
+
+							// If the modifiers don't match, ignore event.
+							if ( 
+								( config.cmd && ! event.metaKey ) ||
+								( config.ctrl && ! event.ctrlKey ) ||
+								( config.alt && ! event.altKey ) ||
+								( config.shift && ! event.shiftKey )
+								) {
+
+								return;
+
+							}
+
+							// If the charCode doesn't match, ignore event.
+							if ( config.charCode && ( config.charCode !== event.which ) ) {
+
+								return;
+
+							}
+
+							// If the char doesn't match, ignore event.
+							if ( config.char && ( config.char !== String.fromCharCode( event.which ) ) ) {
+
+								return;
+
+							}
+
+							event.eventConfig = config;
+
+							// If we made it this far, it means that this is a key event 
+							// that we need to handle (ie, invoke the callback inside the
+							// core Angular change-detection zone).
 							zone.run(
 								function runInZone() {
 
 									handler( event );
 
 								}
-							);
+							);						
 
-						};
-					
+						}
+
 					} // END: addEventListener().
 
 
@@ -276,32 +361,19 @@
 					// de-registration method.
 					function addGlobalEventListener( target, eventName, handler ) {
 
-						// For the purposes of an "outside" event, it will never be 
-						// possible to actually click / mouse outside of the document
-						// or the window object. As such, simply ignore these global 
-						// context, providing a no-op binding.
-						if ( ( target === "document" ) || ( target === "window" ) ) {
-
-							return( noop );
-
-						}
-
-						// If the target was not "document" or "window", it must be body
-						// (the only other "global" host binding). While not very likely,
-						// it is possible to click outside of the body tag (by clicking 
-						// on the HTML tag). As such, let's add the event listener to the
-						// body tag directly.
-						return( addEventListener( document.body, eventName, handler ) );
+						addEventListener( 
+							( ( target === "document" ) ? document : window ), 
+							eventName, 
+							handler
+						);
 
 					}
 
 
 					// I check to see if the given event is supported by the plugin.
 					function supports( eventName ) {
-console.log( "Supports", eventName );
-						// If the event can be mapped to a native event on the document,
-						// then we can support the event.
-						return( false );
+
+						return( eventName.indexOf( "key." === 0 ) );
 
 					}
 
@@ -311,10 +383,104 @@ console.log( "Supports", eventName );
 					// ---
 
 
-					// I perform a no-operation instruction.
-					function noop() {
+					// I parse the eventName (ex, key.CMD.Enter) into a configuration 
+					// object that defines the event requirements.
+					function parseEventName( eventName ) {
 
-						// Nothing to see here, folks.
+						var config = {
+							eventType: "keypress",
+
+							// Modifiers.
+							cmd: false,
+							ctrl: false,
+							alt: false,
+							shift: false,
+
+							// Target keys.
+							charCode: null,
+							char: null
+						};
+
+						var tokens = eventName.split( new RegExp( "\\.", "g" ) );
+						var token = null;
+
+						// Merge the tokens into the event configuration.
+						for ( var i = 1, length = tokens.length ; i < length ; i++ ) {
+
+							switch ( token = tokens[ i ] ) {
+
+								case "CMD":
+								case "CTRL":
+								case "ALT":
+								case "SHIFT":
+									
+									config[ token.toLowerCase() ] = true;
+
+								break;
+
+								default:
+
+									if ( charCodeMap.hasOwnProperty( token ) ) {
+
+										config.charCode = charCodeMap[ token ];
+
+									} else if ( charMap.hasOwnProperty( token ) ) {
+
+										config.char = charMap[ token ];
+
+									} else {
+
+										if ( token.length > 1 ) {
+
+											throw( new Error( "Key event token cannot be more than one character." ) );
+
+										}
+
+										config.char = token;
+										
+									}
+
+								break;
+
+							}
+
+						}
+
+
+						// *******
+						// WARNING: The logic here is not supposed to be the end-all-be-all
+						// of key-code handling. I am sure there is a lot of cross-browser
+						// stuff that I'm not accounting for. However, the point of this 
+						// demo is supposed to be about the dynamic parsing, and not the 
+						// actual key code implementation.
+						// *******
+
+
+						// If there is no char defined, then this is an event that needs
+						// to be caught with the keydown event.
+						if ( ! config.char ) {
+
+							config.eventType = "keydown";
+
+						// For some char-based commands, we need to use the keydown event
+						// in order to be able to override the native browser behavior.
+						} else if ( config.cmd && config.char ) {
+
+							if ( 
+								( config.char === "f" ) ||
+								( config.char === "o" ) ||
+								( config.char === "p" ) ||
+								( config.char === "s" )
+								) {
+
+								config.eventType = "keydown";
+								config.char = config.char.toUpperCase();
+
+							}
+
+						}
+						
+						return( config );
 
 					}
 
@@ -322,7 +488,6 @@ console.log( "Supports", eventName );
 
 			}
 		);
-
 
 	</script>
 
