@@ -1,0 +1,53 @@
+
+a {
+	color: red ;
+	cursor: pointer ;
+	text-decoration: underline ;
+	user-select: none ;
+		-moz-user-select: none ;
+		-webkit-user-select: none ;
+}
+
+counter-input {
+	background-color: #FAFAFA ;
+	border: 3px solid #CCCCCC ;
+	border-radius: 5px 5px 5px 5px ;
+	color: #CCCCCC ;
+	cursor: pointer ;
+	display: inline-block ;
+	padding: 15px 20px 15px 20px ;
+	user-select: none ;
+		-moz-user-select: none ;
+		-webkit-user-select: none ;
+}
+
+counter-input.at-value-1 {
+	border-color: #BBBBBB ;
+	color: #BBBBBB ;
+}
+
+counter-input.at-value-2 {
+	border-color: #999999 ;
+	color: #999999 ;
+}
+
+counter-input.at-value-3 {
+	border-color: #777777 ;
+	color: #777777 ;
+}
+
+counter-input.at-value-4 {
+	border-color: #555555 ;
+	color: #555555 ;
+}
+
+counter-input.at-value-5 {
+	border-color: #333333 ;
+	color: #333333 ;
+}
+
+counter-input.at-value-n {
+	border-color: #CC0000 ;
+	color: #CC0000 ;
+	font-weight: bold ;
+}

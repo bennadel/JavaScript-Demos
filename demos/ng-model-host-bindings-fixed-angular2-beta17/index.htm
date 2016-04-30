@@ -1,0 +1,450 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		NgModel Host Bindings Finally Fixed But OnPush Change Detection Breaking In Angular 2 Beta 17
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></lin>
+</head>
+<body>
+
+	<h1>
+		NgModel Host Bindings Finally Fixed But OnPush Change Detection Breaking In Angular 2 Beta 17
+	</h1>
+
+	<my-app>
+		Loading...
+	</my-app>
+
+	<!-- Load demo scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/17/es6-shim.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/17/Rx.umd.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/17/angular2-polyfills.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/17/angular2-all.umd.js"></script>
+	<!-- AlmondJS - minimal implementation of RequireJS. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/17/almond.js"></script>
+	<script type="text/javascript">
+
+		// Defer bootstrapping until all of the components have been declared.
+		requirejs( 
+			[ /* Using require() for better readability. */ ],
+			function run() {
+
+				ng.platform.browser.bootstrap( require( "App" ) );
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide the root application component.
+		define(
+			"App",
+			function registerApp() {
+
+				// Configure the App component definition.
+				ng.core
+					.Component({
+						selector: "my-app",
+						directives: [ require( "COUNTER_INPUT_DIRECTIVES" ) ],
+
+						// In this template, the CounterInput component is using the 
+						// ngModel two-way data binding directive; however, the 
+						// CounterInput component doesn't actually know about ngModel.
+						// The ngModel "aspect" of this component is being implemented
+						// by a sibling directive bound to the same component.
+						template:
+						`
+							<counter-input [(ngModel)]="count"></counter-input>
+
+							<p>
+								Set Count:
+								<a (click)="setCount( 1 )">1</a>
+								<a (click)="setCount( 2 )">2</a>
+								<a (click)="setCount( 3 )">3</a>
+								<a (click)="setCount( 4 )">4</a>
+								<a (click)="setCount( 5 )">5</a>
+								<a (click)="setCount( 10 )">10</a>
+								<a (click)="setCount( 20 )">20</a>
+							</p>
+						`
+					})
+					.Class({
+						constructor: AppController
+					})
+				;
+
+				return( AppController );
+
+
+				// I control the App component.
+				function AppController() {
+
+					var vm = this;
+
+					// I hold the value of the counter input.
+					vm.count = 0;
+
+					// Expose the public methods.
+					vm.setCount = setCount;
+
+					
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I set the current count.
+					function setCount( newCount ) {
+
+						vm.count = newCount;
+
+					}
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide all of the directives needed to work with the CounterInput 
+		// component. This includes the core component plus the ngModel bridge, which 
+		// adds [(ngModel)] functionality.
+		define(
+			"COUNTER_INPUT_DIRECTIVES",
+			function registerCounterDirectives() {
+
+				return([
+					require( "CounterInput" ),
+					require( "CounterInputForNgModel" )
+				]);
+
+			}
+		);
+
+
+		// I provide a counter input component that accepts a [value] input binding and 
+		// emits a (valueChange) output binding event.
+		// --
+		// NOTE: The CounterInput component doesn't know anything about ngModel. It only
+		// knows about the [value] and (valueChange) bindings. All ngModel functionality 
+		// is provided by the sibling directive that implements a "value accessor" bridge.
+		define(
+			"CounterInput",
+			function registerCounterInput() {
+
+				// Configure the CounterInput component definition.
+				ng.core
+					.Component({
+						selector: "counter-input",
+						inputs: [ "value" ],
+						outputs: [ "valueChange" ],
+						host: {
+							"(click)": "handleClick()",
+							"[class.at-value-0]": "( value >= 0 )",
+							"[class.at-value-1]": "( value >= 1 )",
+							"[class.at-value-2]": "( value >= 2 )",
+							"[class.at-value-3]": "( value >= 3 )",
+							"[class.at-value-4]": "( value >= 4 )",
+							"[class.at-value-5]": "( value >= 5 )",
+							"[class.at-value-n]": "( value >= 10 )"
+						},
+						changeDetection: ng.core.ChangeDetectionStrategy.OnPush,
+						template:
+						`
+							Counter: {{ value }}
+						`
+					})
+					.Class({
+						constructor: CounterInputController,
+
+						// Define the life-cycle methods on the prototype to that they
+						// will be picked up at runtime. 
+						ngOnChanges: function noop() {}
+					})
+				;
+
+				return( CounterInputController );
+
+
+				// I control the CounterInput component. 
+				function CounterInputController() {
+
+					var vm = this;
+
+					// I hold the value of the counter.
+					// --
+					// NOTE: Injected as an input binding.
+					vm.value = 0;
+
+					// I hold the event stream for the valueChange output binding.
+					vm.valueChange = new ng.core.EventEmitter();
+
+					// Expose the public methods.
+					vm.handleClick = handleClick;
+					vm.ngOnChanges = ngOnChanges;
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I handle the internal click event on the component. 
+					function handleClick() {
+
+						// In the one-way data flow philosophy, we can't change this 
+						// value directly. As such, we have to announce the desired 
+						// change and leave it up to the calling context to decide 
+						// whether or not the change is piped back into the component.
+						vm.valueChange.next( vm.value + 1 );
+
+					}
+
+
+					// I get called when any of the input bindings change.
+					function ngOnChanges( changes ) {
+
+						console.log(
+							"ngOnChanges: [value] from %s to %s.",
+							( changes.value.isFirstChange() ? 0 : changes.value.previousValue ),
+							changes.value.currentValue
+						);
+
+					}
+
+				}
+
+			}
+		);
+
+
+		// I provide an ngModel-enabled bridge for the CounterInput component.
+		define(
+			"CounterInputForNgModel",
+			function registerCounterInputForNgModel() {
+
+				// Configure the CounterInputForNgModel directive definition.
+				ng.core
+					.Directive({
+						// As the ngModel bridge, we want to match on instances of the 
+						// CounterInput that are attempting to use ngModel.
+						selector: "counter-input[ngModel]",
+
+						// The bridge has to deal with both input and output bindings. As
+						// such, we have to listen for (valueChange) events on the target
+						// component and translate them into "change" events on ngModel.
+						host: {
+							"(valueChange)": "handleValueChange( $event )"
+						},
+
+						// When ngModel is being used, we need to create a bridge between
+						// the ngModel directive and the target component. This bridge 
+						// has to implement the "value accessor" interface. In this case,
+						// we're telling Angular to use THIS DIRECTIVE INSTANCE as that 
+						// value accessor provider. This means that the following 
+						// controller needs to provide the value accessor methods:
+						// --
+						// * registerOnChange
+						// * registerOnTouched
+						// * writeValue
+						// --
+						// NOTE: You don't need the forwardRef() here because we are 
+						// using ES5 instead of TypeScript. Woot! ES5 for the win! 
+						providers: [
+							ng.core.provide(
+								ng.common.NG_VALUE_ACCESSOR,
+								{
+									useExisting: CounterInputForNgModelController,
+									multi: true
+								}
+							)
+						]
+					})
+					.Class({
+						constructor: CounterInputForNgModelController
+					})
+				;
+
+				CounterInputForNgModelController.parameters = [
+					new ng.core.Inject( require( "CounterInput" ) ),
+					new ng.core.Inject( ng.core.ChangeDetectorRef )
+				];
+
+				return( CounterInputForNgModelController );
+
+
+				// I control the CounterInputForNgModel directive. As part of the ngModel
+				// contract, I implement the value accessor interface.
+				function CounterInputForNgModelController( counterInput, changeDetectorRef ) {
+
+					var vm = this;
+
+					// As part of the value accessor "bridge" that this directive is 
+					// providing, we need to be able to manually trigger the ngOnChanges
+					// life-cycle event on the target component. To do that properly, we
+					// need to keep track of when the first value is written so that we
+					// can announce it as the first SimpleChange instance.
+					var isFirstChange = true;
+
+					// I hold the change hander registered by ngModel. This is the method
+					// we need to call when the target component value changes.
+					var onTargetChange = null;
+
+					// Expose the public methods.
+					vm.handleValueChange = handleValueChange;
+					vm.registerOnChange = registerOnChange; // Value accessor interface.
+					vm.registerOnTouched = registerOnTouched; // Value accessor interface.
+					vm.writeValue = writeValue; // Value accessor interface.
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I handle the valueChange event coming out of the CounterInput, 
+					// bridging the output-gap between the target component and ngModel.
+					function handleValueChange( newValue ) {
+
+						// When we invoke the onChange() value accessor method, ngModel
+						// already assumes that the DOM (Document Object Model) is in the
+						// correct state. As such, we have ensure that the CounterInput 
+						// component reflects the change that it just emitted (by piping
+						// the emitted value right back into the CounterInput component).
+						// --
+						// NOTE: At this point, we are disregarding the one-way data flow
+						// paradigm. But, that's the WHOLE POINT OF NG-MODEL.
+						applyChangesToTarget( counterInput.value, newValue );
+
+						// Tell ngModel so that it can synchronize its own internal model.
+						// --
+						// NOTE: If we wanted to, we could use this as an opportunity to 
+						// "parse" the value into something more "model" oriented (such 
+						// as parsing string values into numbers). But, that is not 
+						// needed for this component since it deals with numbers.
+						onTargetChange( newValue );
+
+					}
+
+
+					// I register the onChange handler provided by ngModel.
+					function registerOnChange( newOnChange ) {
+
+						onTargetChange = newOnChange;
+
+					}
+					
+
+					// I register the onTouched handler provided by ngModel.
+					function registerOnTouched() {
+						
+						// console.log( "registerOnTouched" );
+
+					}
+					
+
+					// I implement the value input changed by ngModel. When ngModel 
+					// wants to update the value of the target component, it doesn't 
+					// know what property to use (or how to transform that value into 
+					// something meaningful for the target component). As such, we have 
+					// to bridge the gap between ngModel and the input property of the 
+					// CounterInput component.
+					function writeValue( newValue ) {
+
+						applyChangesToTarget( counterInput.value, newValue );
+
+					}
+
+
+					// ---
+					// PRIVATE METHODS.
+					// ---
+
+
+					// I apply the given previous and next values to the underlying 
+					// component. Part of that process involves making sure all of the 
+					// right work-flows (such as change-detection) are initiated.
+					function applyChangesToTarget( previousValue, nextValue ) {
+
+						// Write the ngModel value to the CounterInput component.
+						counterInput.value = nextValue;
+
+						// When we update the component's Inputs programmatically, 
+						// Angular doesn't actually register this as an "Input change"
+						// (since change detection is part of the component's template
+						// bindings, not its state). This creates several complications.
+						// First, it means that the OnChanges() life-cycle event method 
+						// won't be triggered implicitly on the target component. Second,
+						// it means that OnPush change detection won't be triggered. As
+						// such, we have to take care of fulfilling both of those
+						// responsibilities explicitly here within this value accessor
+						// bridge.
+
+						// Ensure that the entire component path is marked for change
+						// detection so that Angular will know to perform a check on the
+						// CounterInput's View template.
+						// -- 
+						// CAUTION: This is the part that seems to be broken in Beta 17.
+						// CAUTION: This is the part that seems to be broken in Beta 17.
+						// CAUTION: This is the part that seems to be broken in Beta 17.
+						changeDetectorRef.markForCheck();
+						// CAUTION: This is the part that seems to be broken in Beta 17.
+						// CAUTION: This is the part that seems to be broken in Beta 17.
+						// CAUTION: This is the part that seems to be broken in Beta 17.
+
+						// If the CounterInput component doesn't provide a hook for the 
+						// life-cycle event, there's nothing we need to do.
+						if ( ! counterInput.ngOnChanges ) {
+
+							return;
+
+						}
+
+						// If we made it this far, the CounterInput component is exposing
+						// an ngOnChanges() method. As such, we have to prepare the 
+						// changes collection.
+						var changes = {
+							value: new ng.core.SimpleChange( previousValue, nextValue )
+						};
+
+						// Unfortunately, the Angular API doesn't expose the necessary 
+						// utility library that is used to denote the "first" simple 
+						// change. As such, we have to hack this by overwriting the 
+						// isFirstChange() instance method when we know that this is the
+						// first change we are sending to the CounterInput.
+						if ( isFirstChange ) {
+
+							isFirstChange = false;
+
+							changes.value.isFirstChange = function() {
+								
+								return( true );
+
+							};
+
+						}
+
+						counterInput.ngOnChanges( changes );
+
+					}
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
