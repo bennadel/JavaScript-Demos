@@ -1,0 +1,239 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Exporting Component And Directive References In Angular 2 Beta 17
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></lin>
+</head>
+<body>
+
+	<h1>
+		Exporting Component And Directive References In Angular 2 Beta 17
+	</h1>
+
+	<my-app>
+		Loading...
+	</my-app>
+
+	<!-- Load demo scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/17/es6-shim.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/17/Rx.umd.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/17/angular2-polyfills.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/17/angular2-all.umd.js"></script>
+	<!-- AlmondJS - minimal implementation of RequireJS. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/17/almond.js"></script>
+	<script type="text/javascript">
+
+		// Defer bootstrapping until all of the components have been declared.
+		requirejs( 
+			[ /* Using require() for better readability. */ ],
+			function run() {
+
+				ng.platform.browser.bootstrap( require( "App" ) );
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide the root application component.
+		define(
+			"App",
+			function registerApp() {
+
+				// Configure the App component definition.
+				ng.core
+					.Component({
+						selector: "my-app",
+						directives: [ 
+							require( "ComponentA" ),
+							require( "DirectiveB" ),
+							require( "DirectiveC" )
+						],
+
+						// Setup ViewChild queries for the #ref instances.
+						queries: {
+							qTestImplicit: new ng.core.ViewChild( "testImplicit" ),
+							qTestA: new ng.core.ViewChild( "testA" ),
+							qTestB: new ng.core.ViewChild( "testB" ),
+							qTestC: new ng.core.ViewChild( "testC" )
+						},
+
+						// In the following template, notice that we are setting up
+						// multiple references to our component, including an implicit
+						// #var reference that requires no label.
+						template:
+						`
+							<my-component
+								#testImplicit
+								#testA="ComA"
+								#testB="DirB"
+								#testC="DirC">
+							</my-component>
+
+							<p>
+								testImplicit: {{ testImplicit.testLabel }}<br />
+								testA: {{ testA.testLabel }}<br />
+								testB: {{ testB.testLabel }}<br />
+								testC: {{ testC.testLabel }}<br />
+							</p>
+						`
+					})
+					.Class({
+						constructor: AppController,
+
+						// Define the life-cycle methods on the prototype so that
+						// Angular will pick them up at runtime.
+						ngAfterViewInit: function noop() {}
+					})
+				;
+
+				return( AppController );
+
+
+				// I control the App component.
+				function AppController() {
+
+					var vm = this;
+
+					// Expose the public methods.
+					vm.ngAfterViewInit = ngAfterViewInit;
+
+					
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I get called once after the view is initialized / checked for the
+					// first time. At this point, all of the DOM-queries have been linked.
+					function ngAfterViewInit() {
+
+						console.group( "ViewChild Queries" );
+						console.log( "qTestImplicit:", vm.qTestImplicit );
+						console.log( "qTestA:", vm.qTestA );
+						console.log( "qTestB:", vm.qTestB );
+						console.log( "qTestC:", vm.qTestC );
+						console.groupEnd();
+
+					}
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide a component that exports a bindable reference.
+		define(
+			"ComponentA",
+			function registerComponentA() {
+
+				// Configure the ComponentA component definition.
+				return ng.core
+					.Component({
+						selector: "my-component",
+						
+						// Here, we are exporting the directive class instance as a 
+						// bindable reference (for the #var syntax).
+						// --
+						// NOTE: Components export an implicit reference that can be 
+						// bound without a label. This is in comparison to an Attribute
+						// Directive, which can only be bound-to with an explicit name.
+						exportAs: "ComA",
+						template:
+						`
+							<div>
+								Such component! Much Directive!
+							</div>
+						`
+					})
+					.Class({
+						constructor: function ComponentAController() {
+
+							this.testLabel = "ComA";
+
+						}
+					})
+				;
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide a directive that exports a bindable reference.
+		define(
+			"DirectiveB",
+			function registerDirectiveB() {
+
+				// Configure the DirectiveB directive definition.
+				return ng.core
+					.Directive({
+						selector: "my-component",
+						
+						// Here, we are exporting the directive class instance as a 
+						// bindable reference (for the #var syntax).
+						exportAs: "DirB"
+					})
+					.Class({
+						constructor: function DirectiveBController() {
+
+							this.testLabel = "DirB";
+
+						}
+					})
+				;
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide a directive that exports a bindable reference.
+		define(
+			"DirectiveC",
+			function registerDirectiveC() {
+
+				// Configure the DirectiveC directive definition.
+				return ng.core
+					.Directive({
+						selector: "my-component",
+						
+						// Here, we are exporting the directive class instance as a 
+						// bindable reference (for the #var syntax).
+						exportAs: "DirC"
+					})
+					.Class({
+						constructor: function DirectiveCController() {
+
+							this.testLabel = "DirC";
+
+						}
+					})
+				;
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
