@@ -1,0 +1,208 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Querying For Multiple ViewChild Directives On A Single Element In Angular 2 Beta 17
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></lin>
+</head>
+<body>
+
+	<h1>
+		Querying For Multiple ViewChild Directives On A Single Element In Angular 2 Beta 17
+	</h1>
+
+	<my-app>
+		Loading...
+	</my-app>
+
+	<!-- Load demo scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/17/es6-shim.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/17/Rx.umd.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/17/angular2-polyfills.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/17/angular2-all.umd.js"></script>
+	<!-- AlmondJS - minimal implementation of RequireJS. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/17/almond.js"></script>
+	<script type="text/javascript">
+
+		// Defer bootstrapping until all of the components have been declared.
+		requirejs( 
+			[ /* Using require() for better readability. */ ],
+			function run() {
+
+				ng.platform.browser.bootstrap( require( "App" ) );
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide the root application component.
+		define(
+			"App",
+			function registerApp() {
+
+				// Configure the App component definition.
+				ng.core
+					.Component({
+						selector: "my-app",
+						directives: [ 
+							require( "ComponentA" ),
+							require( "DirectiveB" ),
+							require( "DirectiveC" )
+						],
+
+						// In this version of the demo, rather than querying for "refs", 
+						// we're querying for instances of the given directive types.
+						// --
+						// NOTE: All three of these directives select on "my-component".
+						queries: {
+							qTestA: new ng.core.ViewChild( require( "ComponentA" ) ),
+							qTestB: new ng.core.ViewChild( require( "DirectiveB" ) ),
+							qTestC: new ng.core.ViewChild( require( "DirectiveC" ) )
+						},
+						template:
+						`
+							<my-component></my-component>
+						`
+					})
+					.Class({
+						constructor: AppController,
+
+						// Define the life-cycle methods on the prototype so that
+						// Angular will pick them up at runtime.
+						ngAfterViewInit: function noop() {}
+					})
+				;
+
+				return( AppController );
+
+
+				// I control the App component.
+				function AppController() {
+
+					var vm = this;
+
+					// Expose the public methods.
+					vm.ngAfterViewInit = ngAfterViewInit;
+
+					
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I get called once after the view is initialized / checked for the
+					// first time. At this point, all of the DOM-queries have been linked.
+					function ngAfterViewInit() {
+
+						console.group( "Injected ViewChild Queries" );
+						console.log( "qTestA:", vm.qTestA );
+						console.log( "qTestB:", vm.qTestB );
+						console.log( "qTestC:", vm.qTestC );
+						console.groupEnd();
+
+					}
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide a component that selects on "my-component".
+		define(
+			"ComponentA",
+			function registerComponentA() {
+
+				// Configure the ComponentA component definition.
+				return ng.core
+					.Component({
+						selector: "my-component",
+						template:
+						`
+							<div>
+								Such component! Much Directive!
+							</div>
+						`
+					})
+					.Class({
+						constructor: function ComponentAController() {
+
+							this.name = "ComA";
+
+						}
+					})
+				;
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide a directive that selects on "my-component".
+		define(
+			"DirectiveB",
+			function registerDirectiveB() {
+
+				// Configure the DirectiveB directive definition.
+				return ng.core
+					.Directive({
+						selector: "my-component"
+					})
+					.Class({
+						constructor: function DirectiveBController() {
+
+							this.name = "DirB";
+
+						}
+					})
+				;
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide a directive that selects on "my-component".
+		define(
+			"DirectiveC",
+			function registerDirectiveC() {
+
+				// Configure the DirectiveC directive definition.
+				return ng.core
+					.Directive({
+						selector: "my-component"
+					})
+					.Class({
+						constructor: function DirectiveCController() {
+
+							this.name = "DirC";
+
+						}
+					})
+				;
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
