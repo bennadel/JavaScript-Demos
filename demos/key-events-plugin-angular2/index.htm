@@ -1,0 +1,149 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Native Key-Combination Event Binding In Angular 2 Beta 17
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></lin>
+</head>
+<body>
+
+	<h1>
+		Native Key-Combination Event Binding In Angular 2 Beta 17
+	</h1>
+
+	<my-app>
+		Loading...
+	</my-app>
+
+	<!-- Load demo scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/17/es6-shim.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/17/Rx.umd.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/17/angular2-polyfills.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/17/angular2-all.umd.js"></script>
+	<!-- AlmondJS - minimal implementation of RequireJS. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/17/almond.js"></script>
+	<script type="text/javascript">
+
+		// Defer bootstrapping until all of the components have been declared.
+		requirejs( 
+			[ /* Using require() for better readability. */ ],
+			function run() {
+
+				ng.platform.browser.bootstrap( require( "App" ) );
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide the root application component.
+		define(
+			"App",
+			function registerApp() {
+
+				// Configure the App component definition.
+				ng.core
+					.Component({
+						selector: "my-app",
+
+						// In the following template, we are binding to the key-event
+						// support that comes with Angular 2 out-of-the-box. This allows
+						// us to bind to specific key combinations, including modifiers
+						// and key-identifiers as per the specification:
+						// --
+						// https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key
+						// --
+						// NOTE: This only works with keydown and keyup - NOT keypress.
+						// --
+						// CAUTION: The built-in key event plugin does not support 
+						// binding to the GLOBAL scope for some reason (ie, document: or 
+						// window:). As such, it can only be bound to a specific element.
+						template:
+						`	
+							<p>
+								Focus the Input and then type 
+								<em>(binding not supported on global scope)</em>.
+							</p>
+
+							<input 
+								(keydown.Enter)="handleKeyEvent( $event, 'Enter' )" 
+								(keydown.alt.Enter)="handleKeyEvent( $event, 'ALT + Enter' )" 
+								(keydown.control.Enter)="handleKeyEvent( $event, 'Control + Enter' )" 
+								(keydown.meta.Enter)="handleKeyEvent( $event, 'Meta + Enter' )" 
+								(keydown.shift.Enter)="handleKeyEvent( $event, 'Shift + Enter' )"
+								(keydown.Escape)="handleKeyEvent( $event, 'Escape' )"
+								(keydown.ArrowLeft)="handleKeyEvent( $event, 'Arrow Left' )"
+								(keydown.ArrowUp)="handleKeyEvent( $event, 'Arrow Up' )"
+								(keydown.ArrowRight)="handleKeyEvent( $event, 'Arrow Right' )"
+								(keydown.ArrowDown)="handleKeyEvent( $event, 'Arrow Down' )"
+								(keydown.Dot)="handleKeyEvent( $event, 'Dot' )"
+								(keydown.Space)="handleKeyEvent( $event, 'Space' )"
+								(keydown.shift)="handleKeyEvent( $event, 'Shift' )"
+								(keydown.meta.b)="handleKeyEvent( $event, 'Meta + b' )"
+								(keydown.meta.o)="handleKeyEvent( $event, 'Meta + o' )"
+								(keydown.meta.s)="handleKeyEvent( $event, 'Meta + s' )"
+								(keydown.meta.i)="handleKeyEvent( $event, 'Meta + i' )"
+								(keydown.meta.p)="handleKeyEvent( $event, 'Meta + p' )"
+								(keydown.meta.f)="handleKeyEvent( $event, 'Meta + f' )"
+								(keydown.h)="handleKeyEvent( $event, 'H' )"
+								(keydown.e)="handleKeyEvent( $event, 'E' )"
+								(keydown.l)="handleKeyEvent( $event, 'L' )"
+								(keydown.o)="handleKeyEvent( $event, 'O' )"
+								(keydown.1)="handleKeyEvent( $event, '1' )"
+								(keydown.2)="handleKeyEvent( $event, '2' )"
+								(keydown.3)="handleKeyEvent( $event, '3' )"
+								(keydown.4)="handleKeyEvent( $event, '4' )"
+								(keydown.5)="handleKeyEvent( $event, '5' )"
+								autofocus>
+						`
+					})
+					.Class({
+						constructor: AppController
+					})
+				;
+
+				return( AppController );
+
+
+				// I control the App component.
+				function AppController() {
+
+					var vm = this;
+
+					// Expose the public events.
+					vm.handleKeyEvent = handleKeyEvent;
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I handle the key event, logging the value.
+					function handleKeyEvent( event, value ) {
+
+						console.log( "Event (%s): %s", event.type, value );
+
+						// Since all of the key combinations represent some sort of 
+						// native browser behavior, we're just going to cancel all
+						// the behaviors to keep the demo simple.
+						event.preventDefault();
+
+					}
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>

@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Native Key-Combination Event Binding In Angular 2 Beta 17](http://bennadel.github.io/JavaScript-Demos/demos/key-events-plugin-angular2/)
 * [Querying For Multiple ViewChild Directives On A Single Element In Angular 2 Beta 17](http://bennadel.github.io/JavaScript-Demos/demos/view-child-multi-type-angular2/)
 * [Exporting Component And Directive References In Angular 2 Beta 17](http://bennadel.github.io/JavaScript-Demos/demos/export-as-angular2/)
 * [NgModel Host Bindings Finally Fixed But OnPush Change Detection Breaking In Angular 2 Beta 17](http://bennadel.github.io/JavaScript-Demos/demos/ng-model-host-bindings-fixed-angular2-beta17/)
