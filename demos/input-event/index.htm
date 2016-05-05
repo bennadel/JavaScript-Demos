@@ -1,0 +1,74 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Learning About The Input Event From Angular 2
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></lin>
+</head>
+<body>
+
+	<h1>
+		Learning About The Input Event From Angular 2
+	</h1>
+
+	<p>
+		Focus the input and start typing. Stuff be loggin'. 
+	</p>
+
+	<form>
+		<input type="text" />
+
+		<textarea></textarea>
+
+		<select>
+			<option value="1">One</option>
+			<option value="2">Two</option>
+			<option value="3">Three</option>
+		</select>
+
+		<button type="reset">Clear</button>
+	</form>
+
+
+	<!-- Load demo scripts. -->
+	<script type="text/javascript" src="../../vendor/jquery/jquery-2.1.0.min.js"></script>
+	<script type="text/javascript">
+
+		// Let's compare the Input event to the Change event.
+		// --
+		// NOTE: Select elements don't fire "input" consistently on all browsers. For
+		// Select, you are better off listening to the "change" event.
+		$( "input, textarea, select" )
+			.on( "input", handleInputEvent )
+			.on( "change", handleChangeEvent )
+		;
+
+
+		// I log the change events.
+		function handleChangeEvent( event ) {
+
+			console.log( "Change Event:", event.target.value );
+
+		}
+
+
+		// I log the input events. Input events are fired SYNCHRONOUSLY as the input
+		// element's value is changed by the user interaction.
+		function handleInputEvent( event ) {
+
+			console.log( "Input Event:", event.target.value );
+
+			// CAUTION: The input event CANNOT be canceled. Putting this statement
+			// in here to demonstrate that behavior.
+			event.preventDefault();
+
+		}
+		
+	</script>
+
+</body>
+</html>

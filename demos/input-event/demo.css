@@ -1,0 +1,22 @@
+
+input,
+option,
+textarea,
+select,
+button {
+	font-size: 26px ;
+}
+
+input,
+textarea,
+select,
+button {
+	display: block ;
+	margin-bottom: 10px ;
+}
+
+input,
+select,
+textarea {
+	width: 400px ;
+}
