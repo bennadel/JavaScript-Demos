@@ -15,7 +15,7 @@ button {
 	margin-bottom: 10px ;
 }
 
-input,
+input[ type = text ],
 select,
 textarea {
 	width: 400px ;
