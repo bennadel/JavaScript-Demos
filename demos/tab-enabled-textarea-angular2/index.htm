@@ -1,0 +1,436 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Trying To Enable Tabbing In Textareas In Angular 2 Beta 17
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body>
+
+	<h1>
+		Trying To Enable Tabbing In Textareas In Angular 2 Beta 17
+	</h1>
+
+	<my-app>
+		Loading...
+	</my-app>
+
+	<!-- Load demo scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/17/es6-shim.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/17/Rx.umd.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/17/angular2-polyfills.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/17/angular2-all.umd.js"></script>
+	<!-- AlmondJS - minimal implementation of RequireJS. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/17/almond.js"></script>
+	<script type="text/javascript">
+
+		// Defer bootstrapping until all of the components have been declared.
+		requirejs( 
+			[ /* Using require() for better readability. */ ],
+			function run() {
+
+				ng.platform.browser.bootstrap( require( "App" ) );
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide the root application component.
+		define(
+			"App",
+			function registerApp() {
+
+				// Configure the App component definition.
+				ng.core
+					.Component({
+						selector: "my-app",
+						directives: [ require( "TabEnabled" ) ],
+
+						// In our textarea, we are using the tabEnabled directive to add
+						// adding custom key-press behavior; and, we're doing so in a way
+						// that needs to play nicely with the events that drive ngModel.
+						// That's one of the hardest parts of feature augmentation - not
+						// just the base implementation; but, implementing it in a way 
+						// that doesn't break other "expected" behavior.
+						template:
+						`
+							<textarea 
+								[(ngModel)]="content" 
+								(ngModelChange)="logCurrentValue()" 
+								tabEnabled 
+								autofocus>
+							</textarea>
+						`
+					})
+					.Class({
+						constructor: AppController
+					})
+				;
+
+				return( AppController );
+
+
+				// I control the App component.
+				function AppController() {
+
+					var vm = this;
+
+					// I hold the content of the textarea. We're using the ngModel 
+					// directive to facilitate two-way data binding. As such, the user's
+					// edits will automatically be pushed back into this property.
+					vm.content = "Hello world.";
+
+					// Expose the public methods.
+					vm.logCurrentValue = logCurrentValue;
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I log the current value (that has been synchronized by ngModel).
+					function logCurrentValue() {
+
+						console.log( "(ngModelChange):", vm.content );
+
+					}
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide a directive that enables tabbing and shift-tabbing in a textarea.
+		define(
+			"TabEnabled",
+			function registerTabEnabled() {
+
+				// Configure the TabEnabled directive definition.
+				ng.core
+					.Directive({
+						selector: "textarea[tabEnabled]",
+						host: {
+							"(keydown.tab)": "handleTab( $event )",
+							"(keydown.shift.tab)": "handleShiftTab( $event )",
+							"(keydown.enter)": "handleEnter( $event )"
+						}
+					})
+					.Class({
+						constructor: TabEnabledController
+					})
+				;
+
+				TabEnabledController.parameters = [
+					new ng.core.Inject( ng.core.ElementRef )
+				];
+
+				return( TabEnabledController );
+
+
+				// I control the TabEnabled directive.
+				function TabEnabledController( elementRef ) {
+
+					var vm = this;
+
+					// I hold the tab and newline implementations.
+					// --
+					// TODO: Wire "tab" into input binding so it can be dynamically 
+					// defined (such as if someone went CRAZY and wanted spaces).
+					var newline = getNewlineImplementation();
+					var tab = "\t";
+
+					// Expose the public methods.
+					vm.handleEnter = handleEnter;
+					vm.handleShiftTab = handleShiftTab;
+					vm.handleTab = handleTab;
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I handle the Enter key combination.
+					function handleEnter( event ) {
+
+						event.preventDefault();
+
+						// If we end up changing the textarea value, we need to dispatch
+						// a custom (input) event so that we play nicely with other 
+						// directives (like ngModel) and event handlers.
+						if ( setConfig( insertEnterAtSelection( getConfig() ) ) ) {
+
+							dispatchInputEvent();
+							
+						}
+
+					}
+
+
+					// I handle the Shift+Tab key combination.
+					function handleShiftTab( event ) {
+
+						event.preventDefault();
+
+						// If we end up changing the textarea value, we need to dispatch
+						// a custom (input) event so that we play nicely with other 
+						// directives (like ngModel) and event handlers.
+						if ( setConfig( removeTabAtSelection( getConfig() ) ) ) {
+
+							dispatchInputEvent();
+							
+						}
+
+					}
+
+
+					// I handle the Tab key combination.
+					function handleTab( event ) {
+
+						event.preventDefault();
+
+						// If we end up changing the textarea value, we need to dispatch
+						// a custom (input) event so that we play nicely with other 
+						// directives (like ngModel) and event handlers.
+						if ( setConfig( insertTabAtSelection( getConfig() ) ) ) {
+
+							dispatchInputEvent();
+							
+						}
+
+					}
+
+
+					// ---
+					// PRIVATE METHODS.
+					// ---
+
+
+					// I dispatch a custom (input) event.
+					function dispatchInputEvent() {
+
+						var bubbles = true;
+						var cancelable = false;
+						
+						// IE (shakes fist) uses some other kind of event initialization.
+						// As such, we'll default to trying the "normal" event generation
+						// and then fallback to using the IE version. 
+						try {
+
+							var inputEvent = new CustomEvent( 
+								"input",
+								{
+									bubbles: bubbles,
+									cancelable: cancelable
+								}
+							);
+
+						} catch ( error ) {
+
+							var inputEvent = document.createEvent( "CustomEvent" );
+
+							inputEvent.initCustomEvent( "input", bubbles, cancelable );
+
+						}
+
+						elementRef.nativeElement.dispatchEvent( inputEvent );
+
+					}
+
+
+					// I find the index of the line-start that contains the given offset.
+					function findStartOfLine( value, offset ) {
+
+						var delimiter = /[\r\n]/i;
+
+						for ( var i = ( offset - 1 ) ; i >= 0 ; i-- ) {
+
+							if ( delimiter.test( value.charAt( i ) ) ) {
+
+								return( i + 1 );
+
+							}
+
+						}
+
+						return( 0 );
+
+					}
+
+
+					// I get the current selection and value configuration for the 
+					// textarea element.
+					function getConfig() {
+
+						var element = elementRef.nativeElement;
+
+						return({
+							value: element.value,
+							start: element.selectionStart,
+							end: element.selectionEnd
+						});
+
+					}
+
+
+					// I calculate and return the newline implementation. Different 
+					// operating systems and browsers implement a "newline" with different
+					// character combinations.
+					function getNewlineImplementation() {
+
+						var fragment = document.createElement( "textarea" );
+						fragment.value = "\r\n";
+
+						return( fragment.value );
+
+					}
+
+
+					// I apply the Enter key combination to the given configuration.
+					function insertEnterAtSelection( config ) {
+
+						var value = config.value;
+						var start = config.start;
+						var end = config.end;
+
+						var leadingTabs = value
+							.slice( findStartOfLine( value, start ), start )
+							.match( new RegExp( ( "^(?:" + tab + ")+" ), "i" ) )
+						;
+
+						var tabCount = leadingTabs 
+							? leadingTabs[ 0 ].length
+							: 0
+						;
+
+						var preDelta = value.slice( 0, start );
+						var postDelta = value.slice( start );
+						var delta = ( newline + repeat( tab, tabCount ) );
+
+						return({
+							value: ( preDelta + delta + postDelta ),
+							start: ( start + delta.length ),
+							end: ( end + delta.length )
+						});
+
+					}
+
+
+					// I apply the Tab key combination to the given configuration.
+					function insertTabAtSelection( config ) {
+
+						var value = config.value;
+						var start = config.start;
+						var end = config.end;
+
+						var deltaStart = ( start === end )
+							? start
+							: findStartOfLine( value, start )
+						;
+						var deltaEnd = end;
+						var deltaValue = value.slice( deltaStart, deltaEnd );
+
+						var preDelta = value.slice( 0, deltaStart );
+						var postDelta = value.slice( deltaEnd );
+						
+						var replacement = deltaValue.replace( new RegExp( ( "(^|" + newline + ")" ), "g" ), ( "$1" + tab ) );
+
+						var newValue = ( preDelta + replacement + postDelta );
+						var newStart = ( start + tab.length );
+						var newEnd = ( end + ( replacement.length - deltaValue.length ) );
+
+						return({
+							value: newValue,
+							start: newStart,
+							end: newEnd
+						});
+
+					}
+
+
+					// I apply the Shift+Tab key combination to the given configuration.
+					function removeTabAtSelection( config ) {
+
+						var value = config.value;
+						var start = config.start;
+						var end = config.end;
+
+						var deltaStart = findStartOfLine( value, start )
+						var deltaEnd = end;
+						var deltaValue = value.slice( deltaStart, deltaEnd );
+						var deltaHasLeadingTab = ( deltaValue.indexOf( tab ) === 0 );
+
+						var preDelta = value.slice( 0, deltaStart );
+						var postDelta = value.slice( deltaEnd );
+
+						var replacement = deltaValue.replace( new RegExp( ( "^" + tab ), "gm" ), "" );
+
+						var newValue = ( preDelta + replacement + postDelta );
+						var newStart = deltaHasLeadingTab 
+							? ( start - tab.length )
+							: start
+						;
+						var newEnd = ( end - ( deltaValue.length - replacement.length ) );
+
+						return({
+							value: newValue,
+							start: newStart,
+							end: newEnd
+						});
+
+					}
+
+
+					// I repeat the given string the given number of times.
+					function repeat( value, count ) {
+
+						return( new Array( count + 1 ).join( value ) );
+
+					}
+
+
+					// I apply the given config to the textarea and return a flag 
+					// indicating as to whether or not any changes were precipitated.
+					function setConfig( config ) {
+
+						var element = elementRef.nativeElement;
+						
+						// If the value hasn't actually changed, just return out. There's
+						// no need to set the selection if nothing changed.
+						if ( config.value === element.value ) {
+
+							return( false );
+
+						}
+
+						element.value = config.value;
+						element.selectionStart = config.start;
+						element.selectionEnd = config.end;
+
+						return( true );
+
+					}
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>

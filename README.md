@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Trying To Enable Tabbing In Textareas In Angular 2 Beta 17](http://bennadel.github.io/JavaScript-Demos/demos/tab-enabled-textarea-angular2/)
 * [Learning About The Input Event From Angular 2](http://bennadel.github.io/JavaScript-Demos/demos/input-event/)
 * [Native Key-Combination Event Binding In Angular 2 Beta 17](http://bennadel.github.io/JavaScript-Demos/demos/key-events-plugin-angular2/)
 * [Querying For Multiple ViewChild Directives On A Single Element In Angular 2 Beta 17](http://bennadel.github.io/JavaScript-Demos/demos/view-child-multi-type-angular2/)
