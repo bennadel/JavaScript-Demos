@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [You Can Bind To The Same Event Several Times In Angular 2 Beta 17](http://bennadel.github.io/JavaScript-Demos/demos/multiple-bindings-angular2/)
 * [Trying To Enable Tabbing In Textareas In Angular 2 Beta 17](http://bennadel.github.io/JavaScript-Demos/demos/tab-enabled-textarea-angular2/)
 * [Learning About The Input Event From Angular 2](http://bennadel.github.io/JavaScript-Demos/demos/input-event/)
 * [Native Key-Combination Event Binding In Angular 2 Beta 17](http://bennadel.github.io/JavaScript-Demos/demos/key-events-plugin-angular2/)

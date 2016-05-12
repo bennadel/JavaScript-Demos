@@ -1,0 +1,185 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		You Can Bind To The Same Event Several Times In Angular 2 Beta 17
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body>
+
+	<h1>
+		You Can Bind To The Same Event Several Times In Angular 2 Beta 17
+	</h1>
+
+	<my-app>
+		Loading...
+	</my-app>
+
+	<!-- Load demo scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/17/es6-shim.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/17/Rx.umd.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/17/angular2-polyfills.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/17/angular2-all.umd.js"></script>
+	<!-- AlmondJS - minimal implementation of RequireJS. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/17/almond.js"></script>
+	<script type="text/javascript">
+
+		// Defer bootstrapping until all of the components have been declared.
+		requirejs( 
+			[ /* Using require() for better readability. */ ],
+			function run() {
+
+				ng.platform.browser.bootstrap( require( "App" ) );
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide the root App component.
+		define(
+			"App",
+			function registerApp() {
+
+				// Configure the App component meta-data.
+				ng.core
+					.Component({
+						selector: "my-app",
+						directives: [ require( "Widget" ) ],
+
+						// In this template, notice that we are binding to the (click)
+						// event and the (outputEvent) event several times in the span 
+						// of single component element. This works because Angular uses
+						// its own custom template parser rather than relying on this
+						// template being valid "HTML".
+						template:
+						`
+							<my-widget
+								(click)="groupEvents()"
+								(click)="logValue( 'a' )"
+								(click)="logValue( 'b' )"
+								(click)="logValue( 'c' )"
+								(click)="logValue( 'd' )"
+								(click)="groupEvents()"
+								(outputEvent)="logValue( $event + '-a' )"
+								(outputEvent)="logValue( $event + '-b' )"
+								(outputEvent)="logValue( $event + '-c' )"
+								(outputEvent)="logValue( $event + '-d' )">
+							</my-widget>
+						`
+					})
+					.Class({
+						constructor: AppController
+					})
+				;
+
+				return( AppController );
+
+
+				// I control the App component.
+				function AppController() {
+
+					var vm = this;
+
+					// Expose the public methods.
+					vm.groupEvents = groupEvents;
+					vm.logValue = logValue;
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I wrap all the expected output in a log-group.
+					function groupEvents() {
+
+						console.group( "Click it - click it real good!" );
+
+						// We need to execute the ending in a future tick in order to
+						// give the EventEmitters time to run.
+						setTimeout( console.groupEnd.bind( console ), 0 );
+
+					}
+
+
+					// I love the given value to the console.
+					function logValue( value ) {
+
+						console.log( "Value:", value );
+
+					}
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide a component that emits an output event.
+		define(
+			"Widget",
+			function registerWidget() {
+
+				// Configure the Widget component meta-data.
+				ng.core
+					.Component({
+						selector: "my-widget",
+						outputs: [ "outputEvent" ],
+						host: {
+							"(click)": "handleClick( $event )"
+						},
+						template: "Click Me!"
+					})
+					.Class({
+						constructor: WidgetController
+					})
+				;
+
+				return( WidgetController );
+
+
+				// I control the Widget component.
+				function WidgetController() {
+
+					var vm = this;
+
+					// I expose an output event binding.
+					vm.outputEvent = new ng.core.EventEmitter( /* isAsync = */ false );
+
+					// Expose the public methods.
+					vm.handleClick = handleClick;
+
+					
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I handle click events on the host.
+					function handleClick( event ) {
+
+						vm.outputEvent.next( "outputEvent" );
+
+					}
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>

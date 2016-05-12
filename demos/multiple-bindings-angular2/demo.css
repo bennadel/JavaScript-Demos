@@ -1,0 +1,11 @@
+
+my-widget {
+	border: 2px solid #CCCCCC ;
+	border-radius: 4px 4px 4px 4px ;
+	cursor: pointer ;
+	display: inline-block ;
+	padding: 15px 20px 15px 20px ;
+	user-select: none ;
+		-moz-user-select: none ;
+		-webkit-user-select: none ;
+}
