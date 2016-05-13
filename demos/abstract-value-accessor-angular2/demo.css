@@ -1,0 +1,34 @@
+
+a {
+	color: red ;
+	cursor: pointer ;
+	text-decoration: underline ;
+	user-select: none ;
+		-moz-user-select: none ;
+		-webkit-user-select: none ;
+}
+
+toggle {
+	border: 2px solid transparent ;
+	border-radius: 3px 3px 3px 3px ;
+	cursor: pointer ;
+	display: table ;
+	font-family: sans-serif ;
+	padding: 10px 20px 10px 20px ;
+	text-transform: uppercase ;
+	user-select: none ;
+		-moz-user-select: none ;
+		-webkit-user-select: none ;
+}
+
+toggle.for-off {
+	background-color: #F0F0F0 ;
+	border-color: #E0E0E0 ;
+	color: #999999 ;
+}
+
+toggle.for-on {
+	background-color: #FAFAFA ;
+	border-color: #AAAAAA ;
+	color: #333333 ;
+}

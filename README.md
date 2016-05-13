@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Creating An Abstract Value Accessor For NgModel In Angular 2 Beta 17](http://bennadel.github.io/JavaScript-Demos/demos/abstract-value-accessor-angular2/)
 * [You Can Bind To The Same Event Several Times In Angular 2 Beta 17](http://bennadel.github.io/JavaScript-Demos/demos/multiple-bindings-angular2/)
 * [Trying To Enable Tabbing In Textareas In Angular 2 Beta 17](http://bennadel.github.io/JavaScript-Demos/demos/tab-enabled-textarea-angular2/)
 * [Learning About The Input Event From Angular 2](http://bennadel.github.io/JavaScript-Demos/demos/input-event/)
