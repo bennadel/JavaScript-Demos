@@ -1,0 +1,17 @@
+[
+	{
+		"id": 1,
+		"name": "Anna",
+		"isBFF": false
+	},
+	{
+		"id": 2,
+		"name": "Kim",
+		"isBFF": true
+	},
+	{
+		"id": 3,
+		"name": "Tricia",
+		"isBFF": false
+	}
+]
