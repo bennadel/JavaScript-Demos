@@ -1,0 +1,480 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Creating A Value Accessor "Service" For NgModel In Angular 2 Beta 17
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></lin>
+</head>
+<body>
+
+	<h1>
+		Creating A Value Accessor "Service" For NgModel In Angular 2 Beta 17
+	</h1>
+
+	<my-app>
+		Loading...
+	</my-app>
+
+	<!-- Load demo scripts. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/17/es6-shim.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/17/Rx.umd.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/17/angular2-polyfills.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/17/angular2-all.umd.js"></script>
+	<!-- AlmondJS - minimal implementation of RequireJS. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/17/almond.js"></script>
+	<script type="text/javascript">
+
+		// Defer bootstrapping until all of the components have been declared.
+		requirejs( 
+			[ /* Using require() for better readability. */ ],
+			function run() {
+
+				ng.platform.browser.bootstrap( require( "App" ) );
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide the root application component.
+		define(
+			"App",
+			function registerApp() {
+
+				// Configure the App component definition.
+				ng.core
+					.Component({
+						selector: "my-app",
+
+						// Notice that we are proving two Toggle directives - one that
+						// handles the Toggle functionality; and, one that implements
+						// the ngModel value accessor.
+						directives: [ 
+							require( "Toggle" ),
+							require( "ToggleForNgModel" )
+						],
+						template:
+						`
+							<toggle [(ngModel)]="isOn"></toggle>
+
+							<p>
+								Set Toggle:
+								<a (click)="setToggle( true )">On</a>
+								<a (click)="setToggle( false )">Off</a>
+							</p>
+						`
+					})
+					.Class({
+						constructor: AppController
+					})
+				;
+
+				return( AppController );
+
+
+				// I control the App component.
+				function AppController() {
+
+					var vm = this;
+
+					// I determine whether or not the toggle is on.
+					vm.isOn = false;
+
+					// Expose the public methods.
+					vm.setToggle = setToggle;
+
+					
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I set the current toggle value.
+					function setToggle( newValue ) {
+
+						vm.isOn = newValue;
+
+					}
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide a toggle component that accepts a [value] input binding and emits
+		// a (valueChange) output binding event.
+		// --
+		// NOTE: The Toggle component doesn't know anything about ngModel. It only knows
+		// about the [value] and (valueChange) bindings. All ngModel functionality is
+		// provided by the sibling directive that implements a "value accessor" bridge.
+		define(
+			"Toggle",
+			function registerToggle() {
+
+				// Configure the Toggle component definition.
+				ng.core
+					.Component({
+						selector: "toggle",
+						inputs: [ "value" ],
+						outputs: [ "valueChange" ],
+						host: {
+							"(click)": "handleClick()",
+							"[class.for-on]": "value",
+							"[class.for-off]": "! value"
+						},
+						// NOTE: OnPush currently broken in Beta 17.
+						// --
+						// changeDetection: ng.core.ChangeDetectionStrategy.OnPush,
+						template:
+						`
+							{{ ( value ? "On" : "Off" ) }}
+						`
+					})
+					.Class({
+						constructor: ToggleController,
+
+						// Define the life-cycle methods on the prototype to that they
+						// will be picked up at runtime. 
+						ngOnChanges: function noop() {}
+					})
+				;
+
+				return( ToggleController );
+
+
+				// I control the Toggle component. 
+				function ToggleController() {
+
+					var vm = this;
+
+					// I hold the value of the toggle.
+					vm.value = false;
+
+					// I hold the event stream for the valueChange output binding.
+					vm.valueChange = new ng.core.EventEmitter();
+
+					// Expose the public methods.
+					vm.handleClick = handleClick;
+					vm.ngOnChanges = ngOnChanges;
+
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I handle the internal click event on the component. 
+					function handleClick() {
+
+						// Since we are adhering to a one-way data flow, we can't change
+						// the value directly. Instead, we have to emit a change and then
+						// leave it up to the calling context as to whether or not the
+						// change should be committed back to the component.
+						vm.valueChange.next( ! vm.value );
+
+					}
+
+
+					// I get called when any of the input bindings change.
+					function ngOnChanges( changes ) {
+
+						console.log(
+							"ngOnChanges: [value] from [%s] to [%s].",
+							( changes.value.isFirstChange() ? false : changes.value.previousValue ),
+							changes.value.currentValue
+						);
+
+					}
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide an ngModel-enabled bridge for the Toggle component.
+		define(
+			"ToggleForNgModel",
+			function registerToggleForNgModel() {
+
+				var ToggleValueAccessor = require( "ToggleValueAccessor" );
+
+				// Configure the ToggleForNgModel directive definition.
+				ng.core
+					.Directive({
+						// As the ngModel bridge, we want to match on instances of the 
+						// Toggle that are attempting to use ngModel.
+						selector: "toggle[ngModel],toggle[ngControl]",
+
+						// The value accessor bridge has to deal with both input and 
+						// output bindings. As such, we have to listen for (valueChange)
+						// events on the target component and translate them into "change"
+						// events on ngModel. For this, we will use the onChange() event
+						// handler provided by our value accessor service (which we will
+						// inject into this directive).
+						host: {
+							"(valueChange)": "valueAccessor.onChange( $event )"
+						},
+
+						// Because we are using a separate service for our value accessor,
+						// we have to provide the injector with BOTH the value accessor
+						// service and the value accessor "collection" (which will point
+						// back to the service).
+						providers: [
+							// Our value accessor service.
+							ToggleValueAccessor,
+
+							// Notice the use of "useExisting". This tells Angular to use
+							// the preceding class instance as the instance for our 
+							// value accessor collection as well.
+							ng.core.provide(
+								ng.common.NG_VALUE_ACCESSOR,
+								{
+									useExisting: ToggleValueAccessor,
+									multi: true
+								}
+							)
+						]
+					})
+					.Class({
+						constructor: ToggleForNgModelController
+					})
+				;
+
+				// Configure the injectable parameters.
+				ToggleForNgModelController.parameters = [
+					new ng.core.Inject( ToggleValueAccessor )
+				];
+
+				return( ToggleForNgModelController );
+
+
+				// I control the ToggleForNgModel directive.
+				function ToggleForNgModelController( toggleValueAccessor ) {
+
+					this.valueAccessor = toggleValueAccessor;
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I provide a value accessor service for the Toggle component.
+		define(
+			"ToggleValueAccessor",
+			function registerToggleValueAccessor() {
+
+				var Toggle = require( "Toggle" );
+
+				ToggleValueAccessor.parameters = [
+					new ng.core.Inject( Toggle ),
+					new ng.core.Inject( ng.core.ChangeDetectorRef )
+				];
+
+				// CAUTION: This is really just my ABSTRACT VALUE ACCESSOR from a 
+				// previous post; but, in order to reduce the noise, I'm just making
+				// it the actual accessor and hard-coding the target values.
+				function ToggleValueAccessor( toggle, changeDetectorRef ) {
+
+					// I hold the change detector reference (if supplied) used to mark
+					// the component as dirty (for OnPush change detection).
+					this._changeCount = 0;
+					this._changeDetectorRef = ( changeDetectorRef || null );
+
+					// I hold the change handlers registered by native Angular directives.
+					this._ngModelOnChange = null;
+					this._ngModelOnTouched = null;
+
+					// I hold the name of the property on the target component that is
+					// being modified via the two-way data flow.
+					this._property = "value";
+
+					// I hold the component for which we are implementing the ngModel-
+					// based two-way data flow.
+					this._target = toggle;
+
+				}
+
+				// Define the instance methods.
+				ToggleValueAccessor.prototype = {
+
+					// ---
+					// PUBLIC METHODS.
+					// ---
+
+
+					// I format the property value going into the target component.
+					format: function( incomingValue ) {
+
+						return( !! incomingValue ); // Coerce to Boolean.
+
+					},
+
+
+					// I handle the property change event emitted by the target component.
+					onChange: function( newValue ) {
+
+						// The whole point of the ngModel workflow is that we are breaking
+						// the one-way flow of data. As such, we want to take the emitted
+						// value and pipe it right back into the target component.
+						this._applyChangesToTarget( this._getValue(), newValue );
+
+						// Tell Angular that the component value has changed.
+						if ( this._ngModelOnChange ) {
+
+							this._ngModelOnChange( this.parse( newValue ) );
+
+						}
+
+					},
+
+
+					// I handle the touch event emitted by the target component.
+					onTouched: function() {
+
+						this._ngModelOnTouched && this._ngModelOnTouched();
+
+					},
+
+
+					// I parse the property value coming out of the target component.
+					parse: function( outgoingValue ) {
+
+						return( outgoingValue );
+
+					},
+
+
+					// I register the onChange handler provided by ngModel.
+					registerOnChange: function( newNgModelOnChange ) {
+
+						this._ngModelOnChange = newNgModelOnChange;
+
+					},
+					
+
+					// I register the onTouched handler provided by ngModel.
+					registerOnTouched: function( newNgModelOnTouched) {
+						
+						this._ngModelOnTouched = newNgModelOnTouched;
+
+					},
+
+
+					// I write the external value to the target component.
+					writeValue: function( newValue ) {
+
+						this._applyChangesToTarget( this._getValue(), this.format( newValue ) );
+
+					},
+
+
+					// ---
+					// PRIVATE METHODS.
+					// ---
+
+
+					// I apply the previous / new values to the target component and work
+					// with the change detector and component life-cycle methods to ensure
+					// that the target component is kept in sync.
+					_applyChangesToTarget: function( previousValue, newValue ) {
+
+						// Pipe the value right back into the target component.
+						this._setValue( newValue );
+
+						// If we have a change detector, flag the component as dirty.
+						if ( this._changeDetectorRef ) {
+
+							this._changeDetectorRef.markForCheck();
+
+						}
+
+						// If the target component exposes the ngOnChanges() life-cycle 
+						// method, we have to build the changes object and pass it through.
+						if ( this._target.ngOnChanges ) {
+
+							this._target.ngOnChanges( this._buildChanges( previousValue, newValue ) );
+
+						}
+
+					},
+
+
+					// I build and return a collection of SimpleChange objects for the 
+					// given change in the target property.
+					_buildChanges: function( previousValue, newValue ) {
+
+						var changes = {};
+						var change = changes[ this._property ] = new ng.core.SimpleChange( previousValue, newValue )
+						
+						// Unfortunately, Angular uses a private class in its internal 
+						// workflow to indicate which change is the first change. Since
+						// we don't have access to that class, we need to patch the 
+						// SimpleChange object on the first change to adhere to the 
+						// behavior that the target component is expecting.
+						if ( ! this._changeCount++ ) {
+
+							change.isFirstChange = this._returnTrue;
+
+						}
+
+						return( changes );
+
+					},
+
+
+					// I get the property value from the target component.
+					_getValue: function() {
+
+						return( this._target[ this._property ] );
+
+					},
+
+
+					// I return true. Always.
+					_returnTrue: function() {
+
+						return( true );
+
+					},
+
+
+					// I store the give value into the property of the target component.
+					_setValue: function( value ) {
+
+						this._target[ this._property ] = value;
+
+					}
+
+				};
+
+				return( ToggleValueAccessor );
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
