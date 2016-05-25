@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Better Type Checking With In-Browser TypeScript Transpiling In Angular 2](http://bennadel.github.io/JavaScript-Demos/demos/system-js-type-checking-angular2/)
 * [Building Angular 2 Demos With System.js And TypeScript](http://bennadel.github.io/JavaScript-Demos/demos/system-js-rc1-angular2/)
 * [Creating A Value Accessor "Service" For NgModel In Angular 2 Beta 17](http://bennadel.github.io/JavaScript-Demos/demos/value-accessor-service-angular2/)
 * [Creating An Abstract Value Accessor For NgModel In Angular 2 Beta 17](http://bennadel.github.io/JavaScript-Demos/demos/abstract-value-accessor-angular2/)
