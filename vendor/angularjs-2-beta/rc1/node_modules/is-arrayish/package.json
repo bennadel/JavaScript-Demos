@@ -53,7 +53,7 @@
   "directories": {},
   "dist": {
     "shasum": "77c99840527aa8ecb1a8ba697b80645a7a926a9d",
-    "tarball": "http://registry.npmjs.org/is-arrayish/-/is-arrayish-0.2.1.tgz"
+    "tarball": "https://registry.npmjs.org/is-arrayish/-/is-arrayish-0.2.1.tgz"
   },
   "gitHead": "53f22aa6ce557d7d31a3d1152a590a2df220df9d",
   "homepage": "https://github.com/qix-/node-is-arrayish#readme",

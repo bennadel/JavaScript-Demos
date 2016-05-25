@@ -12,16 +12,19 @@
 		"@angular/router": "2.0.0-rc.1",
 		"@angular/router-deprecated": "2.0.0-rc.1",
 		"@angular/upgrade": "2.0.0-rc.1",
-		"angular2-in-memory-web-api": "0.0.9",
-		"core-js": "^2.4.0",
-		"systemjs": "0.19.27",
-		"reflect-metadata": "^0.1.3",
+		"core-js": "2.4.0",
+		"systemjs": "0.19.28",
+		"reflect-metadata": "0.1.3",
 		"rxjs": "5.0.0-beta.6",
-		"zone.js": "^0.6.12"
+		"zone.js": "0.6.12"
 	},
 	"devDependencies": {
-		"typescript": "^1.8.10",
-		"plugin-typescript": "^4.0.10",
-		"typings": "^0.8.1"
+		"typescript": "1.8.10",
+		"plugin-typescript": "4.0.17",
+		"typings": "0.8.1"
+	},
+	"scripts": {
+		"postinstall": "typings install",
+		"typings": "typings"
 	}
 }
