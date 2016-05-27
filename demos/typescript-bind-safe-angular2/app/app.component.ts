@@ -32,6 +32,7 @@ export class AppComponent {
 		this.testA();
 		this.testB();
 		this.testC();
+		this.testD();
 
 		// Logging out the current object so we can see what is on the instance
 		// and what is on the prototype.
@@ -127,6 +128,28 @@ export class AppComponent {
 	public testC_handleSubscribe = ( value: number ) : void => {
 
 		this.someNumericProp = "value"; // <-- Type incompatibility.
+
+	}
+
+
+	// IN this test, I'm going back to my older (and preferred style) in which the 
+	// callback is defined below its usage (and hoisted). However, rather than using
+	// the .bind() method, we're using a closed-over "self" reference to maintain a 
+	// proper, type-safe reference to the THIS scope.
+	public testD() : void {
+		
+		var self = this;
+
+		Observable
+			.of<number>( 1 )
+			.subscribe( handleSubscribe )
+		;
+
+		function handleSubscribe( value: number ) : void {
+
+			self.someNumericProp = "value"; // <-- Type incompatibility.
+
+		}
 
 	}
 
