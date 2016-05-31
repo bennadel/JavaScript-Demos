@@ -48,7 +48,7 @@ export class GlobalKeyEventsPlugin { /* WISH: extends KeyEventsPlugin | EventMan
 		// 2) {Required} Key combination, ex: "Command.H".
 		// 3) {Required} Priority, ex "100".
 		// 4) {Optional} Termianl flag, "T".
-		this.eventNamePattern = /^(key(?:down|up))((?:\.[^.\s]+)+)\s*@\s*(\d+)(\s*T)?$/i;
+		this.eventNamePattern = /^(key(?:down|up))((?:\.[^.\s]+)+)\s*@\s*(\d+)\s*(T)?$/i;
 
 	}
 
