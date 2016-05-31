@@ -1,0 +1,39 @@
+
+my-app {
+	background-color: #FAFAFA ;
+	border: 1px solid #CCCCCC ;
+	border-radius: 4px 4px 4px 4px ;
+	display: block ;
+	height: 100px ;
+	padding: 15px 15px 15px 15px ;
+	position: relative ;
+	width: 400px ;
+}
+
+layer-one,
+layer-two,
+layer-three {
+	background-color: #F0F0F0 ;
+	border: 1px solid #CCCCCC ;
+	border-radius: 4px 4px 4px 4px ;
+	box-shadow: 2px 2px 5px #E0E0E0 ;
+	display: block ;
+	height: 75px ;
+	left: 45px ;
+	padding: 15px 15px 15px 15px ;
+	position: absolute ;
+	top: 45px ;
+	width: 400px ;
+}
+
+layer-one {
+	background-color: #F0F0F0 ;
+}
+
+layer-two {
+	background-color: #EAEAEA ;
+}
+
+layer-three {
+	background-color: #E0E0E0 ;
+}
