@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Thinking About Static vs. Private Methods In TypeScript / Angular 2](http://bennadel.github.io/JavaScript-Demos/demos/static-vs-private-methods-angular2/)
 * [Prioritizing Global Key Handlers In Angular 2 RC1](http://bennadel.github.io/JavaScript-Demos/demos/global-key-combos-angular2/)
 * [Maintaining Type-Checking With Callbacks Using TypeScript In Angular 2 RC1](http://bennadel.github.io/JavaScript-Demos/demos/typescript-bind-safe-angular2/)
 * [Better Type Checking With In-Browser TypeScript Transpiling In Angular 2](http://bennadel.github.io/JavaScript-Demos/demos/system-js-type-checking-angular2/)

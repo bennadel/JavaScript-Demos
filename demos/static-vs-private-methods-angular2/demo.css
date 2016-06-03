@@ -1,0 +1,18 @@
+
+my-app {
+	display: block ;
+	font-size: 18px ;
+}
+
+input { 
+	font-size: 18px ;
+	margin-right: 10px ;
+	width: 220px ;
+}
+
+span.reversed {
+	background-color: #FFDC73 ;
+	border-radius: 4px 4px 4px 4px ;
+	display: inline-block ;
+	padding: 0px 5px 0px 5px ;
+}
