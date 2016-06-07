@@ -1,0 +1,48 @@
+
+my-app {
+	display: block ;
+	font-size: 18px ;
+}
+
+dynamic-repeater {
+	border: 1px dashed #333333 ;
+	display: block ;
+	padding: 20px 20px 20px 20px ;
+}
+
+dynamic-repeater header *:first-child {
+	margin-top: 0px ;
+}
+
+dynamic-repeater footer *:last-child {
+	margin-bottom: 0px ;
+}
+
+dynamic-repeater-body {
+	border: 1px solid #AAAAAA ;
+	border-radius: 3px 3px 3px 3px ;
+	border-spacing: 10px 10px ;
+	display: table ;
+}
+
+dynamic-repeater-item {
+	border: 1px solid #CCCCCC ;
+	border-radius: 3px 3px 3px 3px ;
+	display: table-cell ;
+	min-width: 80px ;
+	padding: 10px 10px 10px 10px ;
+	text-align: center ;
+}
+
+div.swatch {
+	border-radius: 50px 50px 50px 50px ;
+	height: 50px ;
+	margin: 3px auto 13px auto ;
+	width: 50px ;
+}
+
+div.name {
+	font-size: 16px ;
+	line-height: 18px ;
+	font-family: sans-serif ;
+}
