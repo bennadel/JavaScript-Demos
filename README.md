@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Templates Appear To Maintain Lexical Bindings In Angular 2 RC 1](http://bennadel.github.io/JavaScript-Demos/demos/ng-for-template-angular2/)
 * [Experimenting With Dynamic Template Rendering In Angular 2 RC 1](http://bennadel.github.io/JavaScript-Demos/demos/dynamic-repeater-template-angular2/)
 * [Thinking About Static vs. Private Methods In TypeScript / Angular 2](http://bennadel.github.io/JavaScript-Demos/demos/static-vs-private-methods-angular2/)
 * [Prioritizing Global Key Handlers In Angular 2 RC1](http://bennadel.github.io/JavaScript-Demos/demos/global-key-combos-angular2/)
