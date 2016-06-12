@@ -1,0 +1,90 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Creating A Pre-Bootstrap Loading Screen In Angular 2 RC 1
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+
+	<!-- Load libraries (including polyfill(s) for older browsers. -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/rc1/node_modules/core-js/client/shim.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/rc1/node_modules/zone.js/dist/zone.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/rc1/node_modules/reflect-metadata/Reflect.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/rc1/node_modules/systemjs/dist/system.src.js"></script>
+	<!-- Configure SystemJS loader. -->
+	<script type="text/javascript" src="./system.config.js"></script>
+</head>
+<body>
+
+	<h1>
+		Creating A Pre-Bootstrap Loading Screen In Angular 2 RC 1
+	</h1>
+
+	<my-app>
+		
+		<!--
+			Anything inside the <my-app> component content-area will be automatically 
+			replaced with the "template" (associated with the <my-app> component) once 
+			the application is bootstrapped. The upside of this is that it just happens 
+			automatically. The downside of this is that the content instantaneously 
+			disappears once the application has been bootstrapped.
+		-->
+
+		<style type="text/css">
+
+			#pre-bootstrap {
+				background-color: #262626 ;
+				bottom: 0px ;
+				left: 0px ;
+				position: fixed ;
+				right: 0px ;
+				top: 0px ;
+				z-index: 999999 ;
+			}
+
+			#pre-bootstrap div.messaging {
+				color: #FFFFFF ;
+				font-family: monospace ;
+				left: 0px ;
+				margin-top: -37px ;
+				position: absolute ;
+				right: 0px ;
+				text-align: center ;
+				top: 50% ;
+			}
+
+			#pre-bootstrap h1 {
+				font-size: 26px ;
+				line-height: 35px ;
+				margin: 0px 0px 20px 0px ;
+			}
+
+			#pre-bootstrap p {
+				font-size: 18px ;
+				line-height: 14px ;
+				margin: 0px 0px 0px 0px ;
+			}
+
+		</style>
+
+		<div id="pre-bootstrap">
+			<div class="messaging">
+
+				<h1>
+					App is Loading
+				</h1>
+
+				<p>
+					Please stand by for your ticket to awesome-town!
+				</p>
+				
+			</div>
+		</div>
+
+	</my-app>
+	
+</body>
+</html>
