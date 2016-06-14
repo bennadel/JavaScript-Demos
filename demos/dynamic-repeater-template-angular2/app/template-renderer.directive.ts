@@ -12,7 +12,7 @@ import{ ViewContainerRef } from "@angular/core";
 // * render (aliased as "template")
 // * context
 // --
-// ... however, you can additionally provide other sub-properties of "conext" to make
+// ... however, you can additionally provide other sub-properties of "context" to make
 // the binding syntax easier to read. 
 export function createTemplateRenderer( ...propertyNames: string[] ) {
 
