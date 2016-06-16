@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Thinking About Draggability Within A Unidirectional Data Flow In Angular 2 RC 1](http://bennadel.github.io/JavaScript-Demos/demos/draggable-component-angular2/)
 * [Creating A Pre-Bootstrap Loading Screen In Angular 2 RC 1](http://bennadel.github.io/JavaScript-Demos/demos/pre-bootstrap-loading-screen-angular2/)
 * [Templates Appear To Maintain Lexical Bindings In Angular 2 RC 1](http://bennadel.github.io/JavaScript-Demos/demos/ng-for-template-angular2/)
 * [Experimenting With Dynamic Template Rendering In Angular 2 RC 1](http://bennadel.github.io/JavaScript-Demos/demos/dynamic-repeater-template-angular2/)

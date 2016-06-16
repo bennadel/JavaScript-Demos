@@ -1,0 +1,42 @@
+
+my-app {
+	border: 1px dashed #CCCCCC ;
+	bottom: 10px ;
+	display: block ;
+	left: 10px ;
+	position: fixed ;
+	right: 10px ;
+	top: 100px ;
+}
+
+chip {
+	background-color: #FF0099 ;
+	border-radius: 80px 80px 80px 80px ;
+	color: #FFFFFF ;
+	cursor: pointer ;
+	display: block ;
+	height: 80px ;
+	margin: -40px 0px 0px -40px ;
+	position: absolute ;
+	text-align: center ;
+	user-select: none ;
+		-moz-user-select: none ;
+		-webkit-user-select: none ;
+	width: 80px ;
+}
+
+chip div.label {
+	font-size: 14px ;
+	left: 0px ;
+	position: absolute ;
+	right: 0px ;
+	top: 24px ;
+}
+
+chip div.coordinates {
+	font-size: 12px ;
+	left: 0px ;
+	position: absolute ;
+	right: 0px ;
+	top: 47px ;
+}
