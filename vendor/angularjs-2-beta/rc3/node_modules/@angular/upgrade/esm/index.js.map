@@ -1,0 +1,1 @@
+{"version":3,"file":"index.js","sourceRoot":"","sources":["../../../../modules/@angular/upgrade/index.ts"],"names":[],"mappings":"AAAA,cAAc,WAAW,CAAC","sourcesContent":["export * from './upgrade';\n\ninterface DecoratorInvocation {\n  type: Function;\n  args?: any[];\n}\n"]}
