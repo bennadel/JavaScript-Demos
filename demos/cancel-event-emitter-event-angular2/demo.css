@@ -1,0 +1,40 @@
+
+my-app {
+	display: block ;
+}
+
+file-uploader {
+	background-color: #FAFAFA ;
+	border: 4px dashed #CCCCCC ;
+	border-radius: 10px 10px 10px 10px ;
+	color: #CCCCCC ;
+	display: block ;
+	min-height: 200px ;
+	margin: 16px 0px 16px 0px ;
+	position: relative ;
+}
+
+file-uploader.for-hover {
+	background-color: #F0F0F0 ;
+	color: #999999 ;
+}
+
+file-uploader div.instructions {
+	font-size: 36px ;
+	left: 0px ;
+	line-height: 40px ;
+	margin-top: -20px ;
+	position: absolute ;
+	right: 0px ;
+	text-align: center ;
+	top: 50% ;
+}
+
+a {
+	color: red ;
+	cursor: pointer ;
+	text-decoration: underline ;
+	user-select: none ;
+		-moz-user-select: none ;
+		-webkit-user-select: none ;
+}

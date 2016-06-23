@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Emitting Cancelable / Preventable Output Events In Angular 2 RC 3](http://bennadel.github.io/JavaScript-Demos/demos/cancel-event-emitter-event-angular2/)
 * [ChangeDetectorRef Is A Special Dependency In Angular 2 RC 3](http://bennadel.github.io/JavaScript-Demos/demos/change-detector-ref-dependency-angular2/)
 * [Inline Object Literals Don't Trigger Unnecessary Input Changes In Angular 2 RC 2](http://bennadel.github.io/JavaScript-Demos/demos/inline-object-literals-angular2/)
 * [Thinking About Draggability Within A Unidirectional Data Flow In Angular 2 RC 1](http://bennadel.github.io/JavaScript-Demos/demos/draggable-component-angular2/)
