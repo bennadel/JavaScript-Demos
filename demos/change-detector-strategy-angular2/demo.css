@@ -1,0 +1,23 @@
+
+my-app {
+	display: block ;
+}
+
+my-label,
+my-push-label {
+	background-color: #FAFAFA ;
+	border: 1px solid #CCCCCC ;
+	border-radius: 4px 4px 4px 4px ;
+	display: table ;
+	margin: 16px 0px 16px 0px ;
+	padding: 10px 17px 10px 17px ;
+}
+
+a {
+	color: red ;
+	cursor: pointer ;
+	text-decoration: underline ;
+	user-select: none ;
+		-moz-user-select: none ;
+		-webkit-user-select: none ;
+}
