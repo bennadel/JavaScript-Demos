@@ -1,0 +1,93 @@
+
+my-app {
+	display: block ;
+}
+
+a {
+	color: red ;
+	cursor: pointer ;
+	text-decoration: underline ;
+	user-select: none ;
+		-moz-user-select: none ;
+		-webkit-user-select: none ;
+}
+
+html-dropdown {
+	cursor: pointer ;
+	display: inline-block ;
+	position: relative ;
+	user-select: none ;
+		-moz-user-select: none ;
+		-webkit-user-select: none ;
+}
+
+html-dropdown div.dropdown-root {
+	border: 1px solid #CCCCCC ;
+	border-radius: 3px 3px 3px 3px ;
+	min-width: 100px ;
+}
+
+html-dropdown div.dropdown-root div.placeholder {
+	padding: 10px 10px 10px 10px ;
+}
+
+html-dropdown ul.dropdown-items {
+	border: 1px solid #CCCCCC ;
+	border-radius: 0px 0px 3px 3px ;
+	border-top-width: 0px ;
+	left: 0px ;
+	list-style-type: none ;
+	margin: 0px 0px 0px 0px ;
+	min-width: 100px ;
+	padding: 0px 0px 0px 0px ;
+	position: absolute ;
+	top: 100% ;
+}
+
+html-dropdown ul.dropdown-items li {
+	background-color: #FFFFFF ;
+	border-top: 1px solid #CCCCCC ;
+	margin: 0px 0px 0px 0px ;
+	min-width: 100% ;	
+	padding: 0px 0px 0px 0px ;
+}
+
+html-dropdown ul.dropdown-items li:hover {
+	background-color: #FAFAFA ;
+}
+
+html-dropdown div.dropdown-item-content {
+	position: relative ;
+}
+
+html-dropdown.is-open div.dropdown-root {
+	border-bottom-width: 0px ;
+	border-radius: 3px 3px 0px 0px ;
+}
+
+
+/* Special customizations. */
+
+html-dropdown div.dropdown-root,
+html-dropdown ul.dropdown-items {
+	min-width: 200px ;
+}
+
+html-dropdown div.dropdown-item-content {
+	height: 66px ;
+	line-height: 66px ;
+}
+
+html-dropdown img {
+	border-radius: 46px 46px 46px 46px ;
+	height: 46px ;
+	left: 10px ;
+	position: absolute ;
+	top: 10px ;
+	width: 46px ;
+}
+
+html-dropdown span.name {
+	font-size: 26px ;
+	padding-left: 70px ;
+}

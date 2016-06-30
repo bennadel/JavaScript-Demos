@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Using An Item Template With An HTML Dropdown Menu Component In Angular 2 RC 3](http://bennadel.github.io/JavaScript-Demos/demos/html-dropdown-template-angular2/)
 * [Change Detection Strategy Appears To Override The ChangeDetectorRef In Angular 2 RC 3](http://bennadel.github.io/JavaScript-Demos/demos/change-detector-strategy-angular2/)
 * [Emitting Cancelable / Preventable Output Events In Angular 2 RC 3](http://bennadel.github.io/JavaScript-Demos/demos/cancel-event-emitter-event-angular2/)
 * [ChangeDetectorRef Is A Special Dependency In Angular 2 RC 3](http://bennadel.github.io/JavaScript-Demos/demos/change-detector-ref-dependency-angular2/)
