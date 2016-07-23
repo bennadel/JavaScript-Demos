@@ -1,0 +1,88 @@
+:host {
+  display: block ;
+  height: 0px ;
+  z-index: 1100;
+}
+.__container {
+  bottom: 0px ;
+  left: 0px ;
+  position: fixed ;
+  right: 0px ;
+  top: 0px ;
+}
+.__backdrop {
+  background-color: rgba(0, 0, 0, 0.5);
+  bottom: 0px ;
+  cursor: pointer ;
+  left: 0px ;
+  position: absolute ;
+  right: 0px ;
+  top: 0px ;
+}
+.__close-inbox {
+  background-color: #FFFFFF ;
+  border-radius: 40px 40px 40px 40px ;
+  color: #333333 ;
+  cursor: pointer ;
+  height: 40px ;
+  line-height: 40px ;
+  position: absolute ;
+  right: 30px ;
+  text-align: center ;
+  top: 25px ;
+  width: 40px ;
+}
+.__close-inbox:after {
+  content: "\2715";
+}
+.__panel-1 {
+  animation: panel-1-enter 250ms;
+  bottom: 0px ;
+  left: 0px ;
+  position: absolute ;
+  top: 0px ;
+  width: 270px;
+  z-index: 1103;
+}
+@keyframes panel-1-enter {
+  from {
+    left: -270px;
+  }
+  to {
+    left: 0px ;
+  }
+}
+.__panel-2 {
+  animation: panel-2-enter 250ms;
+  bottom: 0px ;
+  left: 270px;
+  position: absolute ;
+  top: 0px ;
+  width: 348px;
+  z-index: 1102;
+}
+@keyframes panel-2-enter {
+  from {
+    left: -348px;
+  }
+  to {
+    left: 270px;
+  }
+}
+.__panel-3 {
+  animation: panel-3-enter 250ms;
+  bottom: 0px ;
+  left: 618px;
+  position: absolute ;
+  top: 0px ;
+  width: 590px;
+  z-index: 1101;
+}
+@keyframes panel-3-enter {
+  from {
+    left: -590px;
+  }
+  to {
+    left: 618px;
+  }
+}

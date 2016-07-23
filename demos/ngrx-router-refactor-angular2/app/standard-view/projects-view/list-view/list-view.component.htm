@@ -1,0 +1,73 @@
+
+<div class="bn-standard-header">
+	<div class="bn-standard-header__container">
+
+		<span linkTo="/" class="bn-standard-header__logo">
+			in
+		</span>
+
+		<h1 class="bn-standard-header__title">
+			My Projects
+		</h1>
+
+	</div>
+</div>
+
+<div class="bn-stndard-body">
+	<div class="bn-standard-body__container">
+
+		<form class="__form">
+
+			<input 
+				type="text" 
+				[(ngModel)]="filter" 
+				(ngModelChange)="handleFilter()" 
+				(keydown.enter)="handleEnter()"
+				(focus)="filterHasFocus = true"
+				(blur)="filterHasFocus = false"
+				placeholder="Search for a project..." 
+				autofocus 
+				class="__filter" 
+			/>
+
+			<span *ngIf="( filterHasFocus && filter.length )" class="__filter-tip">
+				&#8592; <strong>Tip:</strong> Hit <code class="__filter-tip__key">Enter</code> to navigate to first item.
+			</span>
+
+		</form>
+
+
+		<!-- BEGIN: Loading State. -->
+		<template [ngIf]="isLoading">
+
+			<bn-loading-indicator class="__loading"></bn-loading-indicator>
+
+		</template>
+		<!-- END: Loading State. -->
+
+
+		<!-- BEGIN: Loaded State. -->
+		<template [ngIf]="! isLoading">
+
+			<ul class="__projects">
+				<li 
+					*ngFor="let item of filteredProjects"
+					class="__project __project--column-{{ item.column }}"
+					[bnShowBlock]="item.visible">
+
+					<a linkTo="/projects/{{ item.project.id }}" class="__project-link">
+						<span class="__project-name">{{ item.project.name }}</span>
+					</a>
+
+				</li>
+			</ul>
+
+			<p class="__failure-case">
+				<a linkTo="/projects/999999">Goto Missing Project</a>
+			</p>
+
+		</template>
+		<!-- END: Loaded State. -->	
+
+	</div>
+</div>

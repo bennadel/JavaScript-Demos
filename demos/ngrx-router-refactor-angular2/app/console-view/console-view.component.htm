@@ -1,0 +1,58 @@
+
+<!-- BEGIN: Loading State. -->
+<template [ngIf]="isLoading">
+
+	<bn-loading-indicator class="__loading"></bn-loading-indicator>
+
+</template>
+<!-- END: Loading State. -->
+
+
+<!-- BEGIN: Loaded State. -->
+<template [ngIf]="! isLoading">
+
+	<div class="__workspace">
+
+		<route-view></route-view>
+
+	</div>
+
+	<nav *ngIf="( screens.length > 1 )" class="__cycle">
+		<a (click)="cycleScreen( -1 )" class="__prev-screen"></a>
+		<a (click)="cycleScreen( 1 )" class="__next-screen"></a>
+	</nav>
+
+	<div class="__toolbar">
+
+		<nav class="__context">
+			<a linkTo="/" class="__context-logo">
+				in
+			</a>
+			<a linkTo="/projects/{{ project.id }}" class="__context-project">
+				<span>{{ project.name }}</span>
+			</a>
+			<a (click)="toggleScreenBrowser()" class="__context-screen" [class.__context-screen--open]="isShowingScreenBrowser">
+				<span>{{ screen.name }}</span>
+			</a>
+		</nav>
+
+		<nav class="__tools">
+			<a linkTo="/console/project/{{ project.id }}/screen/{{ screen.id }}/preview" class="__tool-item" linkActive="__tool-item--on">Preview</a>
+			<a linkTo="/console/project/{{ project.id }}/screen/{{ screen.id }}/build" class="__tool-item" linkActive="__tool-item--on">Build</a>
+			<a linkTo="/console/project/{{ project.id }}/screen/{{ screen.id }}/comments" class="__tool-item" linkActive="__tool-item--on">Comments</a>
+			<a linkTo="/console/project/{{ project.id }}/screen/{{ screen.id }}/history" class="__tool-item" linkActive="__tool-item--on">History</a>
+		</nav>
+
+	</div>
+
+	<bn-screen-browser
+		*ngIf="isShowingScreenBrowser"
+		[screens]="screens"
+		[selectedScreen]="screen"
+		(screenSelect)="gotoScreen( $event.id )"
+		(close)="toggleScreenBrowser()"
+		class="__screen-browser">
+	</bn-screen-browser>
+
+</template>
+<!-- BEGIN: Loaded State. -->

@@ -1,0 +1,34 @@
+
+<span class="__logo">in</span>
+
+
+<!-- BEGIN: Loading State. -->
+<template [ngIf]="isLoading">
+
+	<bn-loading-indicator theme="dark" class="__loading"></bn-loading-indicator>
+
+</template>
+<!-- END: Loading State. -->
+
+
+<!-- BEGIN: Loaded State. -->
+<template [ngIf]="! isLoading">
+
+	<div class="__projects-container">
+
+		<h2 class="__header">
+			Recent Conversations
+		</h2>
+
+		<ul class="__projects">
+			<li *ngFor="let project of projects" class="__project">
+				<a (click)="viewProject( project.id )" class="__project-link" [class.__project-link--on]="( project.id === projectId )">
+					{{ project.name }}
+				</a>
+			</li>
+		</ul>
+
+	</div>
+
+</template>
+<!-- END: Loaded State. -->

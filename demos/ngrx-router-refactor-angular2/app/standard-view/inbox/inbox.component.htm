@@ -1,0 +1,33 @@
+
+<div *ngIf="isShowingInbox" class="__container">
+
+	<div (click)="closeInbox()" class="__backdrop">
+		<a class="__close-inbox"></a>
+	</div>
+
+	<!--
+		Since we don't have auxiliary routes in the ngRx Router, we are going to hack
+		the query-parameters to provide hooks into a parallel route for the inbox.
+		Where we might have an additional router outlet, we're going to explicitly
+		include the appropriate "view" component when the query params indicate it.
+	-->
+
+	<div class="__panel-1">
+
+		<bn-inboxes-view></bn-inboxes-view>
+
+	</div>
+
+	<div *ngIf="projectId" class="__panel-2">
+		
+		<bn-notifications-view></bn-notifications-view>
+		
+	</div>
+
+	<div *ngIf="conversationId" class="__panel-3">
+		
+		<bn-conversation-view></bn-conversation-view>
+
+	</div>
+
+</div>

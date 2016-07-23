@@ -1,0 +1,46 @@
+
+<div class="__header">
+
+	<span class="__screen-count">
+		{{ screens.length }}
+		<template [ngIf]="( screens.length > 1 )">Screens</template>
+		<template [ngIf]="( screens.length === 1 )">Screen</template>
+	</span>
+
+	<a (click)="close.next()" class="__close"></a>
+
+</div>
+
+<div class="__content">
+
+	<form class="__form">
+		
+		<input 
+			[(ngModel)]="filter" 
+			(ngModelChange)="handleFilter()" 
+			(keydown.enter)="handleEnter()"
+			placeholder="Search for a screen..."
+			autofocus 
+			class="__filter" 
+		/>
+
+	</form>
+
+	<ul class="__screens">
+		<li 
+			*ngFor="let item of filteredScreens" 
+			class="__screen __screen--column-{{ item.column }}"
+			[bnShowBlock]="item.visible">
+			
+			<a 
+				(click)="selectScreen( item.screen )" 
+				class="__screen-link"
+				[class.__screen-link--selected]="( item.screen === selectedScreen )">
+				<span class="__screen-image"></span>
+				<span class="__screen-name">{{ item.screen.name }}</span>
+			</a>
+
+		</li>
+	</ul>
+
+</div>

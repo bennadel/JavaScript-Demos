@@ -1,0 +1,146 @@
+
+@headerHeight: 60px ;
+
+:host {
+	display: block ;
+	position: relative ;
+}
+
+.__header {
+	background-color: #1F2532 ;
+	height: @headerHeight ;
+	position: absolute ;
+	left: 0px ;
+	right: 0px ;
+	top: 0px ;
+}
+
+.__screen-count {
+	color: #8C94A1 ;
+	display: block ;
+	font-size: 14px ;
+	font-weight: 700 ;
+	line-height: @headerHeight ;
+	padding-left: 18px ;
+}
+
+.__close {
+	color: #8C94A1 ;
+	cursor: pointer ;
+	height: @headerHeight ;
+	line-height: @headerHeight ;
+	position: absolute ;
+	right: 0px ;
+	text-align: center ;
+	top: 0px ;
+	transition: color 100ms ease ;
+		-moz-transition: color 100ms ease ;
+		-webkit-transition: color 100ms ease ;
+	width: @headerHeight ;
+
+	&:after {
+		content: "\2715" ;
+	}
+
+	&:hover {
+		color: #FFFFFF ;
+	}
+}
+
+.__content {
+	background-color: #252C3A ;
+	border-bottom: 1px solid #2D3544 ;
+	border-top: 1px solid #2D3544 ;
+	bottom: 0px ;
+	overflow: auto ;
+	padding: 50px 30px 30px 30px ;
+	position: absolute ;
+	left: 0px ;
+	right: 0px ;
+	top: @headerHeight ;
+}
+
+.__form {
+	margin: 0px auto 0px auto ;
+	width: 1170px ;
+}
+
+.__filter {
+	background: none ;
+	border: none ;
+	border-bottom: 1px solid #2D3544 ;
+	color: #C6CEDA ;
+	font-size: 13px ;
+	padding: 10px 20px 10px 20px ;
+	width: 200px ;
+}
+
+.__screens {
+	list-style-type: none ;
+	margin: 40px auto 0px auto ;
+	padding: 0px 0px 0px 0px ;
+	width: 1170px ;
+
+	&:after {
+		clear: both ;
+		content: "" ;
+		display: table ;
+	}
+}
+
+.__screen {
+	float: left ;
+	margin: 0px 54px 20px 0px ;
+	padding: 0px 0px 0px 0px ;
+
+	// Variations.
+
+	&--column-4 {
+		margin-right: 0px ;
+	}
+}
+
+.__screen-link {
+	cursor: pointer ;
+	display: block ;
+
+	&:hover {
+		.__screen-image {
+			background-color: #111111 ;
+		}
+
+		.__screen-name {
+			color: #ACB1BE ;
+		}
+	}
+
+	// Variations.
+
+	&--selected {
+		.__screen-image {
+			border-color: #FF3366 ;
+		}
+	}
+}
+
+.__screen-image {
+	background-color: #222222 ;
+	border: 1px solid #111111 ;
+	border-radius: 3px 3px 3px 3px ;
+	display: block ;
+	height: 150px ;
+	margin-bottom: 10px ;
+	transition: background-color 100ms ease ;
+		-moz-transition: background-color 100ms ease ;
+		-webkit-transition: background-color 100ms ease ;
+	width: 250px ;
+}
+
+.__screen-name {
+	color: #757B8C ;
+	display: block ;
+	text-align: center ;
+	transition: color 100ms ease ;
+		-moz-transition: color 100ms ease ;
+		-webkit-transition: color 100ms ease ;
+}

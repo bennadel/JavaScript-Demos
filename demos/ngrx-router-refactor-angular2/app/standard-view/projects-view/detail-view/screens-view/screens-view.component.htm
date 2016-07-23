@@ -1,0 +1,48 @@
+
+<!-- BEGIN: Loading State. -->
+<template [ngIf]="isLoading">
+	
+	<bn-loading-indicator class="__loading"></bn-loading-indicator>
+
+</template>
+<!-- END: Loading State. -->
+
+
+<!-- BEGIN: Loaded State. -->
+<template [ngIf]="! isLoading">
+	
+	<form class="__form">
+
+		<input type="text" 
+			[(ngModel)]="filter" 
+			(ngModelChange)="handleFilter()"
+			(keydown.enter)="handleEnter()"
+			(focus)="filterHasFocus = true"
+			(blur)="filterHasFocus = false"
+			placeholder="Search for a screen..." 
+			autofocus 
+			class="__filter" 
+		/>
+
+		<span *ngIf="( filterHasFocus && filter.length )" class="__filter-tip">
+			&#8592; <strong>Tip:</strong> Hit <code class="__filter-tip__key">Enter</code> to navigate to first item.
+		</span>
+
+	</form>
+
+	<ul class="__screens">
+		<li 
+			*ngFor="let item of filteredScreens"
+			class="__screen __screen-column-{{ item.column }}"
+			[bnShowBlock]="item.visible">
+
+			<a linkTo="/console/project/{{ item.screen.projectId }}/screen/{{ item.screen.id }}" class="__screen-link">
+				<span class="__screen-name">{{ item.screen.name }}</span>
+				<span class="__screen-filename">{{ item.screen.filename }}</span>
+			</a>
+
+		</li>
+	</ul>
+
+</template>
+<!-- END: Loaded State. -->

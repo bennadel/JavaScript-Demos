@@ -1,0 +1,27 @@
+
+<div class="__nav-container">
+	<nav class="__nav">
+		
+		<span *ngIf="isShowingLogo" linkTo="/" class="__logo">
+			in
+		</span>
+
+		<a linkTo="/projects" class="__nav-item" linkActive="__nav-item--on" [activeOptions]="{ exact: true }">Prototypes</a>
+		<a linkTo="/boards" class="__nav-item" linkActive="__nav-item--on" [activeOptions]="{ exact: true }">Boards</a>
+		<a linkTo="/activity" class="__nav-item" linkActive="__nav-item--on" [activeOptions]="{ exact: true }">Activity</a>
+		<a linkTo="/team" class="__nav-item" linkActive="__nav-item--on" [activeOptions]="{ exact: true }">People</a>
+		<a linkTo="/learn" class="__nav-item" linkActive="__nav-item--on" [activeOptions]="{ exact: true }">Learn</a>
+		<a linkTo="/blamo" class="__nav-item" linkActive="__nav-item--on" [activeOptions]="{ exact: true }">Blamo (bad link)</a>
+
+		<a (click)="openInbox()" class="__nav-item __nav-item--inbox">Inbox</a>
+
+	</nav>
+</div>
+
+<route-view></route-view>
+
+<a (click)="openHelp()" class="__help-root">
+	Help
+</a>
+
+<bn-inbox></bn-inbox>

@@ -1,0 +1,51 @@
+
+<div class="__header">
+	<span class="__project-name">Project Name</span>
+</div>
+
+<div class="__notifications-container">
+
+	<ul class="__notifications">
+		<li class="__notification">
+			
+			<a (click)="viewNotification( 100 )" class="__notification-link" [class.__notification-link--on]="( 100 === conversationId )">
+				<span class="__avatar">BN</span>
+				<span class="__screen-name">Screen name</span>
+				<span class="__teaser">Notification 100. Teaser text for conversation will go here.</span>
+				<span class="__author">Ben Nadel</span>				
+			</a>
+
+		</li>
+		<li class="__notification">
+			
+			<a (click)="viewNotification( 200 )" class="__notification-link" [class.__notification-link--on]="( 200 === conversationId )">
+				<span class="__avatar">BN</span>
+				<span class="__screen-name">Screen name</span>
+				<span class="__teaser">Notification 200. Teaser text for conversation will go here.</span>
+				<span class="__author">Ben Nadel</span>				
+			</a>
+
+		</li>
+		<li class="__notification">
+			
+			<a (click)="viewNotification( 300 )" class="__notification-link" [class.__notification-link--on]="( 300 === conversationId )">
+				<span class="__avatar">BN</span>
+				<span class="__screen-name">Screen name</span>
+				<span class="__teaser">Notification 300. Teaser text for conversation will go here.</span>
+				<span class="__author">Ben Nadel</span>				
+			</a>
+
+		</li>
+		<li class="__notification">
+			
+			<a (click)="viewNotification( 400 )" class="__notification-link" [class.__notification-link--on]="( 400 === conversationId )">
+				<span class="__avatar">BN</span>
+				<span class="__screen-name">Screen name</span>
+				<span class="__teaser">Notification 400. Teaser text for conversation will go here.</span>
+				<span class="__author">Ben Nadel</span>				
+			</a>
+
+		</li>
+	</ul>
+
+</div>

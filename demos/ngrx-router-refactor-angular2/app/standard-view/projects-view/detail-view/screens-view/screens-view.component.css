@@ -1,0 +1,89 @@
+:host {
+  display: block ;
+}
+.__filter {
+  border: 0px solid #CCCCCC ;
+  border-bottom-width: 1px ;
+  padding: 10px 20px 10px 10px ;
+  width: 300px ;
+}
+.__filter-tip {
+  color: #666666 ;
+  display: inline-block;
+  font-size: 14px ;
+  margin-left: 15px ;
+  vertical-align: middle ;
+}
+.__filter-tip__key {
+  background-color: #FAFAFA ;
+  border: 1px solid #DADADA ;
+  border-radius: 4px 4px 4px 4px ;
+  color: #CC0000 ;
+  display: inline-block;
+  margin: 0px 2px 0px 2px ;
+  padding: 1px 7px 2px 7px ;
+}
+.__screens {
+  list-style-type: none ;
+  margin: 40px 0px 0px 0px ;
+  padding: 0px 0px 0px 0px ;
+}
+.__screens:after {
+  clear: both ;
+  content: "";
+  display: table ;
+}
+.__screen {
+  float: left ;
+  margin: 0px 26px 40px 0px ;
+}
+.__screen-column-4 {
+  margin-right: 0px ;
+}
+.__screen-link {
+  background-color: #FAFAFA ;
+  border: 1px solid #DFE2E6 ;
+  border-radius: 2px 2px 2px 2px ;
+  display: block ;
+  height: 250px ;
+  position: relative ;
+  width: 271px ;
+}
+.__screen-link:hover .__screen-name {
+  padding-bottom: 45px ;
+}
+.__screen-link:hover .__screen-filename {
+  opacity: 1.0 ;
+}
+.__screen-name {
+  background-color: #FFFFFF ;
+  bottom: 0px ;
+  box-shadow: 0px -1px 0px 0px rgba(80, 88, 104, 0.12);
+  color: #666666 ;
+  font-weight: 400 ;
+  left: 0px ;
+  padding: 30px 0px 30px 0px ;
+  position: absolute ;
+  text-align: center ;
+  transition: padding 150ms ease ;
+  -moz-transition: padding 150ms ease ;
+  -webkit-transition: padding 150ms ease ;
+  white-space: nowrap ;
+  right: 0px ;
+}
+.__screen-filename {
+  bottom: -30px;
+  color: #CCCCCC ;
+  opacity: 0.0 ;
+  font-size: 14px ;
+  left: 50% ;
+  position: absolute ;
+  text-decoration: none ;
+  transition: opacity 150ms ease ;
+  -moz-transition: opacity 150ms ease ;
+  -webkit-transition: opacity 150ms ease ;
+  transform: translateX(-50%);
+  -moz-transform: translateX(-50%);
+  -webkit-transform: translateX(-50%);
+  white-space: nowrap ;
+}

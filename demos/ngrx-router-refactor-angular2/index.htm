@@ -1,0 +1,144 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Exploring The ngRx Router In Angular 2 RC 4
+	</title>
+</head>
+<body>
+
+	<bn-app></bn-app>
+
+	<!-- 
+		BEGIN: Pre-bootstrap loading container. 
+
+		This container exist outside of the Angular 2 application so that we can render
+		it immediately (while the application is being bootstrapped) and then control the
+		manner in which it is removed.
+	-->
+	<div id="pre-bootstrap-container">
+
+		<style type="text/css">
+			
+			#pre-bootstrap-content {
+				background-color: #181D28 ;
+				bottom: 0px ;
+				left: 0px ;
+				opacity: 1.0 ;
+				position: fixed ;
+				right: 0px ;
+				top: 0px ;
+				transition: all linear 300ms ;
+					-webkit-transition: all linear 300ms ;
+				z-index: 999999 ;
+			}
+
+			#pre-bootstrap-content.loaded {
+				opacity: 0.0 ;
+			}
+
+			#pre-bootstrap-content div.logo {
+				background-color: #0D1016 ;
+				border-radius: 20px 20px 20px 20px ;
+				color: #FFFFFF ;
+				font-size: 64px ;
+				left: 50% ;
+				padding: 17px 40px 17px 40px ;
+				position: absolute ;
+				text-align: center ;
+				top: 50% ;
+				transform: translateX( -50% ) translateY( -50% ) ;
+					-moz-transform: translateX( -50% ) translateY( -50% ) ;
+					-webkit-transform: translateX( -50% ) translateY( -50% ) ;
+			}
+
+			#pre-bootstrap-content div.warning {
+				animation: pulse 2s infinite ;
+				bottom: 50px ;
+				color: #9EA1A7 ;
+				font-size: 18px ;
+				left: 0px ;
+				position: absolute ;
+				right: 0px ;
+				text-align: center ;
+			}
+
+			@keyframes pulse {
+				0%, 
+				100% {
+					opacity: 0.5 ;
+				}
+				50% {
+					opacity: 1.0 ;
+				}
+			}
+
+		</style>
+
+		<div id="pre-bootstrap-content">
+			<div class="logo">
+				in
+			</div>
+			<div class="warning">
+				&mdash; loading over 450 files &mdash;
+			</div>
+		</div>
+
+		<script type="text/javascript">
+
+			// At this point, we haven't even loaded the System.js config file. As such, 
+			// the application bootstrapping promise isn't even available. We need to 
+			// wait for the DOMContentLoaded event before we know that the promise is 
+			// globally available.
+			document.addEventListener(
+				"DOMContentLoaded",
+				function handleContentLoaded() {
+
+					var container = document.getElementById( "pre-bootstrap-container" );
+					var content = document.getElementById( "pre-bootstrap-content" );
+
+					// When the bootstrapping is complete, start tearing down the 
+					// pre-bootstrap loading experience.
+					window.bootstrapping.then( teardownStart );
+
+
+					function teardownStart() {
+
+						content.className += " loaded";
+						setTimeout( teardownEnd, 350 );
+
+					}
+
+					function teardownEnd() {
+
+						container.remove();
+
+					}
+
+				}
+			);
+
+		</script>
+
+	</div>
+	<!-- END: Pre-bootstrap loading container. -->
+
+
+	<!-- This stuff can all load in the background, behind the pre-bootstrap. -->
+
+	<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700"></link>
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+
+	<!-- Load libraries (including polyfill(s) for older browsers). -->
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/rc4/node_modules/core-js/client/shim.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/rc4/node_modules/zone.js/dist/zone.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/rc4/node_modules/reflect-metadata/Reflect.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs-2-beta/rc4/node_modules/systemjs/dist/system.src.js"></script>
+
+	<!-- Configure SystemJS loader. -->
+	<script type="text/javascript" src="./system.config.js"></script>
+
+</body>
+</html>

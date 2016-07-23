@@ -1,0 +1,218 @@
+:host {
+  bottom: 0px ;
+  display: block ;
+  left: 0px ;
+  position: fixed ;
+  right: 0px ;
+  top: 0px ;
+}
+.__loading {
+  bottom: 0px ;
+  left: 0px ;
+  position: fixed ;
+  right: 0px ;
+  top: 0px ;
+}
+.__workspace {
+  bottom: 60px;
+  left: 0px ;
+  overflow-y: auto ;
+  position: absolute ;
+  right: 0px ;
+  top: 0px ;
+}
+.__prev-screen {
+  bottom: 60px;
+  cursor: pointer ;
+  position: absolute ;
+  left: -100px;
+  top: 0px ;
+  transition: left 150ms ease ;
+  width: 120px ;
+}
+.__prev-screen:after {
+  background-color: #1F2532 ;
+  border-radius: 10px 10px 10px 10px ;
+  box-sizing: border-box;
+  color: #FFFFFF ;
+  content: "\276E";
+  font-size: 60px ;
+  height: 100px ;
+  line-height: 100px ;
+  left: 0px ;
+  margin-top: -50px;
+  padding-right: 7px ;
+  position: absolute ;
+  text-align: center ;
+  top: 50% ;
+  width: 100px ;
+}
+.__prev-screen:hover {
+  left: 0px ;
+}
+.__prev-screen:hover:after {
+  left: 20px ;
+}
+.__next-screen {
+  bottom: 60px;
+  cursor: pointer ;
+  position: absolute ;
+  right: -100px;
+  top: 0px ;
+  transition: right 150ms ease ;
+  width: 120px ;
+}
+.__next-screen:after {
+  background-color: #1F2532 ;
+  border-radius: 10px 10px 10px 10px ;
+  box-sizing: border-box;
+  color: #FFFFFF ;
+  content: "\276F";
+  font-size: 60px ;
+  height: 100px ;
+  line-height: 100px ;
+  margin-top: -50px;
+  padding-left: 7px ;
+  position: absolute ;
+  right: 0px ;
+  text-align: center ;
+  top: 50% ;
+  width: 100px ;
+}
+.__next-screen:hover {
+  right: 0px ;
+}
+.__next-screen:hover:after {
+  right: 20px ;
+}
+.__toolbar {
+  background-color: #1F2532 ;
+  bottom: 0px ;
+  height: 60px;
+  left: 0px ;
+  position: absolute ;
+  right: 0px ;
+}
+.__tools {
+  text-align: center ;
+}
+.__tool-item {
+  color: #757B8C ;
+  display: inline-block;
+  font-size: 13px ;
+  font-weight: 400 ;
+  height: 60px;
+  letter-spacing: 0.8px ;
+  line-height: 60px;
+  padding: 0px 20px 0px 20px ;
+  position: relative ;
+  text-decoration: none ;
+  text-transform: uppercase ;
+  transition: color 100ms ease ;
+  -moz-transition: color 100ms ease ;
+  -webkit-transition: color 100ms ease ;
+}
+.__tool-item:hover {
+  color: #ACB1BE ;
+}
+.__tool-item--on {
+  color: #ACB1BE ;
+}
+.__tool-item--on:after {
+  background-color: #FF3366 ;
+  content: "";
+  height: 3px ;
+  left: 0px ;
+  position: absolute ;
+  right: 0px ;
+  top: 0px ;
+}
+.__context {
+  bottom: 0px ;
+  font-size: 13px ;
+  left: 0px ;
+  line-height: 60px;
+  position: absolute ;
+  top: 0px ;
+}
+.__context-logo {
+  color: #FFFFFF ;
+  float: left ;
+  font-size: 26px ;
+  font-weight: 600 ;
+  height: 60px;
+  padding: 0px 20px 0px 20px ;
+  text-decoration: none ;
+  vertical-align: middle ;
+}
+.__context-project {
+  color: #757B8C ;
+  float: left ;
+  font-weight: 400 ;
+  height: 60px;
+  padding: 0px 20px 0px 30px ;
+  position: relative ;
+  text-decoration: none ;
+  vertical-align: middle ;
+}
+.__context-project:before {
+  bottom: 0px ;
+  content: "\276F";
+  left: 0px ;
+  position: absolute ;
+  top: 0px ;
+}
+.__context-project span {
+  transition: color 100ms ease ;
+  -moz-transition: color 100ms ease ;
+  -webkit-transition: color 100ms ease ;
+}
+.__context-project:hover span {
+  color: #ACB1BE ;
+}
+.__context-screen {
+  color: #757B8C ;
+  cursor: pointer ;
+  float: left ;
+  font-weight: 400 ;
+  height: 60px;
+  padding: 0px 22px 0px 30px ;
+  position: relative ;
+  text-decoration: none ;
+  vertical-align: middle ;
+}
+.__context-screen:before {
+  bottom: 0px ;
+  content: "\276F";
+  left: 0px ;
+  position: absolute ;
+  top: 0px ;
+}
+.__context-screen:after {
+  bottom: 0px ;
+  color: #757B8C ;
+  content: "\25B2";
+  font-size: 10px ;
+  position: absolute ;
+  right: 0px ;
+  top: 1px ;
+}
+.__context-screen span {
+  transition: color 100ms ease ;
+  -moz-transition: color 100ms ease ;
+  -webkit-transition: color 100ms ease ;
+}
+.__context-screen:hover span {
+  color: #ACB1BE ;
+}
+.__context-screen--open:after {
+  content: "\25BC";
+}
+.__screen-browser {
+  bottom: 60px;
+  left: 0px ;
+  position: fixed ;
+  right: 0px ;
+  top: 0px ;
+  z-index: 1000 ;
+}

@@ -1,0 +1,66 @@
+:host {
+  background-color: #1F2532 ;
+  bottom: 0px ;
+  display: block ;
+  left: 0px ;
+  position: absolute ;
+  right: 0px ;
+  top: 0px ;
+}
+.__logo {
+  color: #FFFFFF ;
+  font-size: 30px ;
+  font-weight: 600 ;
+  left: 25px ;
+  line-height: 30px ;
+  position: absolute ;
+  top: 27px ;
+}
+.__loading {
+  bottom: 0px ;
+  left: 0px ;
+  position: absolute ;
+  right: 0px ;
+  top: 0px ;
+}
+.__projects-container {
+  bottom: 0px ;
+  left: 0px ;
+  overflow: auto ;
+  padding: 25px 0px 25px 0px ;
+  position: absolute ;
+  right: 0px ;
+  top: 80px;
+}
+.__header {
+  color: #DADEE6 ;
+  font-size: 10px ;
+  font-weight: 600 ;
+  margin: 0px 0px 15px 25px ;
+  text-transform: uppercase ;
+}
+.__projects {
+  list-style-type: none ;
+  margin: 0px 0px 0px 0px ;
+  padding: 0px 0px 0px 0px ;
+}
+.__project {
+  padding-right: 20px ;
+}
+.__project-link {
+  border-radius: 0px 3px 3px 0px ;
+  color: #91949A ;
+  cursor: pointer ;
+  display: block ;
+  font-size: 13px ;
+  font-weight: 400 ;
+  padding: 10px 10px 11px 25px ;
+}
+.__project-link:hover {
+  background-color: #252D3D ;
+}
+.__project-link--on,
+.__project-link--on:hover {
+  background-color: #1E8FE1 ;
+  color: #EBEDF2 ;
+}

@@ -1,0 +1,45 @@
+
+<!-- BEGIN: Loading State. -->
+<template [ngIf]="isLoading">
+
+	<bn-loading-indicator class="__loading"></bn-loading-indicator>
+
+</template>
+<!-- END: Loading State. -->
+
+
+<!-- BEGIN: Loaded State. -->
+<template [ngIf]="! isLoading">
+
+	<div class="bn-standard-header bn-standard-header--with-nav">
+		<div class="bn-standard-header__container">
+
+			<span linkTo="/projects" class="bn-standard-header__logo">
+				in
+			</span>
+
+			<h1 class="bn-standard-header__title">
+				{{ project.name }}
+			</h1>
+
+			<nav class="bn-standard-header__nav">
+				<a linkTo="/projects/{{ project.id }}/screens" class="bn-standard-header__nav-item" linkActive="bn-standard-header__nav-item--on">Screens</a>
+				<a linkTo="/projects/{{ project.id }}/workflow" class="bn-standard-header__nav-item" linkActive="bn-standard-header__nav-item--on">Workflow</a>
+				<a linkTo="/projects/{{ project.id }}/activity" class="bn-standard-header__nav-item" linkActive="bn-standard-header__nav-item--on">Activity</a>
+				<a linkTo="/projects/{{ project.id }}/comments" class="bn-standard-header__nav-item" linkActive="bn-standard-header__nav-item--on">Comments</a>
+				<a linkTo="/projects/{{ project.id }}/assets" class="bn-standard-header__nav-item" linkActive="bn-standard-header__nav-item--on">Assets</a>
+			</nav>
+
+		</div>
+	</div>
+
+	<div class="bn-stndard-body">
+		<div class="bn-standard-body__container">
+
+			<route-view></route-view>
+
+		</div>
+	</div>
+
+</template>
+<!-- END: Loaded State. -->

@@ -1,0 +1,104 @@
+body {
+  font-family: "Open Sans", sans-serif;
+  font-size: 16px ;
+  font-smoothing: antialiased ;
+  -webkit-font-smoothing: antialiased ;
+  font-weight: 300 ;
+  margin: 0px 0px 0px 0px ;
+  padding: 0px 0px 0px 0px ;
+}
+input,
+select,
+textarea {
+  font-family: "Open Sans", sans-serif;
+  font-size: 16px ;
+  font-weight: 300 ;
+}
+my-app {
+  display: block ;
+}
+.bn-standard-header {
+  background-color: #1F2532 ;
+  display: block ;
+  margin-bottom: 50px ;
+  padding: 25px 0px 48px 0px ;
+}
+.bn-standard-header__container {
+  margin: 0px auto 0px auto ;
+  position: relative ;
+  width: 1170px ;
+}
+.bn-standard-header__logo {
+  border-right: 1px solid #2C3242 ;
+  color: #FFFFFF ;
+  cursor: pointer ;
+  font-size: 30px ;
+  font-weight: 600 ;
+  height: 36px ;
+  line-height: 36px ;
+  padding-right: 20px ;
+  position: absolute ;
+  left: -84px;
+  text-align: center ;
+  top: 0px ;
+  width: 40px ;
+}
+.bn-standard-header__title {
+  color: #FFFFFF ;
+  font-size: 32px ;
+  font-weight: 300 ;
+  line-height: 36px ;
+  margin: 0px 0px 0px 0px ;
+}
+.bn-standard-header__nav {
+  margin-left: -20px;
+  margin-top: 30px ;
+  position: relative ;
+}
+.bn-standard-header__nav-item {
+  color: #757B8C ;
+  float: left ;
+  font-size: 13px ;
+  font-weight: 400 ;
+  letter-spacing: 0.8px ;
+  margin-right: 10px ;
+  padding: 10px 20px 18px 20px ;
+  position: relative ;
+  text-decoration: none ;
+  text-transform: uppercase ;
+  transition: color 100ms ease ;
+  -moz-transition: color 100ms ease ;
+  -webkit-transition: color 100ms ease ;
+}
+.bn-standard-header__nav-item:hover {
+  color: #ACB1BE ;
+}
+.bn-standard-header__nav-item--on {
+  color: #ACB1BE ;
+}
+.bn-standard-header__nav-item--on:after {
+  background-color: #FF3366 ;
+  bottom: 0px ;
+  content: "";
+  height: 2px ;
+  left: 0px ;
+  position: absolute ;
+  right: 0px ;
+}
+.bn-standard-header:after {
+  clear: both ;
+  content: "";
+  display: table ;
+}
+.bn-standard-header--with-nav {
+  padding-bottom: 0px ;
+}
+.bn-standard-body {
+  display: block ;
+}
+.bn-standard-body__container {
+  margin: 0px auto 0px auto ;
+  position: relative ;
+  width: 1170px ;
+}
+/*# sourceMappingURL=demo.css.map */

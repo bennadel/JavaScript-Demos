@@ -1,0 +1,79 @@
+:host {
+	display: block ;	
+}
+
+.__nav-container {
+	background-color: #1F2532 ;
+}
+
+.__nav {
+	height: 60px ;
+	margin: 0px auto 0px auto ;
+	position: relative ;
+	width: 1170px ;
+}
+
+.__logo {
+	color: #79808F ;
+	cursor: pointer ;
+	font-size: 18px ;
+	font-weight: 600 ;
+	height: 60px ;
+	line-height: 58px ;
+	position: absolute ;
+	left: -60px ;
+	text-align: center ;
+	top: 0px ;
+	width: 40px ;
+}
+
+.__nav-item {
+	color: #757B8C ;
+	cursor: pointer ;
+	display: inline-block ;
+	float: left ;
+	font-size: 14px ;
+	font-weight: 400 ;
+	height: 60px ;
+	line-height: 60px ;
+	padding: 0px 20px 0px 20px ;
+	text-decoration: none ;
+	transition: color 100ms ease ;
+		-moz-transition: color 100ms ease ;
+		-webkit-transition: color 100ms ease ;
+	
+	&:first-of-type {
+		padding-left: 0px ;
+	}
+
+	&:hover {
+		color: #ACB1BE ;
+	}
+
+	// ---
+	// VARIATIONS.
+	// ---
+
+	&--on {
+		color: #ACB1BE ;
+	}
+
+	&--inbox {
+		float: right ;
+	}
+}
+
+.__help-root {
+	background-color: #191D28 ;
+	border-radius: 40px 40px 40px 40px ;
+	bottom: 30px ;
+	color: #FFFFFF ;
+	cursor: pointer ;
+	font-size: 16px ;
+	font-weight: 600 ;
+	height: 38px ;
+	line-height: 38px ;
+	padding: 0px 20px 0px 20px ;
+	position: fixed ;
+	right: 25px ;
+}

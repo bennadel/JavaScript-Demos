@@ -1,0 +1,99 @@
+:host {
+  background-color: #F6F6F6 ;
+  bottom: 0px ;
+  display: block ;
+  left: 0px ;
+  position: absolute ;
+  right: 0px ;
+  top: 0px ;
+}
+.__header {
+  background-color: #FFFFFF ;
+  border-bottom: 1px solid #E1E2E6 ;
+  height: 80px;
+  left: 0px ;
+  position: absolute ;
+  right: 0px ;
+  top: 0px ;
+}
+.__project-name {
+  color: #3D4356 ;
+  font-size: 14px ;
+  font-weight: 600 ;
+  left: 29px ;
+  line-height: 80px;
+  position: absolute ;
+  top: 0px ;
+  text-transform: uppercase ;
+}
+.__notifications-container {
+  bottom: 0px ;
+  left: 0px ;
+  overflow: auto ;
+  position: absolute ;
+  right: 0px ;
+  top: 80px;
+}
+.__notifications {
+  list-style-type: none ;
+  margin: 0px 0px 0px 0px ;
+  padding: 0px 0px 0px 0px ;
+}
+.__notification {
+  border-bottom: 1px solid #E1E2E6 ;
+}
+.__notification-link {
+  cursor: pointer ;
+  display: block ;
+  padding: 15px 15px 15px 84px ;
+  position: relative ;
+}
+.__notification-link--on {
+  background-color: #1E81D6 ;
+}
+.__notification-link--on .__avatar {
+  background-color: #78B3E6 ;
+}
+.__notification-link--on .__screen-name {
+  color: #85B5DE ;
+}
+.__notification-link--on .__teaser {
+  color: #FFFFFF ;
+}
+.__notification-link--on .__author {
+  color: #85B5DE ;
+}
+.__avatar {
+  background-color: #8D96AA ;
+  border-radius: 50px 50px 50px 50px ;
+  color: #FFFFFF ;
+  font-size: 12px ;
+  font-weight: 400 ;
+  height: 35px ;
+  left: 30px ;
+  line-height: 35px ;
+  position: absolute ;
+  text-align: center ;
+  text-transform: uppercase ;
+  top: 35px ;
+  width: 35px ;
+}
+.__screen-name {
+  color: #8C96A9 ;
+  display: block ;
+  font-size: 11px ;
+  text-transform: uppercase ;
+}
+.__teaser {
+  color: #333C4E ;
+  display: block ;
+  font-size: 13px ;
+  font-weight: 400 ;
+  line-height: 19px ;
+  margin: 7px 0px 10px 0px ;
+}
+.__author {
+  color: #8C96A9 ;
+  display: block ;
+  font-size: 11px ;
+}

@@ -1,0 +1,104 @@
+
+@panel1Width: 270px ;
+@panel2Width: 348px ;
+@panel3Width: 590px ;
+@zIndex: 1100 ;
+
+:host {
+	display: block ;
+	height: 0px ;
+	z-index: @zIndex ;
+}
+
+.__container {
+	bottom: 0px ;
+	left: 0px ;
+	position: fixed ;
+	right: 0px ;
+	top: 0px ;
+}
+
+.__backdrop {
+	background-color: rgba( 0, 0, 0, 0.5 ) ;
+	bottom: 0px ;
+	cursor: pointer ;
+	left: 0px ;
+	position: absolute ;
+	right: 0px ;
+	top: 0px ;
+}
+
+.__close-inbox {
+	background-color: #FFFFFF ;
+	border-radius: 40px 40px 40px 40px ;
+	color: #333333 ;
+	cursor: pointer ;
+	height: 40px ;
+	line-height: 40px ;
+	position: absolute ;
+	right: 30px ;
+	text-align: center ;
+	top: 25px ;
+	width: 40px ;
+
+	&:after {
+		content: "\2715" ;
+	}
+}
+
+.__panel-1 {
+	animation: panel-1-enter 250ms ;
+	bottom: 0px ;
+	left: 0px ;
+	position: absolute ;
+	top: 0px ;
+	width: @panel1Width ;
+	z-index: ( @zIndex + 3 ) ;
+}
+
+@keyframes panel-1-enter {
+	from {
+		left: -@panel1Width ;
+	}
+	to {
+		left: 0px ;
+	}
+}
+
+.__panel-2 {
+	animation: panel-2-enter 250ms ;
+	bottom: 0px ;
+	left: @panel1Width ;
+	position: absolute ;
+	top: 0px ;
+	width: @panel2Width ;
+	z-index: ( @zIndex + 2 ) ;
+}
+
+@keyframes panel-2-enter {
+	from {
+		left: -@panel2Width ;
+	}
+	to {
+		left: @panel1Width ;
+	}
+}
+
+.__panel-3 {
+	animation: panel-3-enter 250ms ;
+	bottom: 0px ;
+	left: ( @panel1Width + @panel2Width ) ;
+	position: absolute ;
+	top: 0px ;
+	width: @panel3Width ;
+	z-index: ( @zIndex + 1 ) ;
+}
+
+@keyframes panel-3-enter {
+	from {
+		left: -@panel3Width ;
+	}
+	to {
+		left: ( @panel1Width + @panel2Width ) ;
+	}
+}
