@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Implementing A $log-Inspired Logging Service In Angular 2 RC 4](http://bennadel.github.io/JavaScript-Demos/demos/log-service-angular2/)
 * [Object Access: Bracket-Notation vs. Dot-Notation With TypeScript In Angular 2 RC 4](http://bennadel.github.io/JavaScript-Demos/demos/object-notation-typescript-angular2/)
 * [Using An Item Template With An HTML Dropdown Menu Component In Angular 2 RC 3](http://bennadel.github.io/JavaScript-Demos/demos/html-dropdown-template-angular2/)
 * [Change Detection Strategy Appears To Override The ChangeDetectorRef In Angular 2 RC 3](http://bennadel.github.io/JavaScript-Demos/demos/change-detector-strategy-angular2/)
