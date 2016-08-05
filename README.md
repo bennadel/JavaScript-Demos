@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [The Import Statement Creates A "Live" View Of Modules In ES6 And TypeScript In Angular 2](http://bennadel.github.io/JavaScript-Demos/demos/import-read-only-view-angular2/)
 * [Implementing A $log-Inspired Logging Service In Angular 2 RC 4](http://bennadel.github.io/JavaScript-Demos/demos/log-service-angular2/)
 * [Object Access: Bracket-Notation vs. Dot-Notation With TypeScript In Angular 2 RC 4](http://bennadel.github.io/JavaScript-Demos/demos/object-notation-typescript-angular2/)
 * [Using An Item Template With An HTML Dropdown Menu Component In Angular 2 RC 3](http://bennadel.github.io/JavaScript-Demos/demos/html-dropdown-template-angular2/)
