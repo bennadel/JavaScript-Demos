@@ -106,7 +106,8 @@ export class ErrorLogService {
 				{
 					type: error.name,
 					message: error.message,
-					stack: error.stack
+					stack: error.stack,
+					location: window.location.href
 				}
 			)
 			.subscribe(
