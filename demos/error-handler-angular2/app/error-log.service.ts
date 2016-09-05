@@ -63,6 +63,8 @@ export class ErrorLogService {
 		
 			console.group( "Error Log Service" );
 			console.error( error );
+			console.error( error.message );
+			console.error( error.stack );
 			console.groupEnd();
 		
 		}
