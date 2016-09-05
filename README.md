@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Creating A Custom ErrorHandler In Angular 2 RC 6](http://bennadel.github.io/JavaScript-Demos/demos/error-handler-angular2/)
 * [FAILURE: Exploring The ngRx Router In Angular 2 RC 4](http://bennadel.github.io/JavaScript-Demos/demos/ngrx-router-refactor-angular2/)
 * [Experimenting With SVG (Scalable Vector Graphics) In Angular 2 RC 4](http://bennadel.github.io/JavaScript-Demos/demos/svg-angular2/)
 * [The Import Statement Creates A "Live" View Of Modules In ES6 And TypeScript In Angular 2](http://bennadel.github.io/JavaScript-Demos/demos/import-read-only-view-angular2/)
