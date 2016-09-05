@@ -8,26 +8,6 @@ import { Injectable } from "@angular/core";
 // Import the application components and services.
 import { ErrorLogService } from "./error-log.service";
 
-// I am the collection of providers used for this service at the module level.
-// Notice that we are overriding the CORE ErrorHandler with our own class definition.
-export var LOGGING_ERROR_HANDLER_PROVIDERS = [
-	{
-		provide: LOGGING_ERROR_HANDLER_OPTIONS,
-		useValue: LOGGING_ERROR_HANDLER_OPTIONS
-	},
-	{
-		provide: ErrorHandler,
-		useClass: forwardRef(
-			function() {
-
-				return( LoggingErrorHandler ); // Classes don't get hoisted :(
-
-			}
-		)
-	}
-];
-
-
 export interface LoggingErrorHandlerOptions {
 	rethrowError: boolean;
 	unwrapError: boolean;
@@ -133,3 +113,20 @@ export class LoggingErrorHandler implements ErrorHandler {
 	}
 
 }
+
+
+// I am the collection of providers used for this service at the module level.
+// Notice that we are overriding the CORE ErrorHandler with our own class definition.
+// --
+// CAUTION: These are at the BOTTOM of the file so that we don't have to worry about
+// creating futureRef() and hoisting behavior.
+export var LOGGING_ERROR_HANDLER_PROVIDERS = [
+	{
+		provide: LOGGING_ERROR_HANDLER_OPTIONS,
+		useValue: LOGGING_ERROR_HANDLER_OPTIONS
+	},
+	{
+		provide: ErrorHandler,
+		useClass: LoggingErrorHandler
+	}
+];
