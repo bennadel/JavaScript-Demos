@@ -28,12 +28,12 @@ export var LOGGING_ERROR_HANDLER_PROVIDERS = [
 ];
 
 
-export interface LogginErrorHandlerOptions {
+export interface LoggingErrorHandlerOptions {
 	rethrowError: boolean;
 	unwrapError: boolean;
 }
 
-export var LOGGING_ERROR_HANDLER_OPTIONS: LogginErrorHandlerOptions = {
+export var LOGGING_ERROR_HANDLER_OPTIONS: LoggingErrorHandlerOptions = {
 	rethrowError: false,
 	unwrapError: false
 };
@@ -43,7 +43,7 @@ export var LOGGING_ERROR_HANDLER_OPTIONS: LogginErrorHandlerOptions = {
 export class LoggingErrorHandler implements ErrorHandler {
 
 	private errorLogService: ErrorLogService;
-	private options: LogginErrorHandlerOptions;
+	private options: LoggingErrorHandlerOptions;
 
 
 	// I initialize the service.
@@ -54,7 +54,7 @@ export class LoggingErrorHandler implements ErrorHandler {
 	// through an Options object (which is being defaulted in the providers).
 	constructor(
 		errorLogService: ErrorLogService,
-		@Inject( LOGGING_ERROR_HANDLER_OPTIONS ) options: LogginErrorHandlerOptions
+		@Inject( LOGGING_ERROR_HANDLER_OPTIONS ) options: LoggingErrorHandlerOptions
 		) {
 
 		this.errorLogService = errorLogService;
