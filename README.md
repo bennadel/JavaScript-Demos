@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Experimenting With Conditional Enter-Leave Animations In Angular 2 RC 6](http://bennadel.github.io/JavaScript-Demos/demos/directional-animation-angular2/)
 * [Creating A Custom ErrorHandler In Angular 2 RC 6](http://bennadel.github.io/JavaScript-Demos/demos/error-handler-angular2/)
 * [FAILURE: Exploring The ngRx Router In Angular 2 RC 4](http://bennadel.github.io/JavaScript-Demos/demos/ngrx-router-refactor-angular2/)
 * [Experimenting With SVG (Scalable Vector Graphics) In Angular 2 RC 4](http://bennadel.github.io/JavaScript-Demos/demos/svg-angular2/)
