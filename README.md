@@ -10,7 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
-* [Using ChangeDetection With Animation To Setup Dynamic Void Transition In Angular 2 RC 6](http://bennadel.github.io/JavaScript-Demos/demos/animation-leave-state-angular2/)
+* [Using ChangeDetection With Animation To Setup Dynamic Void Transitions In Angular 2 RC 6](http://bennadel.github.io/JavaScript-Demos/demos/animation-leave-state-angular2/)
 * [Experimenting With Conditional Enter-Leave Animations In Angular 2 RC 6](http://bennadel.github.io/JavaScript-Demos/demos/directional-animation-angular2/)
 * [Creating A Custom ErrorHandler In Angular 2 RC 6](http://bennadel.github.io/JavaScript-Demos/demos/error-handler-angular2/)
 * [FAILURE: Exploring The ngRx Router In Angular 2 RC 4](http://bennadel.github.io/JavaScript-Demos/demos/ngrx-router-refactor-angular2/)
