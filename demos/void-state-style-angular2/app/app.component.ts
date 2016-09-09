@@ -25,6 +25,22 @@ import { trigger } from "@angular/core";
 					})
 				),
 
+				// CAUTION: The non-void state needs to be styled for the Web Animations
+				// API ** polyfill **. When running in Chrome, which has native support 
+				// for the Web Animations API, you do NOT need this state() block. If you
+				// attempt to omit this in Firefox, however, you get the following error:
+				// --
+				// Animation to or from an underlying value is not yet supported.
+				// --
+				state(
+					"*",
+					style({
+						borderRadius: 4,
+						opacity: 1.0,
+						transform: "rotate( 0deg )"
+					})
+				),
+
 				// Now, when we transition to and from the "void" state, we don't have
 				// to provide additional styles - we only need to provide the relevant 
 				// animation duration and timing functions.
