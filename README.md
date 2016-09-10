@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Blocking Nested Animations In Angular 2 RC 6](http://bennadel.github.io/JavaScript-Demos/demos/block-animation-angular2/)
 * [Styling The Void State Using Animations In Angular 2 RC 6](http://bennadel.github.io/JavaScript-Demos/demos/void-state-style-angular2/)
 * [Using ChangeDetection With Animation To Setup Dynamic Void Transitions In Angular 2 RC 6](http://bennadel.github.io/JavaScript-Demos/demos/animation-leave-state-angular2/)
 * [Experimenting With Conditional Enter-Leave Animations In Angular 2 RC 6](http://bennadel.github.io/JavaScript-Demos/demos/directional-animation-angular2/)
