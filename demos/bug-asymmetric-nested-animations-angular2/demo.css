@@ -1,0 +1,51 @@
+
+my-app {
+	display: block ;
+}
+
+a {
+	color: red ;
+	cursor: pointer ;
+	text-decoration: underline ;
+	user-select: none ;
+		-moz-user-select: none ;
+		-webkit-user-select: none ;
+}
+
+div.container {
+	border: 2px solid #FF8888 ;
+	border-radius: 5px 5px 5px 5px ;
+	height: 300px ;
+	position: relative ;
+	width: 500px ;
+}
+
+div.box-one {
+	background-color: #262626 ;
+	border-radius: 4px 4px 4px 4px ;
+	color: #FFFFFF ;
+	font-size: 18px ;
+	height: 100px ;
+	left: 15% ;
+	line-height: 100px ;
+	margin-top: -50px ;
+	position: absolute ;
+	text-align: center ;
+	top: 50% ;
+	width: 100px ;
+}
+
+div.box-two {
+	background-color: #262626 ;
+	border-radius: 4px 4px 4px 4px ;
+	color: #FFFFFF ;
+	font-size: 18px ;
+	height: 100px ;
+	line-height: 100px ;
+	margin-top: -50px ;
+	position: absolute ;
+	right: 15% ;
+	text-align: center ;
+	top: 50% ;
+	width: 100px ;
+}
