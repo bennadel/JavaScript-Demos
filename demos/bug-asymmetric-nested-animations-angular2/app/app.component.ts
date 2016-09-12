@@ -25,7 +25,7 @@ import { trigger } from "@angular/core";
 				state(
 					"*",
 					style({
-						borderRadius: "*"
+						borderRadius: 5
 					})
 				),
 				transition(
