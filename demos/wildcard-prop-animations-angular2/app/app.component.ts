@@ -18,10 +18,11 @@ import { trigger } from "@angular/core";
 					[
 						// When transitioning out of the rendered state, we can SOMETIMES
 						// use the "*" to leverage whatever the existing runtime value is
-						// for the given property. In Chrome, this support is fairly 
-						// robust; in polyfilled browsers, however, the support is less 
-						// robust. For example, we can use height:"*" in Firefox, but we 
-						// CANNOT use borderRadius:"*".
+						// for the given property. Support for this depends on the 
+						// browser. For example, in Chrome, we can use borderRadius:"*";
+						// but, in Firefox, it will throw the error:
+						// --
+						// Animation to or from an underlying value is not yet supported.
 						style({
 							borderRadius: "*",
 							height: "*",
