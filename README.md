@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Automatic Property Calculation Partially Supported With Web Animations Polyfill In Angular 2 RC 6](http://bennadel.github.io/JavaScript-Demos/demos/wildcard-prop-animations-angular2/)
 * [Possible Bug With Asymmetric Support For Nested Animations In Angular 2 RC 6](http://bennadel.github.io/JavaScript-Demos/demos/bug-asymmetric-nested-animations-angular2/)
 * [Possible Bug With Nested Animation Transitions In Angular 2 RC 6](http://bennadel.github.io/JavaScript-Demos/demos/bug-animate-nested-transitions-angular2/)
 * [Blocking Nested Animations In Angular 2 RC 6](http://bennadel.github.io/JavaScript-Demos/demos/block-animation-angular2/)
