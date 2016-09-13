@@ -13,16 +13,34 @@ import { trigger } from "@angular/core";
 		trigger(
 			"boxAnimation",
 			[
+				// When transitioning to and from a given state, we can SOMETIMES use 
+				// the "*" to leverage whatever the existing runtime value is (or should 
+				// be) for the given property. Support for this depends on the browser. 
+				// For example, in Chrome, we can use borderRadius:"*"; but, in Firefox, 
+				// it will throw the error:
+				// --
+				// Animation to or from an underlying value is not yet supported.
+				// --
+				// Both Chrome and Firefox support width:"*" and height:"*".
+				transition(
+					"void => *",
+					[
+						style({
+							height: 0,
+							width: 0
+						}),
+						animate(
+							"1000ms ease-in-out",
+							style({
+								height: "*",
+								width: "*"
+							})
+						)
+					]
+				),
 				transition(
 					"* => void",
 					[
-						// When transitioning out of the rendered state, we can SOMETIMES
-						// use the "*" to leverage whatever the existing runtime value is
-						// for the given property. Support for this depends on the 
-						// browser. For example, in Chrome, we can use borderRadius:"*";
-						// but, in Firefox, it will throw the error:
-						// --
-						// Animation to or from an underlying value is not yet supported.
 						style({
 							borderRadius: "*",
 							height: "*",
