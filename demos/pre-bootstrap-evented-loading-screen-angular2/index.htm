@@ -1,0 +1,139 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Creating An Event-Driven Pre-Bootstrap Loading Screen In Angular 2.0.0
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+
+	<!-- Load libraries (including polyfill(s) for older browsers). -->
+	<script type="text/javascript" src="../../vendor/angular2/2.0.0/node_modules/core-js/client/shim.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angular2/2.0.0/node_modules/zone.js/dist/zone.js"></script>
+	<script type="text/javascript" src="../../vendor/angular2/2.0.0/node_modules/reflect-metadata/Reflect.js"></script>
+	<script type="text/javascript" src="../../vendor/angular2/2.0.0/node_modules/systemjs/dist/system.src.js"></script>
+
+	<!-- Load the Web Animations API polyfill for most browsers (basically any browser other than Chrome and Firefox). -->
+	<!-- <script type="text/javascript" src="../../vendor/angular2/2.0.0/node_modules/web-animations-js/web-animations.min.js"></script> -->
+
+	<!-- Configure SystemJS loader. -->
+	<script type="text/javascript" src="./system.config.js"></script>
+</head>
+<body>
+
+	<h1>
+		Creating An Event-Driven Pre-Bootstrap Loading Screen In Angular 2.0.0
+	</h1>
+
+	<my-app></my-app>
+
+
+	<div id="pre-bootstrap-container">
+
+		<!--
+			In this approach, rather than putting the pre-bootstrap content inside 
+			the <my-app> component content, we're leaving it external to the Angular 2
+			application entirely. This way, the content is not automatically removed when
+			the root component template is rendered. Instead, we'll leave this overlay in
+			place until the "appready" event bubbles up to the document, at which point,
+			we can gracefully fade it out of view.
+		-->
+
+		<script type="text/javascript">
+
+			// Listen for the "appready" event, which will be emitted by the application
+			// and bubble up (as far as we know) to the document root.
+			document.addEventListener( "appready", handleAppReady );
+
+
+			// I handle the "appready" event and teardown the loading screen.
+			function handleAppReady( event ) {
+
+				var preBootstrapContainer = document.getElementById( "pre-bootstrap-container" );
+				var preBootstrap = document.getElementById( "pre-bootstrap" );
+
+				// Add the class-name to initiate the transitions.
+				preBootstrap.className = "loaded";
+
+				// Remove the bootstrap container after the transition has 
+				// completed (based on the known transition time).
+				setTimeout(
+					function removeLoadingScreen() {
+
+						preBootstrapContainer
+							.parentNode
+								.removeChild( preBootstrapContainer )
+						;
+
+					},
+					300
+				);
+
+			}
+
+		</script>
+
+		<style type="text/css">
+
+			#pre-bootstrap {
+				background-color: #262626 ;
+				bottom: 0px ;
+				left: 0px ;
+				opacity: 1.0 ;
+				position: fixed ;
+				right: 0px ;
+				top: 0px ;
+				transition: all linear 300ms ;
+					-webkit-transition: all linear 300ms ;
+				z-index: 999999 ;
+			}
+
+			#pre-bootstrap.loaded {
+				opacity: 0.0 ;
+			}
+
+			#pre-bootstrap div.messaging {
+				color: #FFFFFF ;
+				font-family: monospace ;
+				left: 0px ;
+				margin-top: -37px ;
+				position: absolute ;
+				right: 0px ;
+				text-align: center ;
+				top: 50% ;
+			}
+
+			#pre-bootstrap h1 {
+				font-size: 26px ;
+				line-height: 35px ;
+				margin: 0px 0px 20px 0px ;
+			}
+
+			#pre-bootstrap p {
+				font-size: 18px ;
+				line-height: 14px ;
+				margin: 0px 0px 0px 0px ;
+			}
+
+		</style>
+
+		<div id="pre-bootstrap">
+			<div class="messaging">
+
+				<h1>
+					App is Loading
+				</h1>
+
+				<p>
+					Please stand by for your ticket to awesome-town!
+				</p>
+
+			</div>
+		</div>
+
+	</div>
+
+</body>
+</html>

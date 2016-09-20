@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Creating An Event-Driven Pre-Bootstrap Loading Screen In Angular 2.0.0](http://bennadel.github.io/JavaScript-Demos/demos/pre-bootstrap-evented-loading-screen-angular2/)
 * [You Cannot Project Static Content Into The Root Component In Angular 2.0.0](http://bennadel.github.io/JavaScript-Demos/demos/app-content-angular2/)
 * [Automatic Property Calculation Support With Animations In Angular 2 RC 6](http://bennadel.github.io/JavaScript-Demos/demos/wildcard-prop-animations-angular2/)
 * [Possible Bug With Asymmetric Support For Nested Animations In Angular 2 RC 6](http://bennadel.github.io/JavaScript-Demos/demos/bug-asymmetric-nested-animations-angular2/)
