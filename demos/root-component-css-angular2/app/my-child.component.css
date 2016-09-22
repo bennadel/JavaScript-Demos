@@ -1,0 +1,19 @@
+
+:host {
+	border: 1px dashed #AAAAAA ;
+	border-radius: 5px 5px 5px 5px ;
+	display: block ;
+	padding: 20px 20px 20px 20px ;
+}
+
+/*
+	NOTE: Angular will prepend the component unique identifier to the :first-/:last-
+	child pseudo-selectors. So, they end up like "[ _ngcontent-id_4a ]:first-child".
+*/
+:host > :first-child {
+	margin-top: 0px ;
+}
+
+:host > :last-child {
+	margin-bottom: 0px ;
+}

@@ -1,0 +1,56 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Moving Core Application CSS Styles Into The Root Component In Angular 2.0.0
+	</title>
+
+	<style type="text/css">
+		/*
+			Technically, the only non-app styles in this demo would be the BODY and the 
+			H1 tags (and any external drivers for the MY-APP element, for example if it
+			needed to be positioned). The rest of the content and its relevant styles 
+			belong to the app itself. 
+		*/
+		body { /* ... */ }
+		h1 { /* ... */ }
+		my-app { /* ... */ }
+	</style>
+
+	<!--
+		While the use of fonts may "belong" to the app, common font usage poses an 
+		interesting problem. When using remote font providers, like Google Fonts, the 
+		font file is loaded from a different domain and it's loaded based on the current
+		user-agent. As such, the content of the remote CSS file cannot be known ahead of
+		time. And, what's more, Angular will skip any remote file URL in the "styleUrls"
+		component meta-data. All to say, fonts have to be loaded in the root page by the
+		current browser consuming the application.
+	-->
+	<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700"></link>
+
+	<!-- Load libraries (including polyfill(s) for older browsers). -->
+	<script type="text/javascript" src="../../vendor/angular2/2.0.0/node_modules/core-js/client/shim.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angular2/2.0.0/node_modules/zone.js/dist/zone.js"></script>
+	<script type="text/javascript" src="../../vendor/angular2/2.0.0/node_modules/reflect-metadata/Reflect.js"></script>
+	<script type="text/javascript" src="../../vendor/angular2/2.0.0/node_modules/systemjs/dist/system.src.js"></script>
+
+	<!-- Load the Web Animations API polyfill for most browsers (basically any browser other than Chrome and Firefox). -->
+	<!-- <script type="text/javascript" src="../../vendor/angular2/2.0.0/node_modules/web-animations-js/web-animations.min.js"></script> -->
+
+	<!-- Configure SystemJS loader. -->
+	<script type="text/javascript" src="./system.config.js"></script>
+</head>
+<body>
+
+	<h1>
+		Moving Core Application CSS Styles Into The Root Component In Angular 2.0.0
+	</h1>
+
+	<my-app>
+		Loading....
+	</my-app>
+
+</body>
+</html>

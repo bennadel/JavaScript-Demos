@@ -1,0 +1,59 @@
+
+:host {
+	border: 1px dashed #AAAAAA ;
+	border-radius: 5px 5px 5px 5px ;
+	color: #333333 ;
+	display: block ;
+	font-family: "Open Sans", sans-serif ;
+	padding: 20px 20px 20px 20px ;
+}
+
+/*
+	NOTE: Angular will prepend the component unique identifier to the :first-/:last-
+	child pseudo-selectors. So, they end up like "[ _ngcontent-id_3z ]:first-child".
+*/
+:host > :first-child {
+	margin-top: 0px ;
+}
+
+:host > :last-child {
+	margin-bottom: 0px ;
+}
+
+/*
+	When CSS is rendered for the Angular components, it adds a unique identifier to each
+	CSS selector. This applies to compound CSS selectors as well. So, for example, if we
+	had:
+
+	:host h2 {}
+
+	... Angular would actually render it as something like:
+
+	:host[ _nghost-id_3z ] h2[ _ngcontent-id_3z ] {}
+
+	... which means our CSS won't bleed down into the nested components. Of course, in 
+	a root app component, this might be exactly what we want for a reset or a base CSS 
+	definition. To get around this, Angular provides a way to turn off the unique 
+	identifier on compound selectors: "/deep/" or, as an alias, ">>>". 
+*/
+
+:host /deep/ h2 { /* example using /deep/. */
+	color: #555555 ;
+}
+
+:host >>> h3 { /* example using >>>. */
+	color: #777777 ;
+}
+
+:host >>> p {
+	font-size: 18px ;
+}
+
+:host >>> a {
+	color: red ;
+	cursor: pointer ;
+	text-decoration: underline ;
+	user-select: none ;
+		-moz-user-select: none ;
+		-webkit-user-select: none ;
+}
