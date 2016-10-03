@@ -1,0 +1,59 @@
+
+:host {
+	border: 1px solid #CCCCCC ;
+	border-radius: 4px 4px 4px 4px ;
+	display: inline-block ;
+	padding: 10px 10px 10px 10px ;
+}
+
+.__controls {
+	height: 50px ;
+	position: relative ;
+	width: 180px ;
+}
+
+.__sadder,
+.__happier {
+	color: red ;
+	cursor: pointer ;
+	height: 50px ;
+	line-height: 50px ;
+	position: absolute ;
+	text-decoration: underline ;
+	top: 0px ;
+	user-select: none ;
+		-moz-user-select: none ;
+		-webkit-user-select: none ;
+}
+
+.__sadder {
+	left: 5px ;
+}
+
+.__happier {
+	right: 5px ;
+}
+
+.__emoticon {
+	border: 2px solid #999999 ;
+	border-radius: 50px 50px 50px 50px ;
+	box-sizing: border-box ;
+	font-family: sans-serif ;
+	font-size: 20px ;
+	font-weight: bold ;
+	height: 40px ;
+	left: 50% ;
+	line-height: 40px ;
+	margin-left: -20px ;
+	position: absolute ;
+	text-align: center ;
+	top: 5px ;
+	transform: rotate( 90deg ) ;
+		-moz-transform: rotate( 90deg ) ;
+		-webkit-transform: rotate( 90deg ) ;
+	width: 40px ;
+}
+
+.__message {
+	margin-top: 5px ;
+}
