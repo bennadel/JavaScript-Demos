@@ -2,8 +2,17 @@
 :host {
 	border: 1px solid #CCCCCC ;
 	border-radius: 4px 4px 4px 4px ;
-	display: inline-block ;
+	display: table ;
+	margin: 16px 0px 16px 0px ;
 	padding: 10px 10px 10px 10px ;
+}
+
+:host.--happy {
+	border-color: #CCEECC ;
+}
+
+:host.--sad {
+	border-color: #EECCCC ;
 }
 
 .__controls {

@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [ngModel Is Still Kind Of Broken In Angular 2.0.0](http://bennadel.github.io/JavaScript-Demos/demos/ng-model-on-changes-angular2/)
 * [Revisited: Creating An Event-Driven Pre-Bootstrap Loading Screen In Angular 2.0.0](http://bennadel.github.io/JavaScript-Demos/demos/pre-bootstrap-refactored-loading-screen-angular2/)
 * [Moving Core Application CSS Styles Into The Root Component In Angular 2.0.0](http://bennadel.github.io/JavaScript-Demos/demos/root-component-css-angular2/)
 * [Creating An Event-Driven Pre-Bootstrap Loading Screen In Angular 2.0.0](http://bennadel.github.io/JavaScript-Demos/demos/pre-bootstrap-evented-loading-screen-angular2/)
