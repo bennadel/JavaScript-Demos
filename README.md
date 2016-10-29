@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Configuring A Service With Both Dependency-Injection And A Run Block In Angular 2.1.1](http://bennadel.github.io/JavaScript-Demos/demos/rethink-config-phase2-angular2/)
 * [Handling Service Configuration Without A Configuration Phase In Angular 2.1.1](http://bennadel.github.io/JavaScript-Demos/demos/rethink-config-phase-angular2/)
 * [ngModel Is Still Kind Of Broken In Angular 2.0.0](http://bennadel.github.io/JavaScript-Demos/demos/ng-model-on-changes-angular2/)
 * [Revisited: Creating An Event-Driven Pre-Bootstrap Loading Screen In Angular 2.0.0](http://bennadel.github.io/JavaScript-Demos/demos/pre-bootstrap-refactored-loading-screen-angular2/)
