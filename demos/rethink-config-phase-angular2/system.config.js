@@ -121,7 +121,7 @@
 			suppressImplicitAnyIndexErrors: true,
 			target: "es5",
 			typeCheck: true,
-			types: [ "node" ]
+			types: [ "node" ] // For some reason this doesn't do what I expect it to.
 		}
 	});
 
