@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Providing "Run Blocks" As Services That Implement A Runnable Interface In Angular 2.1.1](http://bennadel.github.io/JavaScript-Demos/demos/run-block-interface-angular2/)
 * [Providing Run Blocks Using A Service Constructor In Angular 2.1.1](http://bennadel.github.io/JavaScript-Demos/demos/run-block-service-constructor-angular2/)
 * [Configuring A Service With Both Dependency-Injection And A Run Block In Angular 2.1.1](http://bennadel.github.io/JavaScript-Demos/demos/rethink-config-phase2-angular2/)
 * [Handling Service Configuration Without A Configuration Phase In Angular 2.1.1](http://bennadel.github.io/JavaScript-Demos/demos/rethink-config-phase-angular2/)
