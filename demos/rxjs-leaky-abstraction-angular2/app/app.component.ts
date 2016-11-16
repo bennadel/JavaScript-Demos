@@ -26,13 +26,13 @@ export class AppComponent implements OnInit {
 
 	public friends: IFriend[];
 
-	private friendSerice: FriendService;
+	private friendService: FriendService;
 
 
 	// I initialize the component.
-	constructor( friendSerice: FriendService ) {
+	constructor( friendService: FriendService ) {
 		
-		this.friendSerice = friendSerice;
+		this.friendService = friendService;
 		this.friends = null;
 
 	}
@@ -53,13 +53,15 @@ export class AppComponent implements OnInit {
 		// the underlying stream (Http request) will still execute no matter what. Heck,
 		// you shouldn't even think about the fact that this IS an HTTP request (most of
 		// the time).
-		var subscription = this.friendSerice
+		var subscription = this.friendService
 			.getFriends()
 			.subscribe(
 				( friends: IFriend[] ) => {
-
+			
 					this.friends = friends;
-
+			
+					console.log( "Friends loaded." );
+			
 				}
 			)
 		;
