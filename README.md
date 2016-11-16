@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Follow-Up: Creating Leaky Abstractions With RxJS In Angular 2.1.1](http://bennadel.github.io/JavaScript-Demos/demos/rxjs-leaky-abstraction2-angular2/)
 * [Creating Leaky Abstractions With RxJS In Angular 2.1.1](http://bennadel.github.io/JavaScript-Demos/demos/rxjs-leaky-abstraction-angular2/)
 * [NgModule Constructors Provide A Module-Level Run Block In Angular 2.1.1](http://bennadel.github.io/JavaScript-Demos/demos/ng-module-constructor-angular2/)
 * [Providing "Run Blocks" As Services That Implement A Runnable Interface In Angular 2.1.1](http://bennadel.github.io/JavaScript-Demos/demos/run-block-interface-angular2/)
