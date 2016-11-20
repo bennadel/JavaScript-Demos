@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Partial Stream Execution: A Case For Hot RxJS Observables In Angular 2.1.1](http://bennadel.github.io/JavaScript-Demos/demos/rxjs-partial-stream-angular2/)
 * [Using Hot RxJS Observables In Your Service Layer In Angular 2.1.1](http://bennadel.github.io/JavaScript-Demos/demos/rxjs-hot-observable-services-angular2/)
 * [Follow-Up: Creating Leaky Abstractions With RxJS In Angular 2.1.1](http://bennadel.github.io/JavaScript-Demos/demos/rxjs-leaky-abstraction2-angular2/)
 * [Creating Leaky Abstractions With RxJS In Angular 2.1.1](http://bennadel.github.io/JavaScript-Demos/demos/rxjs-leaky-abstraction-angular2/)
