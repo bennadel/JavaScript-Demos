@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Performing The Stream Equivalent Of Promise.all() Using RxJS](http://bennadel.github.io/JavaScript-Demos/demos/rxjs-promise-all/)
 * [Syncing LocalStorage In-Memory Cache With "storage" Events In Angular 2.1.1](http://bennadel.github.io/JavaScript-Demos/demos/local-storage-sync-angular2/)
 * [Partial Stream Execution: A Case For Hot RxJS Observables In Angular 2.1.1](http://bennadel.github.io/JavaScript-Demos/demos/rxjs-partial-stream-angular2/)
 * [Using Hot RxJS Observables In Your Service Layer In Angular 2.1.1](http://bennadel.github.io/JavaScript-Demos/demos/rxjs-hot-observable-services-angular2/)

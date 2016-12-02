@@ -1,0 +1,207 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Performing The Stream Equivalent Of Promise.all() Using RxJS
+	</title>
+
+	<script type="text/javascript" src="../../vendor/angular2/2.1.1/node_modules/core-js/client/shim.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angular2/2.1.1/node_modules/rxjs/bundles/Rx.min.js"></script>
+</head>
+<body>
+
+	<h1>
+		Performing The Stream Equivalent Of Promise.all() Using RxJS
+	</h1>
+
+	<script type="text/javascript">
+
+		// Run first test with a synchronous range stream.
+		setTimeout(
+			function() {
+
+				console.group( "With No Range Delay" );
+				runTest( false );
+				setTimeout( console.groupEnd, 10 );
+
+			}
+		);
+
+		// Run second test with an asynchronous range stream - this way, we can see what 
+		// happens when the promises resolve before the stream.
+		setTimeout(
+			function() {
+
+				console.group( "With Range Delay (so that Promises resolve before range)" );
+				runTest( true );
+				setTimeout( console.groupEnd, 50 );
+
+			},
+			50
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		function runTest( useDelay ) {
+
+			var one = Promise.resolve( "One" );
+			var two = Promise.resolve( "Two" );
+			var three = Promise.resolve( "Three" );
+			
+			// As the fourth item to "collect", I'm going to use a range stream that
+			// has an optional delay. Since RxJS streams are inconsistently asynchronous,
+			// the optional .delay() will allow the Promises to resolve before the stream
+			// in certain tests.
+			var fourAsRangeStream = useDelay
+				? Rx.Observable.range( 1, 4 ).delay( 10 )
+				: Rx.Observable.range( 1, 4 )
+			;
+
+
+			// ----------------------------------------------------------------------- //
+			// ----------------------------------------------------------------------- //
+
+
+			// This is our "control" group - this is what we want to do with Streams.
+			
+			Promise
+				.all( [ one, two, three, fourAsRangeStream.toPromise() ] )
+				.then(
+					function handleResolve( values ) {
+
+						console.log( "Promise.all() Result:", values );
+
+					}
+				)
+			;
+
+
+			// ----------------------------------------------------------------------- //
+			// ----------------------------------------------------------------------- //
+
+
+			// .combineLatest() runs all of the streams / promises in parallel, waits
+			// for all of them to emit a value, and then emits an array with the latest 
+			// value from each stream. This does not wait for the streams to complete; 
+			// once each of the streams has emitted a value, .combineLatest() will emit 
+			// a new value when any of the other streams emits a new value.
+			// --
+			// NOTE: If all of the streams emit a single value, this will behave 
+			// similar to the .forkJoin() operator.
+
+			Rx.Observable
+				.combineLatest(
+					Rx.Observable.fromPromise( one ),
+					Rx.Observable.fromPromise( two ),
+					Rx.Observable.fromPromise( three ),
+					fourAsRangeStream
+				)
+				.subscribe(
+					function handleValue( values ) {
+
+						console.log( "Rx.Observable.combineLatest( ...streams ) Result:", values );
+
+					}
+				)
+			;
+
+			Rx.Observable
+				.combineLatest( one, two, three, fourAsRangeStream )
+				.subscribe(
+					function handleValue( values ) {
+
+						console.log( "Rx.Observable.combineLatest( ...promises ) Result:", values );
+
+					}
+				)
+			;
+
+
+			// ----------------------------------------------------------------------- //
+			// ----------------------------------------------------------------------- //
+
+
+			// .forkJoin() runs all of the streams / promises in parallel, waits for 
+			// them all to COMPLETE, and then emits an array that contains the last 
+			// value from each of the parallel streams.
+
+			Rx.Observable
+				.forkJoin(
+					Rx.Observable.fromPromise( one ),
+					Rx.Observable.fromPromise( two ),
+					Rx.Observable.fromPromise( three ),
+					fourAsRangeStream
+				)
+				.subscribe(
+					function handleValue( values ) {
+
+						console.log( "Rx.Observable.forkJoin( ...streams ) Result:", values );
+
+					}
+				)
+			;
+
+			Rx.Observable
+				.forkJoin( one, two, three, fourAsRangeStream )
+				.subscribe(
+					function handleValue( values ) {
+
+						console.log( "Rx.Observable.forkJoin( ...promises ) Result:", values );
+
+					}
+				)
+			;
+
+
+			// ----------------------------------------------------------------------- //
+			// ----------------------------------------------------------------------- //
+
+
+			// .zip() runs all of the promises / streams in parallel, but only emits a
+			// list of values when each stream has emitted a value at the same index. 
+			// In this case, since the Promises will only emit one value, only the 
+			// first index of the range stream will be taken.
+			// --
+			// NOTE: If all of the streams emit a single value, this will behave 
+			// similar to the .forkJoin() operator.
+
+			Rx.Observable
+				.zip(
+					Rx.Observable.fromPromise( one ),
+					Rx.Observable.fromPromise( two ),
+					Rx.Observable.fromPromise( three ),
+					fourAsRangeStream
+				)
+				.subscribe(
+					function handleValue( values ) {
+
+						console.log( "Rx.Observable.zip( ...streams ) Result:", values );
+
+					}
+				)
+			;
+
+			Rx.Observable
+				.zip( one, two, three, fourAsRangeStream )
+				.subscribe(
+					function handleValue( values ) {
+
+						console.log( "Rx.Observable.zip( ...promises ) Result:", values );
+
+					}
+				)
+			;
+
+		};
+
+	</script>
+
+</body>
+</html>
