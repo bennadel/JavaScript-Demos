@@ -1,0 +1,44 @@
+
+my-app {
+	display: block ;
+}
+
+a {
+	color: red ;
+	cursor: pointer ;
+	text-decoration: underline ;
+	user-select: none ;
+		-moz-user-select: none ;
+		-webkit-user-select: none ;
+}
+
+ul {
+	list-style-type: none ;
+	margin: 20px 0px 20px 0px ;
+	padding: 0px 0px 0px 0px ;
+}
+
+li {
+	border: 1px solid #CCCCCC ;
+	border-radius: 3px 3px 3px 3px ;
+	margin: 10px 0px 10px 0px ;
+	padding: 12px 12px 12px 12px ;
+	width: 400px ;
+}
+
+li.selected {
+	border-color: #262626 ;
+}
+
+div.form {
+	margin: 20px 0px 0px 0px ;
+}
+
+div.form input {
+	font-size: 16px ;
+	width: 200px ;
+}
+
+div.form button {
+	font-size: 16px ;
+}	
