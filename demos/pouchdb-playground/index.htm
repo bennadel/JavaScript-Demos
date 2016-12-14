@@ -1,0 +1,360 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Creating A PouchDB Playground In The Browser With JavaScript
+	</title>
+</head>
+<body>
+
+	<h1>
+		Creating A PouchDB Playground In The Browser With JavaScript
+	</h1>
+
+	<p>
+		<em>Look at console &mdash; things being logged, yo!</em>
+	</p>
+
+	<!--
+		PouchDB provides a Promise-based API. While most modern browsers support Promises 
+		at this point, including the core-js Shim will ensure that Promises are available
+		in the current JavaScript runtime.
+	-->
+	<script type="text/javascript" src="../../vendor/core-js/2.4.1/shim.min.js"></script>
+	<script type="text/javascript" src="../../vendor/pouchdb/6.0.7/pouchdb-6.0.7.min.js"></script>
+	<script type="text/javascript">
+
+		var dbName = "javascript-demos-pouchdb-playground";
+
+		// Creating the PouchDB database instance is a synchronous operation. This means
+		// that we can immediately start to interact with the "db" object. The data will
+		// be persisted to either IndexedDB or WebSQL (favoring IndexedDB), with plugins
+		// available for other persistence engines (ex, localStorage).
+		var db = new PouchDB( dbName );
+
+		// When I am playing around with PouchDB, I like to destroy and recreate the 
+		// database on each test run. This way, any conflicts with existing data are 
+		// explicitly coded into the experiment and not a byproduct of dirty data.
+		db.destroy().then(
+			function() {
+
+				// Once we destroy the database, we have to create a new one otherwise
+				// we'll get an error, "Error: database is destroyed".
+				db = new PouchDB( dbName );
+
+			}
+		)
+
+		// At this point, we have a pristine PouchDB instance to experiment with. Every 
+		// PouchDB operation returns a Promise (though you could use a Callback if you
+		// wanted to for some reason). So, to start experimenting, we can just chain the
+		// "thenable" operations together.
+		.then(
+			function() {
+
+				// Let's insert some Friend data.
+				var promise = db.bulkDocs([
+					{
+						_id: "friend:kim",
+						name: "Kim",
+						interests: [ "Movies", "Computers", "Cooking" ]
+					},
+					{
+						_id: "friend:sarah",
+						name: "Sarah",
+						interests: [ "Museums", "Working Out", "Movies" ]
+					},
+					{
+						_id: "friend:joanna",
+						name: "Joanna",
+						interests: [ "Working Out", "Poetry", "Dancing" ]
+					}
+				]);
+
+				return( promise );
+
+			}
+		).then(
+			function() {
+
+				// Each Friend has a collection of interests. In order to look up a 
+				// Friend by one of their interests, we have to index the documents by
+				// the collection of interests.
+				// --
+				// From the documentation: 
+				// https://pouchdb.com/2014/05/01/secondary-indexes-have-landed-in-pouchdb.html
+				// 
+				// Technically, a design doc can contain multiple views, but there's 
+				// really no advantage to this. Plus, it can even cause performance 
+				// problems in CouchDB, since all the indexes are written to a single
+				// file. So we recommend that you create one view per design doc, and
+				// use the same name for both, in order to make things simpler.
+				var promise = db.put({
+					_id: "_design/friends-by-interest",
+					views: {
+						"friends-by-interest": {
+							map: function( doc ) {
+
+								// Only add to the index, Friends that have interests.
+								if ( /^friend:/i.test( doc._id ) && doc.interests ) {
+
+									// Index each ( Friend x Interest ) combination 
+									// separately. This way, we can search by any interest.
+									doc.interests.forEach(
+										function( interest, i ) {
+
+											emit( interest );
+
+										}
+									);
+									
+								}
+
+							}.toString() // The map function goes into the database as a String.
+						}
+					}
+				});
+
+				// Views are populated lazily in PouchDB / CouchDB. As such, we need to 
+				// run a query on the view before PouchDB will bother building the 
+				// internal B+Tree index on it. This will make the next "real query" 
+				// faster since it doesn't have to do any pre-query work.
+				promise = promise.then(
+					function() {
+
+						return( db.query( "friends-by-interest", { limit: 0 } ) );
+
+					}
+				);
+				
+				return( promise );
+
+			}
+		).then(
+			function() {
+
+				// Now that we have our index, we can find all of the friends that like
+				// "Movies". The include_docs flag will pull in the documents associated
+				// with each index key.
+				var promise = db.query(
+					"friends-by-interest",
+					{
+						key: "Movies",
+						include_docs: true
+					}
+				);
+
+				promise = promise.then(
+					function( results ) {
+
+						console.group( "Found %s friends that like Movies.", results.rows.length );
+						console.info( "{ key: \"Movies\" }" );
+						results.rows.forEach(
+							function( row ) {
+
+								console.log( row.doc.name );
+
+							}
+						);
+						console.groupEnd();
+
+					}
+				);
+
+				return( promise );
+
+			}
+		).then(
+			function() {
+
+				// Looking up Friends by a single interest is easy (above); but, looking
+				// Friends by multiple interests is not quite so easy. We can certainly
+				// query the index for multiple keys (ie, multiple interests):
+				var promise = db.query(
+					"friends-by-interest",
+					{
+						keys: [ "Movies", "Working Out" ],
+						include_docs: true
+					}
+				);
+
+				// .... but, that won't give us quite what we want. It's not like a 
+				// SQL "WHERE" clause; its more like a "UNION" operation that returns
+				// records for Friends that have ANY of the given interests.
+				promise = promise.then(
+					function( results ) {
+
+						// CAUTION: Returns more records that we might "expect".
+						console.group( "Found %s friends that like Movies & Working Out.", results.rows.length );
+						console.info( "{ keys: [ \"Movies\", \"Working Out\" ] }" );
+						results.rows.forEach(
+							function( row ) {
+
+								console.log( row.doc.name );
+
+							}
+						);
+						console.groupEnd();
+
+					}
+				);
+
+				return( promise );
+
+			}
+		).then(
+			function() {
+
+				// To fix the "too many records" problem, we could use the suggestion 
+				// that I learned from Jesse Hallett, which is to search for one matching
+				// interest and then do a client-side filter for "all" matching interests:
+				// --
+				// http://sitr.us/2009/06/30/database-queries-the-couchdb-way.html
+				var promise = db.query(
+					"friends-by-interest",
+					{
+						key: "Movies",
+						include_docs: true
+					}
+				);
+
+				promise = promise.then(
+					function( results ) {
+
+						var rows = results.rows.filter(
+							function( row ) {
+
+								// We already know that all the recipients like "Movies";
+								// so, we now have to check to see which ones ALSO like
+								// "Working Out".
+								return( row.doc.interests.includes( "Working Out" ) );
+
+							}
+						);
+
+						console.group( "Found %s friends that like Movies & Working Out.", rows.length );
+						console.info( "{ key: \"Movies\" } + client-side filtering" );
+						rows.forEach(
+							function( row ) {
+
+								console.log( row.doc.name );
+
+							}
+						);
+						console.groupEnd();
+
+					}
+				);
+
+				return( promise );
+
+			}
+		).then(
+			function() {
+
+				// Now, if we don't want to do client-side filtering based on multiple 
+				// interests, we can try to come up with a more "semantic" index. 
+				// Meaning, we can create an index that abstracts various combinations
+				// of interests behind an application-specific rating.
+				var promise = db.put({
+					_id: "_design/friends-by-rating",
+					views: {
+						"friends-by-rating": {
+							map: function( doc ) {
+
+								// Only add to the index, Friends that have interests.
+								if ( /^friend:/i.test( doc._id ) && doc.interests ) {
+
+									// Now, instead of indexing the cross-product of 
+									// Friends and Interests, we'll build various 
+									// combinations into the index itself. So, Friends
+									// that like movies AND working are "awesome"!
+									if ( 
+										doc.interests.includes( "Movies" ) &&
+										doc.interests.includes( "Working Out" )
+										) {
+
+										emit( "awesome" );
+
+									}
+
+									// ... and, Friends that like movies AND working out
+									// AND computers are "amazing"!
+									if ( 
+										doc.interests.includes( "Movies" ) &&
+										doc.interests.includes( "Working Out" ) &&
+										doc.interests.includes( "Computers" )
+										) {
+
+										emit( "amazing" );
+
+									}
+									
+								}
+
+							}.toString() // The map function goes into the database as a String.
+						}
+					}
+				});
+
+				// Populate the secondary index ahead of time.
+				promise = promise.then(
+					function() {
+
+						return( db.query( "friends-by-rating", { limit: 0 } ) );
+
+					}
+				);
+
+				return( promise );
+
+			}
+		).then(
+			function() {
+
+				// Now that we have an index that abstracts the combinations of interests
+				// behind more general "rating", we can query that index for "awesome"
+				// friends, ie. those who like Movies and Working Out.
+				var promise = db.query(
+					"friends-by-rating",
+					{
+						key: "awesome",
+						include_docs: true
+					}
+				);
+
+				promise = promise.then(
+					function( results ) {
+
+						console.group( "Found %s friends that are Awesome (ie, Movies & Working Out).", results.rows.length );
+						console.info( "{ key: \"awesome\" }" );
+						results.rows.forEach(
+							function( row ) {
+
+								console.log( row.doc.name );
+
+							}
+						);
+						console.groupEnd();
+
+					}
+				);
+
+				return( promise );
+
+			}
+		).catch(
+			function( error ) {
+
+				console.warn( "An error occurred:" );
+				console.error( error );
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>
