@@ -1,0 +1,262 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Updating Multiple Documents With PouchDB
+	</title>
+</head>
+<body>
+
+	<h1>
+		Updating Multiple Documents With PouchDB
+	</h1>
+
+	<p>
+		<em>Look at console &mdash; things being logged, yo!</em>
+	</p>
+
+	<script type="text/javascript" src="../../vendor/pouchdb/6.0.7/pouchdb-6.0.7.min.js"></script>
+	<script type="text/javascript">
+
+		getPristineDatabase( window, "db" ).then(
+			function() {
+
+				// To experiment with bulk updates, we need to have document to 
+				// experiment on. Let's create some food products with prices that 
+				// we'll update based on the "type", which is being built into the 
+				// _id schema (type:).
+				var promise = db.bulkDocs([
+					{
+						_id: "apple:fuji",
+						name: "Fuji",
+						price: 1.05
+					},
+					{
+						_id: "apple:applecrisp",
+						name: "Apple Crisp",
+						price: 1.33
+					},
+					{
+						_id: "pear:bosc",
+						name: "Bosc",
+						price: 1.95
+					},
+					{
+						_id: "apple:goldendelicious",
+						name: "Golden Delicious",
+						price: 1.27
+					},
+					{
+						_id: "pear:bartlett",
+						name: "Bartlett",
+						price: 1.02
+					}
+				]);
+
+				return( promise );
+
+			}
+		)
+		.then(
+			function() {
+
+				// Now that we've inserted the documents, let's fetch all the Apples
+				// and output them so we can see the prices before we do a bulk update.
+				var promise = db
+					.allDocs({
+						startkey: "apple:",
+						endkey: "apple:\uffff",
+						include_docs: true
+					})
+					.then(
+						function( results ) {
+
+							// Prepare docs for logging.
+							var docs = results.rows.map(
+								function( row ) {
+
+									return( row.doc )
+
+								}
+							);
+							console.table( docs );
+
+						}
+					)
+				;
+
+				return( promise );
+
+			}
+		)
+		.then(
+			function() {
+
+				// In PouchDB, there is no "UPDATE" like there is in SQL; each document
+				// has to be updated as a single atomic unit. As such, if we want to 
+				// update all Apples, for example, we have to first fetch all Apple
+				// documents, alter their structure, and then .put() them back into the
+				// database. This way, PouchDB can compare _rev values and handle any
+				// conflicts.
+
+				// To experiment with this, let's try increasing the price of each Apple
+				// by 10-percent. To do this, we have to fetch all Apples. Since the 
+				// product type is build into the _id schema, we can use the bulk-fetch
+				// method to gather them all (into memory) in one shot.
+				var promise = db
+					.allDocs({
+						startkey: "apple:",
+						endkey: "apple:\uffff",
+						include_docs: true
+					})
+					.then(
+						function( results ) {
+
+							// Once we have all of the Apples read into memory, we can
+							// loop over the collection and alter the price, in memory.
+							// Since we're going to have to PUT these documents back into 
+							// the database, we might as well transform the results into
+							// the collection of updated documents we have to persist.
+							var docsToUpdate = results.rows.map(
+								function( row ) {
+
+									var doc = row.doc;
+
+									// Apply the 10% price increase.
+									// --
+									// CAUTION: Using the "+" to coerce the rounded number
+									// String back to a numeric data type for simple demo.
+									doc.price = +( doc.price * 1.1 ).toFixed( 2 )
+
+									return( doc );
+
+								}
+							);
+							
+							// To look at how conflicts are handled, let's delete the 
+							// revision for the first document. Since we can't PUT an 
+							// object without a revision, we know that the first document 
+							// will hit a conflict.
+							delete( docsToUpdate[ 0 ]._rev );
+
+							// To PUT all documents in one operation (NOT A TRANSACTION),
+							// we can use the bulkDocs() method.
+							return( db.bulkDocs( docsToUpdate ) );
+
+						}
+					)
+					.then(
+						function( results ) {
+
+							// We know that we're going to get a conflict with the first 
+							// document (since we deleted its revision value). With a bulk
+							// operation, however, the result won't fail (ie, reject the 
+							// Promise) simply because one of the documents failed. As 
+							// such, we have to examine the result to see if any indicate 
+							// an error occurred.
+							var errors = results.filter(
+								function( result ) {
+
+									// NOTE: On success objects, { ok: true } and on error
+									// objects, { error: true }. 
+									return( result.error === true );
+
+								}
+							);
+
+							// We should have at least ONE error (revision conflict).
+							if ( errors.length ) {
+
+								console.group( "Bulk update applied to %s docs with %s error(s).", results.length, errors.length );
+								errors.forEach(
+									function( error, i ) {
+
+										console.log( "%s : %s", i, error.message );
+
+									}
+								);
+								console.groupEnd();
+
+							}
+
+						}
+					)
+				;
+
+				return( promise );
+
+			}
+		)
+		.then(
+			function() {
+
+				// Now that we've [tried] to apply a 10% price increase to all Apples,
+				// let's re-fetch the Apple documents to see how they've changed.
+				var promise = db
+					.allDocs({
+						startkey: "apple:",
+						endkey: "apple:\uffff",
+						include_docs: true
+					})
+					.then(
+						function( results ) {
+
+							// Prepare docs for logging.
+							var docs = results.rows.map(
+								function( row ) {
+
+									return( row.doc )
+
+								}
+							);
+							console.table( docs );
+
+						}
+					)
+				;
+
+				return( promise );
+
+			}
+		)
+		.catch(
+			function( error ) {
+
+				console.warn( "An error occurred:" );
+				console.error( error );
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I ensure that a new database is created and stored in the given scope.
+		function getPristineDatabase( scope, handle ) {
+
+			var dbName = "javascript-demos-pouchdb-playground";
+
+			var promise = new PouchDB( dbName )
+				.destroy()
+				.then(
+					function() {
+
+						// Store new, pristine database in to the given scope.
+						return( scope[ handle ] = new PouchDB( dbName ) );
+
+					}
+				)
+			;
+
+			return( promise );
+
+		}
+
+	</script>
+
+</body>
+</html>
