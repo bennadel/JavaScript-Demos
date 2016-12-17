@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Creating A PouchDB Plugin For Bulk Document Updates](http://bennadel.github.io/JavaScript-Demos/demos/pouchdb-bulk-update-plugin/)
 * [Updating Multiple Documents With PouchDB](http://bennadel.github.io/JavaScript-Demos/demos/pouchdb-bulk-update/)
 * [Creating A PouchDB Playground In The Browser With JavaScript](http://bennadel.github.io/JavaScript-Demos/demos/pouchdb-playground/)
 * [Experimenting With Simple CRUD Operations Using PouchDB In Angular 2.1.1](http://bennadel.github.io/JavaScript-Demos/demos/pouchdb-angular2/)

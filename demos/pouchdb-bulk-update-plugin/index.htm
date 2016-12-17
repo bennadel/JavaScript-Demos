@@ -1,0 +1,312 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Creating A PouchDB Plugin For Bulk Document Updates
+	</title>
+</head>
+<body>
+
+	<h1>
+		Creating A PouchDB Plugin For Bulk Document Updates
+	</h1>
+
+	<p>
+		<em>Look at console &mdash; things being logged, yo!</em>
+	</p>
+
+	<script type="text/javascript" src="../../vendor/pouchdb/6.0.7/pouchdb-6.0.7.min.js"></script>
+	<script type="text/javascript">
+
+		// I provide an API for updating many documents (encapsulating the fetch and 
+		// subsequent .bulkDocs() call). This method will use either the .allDocs() method
+		// or the .query() method for fetching, depending on the invocation signature:
+		// --
+		// .updateMany( options, operator ) ==> Uses .allDocs()
+		// .updateMany( viewName, options, operator ) ==> Uses .query()
+		// --
+		// In each case, the "options" object is passed to the underlying fetch method. 
+		// Each document in the resultant collection is then passed to the given operator
+		// function - operator( doc ) - to perform the update transformation.
+		PouchDB.plugin({
+			updateMany: function( /* [ viewName, ] options, operator */ ) {
+
+				var pouch = this;
+
+				// CAUTION: Top-level errors MAY NOT be caught in a Promise.
+
+				// .allDocs() invocation signature: ( options, operator ).
+				if ( arguments.length === 2 ) {
+
+					var options = arguments[ 0 ];
+					var operator = arguments[ 1 ];
+					var promise = pouch.allDocs( ensureIncludeDocs( options ) );
+
+				// .query() invocation signature: ( viewName, options, operator ).
+				} else {
+
+					var viewName = arguments[ 0 ];
+					var options = arguments[ 1 ];
+					var operator = arguments[ 2 ];
+					var promise = pouch.query( viewName, ensureIncludeDocs( options ) );
+
+				}
+
+				// Even though the results are potentially coming back from two different
+				// search methods - .allDocs() or .query() - the result structure from 
+				// both methods is the same. As such, we can count on the following keys
+				// to exist in the results:
+				// --
+				// * offset
+				// * total_rows
+				// * rows : [{ doc }] 
+				// --
+				promise = promise.then(
+					function( results ) {
+
+						var docsToUpdate = results.rows.map(
+							function iterator( row, index, rows ) {
+
+								return( operator( row.doc, index, rows ) || row.doc );
+
+							}
+						);
+
+						return( pouch.bulkDocs( docsToUpdate ) );
+
+					}
+				);
+
+				return( promise );
+
+
+				// -- Utility methods for my PouchDB plugin. Thar be hoistin'! -- //
+
+
+				// I ensure that the given search options has the "include_docs" set to 
+				// true. Since we are working on updating documents, it is important 
+				// that we actually fetch the docs being updated. Returns options.
+				function ensureIncludeDocs( options ) {
+
+					options.include_docs = true;
+
+					return( options );
+
+				}
+
+			}
+		});
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		getPristineDatabase( window, "db" ).then(
+			function() {
+
+				// To experiment with the bulk update PLUGIN, we need to have documents 
+				// on which to experiment. Let's create some food products with names
+				// and prices that we'll update with the bulk update plugin.
+				var promise = db
+					.bulkDocs([
+						{
+							_id: "apple:fuji",
+							name: "Fuji",
+							price: 1.05
+						},
+						{
+							_id: "apple:applecrisp",
+							name: "Apple Crisp",
+							price: 1.33
+						},
+						{
+							_id: "pear:bosc",
+							name: "Bosc",
+							price: 1.95
+						},
+						{
+							_id: "apple:goldendelicious",
+							name: "Golden Delicious",
+							price: 1.27
+						},
+						{
+							_id: "pear:bartlett",
+							name: "Bartlett",
+							price: 1.02
+						}
+					])
+					.then(
+						function() {
+
+							// Since the bulk update plugin can also fetch documents 
+							// using a VIEW, let's create a view that indexes the 
+							// fruit products by type (ie, key prefix).
+							var promise = db.put({
+								_id: "_design/by-type",
+								views: {
+									"by-type": {
+										map: function( doc ) {
+
+											// Emit the key prefix, example "apple".
+											emit( doc._id.split( ":", 1 )[ 0 ] );
+
+										}.toString()
+									}
+								}
+							});
+
+							// NOTE: View are not populated proactively - they are 
+							// populated at query time. As such, one might ordinarily 
+							// kick off a query to force indexing. However, to keep this
+							// demo simple, we won't care about pre-heating the index.
+							return( promise );
+
+						}
+					)
+				;
+
+				return( promise );
+
+			}
+		)
+		.then(
+			function() {
+
+				// Now that we've inserted the documents, let's fetch all the Apples
+				// and output them so we can see the pre-update values.
+				var promise = db
+					.allDocs({
+						startkey: "apple:",
+						endkey: "apple:\uffff",
+						include_docs: true
+					})
+					.then( renderResultsToConsole )
+				;
+
+				return( promise );
+
+			}
+		)
+		.then(
+			function() {
+
+				// Now, let's update the Apples, applying a 10% price increase. Since we
+				// invoking the .updateMany() plugin method with TWO ARGUMENTS, it will 
+				// use the .allDocs() bulk fetch method under the hood.
+				var promise = db.updateMany(
+					{
+						startkey: "apple:",
+						endkey: "apple:\uffff"
+					},
+					function operator( doc ) {
+
+						// Apply the 10% price increase.
+						doc.price = +( doc.price * 1.1 ).toFixed( 2 )
+
+					}
+				);
+
+				return( promise );
+
+			}
+		)
+		.then(
+			function() {
+
+				// Now, let's update the Apples, upper-casing the name. Since we are 
+				// invoking the .updateMany() plugin method with THREE ARGUMENTS, it will
+				// use the .query() bulk fetch method under the hood. In this case, the
+				// first argument is the View / secondary-index name.
+				var promise = db.updateMany(
+					"by-type",
+					{
+						key: "apple"
+					},
+					function operator( doc ) {
+
+						doc.name = doc.name.toUpperCase();
+
+					}
+				);
+
+				return( promise );
+
+			}
+		)
+		.then(
+			function() {
+
+				// Now that we've updated the Apples twice (once using .allDocs() and 
+				// once using .query() under the hood), let's re-fetch the Apples to see
+				// how the values have changed.
+				var promise = db
+					.allDocs({
+						startkey: "apple:",
+						endkey: "apple:\uffff",
+						include_docs: true
+					})
+					.then( renderResultsToConsole )
+				;
+
+				return( promise );
+
+			}
+		)
+		.catch(
+			function( error ) {
+
+				console.warn( "An error occurred:" );
+				console.error( error );
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I ensure that a new database is created and stored in the given scope.
+		function getPristineDatabase( scope, handle ) {
+
+			var dbName = "javascript-demos-pouchdb-playground";
+
+			var promise = new PouchDB( dbName )
+				.destroy()
+				.then(
+					function() {
+
+						// Store new, pristine database in to the given scope.
+						return( scope[ handle ] = new PouchDB( dbName ) );
+
+					}
+				)
+			;
+
+			return( promise );
+
+		}
+
+
+		// I use the console.table() method to log the documents in the given results
+		// collection to the console.
+		function renderResultsToConsole( results ) {
+
+			var docs = results.rows.map(
+				function( row ) {
+
+					return( row.doc )
+
+				}
+			);
+			console.table( docs );
+
+		}
+
+	</script>
+
+</body>
+</html>
