@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Exploring Recursive Promises In JavaScript](http://bennadel.github.io/JavaScript-Demos/demos/recursive-promises/)
 * [Retrying Bulk Updates In PouchDB Using A Recursive Promise Chain](http://bennadel.github.io/JavaScript-Demos/demos/pouchdb-bulk-update-retry-plugin/)
 * [Creating A PouchDB Plugin For Bulk Document Updates](http://bennadel.github.io/JavaScript-Demos/demos/pouchdb-bulk-update-plugin/)
 * [Updating Multiple Documents With PouchDB](http://bennadel.github.io/JavaScript-Demos/demos/pouchdb-bulk-update/)

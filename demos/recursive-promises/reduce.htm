@@ -1,0 +1,78 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Exploring Recursive Promises In JavaScript
+	</title>
+</head>
+<body>
+
+	<h1>
+		Exploring Recursive Promises In JavaScript
+	</h1>
+
+	<h2>
+		Using Reduce, Not Recursion
+	</h2>
+
+	<p>
+		<em>Look at console &mdash; things being logged, yo!</em>
+	</p>
+
+	<script type="text/javascript" src="../../vendor/core-js/2.4.1/shim.min.js"></script>
+	<script type="text/javascript">
+
+		var values = [ 1, 2, 3 ];
+
+		// Here, we are going to reduce the Values collection down into an asynchronous
+		// SUM calculation in which each link in the Promise chain will add one value to
+		// the running sum and then return the running sum to the next promise link.
+		var promise = values.reduce(
+			function reducer( promiseChain, value ) {
+
+				// In each iteration of the reducer, we have a PromiseChain that will
+				// resolve with running aggregate (starting with the initial value of 0).
+				// To get at that sum, we have to bind to the resolution of the chain,
+				// thereby adding a new link to the end.
+				var nextLinkInChain = promiseChain.then(
+					function( previousValue ) {
+
+						return( previousValue + value );
+
+					}
+				);
+
+				// Return the "next link", which is currently the "last link" in the 
+				// Promise chain.
+				return( nextLinkInChain );
+
+			},
+			Promise.resolve( 0 ) // Start the promise chain.
+		);
+
+		// This looks and feels a bit like recursion, but it's not. We're just using an
+		// iterator to translate a series of values into a series of .then() bindings.
+		// But, this could just as easily have been HARD-CODED to look something like:
+		// --
+		// Promise.resolve( 0 )
+		// .then( function( sum ) { return( sum + 1 ); } )
+		// .then( function( sum ) { return( sum + 2 ); } )
+		// .then( function( sum ) { return( sum + 3 ); } )
+		// 
+		// Read more: // https://github.com/kriskowal/q#sequences
+		// --
+		// In either case, the reduced Promise will now resolve to the sum of the values:
+		promise.then(
+			function( sum ) {
+
+				console.log( "Sum of values:", sum );
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>

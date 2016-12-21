@@ -1,0 +1,86 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Exploring Recursive Promises In JavaScript
+	</title>
+</head>
+<body>
+
+	<h1>
+		Exploring Recursive Promises In JavaScript
+	</h1>
+
+	<h2>
+		Recursion With Internal Function
+	</h2>
+
+	<p>
+		<em>Look at console &mdash; things being logged, yo!</em>
+	</p>
+
+	<script type="text/javascript" src="../../vendor/core-js/2.4.1/shim.min.js"></script>
+	<script type="text/javascript">
+
+		Promise.resolve()
+			.then(
+				function() {
+
+					console.group( "Recursion - inline function." );
+					return( 3 );
+
+				}
+			)
+			// In this link of the promise chain, the resolution function is explicitly
+			// named. This way, the function reference can be invoked from within its 
+			// own function body.
+			.then(
+				function recursiveFunction( n ) {
+
+					console.log( "Entering recursive function for [", n, "]." );
+
+					// Once we hit zero, bail out of the recursion. The key to recursion
+					// is that it stops at some point, and the callstack can be "rolled"
+					// back up.
+					if ( n === 0 ) {
+
+						return( 0 );
+
+					}
+
+					// Internally to this promise link, we're going to start a NEW 
+					// PROMISE CHAIN whose fulfillment will become the continuation of 
+					// the parent promise chain. This fundamentally different from the
+					// reduce() example.
+					var promise = Promise.resolve().then(
+						function() {
+
+							return( recursiveFunction( n - 1 ) ); // RECURSE!
+
+						}
+					);
+
+					return( promise );
+
+					// NOTE: To be ultra-concise, I could have written the following; 
+					// but, I think that would have made the example harder to follow.
+					// --
+					// return( Promise.resolve( recursiveFunction( n - 1 ) ) );
+
+				}
+			)
+			.then(
+				function() {
+
+					console.groupEnd();
+
+				}
+			)
+		;
+
+	</script>
+
+</body>
+</html>
