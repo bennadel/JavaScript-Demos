@@ -1,0 +1,25 @@
+{
+	"name": "angular2-v2-4-1",
+	"version": "2.4.1",
+	"license": "ISC",
+	"dependencies": {
+		"@angular/common": "2.4.1",
+		"@angular/compiler": "2.4.1",
+		"@angular/core": "2.4.1",
+		"@angular/forms": "2.4.1",
+		"@angular/http": "2.4.1",
+		"@angular/platform-browser": "2.4.1",
+		"@angular/platform-browser-dynamic": "2.4.1",
+		"@angular/router": "3.4.1",
+		"@types/core-js": "0.9.34",
+		"@types/node": "6.0.45",
+		"core-js": "2.4.1",
+		"plugin-typescript": "5.2.7",
+		"reflect-metadata": "0.1.8",
+		"rxjs": "5.0.1",
+		"systemjs": "0.19.40",
+		"typescript": "2.1.4",
+		"web-animations-js": "2.2.2",
+		"zone.js": "0.7.4"
+	}
+}

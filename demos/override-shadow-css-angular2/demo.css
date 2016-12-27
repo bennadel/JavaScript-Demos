@@ -1,0 +1,40 @@
+
+my-app {
+	display: block ;
+}
+
+/*
+	CAUTION: This one does NOT WORK because the ELEMENT selector has 
+	less "specificity" than the ATTRIBUTE selector that is being used 
+	by the simulated shadow-DOM:
+	--
+	Element < Attribute
+	--
+	As such, the more-specific :host margin overrides this margin.
+*/
+info-box {
+	margin: 16px 0px 16px 0px ;
+}
+
+/*
+	CAUTION: This DOES WORK. Since the ATTRIBUTE and CLASS selectors
+	are at the same level of specificity, this selector becomes more
+	specific that the one being used by the simulated shadow-DOM:
+	--
+	Element + Class > Attribute
+	--
+	As such, this more-specific margin overrides the :host margin.
+*/
+info-box.mini {
+	margin: 16px 0px 16px 0px ;
+}
+
+/*
+body info-box.mini {
+	margin: 50px ;
+}
+
+html body info-box.mini {
+	margin: 100px ;
+}
+*/
