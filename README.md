@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Solved: CSS Specificity And Shadow DOM Overrides In Angular 2.4.1](http://bennadel.github.io/JavaScript-Demos/demos/override-nested-shadow-css-angular2/)
 * [Exploring CSS Specificity With Shadow DOM Styles In Angular 2.4.1](http://bennadel.github.io/JavaScript-Demos/demos/override-shadow-css-angular2/)
 * [Exploring Recursive Promises In JavaScript](http://bennadel.github.io/JavaScript-Demos/demos/recursive-promises/)
 * [Retrying Bulk Updates In PouchDB Using A Recursive Promise Chain](http://bennadel.github.io/JavaScript-Demos/demos/pouchdb-bulk-update-retry-plugin/)
