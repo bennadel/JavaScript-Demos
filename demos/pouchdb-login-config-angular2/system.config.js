@@ -9,6 +9,7 @@
 		map: {
 			"@angular": "ng2/node_modules/@angular",
 			"plugin-typescript": "ng2/node_modules/plugin-typescript/lib/plugin.js",
+			"pouchdb": "vendor/pouchdb/6.0.7",
 			"rxjs": "ng2/node_modules/rxjs",
 			"ts": "ng2/node_modules/plugin-typescript",
 			"typescript": "ng2/node_modules/typescript"
@@ -86,6 +87,9 @@
 						loader: "ts"
 					}
 				}
+			},
+			"pouchdb": {
+				main: "pouchdb-6.0.7.min.js"
 			},
 			"rxjs": {
 				meta: {
