@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Experimenting With Auth0 Passwordless Email Authentication In Angular 2.4.1](http://bennadel.github.io/JavaScript-Demos/demos/auth0-email-code-angular2/)
 * [Configuring PouchDB After Login For A Database-Per-User Architecture In Angular 2.4.1](http://bennadel.github.io/JavaScript-Demos/demos/pouchdb-login-config-angular2/)
 * [Using Form Controls Without FormsModule Or NgModel In Angular 2.4.1](http://bennadel.github.io/JavaScript-Demos/demos/forms-without-ng-model-angular2/)
 * [Solved: CSS Specificity And Shadow DOM Overrides In Angular 2.4.1](http://bennadel.github.io/JavaScript-Demos/demos/override-nested-shadow-css-angular2/)
