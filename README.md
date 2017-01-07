@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Associating Auth0 Rules With Specific Auth0 Clients In Angular 2.4.1](http://bennadel.github.io/JavaScript-Demos/demos/auth0-client-id-rules-angular2/)
 * [Provisioning Cloudant / CouchDB Databases From Auth0 For A Database-Per-User Architecture In Angular 2.4.1](http://bennadel.github.io/JavaScript-Demos/demos/auth0-cloudant-provision-angular2/)
 * [Experimenting With Auth0 Passwordless Email Authentication In Angular 2.4.1](http://bennadel.github.io/JavaScript-Demos/demos/auth0-email-code-angular2/)
 * [Configuring PouchDB After Login For A Database-Per-User Architecture In Angular 2.4.1](http://bennadel.github.io/JavaScript-Demos/demos/pouchdb-login-config-angular2/)

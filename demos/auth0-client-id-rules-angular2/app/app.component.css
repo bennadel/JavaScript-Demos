@@ -1,0 +1,23 @@
+
+:host {
+	display: block ;
+	font-size: 16px ;
+}
+
+:host >>> a {
+	color: red ;
+	cursor: pointer ;
+	text-decoration: underline ;
+	user-select: none ;
+		-moz-user-select: none ;
+		-webkit-user-select: none ;
+}
+
+input {
+	font-size: 14px ;
+}
+
+label {
+	display: table ;
+	margin: 5px 0px 5px 0px ;
+}
