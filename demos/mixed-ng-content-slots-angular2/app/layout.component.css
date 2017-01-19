@@ -1,0 +1,20 @@
+
+:host {
+	border: 2px solid #CCCCCC ;
+	border-radius: 4px 4px 4px 4px ;
+	display: block ;
+	padding: 20px 20px 20px 20px ;
+}
+
+div.header-panel,
+div.footer-panel {
+	border: 1px solid #DDDDDD ;
+	border-radius: 4px 4px 4px 4px ;
+	padding: 15px 15px 15px 15px ;
+}
+
+div.body-panel {
+	border: 1px solid #AAAAAA ;
+	margin: 10px 0px 10px 0px ;
+	padding: 15px 15px 15px 15px ;
+}

@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Mixing Specific And Non-Specific ng-content Transclusion In Angular 2.4.1](http://bennadel.github.io/JavaScript-Demos/demos/mixed-ng-content-slots-angular2/)
 * [Consuming Auth0-Secured WebTask.io Resources In Angular 2.4.1](http://bennadel.github.io/JavaScript-Demos/demos/auth0-webtask-angular2/)
 * [Syncing Local PouchDB Data With Remote IBM Cloudant Database In Angular 2.4.1](http://bennadel.github.io/JavaScript-Demos/demos/pouchdb-cloudant-sync-angular2/)
 * [Injecting "Newable" Classes Using TypeScript And Dependency-Injection In Angular 2.4.1](http://bennadel.github.io/JavaScript-Demos/demos/dependency-inject-class-angular2/)
