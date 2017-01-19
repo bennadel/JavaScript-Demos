@@ -115,7 +115,7 @@ export class AppComponent {
 
 					this.randomNumber = response.json
 						? response.json()
-						: "Something weng wrong."
+						: "Something went wrong."
 					;
 
 				}
