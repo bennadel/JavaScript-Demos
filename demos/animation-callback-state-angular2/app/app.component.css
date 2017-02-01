@@ -1,0 +1,24 @@
+
+:host {
+	display: block ;
+	font-size: 16px ;
+}
+
+:host >>> a {
+	color: red ;
+	cursor: pointer ;
+	text-decoration: underline ;
+	user-select: none ;
+		-moz-user-select: none ;
+		-webkit-user-select: none ;
+}
+
+div.box {
+	border: 1px solid #CCCCCC ;
+	border-radius: 3px 3px 3px 3px ;
+	cursor: pointer ;
+	height: 100px ;
+	line-height: 100px ;
+	text-align: center ;
+	width: 200px ;
+}
