@@ -1,0 +1,80 @@
+
+:host {
+	background-color: #F4FAFF ;
+	border: 1px solid #BCE1FE ;
+	border-radius: 4px 4px 4px 4px ;
+	color: #69BCFC ;
+	cursor: pointer ;
+	display: inline-block ;
+	font-size: 14px ;
+	overflow: hidden ;
+	padding: 0px 6px 0px 32px ;
+	position: relative ;
+	user-select: none ;
+		-moz-user-select: none ;
+		-webkit-user-select: none ;
+}
+
+.emoticon {
+	background-image: url( "./emoticons.png" ) ; /* CAUTION: Relevant to root of app */
+	background-position: 0px 0px ;
+	background-repeat: no-repeat ;
+	display: inline-block ;
+	height: 22px ;
+	left: 5px ;
+	position: absolute ;
+	top: 4px ;
+	width: 22px ;
+}
+
+.emoticon--smile {
+	background-position: 0px 0px ;
+}
+
+.emoticon--simple_smile {
+	background-position: -36px 0px ;
+}
+
+.emoticon--disappointed {
+	background-position: -73px 0px ;
+}
+
+.emoticon--slightly_smiling_face {
+	background-position: -110px 0px ;
+}
+
+.emoticon--wink {
+	background-position: -147px 0px ;
+}
+
+.emoticon--neutral_face {
+	background-position: -184px 0px ;
+}
+
+.emoticon--stuck_out_tongue {
+	background-position: -221px 0px ;
+}
+
+.emoticon--confused {
+	background-position: -258px 0px ;
+}
+
+.emoticon--thumbsup {
+	background-position: -295px 0px ;
+}
+
+.counter {
+	display: block ;
+	font-family: monospace, sans-serif, helvetica, arial ;
+	height: 30px ;
+	line-height: 31px ;
+	overflow: hidden ;
+}
+
+.current-value {
+	display: block ;
+}
+
+.previous-value {
+	display: block ;
+}

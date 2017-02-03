@@ -1,0 +1,22 @@
+
+:host {
+	display: block ;
+	font-size: 16px ;
+}
+
+:host >>> a {
+	color: red ;
+	cursor: pointer ;
+	text-decoration: underline ;
+	user-select: none ;
+		-moz-user-select: none ;
+		-webkit-user-select: none ;
+}
+
+:host >>> hr {
+	margin: 30px 0px 30px 0px ;
+}
+
+emoticon-button {
+	margin-right: 5px ;
+}
