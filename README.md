@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Using ANY Type Prevents Function Parameter Type-Checking In TypeScript 2.1.5](http://bennadel.github.io/JavaScript-Demos/demos/typescript-any-type-checking/)
 * [Creating An Animated Slack-Inspired "Reaction" Emoticon Button In Angular 2.4.4](http://bennadel.github.io/JavaScript-Demos/demos/emoticon-button-angular2/)
 * [Using Animation Callbacks When Animation Transitions Are Interrupted In Angular 2.4.4](http://bennadel.github.io/JavaScript-Demos/demos/animation-callback-state-angular2/)
 * [Template vs. ng-container For Grouping DOM Nodes In Angular 2.4.4](http://bennadel.github.io/JavaScript-Demos/demos/ng-container-vs-template-angular2/)
