@@ -1,0 +1,76 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Always Throw Errors In Order To Get A Stack Trace In Promise Chains
+	</title>
+</head>
+<body>
+
+	<h1>
+		Always Throw Errors In Order To Get A Stack Trace In Promise Chains
+	</h1>
+
+	<p>
+		<em>Look at console &mdash; things being logged, yo!</em>
+	</p>
+
+	<script type="text/javascript" src="../../vendor/core-js/2.4.1/shim.min.js"></script>
+	<script type="text/javascript">
+
+		var promise = new Promise(
+			function( resolve, reject ) {
+
+				// If we REJECT instead of THROW ....
+				reject( new Error( "Something went wrong!" ) );
+
+			}
+		);
+
+		promise.catch(
+			function handleReject( error ) {
+
+				console.warn( "Error:" );
+				console.log( error.message );
+
+				// CAUTION: In IE 10 / 11, the stack property will be undefined because 
+				// the original Error() object was never thrown. IE only populates the 
+				// stack at the time the Error is thrown.
+				console.log( error.stack );
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		var promise = new Promise(
+			function( resolve, reject ) {
+
+				// If we THROW instead of REJECT ....
+				throw( new Error( "Something went wrong (but better)!" ) );
+
+			}
+		);
+
+		promise.catch(
+			function handleReject( error ) {
+
+				console.warn( "Error:" );
+				console.log( error.message );
+
+				// This time, since we threw the error, instead of simply rejecting it,
+				// IE 10 and 11 will populate the stack trace.
+				console.log( error.stack );
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>

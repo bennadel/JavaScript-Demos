@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Always Throw Errors In Order To Get A Stack Trace In Promise Chains](http://bennadel.github.io/JavaScript-Demos/demos/promise-throw-error-ie/)
 * [Experimenting With Error Sub-Classing Using ES5 And TypeScript 2.1.5](http://bennadel.github.io/JavaScript-Demos/demos/typescript-extending-errors/)
 * [Using ANY Type Prevents Function Parameter Type-Checking In TypeScript 2.1.5](http://bennadel.github.io/JavaScript-Demos/demos/typescript-any-type-checking/)
 * [Creating An Animated Slack-Inspired "Reaction" Emoticon Button In Angular 2.4.4](http://bennadel.github.io/JavaScript-Demos/demos/emoticon-button-angular2/)
