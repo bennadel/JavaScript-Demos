@@ -1,0 +1,5 @@
+__DONT_UPGRADE_TYPESCRIPT__
+
+
+Don't upgrade TypeScript - it no longer performs TypeChecking in the browser.
+Don't upgrade System.js - it has breaking changes I can't figure out.

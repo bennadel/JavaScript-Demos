@@ -1,0 +1,48 @@
+
+:host {
+	display: block ;
+	font-size: 16px ;
+}
+
+:host >>> a {
+	color: red ;
+	cursor: pointer ;
+	text-decoration: underline ;
+	user-select: none ;
+		-moz-user-select: none ;
+		-webkit-user-select: none ;
+}
+
+:host >>> hr {
+	margin: 30px 0px 30px 0px ;
+}
+
+p button {
+	background-color: #F0F0F0 ;
+	border: 1px solid #CCCCCC ;
+	border-radius: 5px 5px 5px 5px ;
+	cursor: pointer ;
+	font-size: 14px ;
+	margin-right: 10px ;
+	padding: 5px 10px 5px 11px ;
+	vertical-align: middle ;
+}
+
+p span {
+	border-bottom: 2px dotted #CCCCCC ;
+	display: inline-block ;
+	font-size: 18px ;
+	padding: 5px 10px 5px 10px ;
+	vertical-align: middle ;
+}
+
+textarea {
+	border: 1px solid #AAAAAA ;
+	box-sizing: border-box ;
+	display: block ;
+	font-size: 18px ;
+	height: 100px ;
+	margin-top: 30px ;
+	padding: 10px 10px 10px 10px ;
+	width: 500px ;
+}
