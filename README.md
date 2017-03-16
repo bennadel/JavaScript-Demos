@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Logging And Debugging Unhandled Promise Rejections In The Browser](http://bennadel.github.io/JavaScript-Demos/demos/unhandled-rejection/)
 * [Creating A Simple Copy-To-Clipboard Directive In Angular 2.4.9](http://bennadel.github.io/JavaScript-Demos/demos/copy-to-clipboard-angular2/)
 * [Always Throw Errors In Order To Get A Stack Trace In Promise Chains](http://bennadel.github.io/JavaScript-Demos/demos/promise-throw-error-ie/)
 * [Experimenting With Error Sub-Classing Using ES5 And TypeScript 2.1.5](http://bennadel.github.io/JavaScript-Demos/demos/typescript-extending-errors/)

@@ -1,0 +1,143 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Logging And Debugging Unhandled Promise Rejections In The Browser
+	</title>
+</head>
+<body>
+
+	<h1>
+		Logging And Debugging Unhandled Promise Rejections In The Browser
+	</h1>
+
+	<h2>
+		Q Promise Implementation (Experimental Shim)
+	</h2>
+
+	<p>
+		<em>Look at console &mdash; things being logged, yo!</em>
+	</p>
+
+	<script type="text/javascript" src="../../vendor/core-js/2.4.1/shim.min.js"></script>
+	<script type="text/javascript" src="../../vendor/q/v1/q.js"></script>
+	<script type="text/javascript">
+
+		// Like the Bluebird library, the Q library will hook into Node.js' 
+		// "unhandledRejection" on the global process. But, unlike Bluebird, Q does not
+		// hook into the browser-based event workflow. As such, I wanted to EXPERIMENT
+		// with shiming the Node.js process.emit() into the Browser.
+		(function( originalProcess ) {
+
+			var supportsNative = true;
+
+			// In Chrome, when using Q, the unhandled Promise rejection will actually 
+			// trigger the native "unhandledrejection" event even when we wrap the 
+			// Promise in Q.when(). As such, we want to un-mock the "process" if we 
+			// detect that the window event handler is invoked before our mocked-out
+			// process object.
+			window.addEventListener(
+				"unhandledrejection",
+				function handleRejection( event ) {
+
+					if ( supportsNative ) {
+
+						// Restore the previous process (likely undefined).
+						window.process = originalProcess;
+
+					}
+
+					// We only need to test this once.
+					window.removeEventListener( "unhandledrejection", handleRejection );
+
+				}
+			);
+
+			// Stub-out the Node.js process.emit() that Q will look for.
+			window.process = {
+				emit: function( eventType ) {
+
+					supportsNative = false;
+
+					if ( eventType === "unhandledRejection" ) {
+
+						var event = new Event( "unhandledrejection" );
+
+						// I'm using the "detail" here to mimic what Bluebird does.
+						event.detail = {
+							reason: arguments[ 1 ],
+							promise: arguments[ 2 ]
+						};
+
+						return( window.dispatchEvent( event ) );
+
+					}
+
+				}
+			};
+
+		})( window.process );
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// Listen for unhandled Promise rejections.
+		// --
+		// NOTE: At the time of this writing, only Chrome has native support for this 
+		// global event. Other browser may or may not log the root Error to the console,
+		// but the behavior differs depending on the Promise implementation (ie, native
+		// vs. shim).
+		window.addEventListener(
+			"unhandledrejection",
+			function handleRejection( event ) {
+
+				// Prevent the default behavior, which is logging the unhandled rejection
+				// error to the console.
+				// --
+				// NOTE: This is only meaningful in Chrome that supports this event.
+				event.preventDefault();
+
+				// The native event-handler in Chrome puts the Reason and Promise in the
+				// root event, but Bluebird attaches them to the event detail.
+				var reason = ( event.reason || event.detail.reason );
+				var promise = ( event.promise || event.detail.promise );
+
+				console.group( "UNHANDLED PROMISE REJECTION" );
+				console.log( reason );
+				console.log( promise );
+				console.groupEnd();
+
+			}
+		);
+
+
+		// Now that we have our global event-handler in place, let's create a Promise
+		// chain that results in a Rejection for which we provide no .catch() handler.
+		var promise = Promise
+			.resolve( "Hello" )
+			.then(
+				function() {
+
+					throw( new Error( "Something went wrong!" ) );
+
+				}
+			)
+		;
+
+
+		// In order to get Q to monitor the unhandled Rejections, we have to wrap any
+		// native Promise chain in a Q Promise. Doing so will ensure that the down-chain
+		// functionality is provided by Q. This will leave us with a Q promise that is
+		// rejected with no .catch() handler ... which will cause Q to emit the PROCESS
+		// EVENT "unhandledRejection", which we are shimming into the Browser event,
+		// "unhandledrejection".
+		Q.when( promise );
+
+	</script>
+
+</body>
+</html>

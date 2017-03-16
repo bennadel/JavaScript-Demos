@@ -1,0 +1,95 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Logging And Debugging Unhandled Promise Rejections In The Browser
+	</title>
+</head>
+<body>
+
+	<h1>
+		Logging And Debugging Unhandled Promise Rejections In The Browser
+	</h1>
+
+	<h2>
+		Bluebird Promise Implementation
+	</h2>
+
+	<p>
+		<em>Look at console &mdash; things being logged, yo!</em>
+	</p>
+
+	<!--
+		CAUTION: We have to include the CORE shim BEFOE we include BLUEBIRD. If we
+		include Bluebird first, the Core shim will overwrite the Promise reference.
+	-->
+	<script type="text/javascript" src="../../vendor/core-js/2.4.1/shim.min.js"></script>
+	<script type="text/javascript" src="../../vendor/bluebird/3.5.0/bluebird.min.js"></script>
+	<script type="text/javascript">
+
+		// Don't have Bluebird overwrite the global Promise reference. If we want to use
+		// the Bluebird promises, we want to make that an explicit choice in the code.
+		var Bluebird = Promise.noConflict();
+
+
+		// Listen for unhandled Promise rejections.
+		// --
+		// NOTE: At the time of this writing, only Chrome has native support for this 
+		// global event. Other browser may or may not log the root Error to the console,
+		// but the behavior differs depending on the Promise implementation (ie, native
+		// vs. shim).
+		window.addEventListener(
+			"unhandledrejection",
+			function handleRejection( event ) {
+
+				// Prevent the default behavior, which is logging the unhandled rejection
+				// error to the console.
+				// --
+				// NOTE: This is only meaningful in Chrome that supports this event.
+				event.preventDefault();
+
+				// The native event-handler in Chrome puts the Reason and Promise in the
+				// root event, but Bluebird attaches them to the event detail.
+				var reason = ( event.reason || event.detail.reason );
+				var promise = ( event.promise || event.detail.promise );
+
+				console.group( "UNHANDLED PROMISE REJECTION" );
+				console.log( reason );
+				console.log( promise );
+				console.groupEnd();
+
+			}
+		);
+
+
+		// Now that we have our global event-handler in place, let's create a Promise
+		// chain that results in a Rejection for which we provide no .catch() handler.
+		var promise = Promise
+			.resolve( "Hello" )
+			.then(
+				function() {
+
+					throw( new Error( "Something went wrong!" ) );
+
+				}
+			)
+		;
+
+
+		// Just including the Bluebird library doesn't do anything (since we called 
+		// .noConflict() in order to ensure Bluebird was not the global Promise 
+		// implementation); we therefore have to wrap the native Promise object in a
+		// Bluebird promise in order to ensure that the down-chain functionality is 
+		// provided by Bluebird. This will leave us with a Bluebird promise that is
+		// rejected with no .catch() handler ... which will cause Bluebird to trigger
+		// the global "unhandledrejection" event.
+		// --
+		// NOTE: If we didn't call Promise.noConflict(), we wouldn't need this step.
+		Bluebird.resolve( promise );
+
+	</script>
+
+</body>
+</html>
