@@ -1,0 +1,30 @@
+/**
+ * @license
+ * Copyright Google Inc. All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
+import { Summary, SummaryResolver } from '../summary_resolver';
+import { StaticSymbol, StaticSymbolCache } from './static_symbol';
+export interface AotSummaryResolverHost {
+    /**
+     * Loads an NgModule/Directive/Pipe summary file
+     */
+    loadSummary(filePath: string): string;
+    /**
+     * Returns whether a file is a source file or not.
+     */
+    isSourceFile(sourceFilePath: string): boolean;
+}
+export declare class AotSummaryResolver implements SummaryResolver<StaticSymbol> {
+    private host;
+    private staticSymbolCache;
+    private summaryCache;
+    private loadedFilePaths;
+    constructor(host: AotSummaryResolverHost, staticSymbolCache: StaticSymbolCache);
+    private _assertNoMembers(symbol);
+    resolveSummary(staticSymbol: StaticSymbol): Summary<StaticSymbol>;
+    getSymbolsOf(filePath: string): StaticSymbol[];
+    private _loadSummaryFile(filePath);
+}

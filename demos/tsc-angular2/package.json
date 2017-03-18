@@ -1,0 +1,7 @@
+{
+	"scripts": {
+		"build": "../../vendor/angular2/2.4.9-tsc/node_modules/.bin/tsc --project tsconfig.json",
+		"version": "../../vendor/angular2/2.4.9-tsc/node_modules/.bin/tsc --version",
+		"watch": "../../vendor/angular2/2.4.9-tsc/node_modules/.bin/tsc --watch --project tsconfig.json"
+	}
+}
