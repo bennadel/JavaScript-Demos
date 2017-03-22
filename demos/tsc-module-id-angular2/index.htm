@@ -1,0 +1,53 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Relative Template And Style URLs Using System.js Without moduleId In Angular 2.4.9
+	</title>
+
+	<!-- Load libraries (including polyfill(s) for older browsers). -->
+	<script type="text/javascript" src="../../vendor/angular2/2.4.9-tsc/node_modules/core-js/client/shim.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angular2/2.4.9-tsc/node_modules/zone.js/dist/zone.js"></script>
+	<script type="text/javascript" src="../../vendor/angular2/2.4.9-tsc/node_modules/reflect-metadata/Reflect.js"></script>
+	<script type="text/javascript" src="../../vendor/angular2/2.4.9-tsc/node_modules/systemjs/dist/system.src.js"></script>
+
+	<!-- Load the Web Animations API polyfill for most browsers (basically any browser other than Chrome and Firefox). -->
+	<!-- <script type="text/javascript" src="../../vendor/angular2/2.4.9-tsc/node_modules/web-animations-js/web-animations.min.js"></script> -->
+
+	<!-- Configure SystemJS loader. -->
+	<script type="text/javascript" src="./system.config.js"></script>
+</head>
+<body>
+
+	<h1>
+		Relative Template And Style URLs Using System.js Without moduleId In Angular 2.4.9
+	</h1>
+
+	<my-app>
+
+		<p>
+			<em>Loading files...</em>
+		</p>
+
+		<h2>
+			npm Run Scripts:
+		</h2>
+
+		<ul>
+			<li>
+				<strong>npm run build</strong> &mdash; Compiles the .ts file into .js files (in same location).
+			</li>
+			<li>
+				<strong>npm run watch</strong> &mdash; Compiles the .ts file into .js files and then watches files for changes.
+			</li>
+			<li>
+				<strong>npm run version</strong> &mdash; Logs the version of TypeScript being used to compile.
+			</li>
+		</ul>
+	
+	</my-app>
+
+</body>
+</html>
