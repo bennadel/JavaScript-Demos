@@ -1,0 +1,30 @@
+{
+	"name": "angular2-v2-4-9-webpack",
+	"version": "2.4.9-webpack",
+	"license": "ISC",
+	"dependencies": {
+		"@angular/common": "2.4.9",
+		"@angular/compiler": "2.4.9",
+		"@angular/core": "2.4.9",
+		"@angular/forms": "2.4.9",
+		"@angular/http": "2.4.9",
+		"@angular/platform-browser": "2.4.9",
+		"@angular/platform-browser-dynamic": "2.4.9",
+		"@angular/router": "3.4.9",
+		"@types/lodash": "4.14.57",
+		"@types/node": "7.0.11",
+		"angular2-template-loader": "0.6.2",
+		"core-js": "2.4.1",
+		"html-webpack-plugin": "2.28.0",
+		"lodash": "4.17.4",
+		"raw-loader": "0.5.1",
+		"reflect-metadata": "0.1.10",
+		"rxjs": "5.2.0",
+		"systemjs": "0.20.10",
+		"ts-loader": "2.0.2",
+		"typescript": "2.2.1",
+		"web-animations-js": "2.2.2",
+		"webpack": "2.2.1",
+		"zone.js": "0.8.4"
+	}
+}
