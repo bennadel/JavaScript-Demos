@@ -1,0 +1,46 @@
+
+a {
+	color: red ;
+	cursor: pointer ;
+	text-decoration: underline ;
+	user-select: none ;
+		-moz-user-select: none ;
+		-webkit-user-select: none ;
+}
+
+ul.shapes a.copy {
+	display: inline-block ;
+	margin: 0px 15px 0px 0px ;
+}
+
+ul.shapes a.delete {
+	color: #CCCCCC ;
+	font-size: 14px ;
+}
+
+form:after {
+	clear: "both" ;
+	content: "" ;
+	display: block ;
+	height: 0px ;
+}
+
+form input.shape {
+	font-size: 20px ;
+	width: 400px ;
+}
+
+form button.submit {
+	font-size: 20px ;
+	width: 150px ;
+}
+
+p.notes {
+	color: #999999 ;
+	font-size: 14px ;
+	font-style: italic ;
+}
+
+p.notes a {
+	color: #666666 ;
+}

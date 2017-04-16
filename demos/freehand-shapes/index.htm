@@ -1,0 +1,329 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Fun With InVision Freehand Shapes
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css" />
+</head>
+<body>
+
+	<h1>
+		Fun With InVision Freehand Shapes
+	</h1>
+
+	<p>
+		<a class="start-debug">Get START Debug Bookmarklet</a>
+		&nbsp;|&nbsp;
+		<a class="stop-debug">Get STOP Debug Bookmarklet</a>
+	</p>
+
+	<h2>
+		Freehand Shape Copy Links
+	</h2>
+
+	<ul class="shapes">
+		<!-- Shapes will be loaded from localStroage. -->
+	</ul>
+
+	<h2>
+		Add Freehand Shape
+	</h2>
+
+	<p>
+		Paste in the debugging shape data from the <strong>Freehand bookmarklet</strong>.
+	</p>
+
+	<form>
+		<input type="text" class="shape" />
+		<button type="submit" class="submit">Add Shape</button>
+	</form>
+
+	<p class="notes">
+		Demo based on <a href="https://freehand.invisionapp.com">InVision Freehand</a>
+		sketching tool by <a href="https://www.invisionapp.com/?source=bennadel.com">InVision App, Inc</a>.
+	</p>
+
+
+	<!-- I am the TEMPLATE for the start-debugging bookmarklet. -->
+	<script type="text/javascript-template" class="start-debug-script">
+
+		javascript:(function ( w, c, data ) {
+
+			w.debugCopy = w.debugCopy || function( e ) {
+
+				if ( data = e.clipboardData.getData( "custom/binary" ) ) {
+
+					c.group( "Freehand Shape Debugging" );
+					c.log( "<a data-shape=\"" + data + "\">Copy: SHAPE NAME</a>" );
+					c.groupEnd();
+
+				}
+
+			};
+
+			w.addEventListener( "copy", w.debugCopy );
+
+		})( window, console );void(0);
+
+	</script>
+
+
+	<!-- I am the TEMPLATE for the stop-debugging bookmarklet. -->
+	<script type="text/javascript-template" class="stop-debug-script">
+
+		javascript:(function ( w ) {
+
+			if ( w.debugCopy ) {
+
+				w.removeEventListener( "copy", w.debugCopy );
+				
+			}
+
+		})( window );void(0);
+
+	</script>
+
+
+	<script type="text/javascript" src="../../vendor/jquery/3.2.1/jquery-3.2.1.min.js"></script>
+	<script type="text/javascript">
+
+		// Setup the click-handler that presents the Start-Debugging bookmarklet.
+		$( "a.start-debug" ).click(
+			function handleClick( event ) {
+
+				event.preventDefault();
+				
+				prompt(
+					"Start Debugging Bookmarklet:",
+					prepareBookmarkletContent( $( ".start-debug-script" ) )
+				);
+
+			}
+		);
+
+		// Setup the click-handler that presents the Stop-Debugging bookmarklet.
+		$( "a.stop-debug" ).click(
+			function handleClick( event ) {
+
+				event.preventDefault();
+				
+				prompt(
+					"Stop Debugging Bookmarklet:",
+					prepareBookmarkletContent( $( ".stop-debug-script" ) )
+				);
+
+			}
+		);
+
+		// Setup the event-delegation for the Copy-Shape handler.
+		$( "ul.shapes" ).on(
+			"click",
+			"a.copy",
+			function handleClick( event ) {
+
+				event.preventDefault();
+
+				var anchor = $( event.target );
+				var shapeData = anchor.data( "shape" );
+				var shapeLabel = anchor.text();
+
+				$( window ).one(
+					"copy",
+					function handleCopy( event ) {
+
+						console.log( "Executing:", shapeLabel );
+
+						// Unwrap the jQuery event.
+						event = event.originalEvent;
+
+						// In order to override the data that gets associated with the
+						// "copy" event, we have to prevent the default behavior.
+						event.preventDefault();
+
+						// Store the proprietary shape data - this is what InVision 
+						// Freehand will use when processing the "paste" event.
+						event.clipboardData.setData( "custom/binary", shapeData );
+
+					}
+				);
+
+				// Execute the COPY command in order to invoke the copy handler above.
+				// --
+				// CAUTION: From my testing in Chrome and Firefox, I didn't actually 
+				// need to create any text selection for this event to take place. Your 
+				// mileage may vary in your browser.
+				document.execCommand( "copy" );
+
+			}
+		);
+
+		// Setup the event-delegation for the Delete-Shape handler.
+		$( "ul.shapes" ).on(
+			"click",
+			"a.delete",
+			function handleClick( event ) {
+
+				event.preventDefault();
+
+				deleteShape( $( this ).data( "id" ) );
+				applyShapes();
+
+			}
+		);
+
+		// Setup the form submission handler, which adds a new shape.
+		$( "form" ).submit(
+			function handleSubmit( event ) {
+
+				event.preventDefault();
+
+				var input = $( this ).find( "input.shape" );
+
+				if ( input.val() ) {
+
+					addShape( input.val() );
+					applyShapes();
+
+					input.val( "" );
+
+				}
+
+			}
+		);
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// All of the shapes are stored in LocalHost (in order to make this demo a bit
+		// more interesting). This is key that stores the ARRAY of shapes.
+		var localStorageKey = "freehand_shape_copy_demo";
+
+		// Load and render the shapes.
+		applyShapes();
+
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+
+		// I add the given shape meta-data to the underlying collection.
+		function addShape( outerHTML ) {
+
+			var anchor = $( outerHTML );
+			var shapes = getShapes();
+
+			shapes.push({
+				id: Date.now(),
+				data: anchor.data( "shape" ),
+				label: anchor.text()
+			});
+
+			// Sort the shapes alphabetically by label.
+			shapes.sort(
+				function operator( a, b ) {
+
+					return ( a.label.toLowerCase() < b.label.toLowerCase() )
+						? -1
+						: 1
+					;
+
+				}
+			);
+
+			setShapes( shapes );
+
+		}
+
+
+		// I load and apply the shapes to the user interface.
+		function applyShapes() {
+
+			var shapes = getShapes();
+			var shapesList = $( "ul.shapes" ).empty();
+
+			shapes.forEach(
+				function iterator( shape ) {
+
+					var li = $( "<li />" )
+						.appendTo( shapesList )
+					;
+
+					var anchor = $( "<a />" )
+						.data( "shape", shape.data )
+						.text( shape.label )
+						.addClass( "copy" )
+						.appendTo( li )
+					;
+
+					var deleteAnchor = $( "<a />" )
+						.data( "id", shape.id )
+						.text( "Delete" )
+						.addClass( "delete" )
+						.appendTo( li )
+					;
+
+				}
+			);
+
+		}
+
+
+		// I delete the shape with the given ID.
+		function deleteShape( id ) {
+
+			var shapes = getShapes();
+
+			shapes = shapes.filter(
+				function operator( shape ) {
+
+					return( shape.id && ( shape.id !== id ) );
+
+				}
+			);
+
+			setShapes( shapes );
+
+		}
+
+
+		// I load the shapes from the underlying storage.
+		function getShapes() {
+
+			var rawShapes = localStorage.getItem( localStorageKey );
+
+			return( rawShapes ? JSON.parse( rawShapes ) : [] );
+
+		}
+
+
+		// I persist the given shapes to the underlying storage.
+		function setShapes( shapes ) {
+
+			localStorage.setItem( localStorageKey, JSON.stringify( shapes ) );
+
+		}
+
+
+		// I prepare the given bookmarlet template for use in a bookmarklet URL.
+		function prepareBookmarkletContent( scriptTag ) {
+
+			var compressed = scriptTag
+				.text()
+				.replace( /[\r\n\t]+/g, "" )
+				.replace( /^\s+|\s+$/g, "" )
+			;
+
+			return( compressed );
+
+		}
+
+	</script>
+
+</body>
+</html>
