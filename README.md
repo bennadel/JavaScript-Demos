@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Experimenting With PouchDB 6.2.0 And The New Mango .find() Plugin](http://bennadel.github.io/JavaScript-Demos/demos/pouchdb-find-playground/)
 * [Fun With InVision Freehand Shapes](http://bennadel.github.io/JavaScript-Demos/demos/freehand-shapes/)
 * [Defining Functions With Properties Using TypeScript Declaration Merging In Angular 2.4.9](http://bennadel.github.io/JavaScript-Demos/demos/invocable-class-angular2/)
 * [Building JavaScript Demos With TypeScript 2.2.1, Webpack 2, And Angular 2.4.9](http://bennadel.github.io/JavaScript-Demos/demos/webpack-angular2/)
