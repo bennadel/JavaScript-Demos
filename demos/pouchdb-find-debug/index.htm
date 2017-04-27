@@ -155,9 +155,7 @@
 			function() {
 
 				// Now that we have our [ type, age ] secondary index, we can search 
-				// the documents using a "covering index" if we want to search for both
-				// Type and Age. "Covering" simply means that the index contains all of
-				// the fields we are looking for.
+				// the documents using both Type and Age.
 				var promise = db.find({
 					selector: {
 						type: "friend",
