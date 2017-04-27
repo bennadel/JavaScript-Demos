@@ -1,0 +1,358 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Understanding The Query Plan "Explained" By the Find Plugin In PouchDB 6.2.0
+	</title>
+</head>
+<body>
+
+	<h1>
+		Understanding The Query Plan "Explained" By the Find Plugin In PouchDB 6.2.0
+	</h1>
+
+	<p>
+		<em>Look at console &mdash; things being logged, yo!</em>
+	</p>
+
+	<script type="text/javascript" src="../../vendor/pouchdb/6.2.0/pouchdb-6.2.0.min.js"></script>
+	<!--
+		NOTE: When running this in the browser, the Find() plugin will AUTOMATICALLY 
+		inject itself into the PouchDB global object. We don't have to wire this up 
+		explicitly (except when running in node).
+	-->
+	<script type="text/javascript" src="../../vendor/pouchdb/6.2.0/pouchdb.find.js"></script>
+	<script type="text/javascript">
+
+		var dbName = "javascript-demos-pouchdb-find-playground";
+
+		// Enable debugging for the .find() plugin. This will output the Selector that
+		// each query uses as well as the Query Plan that has been chosen to run on top 
+		// of the map / reduce infrastructure.
+		PouchDB.debug.enable( "pouchdb:find" );
+
+		// Creating the PouchDB database instance is a synchronous operation. This means
+		// that we can immediately start to interact with the "db" object.
+		var db = new PouchDB( dbName );
+
+		// When I am playing around with PouchDB, I like to destroy and recreate the 
+		// database on each test run. This way, any conflicts with existing data are 
+		// explicitly coded into the experiment and not a byproduct of dirty data.
+		db.destroy().then(
+			function() {
+
+				// Once we destroy the database, we have to create a new one otherwise
+				// we'll get an error, "Error: database is destroyed".
+				db = new PouchDB( dbName );
+
+			}
+		)
+
+		// At this point, we have a pristine PouchDB instance to experiment with. Every 
+		// PouchDB operation returns a Promise (though you could use a Callback if you
+		// wanted to for some reason). So, to start experimenting, we can just chain the
+		// "thenable" operations together.
+		.then(
+			function() {
+
+				// Let's insert some Friend data.
+				var promise = db.bulkDocs([
+					{
+						_id: "friend:kim",
+						type: "friend",
+						name: "Kim",
+						age: 42,
+						interests: [ "Movies", "Computers", "Cooking" ],
+						favoriteMovies: [
+							{ imdbId: "tt0103064", title: "Terminator 2: Judgment Day" },
+							{ imdbId: "tt0093773", title: "Predator" },
+							{ imdbId: "tt0093894", title: "The Running Man" }
+						]
+					},
+					{
+						_id: "friend:sarah",
+						type: "friend",
+						name: "Sarah",
+						age: 35,
+						interests: [ "Museums", "Working Out", "Movies" ],
+						favoriteMovies: [
+							{ imdbId: "tt0112508", title: "Billy Madison" },
+							{ imdbId: "tt0116483", title: "Happy Gilmore" },
+							{ imdbId: "tt0103064", title: "Terminator 2: Judgment Day" }
+						]
+					},
+					{
+						_id: "friend:joanna",
+						type: "friend",
+						name: "Joanna",
+						age: 29,
+						interests: [ "Working Out", "Poetry", "Dancing" ],
+						favoriteMovies: [
+							{ imdbId: "tt0210075", title: "Girlfight" },
+							{ imdbId: "tt0179116", title: "But I'm a Cheerleader" },
+							{ imdbId: "tt0112697", title: "Clueless" }
+						]
+					}
+				]);
+
+				return( promise );
+
+			}
+		).then(
+			function() {
+
+				// The .find() plugin allow us to search both the primary key index as 
+				// well as the indices we create using .createIndex(). Let's select a
+				// subset of friends using a range on the primary key.
+				var promise = db.find({
+					selector: {
+						_id: {
+							$gte: "friend:",
+							$lte: "friend:kim"
+						}
+					}
+				});
+
+				promise.then(
+					function( results ) {
+
+						console.group( "ONE: Found %s friends by _ID range.", results.docs.length );
+						results.warning && console.warn( results.warning );
+						results.docs.forEach(
+							function( doc ) {
+
+								console.log( doc.name, "-", doc._id );
+
+							}
+						);
+						console.groupEnd();
+
+					}
+				);
+
+				return( promise );
+
+			}
+		).then(
+			function() {
+
+				// The .find() plugin will also search secondary indices; but, only the 
+				// indices created using the .find() plugin (presumably because those 
+				// are the only indices that offer insight into which fields were emitted
+				// during the index population).
+				var promise = db.createIndex({
+					index: {
+						fields: [ "type", "age" ]
+					}
+				});
+				
+				return( promise );
+
+			}
+		).then(
+			function() {
+
+				// Now that we have our [ type, age ] secondary index, we can search 
+				// the documents using a "covering index" if we want to search for both
+				// Type and Age. "Covering" simply means that the index contains all of
+				// the fields we are looking for.
+				var promise = db.find({
+					selector: {
+						type: "friend",
+						age: {
+							$gte: 30,
+							$lt: 50
+						}
+					}
+				});
+
+				promise.then(
+					function( results ) {
+
+						console.group( "TWO: Found %s friends by AGE.", results.docs.length );
+						results.warning && console.warn( results.warning );
+						results.docs.forEach(
+							function( doc ) {
+
+								console.log( doc.name, "-", doc.age );
+
+							}
+						);
+						console.groupEnd();
+
+					}
+				);
+
+				return( promise );
+
+			}
+		).then(
+			function() {
+
+				// In the previous example, we used all of the fields [ Type, Age ] in 
+				// the query's selector; but, we can also use an index PREFIX to locate
+				// documents efficiently. In this case, we'll use the [ Type, Age ] to
+				// search for friends REGARDLESS OF AGE; then, we'll perform some 
+				// additional IN-MEMORY filtering based on favorite movies.
+				var promise = db.find({
+					selector: {
+						type: "friend",
+
+						// In order to leverage the index we created above (for Type and
+						// Age), we have to include all the fields that were part of the
+						// index definition. However, since we don't actually care about
+						// the Age for this query, we can use a "wildcard" (so to speak).
+						// --
+						// NOTE: Using the {} as the field equality (complex key range)
+						// is the same as explicitly defining the range:
+						// --
+						// age: {
+						// 	$gte: null,
+						// 	$lte: {}
+						// }
+						age: {},
+
+						// CAUTION: The $elemMatch operator is an IN-MEMORY OPERATOR,
+						// which means that it cannot be run against an index. As such, 
+						// we have to rely on the preceding "key prefix" index to return
+						// the bulk of the payload.
+						favoriteMovies: {
+							$elemMatch: {
+								imdbId: {
+									$eq: "tt0112697" // Clueless.
+								}
+								// NOTE: In the preceding condition, you CANNOT used the
+								// implied equality operator (imdbId: "abc"). Doing so 
+								// throws the rather confusing error:
+								// -- 
+								// Error: unknown operator "0" - should be one of $eq, 
+								// $lte, $lt, $gt, $gte, $exists, $ne, $in, $nin, $size, 
+								// $mod, $regex, $elemMatch, $type or $all
+							}
+						}
+					}
+				});
+
+				promise.then(
+					function( results ) {
+
+						console.group( "THREE: Found %s friends by IMDB-ID.", results.docs.length );
+						results.warning && console.warn( results.warning );
+						results.docs.forEach(
+							function( doc ) {
+
+								console.log( doc.name, "-", doc.favoriteMovies );
+
+							}
+						);
+						console.groupEnd();
+
+					}
+				);
+
+				return( promise );
+
+			}
+		).then(
+			function() {
+
+				// Now, let's create an index on the Interests field.
+				// --
+				// CAUTION: This MAY NOT DO WHAT YOU THINK IT DOES. PouchDB doesn't 
+				// index the sub-items of the field - it indexes the entire field as 
+				// a blackbox.
+				var promise = db.createIndex({
+					index: {
+						fields: [ "interests" ]
+					}
+				});
+				
+				return( promise );
+
+			}
+		).then(
+			function() {
+
+				// Let's try to search for friends that have an interest in movies.
+				// --
+				// CAUTION: Only equality-based operators can be run against an index.
+				// In this case, we're using $in, which means that this will be forced
+				// to run IN-MEMORY.
+				var promise = db.find({
+					selector: {
+						interests: {
+							$in: [ "Movies" ]
+						}
+					}
+				});
+
+				promise.then(
+					function( results ) {
+
+						console.group( "FOUR: Found %s friends by interest.", results.docs.length );
+						results.warning && console.warn( results.warning );
+						results.docs.forEach(
+							function( doc ) {
+
+								console.log( doc.name, "-", doc.interests.toString() );
+
+							}
+						);
+						console.groupEnd();
+
+					}
+				);
+
+				return( promise );
+
+			}
+		).then(
+			function() {
+
+				// Since equality-based operators can be used to search an index, we can
+				// try to search for friends that have the EXACT COLLECTION OF INTERESTS.
+				// --
+				// NOTE: The order of the sub-items here must be exactly correct.
+				var promise = db.find({
+					selector: {
+						interests: {
+							$eq: [ "Working Out", "Poetry", "Dancing" ]
+						}
+					}
+				});
+
+				promise.then(
+					function( results ) {
+
+						console.group( "FIVE: Found %s friends by interests ARRAY.", results.docs.length );
+						results.warning && console.warn( results.warning );
+						results.docs.forEach(
+							function( doc ) {
+
+								console.log( doc.name, "-", doc.interests.toString() );
+
+							}
+						);
+						console.groupEnd();
+
+					}
+				);
+
+				return( promise );
+
+			}
+		).catch(
+			function( error ) {
+
+				console.warn( "An error occurred:" );
+				console.error( error );
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>

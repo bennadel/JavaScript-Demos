@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Understanding The Query Plan "Explained" By the Find Plugin In PouchDB 6.2.0](http://bennadel.github.io/JavaScript-Demos/demos/pouchdb-find-debug/)
 * [Monkey-Patching The Mango .find() Plugin To Use .allDocs() In PouchDB 6.2.0](http://bennadel.github.io/JavaScript-Demos/demos/pouchdb-find-monkeypatch-plugin/)
 * [Experimenting With PouchDB 6.2.0 And The New Mango .find() Plugin](http://bennadel.github.io/JavaScript-Demos/demos/pouchdb-find-playground/)
 * [Fun With InVision Freehand Shapes](http://bennadel.github.io/JavaScript-Demos/demos/freehand-shapes/)
