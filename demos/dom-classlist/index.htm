@@ -1,0 +1,116 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Using Element.classList To Manipulate CSS Classes On The DOM
+	</title>
+
+	<style type="text/css">
+
+		p, ul {
+			font-size: 20px ;
+		}
+
+		p {
+			border: 3px solid #DADADA ;
+			border-radius: 5px 5px 5px 5px ;
+			padding: 20px 20px 20px 20px ;
+		}
+
+		a {
+			color: red ;
+			cursor: pointer ;
+			text-decoration: underline ;
+			user-select: none ;
+				-moz-user-select: none ;
+				-webkit-user-select: none ;
+		}
+
+		.one {
+			color: red ;
+		}
+
+		.two {
+			font-weight: bold ;
+		}
+
+		.three {
+			font-style: italic ;
+		}
+
+	</style>
+</head>
+<body>
+
+	<h1>
+		Using Element.classList To Manipulate CSS Classes On The DOM
+	</h1>
+
+	<p class="line">
+		I've seen things you people wouldn't believe. Attack ships on fire off the shoulder of Orion. I watched C-beams glitter in the dark near the Tannhauser gate. All those moments will be lost in time... like tears in rain... Time to die.
+	</p>
+
+	<ul>
+		<li>
+			Class .one &mdash; 
+			<a data-class="one" class="add">Add</a> ,
+			<a data-class="one" class="remove">Remove</a>
+		</li>
+		<li>
+			Class .two &mdash; 
+			<a data-class="two" class="add">Add</a> ,
+			<a data-class="two" class="remove">Remove</a>
+		</li>
+		<li>
+			Class .three &mdash; 
+			<a data-class="three" class="add">Add</a> ,
+			<a data-class="three" class="remove">Remove</a>
+		</li>
+	</ul>
+
+
+	<script type="text/javascript">
+
+		var line = document.querySelector( "p.line" );
+
+		// Wire-up event-delegation for our add / remove click handlers.
+		document.body.addEventListener(
+			"click",
+			function handleClick( event ) {
+
+				var clickTarget = event.target;
+
+				// In the following logic, we're using the classList to implement the
+				// event-delegation (checking for "add" and "remove" classes on the
+				// click-target). Then, we're also using the classList to add and remove
+				// the relevant class to and from the demo line.
+				// --
+				// CAUTION: I'm using "dataset" instead of getAttribute() to access the
+				// data-* attributes on the click-target. This is only available in IE 11+.
+				if ( clickTarget.classList.contains( "add" ) ) {
+
+					line.classList.add( clickTarget.dataset.class );
+
+				} else if ( clickTarget.classList.contains( "remove" ) ) {
+
+					line.classList.remove( clickTarget.dataset.class );
+
+				} else {
+
+					return;
+					
+				}
+				
+				// Now that the event-delegation action has been applied, let's look at
+				// what classes have been applied to the demo line.
+				console.log( "CLASSES:", line.classList.value );
+
+			}
+		);
+
+	</script>
+	
+</body>
+</html>
