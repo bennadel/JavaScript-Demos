@@ -1,0 +1,6 @@
+{
+	"scripts": {
+		"build": "../../vendor/angular2/4.2.3-webpack/node_modules/.bin/webpack",
+		"watch": "../../vendor/angular2/4.2.3-webpack/node_modules/.bin/webpack --watch"
+	}
+}
