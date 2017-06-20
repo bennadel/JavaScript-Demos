@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Using % (Percent) For In-Line Styles In Angular 4.2.3](http://bennadel.github.io/JavaScript-Demos/demos/style-percent-angular4/)
 * [Using Element.classList To Manipulate CSS Classes On The DOM](http://bennadel.github.io/JavaScript-Demos/demos/dom-classlist/)
 * [Using Import = Require Syntax With TypeScript 2.2 In Angular 2.4.9](http://bennadel.github.io/JavaScript-Demos/demos/import-require-angular2/)
 * [Understanding The Query Plan "Explained" By the Find Plugin In PouchDB 6.2.0](http://bennadel.github.io/JavaScript-Demos/demos/pouchdb-find-debug/)

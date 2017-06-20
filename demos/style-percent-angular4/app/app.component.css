@@ -1,0 +1,50 @@
+
+:host {
+	display: block ;
+	font-size: 16px ;
+}
+
+:host >>> a {
+	color: red ;
+	cursor: pointer ;
+	text-decoration: underline ;
+	user-select: none ;
+		-moz-user-select: none ;
+		-webkit-user-select: none ;
+}
+
+:host >>> hr {
+	margin: 30px 0px 30px 0px ;
+}
+
+p.actions {}
+
+p.actions a {
+	display: inline-block ;
+	margin-left: 5px ;
+}
+
+p.actions a.selected {
+	font-weight: bold ;
+	text-decoration: none ;
+}
+
+p.bar {
+	background-color: #FAFAFA ;
+	box-shadow: 0px 1px 5px #CCCCCC ;
+	box-sizing: border-box ;
+	padding: 5px 7px 5px 7px ;
+	overflow: hidden ;
+	text-overflow: ellipsis ;
+	transition: width ease 500ms ;
+	white-space: nowrap ;
+}
+
+p.bar span {
+	color: #AAAAAA ;
+	font-style: italic ;
+}
+
+p.bar span:before {
+	content: "\00A0\00A0\00A0" ;
+}
