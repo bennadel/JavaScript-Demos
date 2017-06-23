@@ -1,0 +1,6 @@
+{
+	"scripts": {
+		"build": "../../vendor/reactjs/15.6.1-webpack-tsc/node_modules/.bin/webpack",
+		"watch": "../../vendor/reactjs/15.6.1-webpack-tsc/node_modules/.bin/webpack --watch"
+	}
+}
