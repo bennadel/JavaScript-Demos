@@ -1,0 +1,12 @@
+
+:host {
+	display: block ;
+}
+
+p:first-child {
+	margin-top: 0px ;
+}
+
+p:last-child {
+	margin-bottom: 0px ;
+}
