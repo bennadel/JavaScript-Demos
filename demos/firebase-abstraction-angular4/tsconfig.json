@@ -1,0 +1,31 @@
+{
+	"compilerOptions": {
+		"allowUnreachableCode": true,
+		"baseUrl": "../../vendor/angular2/4.2.3-webpack/node_modules/",
+		"emitDecoratorMetadata": true,
+		"experimentalDecorators": true,
+		"lib": [
+			"DOM",
+			"ES6"
+		],
+		"module": "commonjs",
+		"moduleResolution": "node",
+		"noImplicitAny": true,
+		"paths": {
+			"lodash": [
+				"@types/lodash"
+			]
+		},
+		"pretty": true,
+		"removeComments": false,
+		"sourceMap": true,
+		"suppressImplicitAnyIndexErrors": true,
+		"target": "es5",
+		"typeRoots": [ 
+			"../../vendor/angular2/4.2.3-webpack/node_modules/@types/"
+		],
+		"types": [
+			"node"
+		]
+	}
+}
