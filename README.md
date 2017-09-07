@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Creating A Pipe That Can Consume Component Methods In Angular 4.4.0-RC.0](http://bennadel.github.io/JavaScript-Demos/demos/pipe-component-method-angular4/)
 * [Encapsulating Firebase Using RxJS Streams In Angular 4.2.3](http://bennadel.github.io/JavaScript-Demos/demos/firebase-abstraction-angular4/)
 * [Understanding Pipe Instantiation Life-Cycles In Angular 4.2.3](http://bennadel.github.io/JavaScript-Demos/demos/pipe-lifecycle-angular4/)
 * [Hello World With Webpack And TypeScript 2.3.4 In React 15.6.1](http://bennadel.github.io/JavaScript-Demos/demos/webpack-react-15-6-1/)
