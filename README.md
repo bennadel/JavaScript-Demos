@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Conditional Router Outlets Mostly Work In Angular 4.4.0-RC.0](http://bennadel.github.io/JavaScript-Demos/demos/router-conditional-child-angular4/)
 * [Creating An Angular 1.x $location-Inspired RetroLocation Service In Angular 4.4.0-RC.0](http://bennadel.github.io/JavaScript-Demos/demos/retro-location-angular4/)
 * [Changing The Hash With The Location Service In Angular 4.4.0-RC.0](http://bennadel.github.io/JavaScript-Demos/demos/location-hash-angular4/)
 * [Creating A Pipe That Can Consume Component Methods In Angular 4.4.0-RC.0](http://bennadel.github.io/JavaScript-Demos/demos/pipe-component-method-angular4/)
