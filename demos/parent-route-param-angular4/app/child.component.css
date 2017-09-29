@@ -1,0 +1,21 @@
+
+p:last-child {
+	margin-bottom: 0px ;
+}
+
+em {
+	color: red ;
+}
+
+strong {
+	color: green ;
+}
+
+.view {
+	border: 2px dashed #DADADA ;
+	padding: 15px 15px 15px 15px ;
+}
+
+.view p:first-child {
+	margin-top: 0px ;
+}

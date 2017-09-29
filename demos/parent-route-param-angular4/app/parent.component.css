@@ -1,0 +1,17 @@
+
+em {
+	color: red ;
+}
+
+strong {
+	color: green ;
+}
+
+.view {
+	border: 2px solid #DADADA ;
+	padding: 15px 15px 15px 15px ;
+}
+
+.view p:first-child {
+	margin-top: 0px ;
+}
