@@ -1,0 +1,102 @@
+
+<!-- BEGIN: Loading State. -->
+<ng-template [ngIf]="isLoading">
+
+	<app-loading-indicator class="loading"></app-loading-indicator>
+
+</ng-template>
+<!-- END: Loading State. -->
+
+
+<!-- BEGIN: Loaded State. -->
+<ng-template [ngIf]="! isLoading">
+
+	<div class="workspace">
+
+		<router-outlet></router-outlet>
+
+		<a *ngIf="( selectedMode === 'preview' )" (click)="toggleToolbar()" class="toolbar-toggle" [ngSwitch]="isShowingToolbar">
+			<span *ngSwitchCase="true">Hide</span>
+			<span *ngSwitchCase="false">Show</span>
+		</a>
+
+	</div>
+
+	<div *ngIf="isShowingToolbar" class="toolbar">
+
+		<nav class="toolbar__context context">
+			<a routerLink="/app/prototypes" class="context__logo">
+				in
+			</a>
+			<span class="context__pipe">
+				&#x276F;
+			</span>
+			<a routerLink="/app/prototypes/{{ prototype.id }}" class="context__prototype">
+				<span>{{ prototype.name }}</span>
+			</a>
+			<span class="context__pipe">
+				&#x276F;
+			</span>
+			<a (click)="toggleScreenBrowser()" class="context__screen" title="Browse Screens (Command+F)" [class.__context-screen--open]="isShowingScreenBrowser">
+				<span>{{ screen.name }}</span>
+			</a>
+		</nav>
+
+		<nav class="toolbar__modes modes">
+			<a routerLink="./preview" title="Preview (P)" class="modes__mode modes__mode--preview" routerLinkActive="modes__mode--on">P</a>
+			<a routerLink="./build" title="Build (B)" class="modes__mode modes__mode--build" routerLinkActive="modes__mode--on">B</a>
+			<a routerLink="./comment" title="Comment (C)" class="modes__mode modes__mode--comment" routerLinkActive="modes__mode--on">C</a>
+			<a routerLink="./inspect" title="Inspect (I)" class="modes__mode modes__mode--inspect" routerLinkActive="modes__mode--on">I</a>
+			<a routerLink="./history" title="History (H)" class="modes__mode modes__mode--history" routerLinkActive="modes__mode--on">H</a>
+		</nav>
+
+		<div class="toolbar__secondary secondary">
+			
+			<a (click)="toggleStatusMenu()" class="secondary__button secondary__button--status statusMenuTrigger">
+				<br />
+			</a>
+
+			<a
+				[routerLink]="[ '/app', { outlets: { modal: [ 'modal', 'share-prototype', prototype.id ] } } ]"
+				class="secondary__button secondary__button--share">
+				Share
+			</a>
+
+		</div>
+
+	</div>
+
+	<screen-browser
+		*ngIf="isShowingScreenBrowser"
+		[screens]="screens"
+		[selectedScreen]="screen"
+		(selectScreen)="gotoScreen( $event )"
+		(close)="toggleScreenBrowser()">
+	</screen-browser>
+
+	<div 
+		*ngIf="isShowingStatusMenu"
+		(click)="hideStatusMenu()"
+		(mousedownoutside)="hideStatusMenu()"
+		data-ignoreMousedownOutside="a.statusMenuTrigger"
+		class="status-menu">
+
+		<ul class="status-menu__items">
+			<li class="status-menu__item status-menu__item--on-hold">
+				On Hold
+			</li>
+			<li class="status-menu__item status-menu__item--in-progress">
+				In Progress
+			</li>
+			<li class="status-menu__item status-menu__item--needs-review">
+				Needs Review
+			</li>
+			<li class="status-menu__item status-menu__item--approved">
+				Approved
+			</li>
+		</ul>
+
+	</div>
+
+</ng-template>
+<!-- END: Loaded State. -->

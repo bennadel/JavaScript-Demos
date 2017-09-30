@@ -1,0 +1,53 @@
+
+:host {
+	display: block ;
+}
+
+.activity-wrapper {
+	position: relative ;
+
+	&:before {
+		background-color: #DFE0E3 ;
+		bottom: 0px ;
+		content: "" ;
+		left: 60px ;
+		position: absolute ;
+		top: 0px ;
+		width: 1px ;
+		z-index: 1 ;
+	}
+}
+
+.activity {
+	margin-bottom: 30px ;
+	position: relative ;
+	z-index: 2 ;
+
+	&__header {
+		padding-bottom: 30px ;
+	}
+
+	&__date {
+		background-color: #3E85C1 ;
+		border-radius: 30px 30px 30px 30px ;
+		color: #FFFFFF ;
+		font-size: 11px ;
+		font-weight: 400 ;
+		line-height: 16px ;
+		padding: 10px 0px 10px 0px ;
+		text-align: center ;
+		text-transform: uppercase ;
+		width: 120px ;
+	}
+
+	&__content {
+		background-color: #FFFFFF ;
+		border-radius: 4px 4px 4px 4px ;
+		box-shadow: 0px 1px 2px fade( #2b3b5d, 29% ) ;
+		color: #58606E ;
+		font-size: 14px ;
+		line-height: 19px ;
+		margin-bottom: 15px ;
+		padding: 30px 30px 30px 30px ;
+	}
+}

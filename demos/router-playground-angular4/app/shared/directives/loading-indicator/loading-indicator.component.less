@@ -1,0 +1,51 @@
+
+:host {
+	color: #FF0099 ;
+	display: block ;
+	min-height: 300px ;
+	position: relative ;
+}
+
+.indicator {
+	height: 51px ;
+	left: 50% ;
+	margin: -25px 0px 0px -25px ;
+	position: absolute ;
+	top: 50% ;
+	width: 51px ;
+
+	&--light {}
+
+	&--dark {
+		color: #FFFFFF ;
+	}
+}
+
+.path {
+	animation:
+		line-dash 1500ms infinite, 
+		line-rotation 1500ms linear infinite ;
+	stroke-dasharray: 142px, 142px ;
+	transform-origin: 50% 50% ;
+}
+
+@keyframes line-dash {
+	from {
+		stroke-dashoffset: 0px ;
+	}
+	50% {
+		stroke-dashoffset: 142px ;
+	}
+	to {
+		stroke-dashoffset: 284px ;
+	}
+}
+
+@keyframes line-rotation {
+	from {
+		transform: rotate( 0deg ) ;
+	}
+	to {
+		transform: rotate( -360deg ) ;
+	}
+}

@@ -1,0 +1,91 @@
+
+<!--
+	We always want to show the ability to leave this route, even before the contents have
+	loaded fully. 
+-->
+<a routerLink="../../" class="in">in</a>
+
+<!--
+	For this view, we're going to be loading the item from the parent view. As such, 
+	the loading should be [essentially] instantaneous. The only thing that will load 
+	with network latency is the sidebar with the comments.
+-->
+<div *ngIf="item" class="content">
+
+	<div class="content__main">
+
+		<span class="item-label">
+			<span class="item-label__type">
+				{{ item.type | uppercase }}
+			</span>
+			<span class="item-label__item">
+				{{ item.name }}
+			</span>
+		</span>
+
+	</div>
+
+	<div class="content__sidebar sidebar">
+
+		<!-- BEGIN: Loading State. -->
+		<ng-template [ngIf]="isLoading">
+
+			<app-loading-indicator class="sidebar__loading"></app-loading-indicator>
+
+		</ng-template>
+		<!-- END: Loading State. -->
+
+
+		<!-- BEGIN: Loaded State. -->
+		<ng-template [ngIf]="! isLoading">
+
+			<div class="sidebar__metadata metadata">
+				
+				<div class="metadata__board">
+					{{ board.name }}
+				</div>
+
+				<div class="metadata__item">
+					{{ item.name }}
+				</div>
+
+			</div>
+
+			<div class="sidebar__main">
+			
+				<ul *ngIf="comments.length" class="comments">
+					<li *ngFor="let comment of comments" class="comments__item comment">
+
+						<app-avatar [initials]="comment.user.initials" [src]="comment.user.avatarUrl" class="comment__avatar"></app-avatar>
+
+						<div class="comment__author">
+							{{ comment.user.name }}
+						</div>
+						
+						<div class="comment__content">
+							{{ comment.content }}
+						</div>
+
+					</li>
+				</ul>
+
+			</div>
+
+			<div class="sidebar__creator creator">
+
+				<app-avatar initials="BN" class="creator__avatar"></app-avatar>
+				<div class="creator__identity">
+					Added by <strong>Someone</strong>
+				</div>
+				<div class="creator__modified">
+					Modified on January 5, 2018
+				</div>
+
+			</div>
+
+		</ng-template>
+		<!-- END: Loaded State. -->
+
+	</div>
+
+</div>

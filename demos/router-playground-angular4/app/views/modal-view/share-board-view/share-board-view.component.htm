@@ -1,0 +1,46 @@
+
+<div class="modal">
+
+	<a [routerLink]="[ '/app', { outlets: { modal: null } } ]" class="close"></a>
+
+
+	<!-- BEGIN: Loading State. -->
+	<ng-template [ngIf]="isLoading">
+
+		<app-loading-indicator class="loading"></app-loading-indicator>
+
+	</ng-template>
+	<!-- END: Loading State. -->
+
+
+	<!-- BEGIN: Loaded State. -->
+	<ng-template [ngIf]="! isLoading">
+
+		<header class="header">
+			
+			<h1>
+				Share Board
+			</h1>
+
+			<nav class="delivery-methods">
+				<a routerLink="./url" class="delivery-methods__method" routerLinkActive="delivery-methods__method--on">
+					Url
+				</a>
+				<a routerLink="./email" class="delivery-methods__method" routerLinkActive="delivery-methods__method--on">
+					Email
+				</a>
+				<a routerLink="./sms" class="delivery-methods__method" routerLinkActive="delivery-methods__method--on">
+					SMS
+				</a>
+			</nav>
+
+		</header>
+
+		<section class="body">
+			<router-outlet></router-outlet>
+		</section>
+
+	</ng-template>
+	<!-- END: Loaded State. -->
+
+</div>

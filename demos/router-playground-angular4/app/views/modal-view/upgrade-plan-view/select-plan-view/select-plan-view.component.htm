@@ -1,0 +1,117 @@
+
+<header class="header">
+
+	<div class="header__title">
+		More features, more power, more creativity.
+	</div>
+
+	<div class="header__subtitle">
+		Find the perfect plan for you &mdash; 100% satisfaction guaranteed.
+	</div>
+
+</header>
+
+<ul class="plans">
+	<li class="plans__item">
+
+		<a [routerLink]="[ '../select-payment', { plan: 'starter' } ]" class="plan">
+			<span class="plan__name">
+				Starter
+			</span>
+
+			<span class="plan__description">
+				Find the perfect plan for you &mdash; 100% satisfaction guaranteed.
+			</span>
+
+			<span class="plan__features">
+				( details )
+			</span>
+
+			<span class="plan__price price">
+				<span class="price__currency">$</span>
+				<span class="price__amount">13</span>
+				<span class="price__term">/ mo</span>
+			</span>
+
+			<span class="plan__cta">
+				Choose Starter
+			</span>
+		</a>
+
+	</li>
+	<li class="plans__item">
+
+		<a [routerLink]="[ '../select-payment', { plan: 'professional' } ]" class="plan">
+			<span class="plan__name">
+				Professional
+			</span>
+
+			<span class="plan__description">
+				For professional designers with lots of active projects.
+			</span>
+
+			<span class="plan__features">
+				( details )
+			</span>
+
+			<span class="plan__price price">
+				<span class="price__currency">$</span>
+				<span class="price__amount">22</span>
+				<span class="price__term">/ mo</span>
+			</span>
+
+			<span class="plan__cta">
+				Choose Pro
+			</span>
+		</a>
+
+	</li>
+	<li class="plans__item">
+
+		<a [routerLink]="[ '../select-payment', { plan: 'team' } ]" class="plan">
+			<span class="plan__name">
+				Team
+			</span>
+
+			<span class="plan__description">
+				For teams of up to 5 people handling many projects.
+			</span>
+
+			<span class="plan__features">
+				( details )
+			</span>
+
+			<span class="plan__price price">
+				<span class="price__currency">$</span>
+				<span class="price__amount">89</span>
+				<span class="price__term">/ mo</span>
+			</span>
+
+			<span class="plan__cta">
+				Choose Team
+			</span>
+		</a>
+
+	</li>
+	<li class="plans__item">
+
+		<a [routerLink]="[ '/app', { outlets: { modal: 'modal/enterprise-demo' } } ]" class="plan plan--enterprise">
+			<span class="plan__name">
+				Enterprise
+			</span>
+
+			<span class="plan__description">
+				Advanced features for large teams with complex projects.
+			</span>
+
+			<span class="plan__features">
+				( details )
+			</span>
+
+			<span class="plan__cta">
+				Schedule a Demo
+			</span>
+		</a>
+
+	</li>
+</ul>

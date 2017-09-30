@@ -1,0 +1,101 @@
+
+// CAUTION: We are NOT using a FLEX DISPLAY to center the modal window because the modal
+// window uses a tabbed-interface that creates a variable-height content window. As such,
+// using a flex-based layout would re-center the modal when the tab selection changed, 
+// which is a janky user experience.
+
+:host {
+	background-color: fade( #323A45, 96% ) ;
+	bottom: 0px ;
+	left: 0px ;
+	overflow: auto ;
+	position: absolute ;
+	right: 0px ;
+	top: 0px ;
+}
+
+.modal {
+	background-color: #FFFFFF ;
+	border-radius: 4px 4px 4px 4px ;
+	box-sizing: border-box ;
+	left: 50% ;
+	margin-left: -335px ;
+	position: absolute ;
+	top: 150px ;
+	width: 670px ;
+}
+
+.close {
+	color: #999999 ;
+	font-size: 20px ;
+	font-weight: 600 ;
+	height: 50px ;
+	line-height: 50px ;
+	position: absolute ;
+	right: 0px ;
+	text-align: center ;
+	text-decoration: none ;
+	top: 0px ;
+	transition: color 200ms ease ;
+	width: 50px ;
+
+	&:after {
+		content: "\2715" ;
+	}
+
+	&:hover {
+		color: #000000 ;
+	}
+}
+
+.header {
+	padding-top: 50px ;
+}
+
+.body {
+	background-color: #F9F9FB ;
+	border-radius: 0px 0px 4px 4px ;
+	border-top: 1px solid #EAECF1 ;
+	padding: 35px 65px 40px 65px ;
+}
+
+h1 {
+	color: #464D5D ;
+	font-size: 28px ;
+	font-weight: 600 ;
+	line-height: 33px ;
+	margin: 0px 0px 12px 0px ;
+	text-align: center ;
+}
+
+.delivery-methods {
+	display: flex ;
+	flex-direction: row ;
+	justify-content: center ;
+	line-height: 17px ;
+
+	&__method {
+		color: #A4ABB1 ;
+		flex: 0 0 auto ;
+		font-size: 12px ;
+		margin: 0px 7px 0px 7px ;
+		padding: 21px 10px 22px 10px ;
+		position: relative ;
+		text-decoration: none ;
+		text-transform: uppercase ;
+
+		&--on {
+			color: #464D5D ;
+
+			&:after {
+				background-color: #52B266 ;
+				bottom: 0px ;
+				content: "" ;
+				height: 2px ;
+				left: 0px ;
+				position: absolute ;
+				right: 0px ;
+			}
+		}
+	}
+}

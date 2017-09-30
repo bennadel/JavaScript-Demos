@@ -1,0 +1,71 @@
+
+<!-- BEGIN: Loading State. -->
+<ng-template [ngIf]="isLoading">
+
+	<app-loading-indicator class="loading"></app-loading-indicator>
+
+</ng-template>
+<!-- END: Loading State. -->
+
+
+<!-- BEGIN: Loaded State. -->
+<ng-template [ngIf]="! isLoading">
+
+	<div class="m-standard-header">
+		<div class="m-standard-header__container m-standard-header__container--with-nav">
+
+			<span routerLink="/app/prototypes" class="m-standard-header__logo">
+				in
+			</span>
+
+			<div class="badge">
+
+				<app-avatar
+					[initials]="user.initials"
+					[src]="user.avatarUrl"
+					class="badge__avatar">
+				</app-avatar>
+
+				<h1 class="m-standard-header__title badge__name">
+					{{ user.name }}
+				</h1>
+
+			</div>
+
+			<div *ngIf="! isSelf" class="person-actions">
+
+				<a
+					[routerLink]="[ '/app', { outlets: { modal: [ 'modal', 'user-projects', user.id ] } } ]"
+					class="person-actions__add-to-projects">
+					+ Add to Projects
+				</a>
+
+			</div>
+
+			<nav class="m-standard-header__nav">
+				<ng-template [ngIf]="isSelf">
+					<a routerLink="./profile" class="m-standard-header__nav-item" routerLinkActive="m-standard-header__nav-item--on">Profile</a>
+					<a routerLink="./password" class="m-standard-header__nav-item" routerLinkActive="m-standard-header__nav-item--on">Password</a>
+					<a routerLink="./billing" class="m-standard-header__nav-item" routerLinkActive="m-standard-header__nav-item--on">Billing</a>
+					<a routerLink="./notifications" class="m-standard-header__nav-item" routerLinkActive="m-standard-header__nav-item--on">Notifications</a>
+					<a routerLink="./activity" class="m-standard-header__nav-item" routerLinkActive="m-standard-header__nav-item--on">Activity</a>
+				</ng-template>
+				<ng-template [ngIf]="! isSelf">
+					<a routerLink="./projects" class="m-standard-header__nav-item" routerLinkActive="m-standard-header__nav-item--on">Projects</a>
+					<a routerLink="./activity" class="m-standard-header__nav-item" routerLinkActive="m-standard-header__nav-item--on">Activity</a>
+				</ng-template>
+			</nav>
+
+		</div>
+	</div>
+
+	<div class="m-standard-body">
+		<div class="m-standard-body__container">
+
+			<router-outlet></router-outlet>
+
+		</div>
+	</div>
+
+</ng-template>
+<!-- END: Loaded State. -->

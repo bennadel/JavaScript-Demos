@@ -1,0 +1,61 @@
+
+<!-- BEGIN: Loading State. -->
+<ng-template [ngIf]="isLoading">
+
+	<app-loading-indicator class="loading"></app-loading-indicator>
+
+</ng-template>
+<!-- END: Loading State. -->
+
+
+<!-- BEGIN: Loaded State. -->
+<ng-template [ngIf]="! isLoading">
+
+	<header class="header">
+		
+		<div class="header__prototype-name">
+			{{ prototype.name }}
+		</div>
+
+		<div class="header__screen-name">
+			{{ screen.name }}
+		</div>
+
+		<a 
+			[routerLink]="[ '/app', { outlets: { primary: [ 'console', 'prototypes', prototype.id, 'screens', screen.id ], inbox: null } } ]" 
+			[title]="screen.filename"
+			class="header__figure">
+			<span class="header__conversation-label">
+				{{ conversation.label }}
+			</span>
+		</a>
+
+	</header>
+
+	<ul class="comments">
+		<ng-template ngFor let-comment [ngForOf]="comments">
+
+			<li class="comments__item comment">
+				
+				<app-avatar
+					[initials]="comment.user.initials"
+					[src]="comment.user.avatarUrl"
+					[title]="comment.user.name"
+					class="comment__avatar">
+				</app-avatar>
+				
+				<div class="comment__author">
+					{{ comment.user.name }}
+				</div>
+				
+				<div class="comment__content">
+					{{ comment.content }}
+				</div>
+
+			</li>
+
+		</ng-template>
+	</ul>
+
+</ng-template>
+<!-- END: Loaded State. -->

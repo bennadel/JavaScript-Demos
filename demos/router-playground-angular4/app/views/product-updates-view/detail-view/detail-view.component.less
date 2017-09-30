@@ -1,0 +1,117 @@
+
+:host {
+	bottom: 0px ;
+	display: flex ;
+	flex-direction: column ;
+	left: 0px ;
+	position: absolute ;
+	right: 0px ;
+	top: 0px ;
+}
+
+.loading {
+	color: #333C4E ;
+	bottom: 0px ;
+	left: 0px ;
+	position: absolute ;
+	right: 0px ;
+	top: 0px ;
+}
+
+.header {
+	background-color: #333C4E ;
+	box-sizing: border-box ;
+	flex: 0 0 auto ;
+	padding: 20px 0px 20px 128px ;
+	position: relative ;
+
+	&__avatar {
+		height: 35px ;
+		left: 80px ;
+		position: absolute ;
+		top: 22px ;
+		width: 35px ;
+	}
+
+	&__name {
+		color: #FFFFFF ;
+		font-size: 16px ;
+		font-weight: 400 ;
+		line-height: 21px ;
+	}
+
+	&__status {
+		color: #CCCCCC ;
+		font-size: 13px ;
+		font-weight: 400 ;
+		line-height: 18px ;
+	}
+
+	&__back {
+		color: #FFFFFF ;
+		font-size: 30px ;
+		font-weight: 600 ;
+		height: 50px ;
+		left: 20px ;
+		line-height: 45px ;
+		margin-top: -25px ;
+		position: absolute ;
+		text-align: center ;
+		text-decoration: none ;
+		top: 50% ;
+		width: 50px ;
+
+		&:hover {
+			background-color: darken( #333C4E, 5% ) ;
+		}
+	}
+
+	&__close {
+		color: #FFFFFF ;
+		font-size: 20px ;
+		font-weight: 400 ;
+		height: 50px ;
+		line-height: 50px ;
+		margin-top: -25px ;
+		position: absolute ;
+		right: 20px ;
+		text-align: center ;
+		text-decoration: none ;
+		top: 50% ;
+		width: 50px ;
+
+		&:hover {
+			background-color: darken( #333C4E, 5% ) ;
+		}
+	}
+}
+
+.body {
+	flex: 1 0 auto ;
+	position: relative ;
+
+	&__viewport {
+		bottom: 0px ;
+		left: 0px ;
+		overflow: auto ;
+		padding: 30px 35px 40px 35px ;
+		position: absolute ;
+		right: 0px ;
+		top: 0px ;
+	}
+
+	&__content {
+		border: 1px solid #F3F4F5 ;
+		border-radius: 4px 4px 4px 4px ;
+		color: #6E7A89 ;
+		font-size: 14px ;
+		line-height: 19px ;
+		padding: 25px 25px 25px 25px ;
+	}
+}
+
+.footer {
+	background-color: #F4F7F9 ;
+	flex: 0 0 auto ;
+	height: 45px ;
+}

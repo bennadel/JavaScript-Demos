@@ -1,0 +1,52 @@
+
+<div class="titlebar">
+
+	<span class="count">
+		{{ screens.length }} Screens
+	</span>
+
+	<a (click)="close()" class="close"></a>
+
+</div>
+
+<div class="body">
+
+	<form class="search">
+
+		<input
+			type="text" 
+			name="filterText"
+			[(ngModel)]="filterText" 
+			(ngModelChange)="handleFilter()" 
+			(keydown.enter)="handleEnter()"
+			(focus)="filterTextHasFocus = true"
+			(blur)="filterTextHasFocus = false"
+			placeholder="Search for a screen..." 
+			autocomplete="off"
+			autofocus
+			class="search__input" 
+		/>
+
+		<span *ngIf="( filterTextHasFocus && filterText.length )" class="search__tip">
+			&#8592; <strong>Tip:</strong> Hit <code class="search__key">Enter</code> to navigate to first item.
+		</span>
+
+	</form>
+
+	<ul class="items">
+		<li 
+			*ngFor="let filteredItem of filteredScreens"
+			class="items__item items__item--column-{{ filteredItem.column}}"
+			[appShowBlock]="filteredItem.isVisible">
+
+			<a (click)="selectScreen( filteredItem.item )" class="screen" [class.screen--selected]="( filteredItem.item === selectedScreen )">
+				<span class="screen__thumbnail"></span>
+				<span class="screen__name">
+					{{ filteredItem.item.name }}
+				</span>
+			</a>
+
+		</li>
+	</ul>
+
+</div>
