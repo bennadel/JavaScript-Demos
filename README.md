@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Named-Outlets Require Non-Empty Parent Route-Segment Paths In Angular 4.4.4](http://bennadel.github.io/JavaScript-Demos/demos/named-route-outlet-angular4/)
 * [Accessing Parent And Child Route Segment Parameters In Angular 4.4.4](http://bennadel.github.io/JavaScript-Demos/demos/parent-route-param-angular4/)
 * [Conditional Router Outlets Mostly Work In Angular 4.4.0-RC.0](http://bennadel.github.io/JavaScript-Demos/demos/router-conditional-child-angular4/)
 * [Creating An Angular 1.x $location-Inspired RetroLocation Service In Angular 4.4.0-RC.0](http://bennadel.github.io/JavaScript-Demos/demos/retro-location-angular4/)
