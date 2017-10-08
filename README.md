@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Routable View Components Don't Need Selectors In Angular 4.4.4](http://bennadel.github.io/JavaScript-Demos/demos/routable-view-selectors-angular4/)
 * [Local Redirects Automatically Append The Non-Local Route Segments In Angular 4.4.4](http://bennadel.github.io/JavaScript-Demos/demos/route-redirect-sink2-angular4/)
 * [A Single Route Parameter Can Match Multiple URL Segments In Angular 4.4.4](http://bennadel.github.io/JavaScript-Demos/demos/route-redirect-sink-angular4/)
 * [Named-Outlets Require Non-Empty Parent Route-Segment Paths In Angular 4.4.4](http://bennadel.github.io/JavaScript-Demos/demos/named-route-outlet-angular4/)
