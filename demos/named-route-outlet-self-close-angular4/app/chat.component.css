@@ -1,0 +1,11 @@
+
+:host {
+	border: 1px solid #666699 ;
+	display: block ;
+	margin: 16px 0px 16px 0px ;
+	padding: 1px 15px 1px 15px ;
+}
+
+strong {
+	background-color: gold ;
+}
