@@ -1,0 +1,30 @@
+
+:host {
+	display: block ;
+	font-size: 16px ;
+}
+
+a {
+	color: red ;
+	cursor: pointer ;
+	text-decoration: underline ;
+}
+
+/*
+	When Angular injects the routable ng-component into the current component view,
+	it DOES NOT ADD the typical "ngcontent-XYZ" HTML attribute that's used to prevent
+	styles from bleeding outside of the current component. This means that any attempt 
+	to use a "naked" View selector in this component CSS will fail to affect an injected
+	component. As such, we have to use the DEEP SELECTOR with the CHILD COMBINATOR (>)
+	in order to target the injected component.
+	--
+	NOTE: We're using the child combinator to ensure we don't accidentally bleed our
+	::ng-deep styles beyond the scope of the current component.
+*/
+:host ::ng-deep > layout-a {
+	border-color: gold ;
+}
+
+:host ::ng-deep > layout-b {
+	border-color: aqua ;
+}

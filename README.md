@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Applying CSS Styles To Routable Child Views Using Simulated Encapsulation In Angular 4.4.4](http://bennadel.github.io/JavaScript-Demos/demos/style-child-view-angular4/)
 * [Closing Secondary Router-Outlet Views From Within The Named-Route View Components In Angular 4.4.4](http://bennadel.github.io/JavaScript-Demos/demos/named-route-outlet-self-close-angular4/)
 * [Routable View Components Don't Need Selectors In Angular 4.4.4](http://bennadel.github.io/JavaScript-Demos/demos/routable-view-selectors-angular4/)
 * [Local Redirects Automatically Append The Non-Local Route Segments In Angular 4.4.4](http://bennadel.github.io/JavaScript-Demos/demos/route-redirect-sink2-angular4/)
