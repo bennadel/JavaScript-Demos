@@ -1,0 +1,62 @@
+
+:host {
+	display: block ;
+	font-size: 16px ;
+}
+
+.pattern {
+	background: url( "./goose-duck.jpg" ) ;
+	height: 300px ;
+	left: 20px ;
+	position: absolute ;
+	top: 90px ;
+	width: 300px ;
+	z-index: 2 ;
+}
+
+.blocks {
+	left: 20px ;
+	position: absolute ;
+	top: 90px ;
+	width: 300px ;
+	z-index: 3 ;
+}
+
+.block {
+	color: #FFFFFF ;
+	height: 50px ;
+	font-family: sans-serif ;
+	font-weight: bold ;
+	line-height: 50px ;
+	text-align: center ;
+	transition: background-color 200ms ease ;
+
+	// With the fade() method, you can apply an opacity to a HEX value!!
+	&-100 {
+		background-color: fade( #FF0099, 100% ) ;
+	}
+
+	&-80 {
+		background-color: fade( #FF0099, 80% ) ;
+	}
+
+	&-60 {
+		background-color: fade( #FF0099, 60% ) ;
+	}
+
+	&-40 {
+		background-color: fade( #FF0099, 40% ) ;
+	}
+
+	&-20 {
+		background-color: fade( #FF0099, 20% ) ;
+	}
+
+	&-0 {
+		background-color: fade( #FF0099, 0% ) ;
+	}
+
+	&:hover {
+		background-color: fade( #FF0099, 100% ) ;
+	}
+}

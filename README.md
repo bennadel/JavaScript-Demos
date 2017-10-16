@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Using LESS CSS fade Method To Apply Opacity To A HEX Color In Angular 4.4.5](http://bennadel.github.io/JavaScript-Demos/demos/less-fade-angular4/)
 * [Applying CSS Styles To Routable Child Views Using Simulated Encapsulation In Angular 4.4.4](http://bennadel.github.io/JavaScript-Demos/demos/style-child-view-angular4/)
 * [Closing Secondary Router-Outlet Views From Within The Named-Route View Components In Angular 4.4.4](http://bennadel.github.io/JavaScript-Demos/demos/named-route-outlet-self-close-angular4/)
 * [Routable View Components Don't Need Selectors In Angular 4.4.4](http://bennadel.github.io/JavaScript-Demos/demos/routable-view-selectors-angular4/)
