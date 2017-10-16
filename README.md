@@ -8,7 +8,7 @@ blog, [BenNadel.com][1]. Basically, all the code is already on my blog; but,
 I wanted a way to easily create interactive demos that my readers could play 
 with.
 
-## My JavaScript Demos - I Love JavaScript!
+## My JavaScript Demos - I Love JavaScript! 
 
 * [Using LESS CSS fade Method To Apply Opacity To A HEX Color In Angular 4.4.5](http://bennadel.github.io/JavaScript-Demos/demos/less-fade-angular4/)
 * [Applying CSS Styles To Routable Child Views Using Simulated Encapsulation In Angular 4.4.4](http://bennadel.github.io/JavaScript-Demos/demos/style-child-view-angular4/)
