@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript! 
 
+* [CSS @keyframes Animations Are Not Scoped With Emulated Encapsulation In Angular 4.4.6](http://bennadel.github.io/JavaScript-Demos/demos/css-keyframes-not-scoped-angular4/)
 * [ngOnInit() May Not Get Called Before ngOnDestroy() Is Called In Angular 4.4.6](http://bennadel.github.io/JavaScript-Demos/demos/ng-on-init-may-not-be-called-angular4/)
 * [Using LESS CSS fade Method To Apply Opacity To A HEX Color In Angular 4.4.5](http://bennadel.github.io/JavaScript-Demos/demos/less-fade-angular4/)
 * [Applying CSS Styles To Routable Child Views Using Simulated Encapsulation In Angular 4.4.4](http://bennadel.github.io/JavaScript-Demos/demos/style-child-view-angular4/)
