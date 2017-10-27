@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript! 
 
+* [View Components May Get Unnecessarily Reinstantiated Under Certain Circumstances In Angular 4.4.6](http://bennadel.github.io/JavaScript-Demos/demos/activated-route-destroy-race-condition-angular4/)
 * [CSS @keyframes Animations Are Not Scoped With Emulated Encapsulation In Angular 4.4.6](http://bennadel.github.io/JavaScript-Demos/demos/css-keyframes-not-scoped-angular4/)
 * [ngOnInit() May Not Get Called Before ngOnDestroy() Is Called In Angular 4.4.6](http://bennadel.github.io/JavaScript-Demos/demos/ng-on-init-may-not-be-called-angular4/)
 * [Using LESS CSS fade Method To Apply Opacity To A HEX Color In Angular 4.4.5](http://bennadel.github.io/JavaScript-Demos/demos/less-fade-angular4/)
