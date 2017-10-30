@@ -17,7 +17,7 @@ import "rxjs/add/operator/delay";
 	template:
 	`
 		<h2>
-			Without <code>.delay(0)</code> In ActivatedRoute
+			Without <code>.delay(10)</code> In ActivatedRoute
 		</h2>
 
 		<ul>
@@ -40,7 +40,7 @@ import "rxjs/add/operator/delay";
 		</ul>
 
 		<h2>
-			With <code>.delay(0)</code> In ActivatedRoute
+			With <code>.delay(10)</code> In ActivatedRoute
 		</h2>
 
 		<ul>

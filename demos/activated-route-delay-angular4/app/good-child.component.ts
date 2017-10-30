@@ -58,12 +58,12 @@ export class GoodChildComponent {
 	public ngOnInit() : void {
 
 		this.paramMapSubscription = this.activatedRoute.paramMap
-			// CAUTION: Adding the .delay(0) to the ParamMap subscription helps prevent
+			// CAUTION: Adding the .delay(10) to the ParamMap subscription helps prevent
 			// several unwanted behaviors in the Angular Router (as of 4.4.6). To be 
 			// clear, I AM NOT SAYING THAT THESE ARE "BUGS"; only that there things are 
-			// happening that I don't want to happen, and adding .delay(0) helps prevent
+			// happening that I don't want to happen, and adding .delay(10) helps prevent
 			// those things. I've started adding this as the default behavior.
-			.delay( 0 )
+			.delay( 10 )
 			.subscribe(
 				( paramMap: ParamMap ) : void => {
 
