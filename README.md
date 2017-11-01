@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript! 
 
+* [Creating A Direct-Click DOM Event Plug-in In Angular 4.4.6](http://bennadel.github.io/JavaScript-Demos/demos/direct-click-plugin-angular4/)
 * [Adding .delay(10) To ActivatedRoute Helps Prevent Unwanted Router Behaviors In Angular 4.4.6](http://bennadel.github.io/JavaScript-Demos/demos/activated-route-delay-angular4/)
 * [View Components May Get Unnecessarily Reinstantiated Under Certain Circumstances In Angular 4.4.6](http://bennadel.github.io/JavaScript-Demos/demos/activated-route-destroy-race-condition-angular4/)
 * [CSS @keyframes Animations Are Not Scoped With Emulated Encapsulation In Angular 4.4.6](http://bennadel.github.io/JavaScript-Demos/demos/css-keyframes-not-scoped-angular4/)
