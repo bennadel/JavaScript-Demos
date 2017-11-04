@@ -21,6 +21,14 @@ import { DoCheck } from "@angular/core";
 				>This textarea should be allowed to scroll, within a trap container.
 			</textarea>
 
+			<input type="text" size="50" />
+
+			<div class="overflower">
+				This is overflowing ...<br />
+				<br /><br /><br /><br /><br />
+				THis is the bottom.
+			</div>
+
 		</div>
 
 		<p class="spacer">
