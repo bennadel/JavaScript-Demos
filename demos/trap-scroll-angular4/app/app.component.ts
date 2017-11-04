@@ -11,6 +11,18 @@ import { DoCheck } from "@angular/core";
 	styleUrls: [ "./app.component.less" ],
 	template:
 	`
+		<div trapScroll trapKeyScroll class="control-case">
+
+			<p>
+				I trap <strong>wheel &amp; keyboard events</strong>
+			</p>
+			
+			<textarea rows="5" columns="50"
+				>This textarea should be allowed to scroll, within a trap container.
+			</textarea>
+
+		</div>
+
 		<p class="spacer">
 			Scroll down to find scrollable elements.
 		</p>

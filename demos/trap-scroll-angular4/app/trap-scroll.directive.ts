@@ -76,8 +76,8 @@ export class TrapScrollDirective implements OnInit, OnChanges, OnDestroy {
 	// I get called once when the directive is being unmounted.
 	public ngOnDestroy() : void {
 
-		this.element.removeEventListener( "wheel", this.handleWheelEvent, false );
-		this.element.removeEventListener( "keydown", this.handleKeyboardEvent, false );
+		this.element.removeEventListener( "wheel", this.handleEvent, false );
+		this.element.removeEventListener( "keydown", this.handleEvent, false );
 		
 	}
 
@@ -97,8 +97,8 @@ export class TrapScrollDirective implements OnInit, OnChanges, OnDestroy {
 
 				// NOTE: All modern browsers support "wheel". As such, we'll apply this 
 				// as a progressive enhancement and not worry about older browsers.
-				this.element.addEventListener( "wheel", this.handleWheelEvent, false );
-				this.element.addEventListener( "keydown", this.handleKeyboardEvent, false );
+				this.element.addEventListener( "wheel", this.handleEvent, false );
+				this.element.addEventListener( "keydown", this.handleEvent, false );
 
 			}
 		);
@@ -109,28 +109,32 @@ export class TrapScrollDirective implements OnInit, OnChanges, OnDestroy {
 	// PRIVATE METHODS.
 	// ---
 
-	// I handle the keyboard events for the local element.
+	// I handle both Wheel and Keyboard events, and prevent the default behaviors if the
+	// events would cause scrolling at a higher point in the DOM tree.
 	// --
 	// CAUTION: Using fat-arrow binding for class method.
-	private handleKeyboardEvent = ( event: KeyboardEvent ) : void => {
+	private handleEvent = ( event: WheelEvent | KeyboardEvent ) : void => {
 
-		if ( ! this.trapScroll || ! this.trapKeyScroll ) {
+		if ( ! this.isTrappingEvent( event ) ) {
 
 			return;
 
 		}
 
-		// Regardless of whether or not we're going to allow this keyboard event to be
-		// applied locally, we want to stop the event from propagating. This way, we 
-		// make sure that an ancestor instance of [trapScroll], higher up in the 
-		// Document Object Model (DOM) tree, doesn't accidentally interfere with the
+		// Regardless of whether or not we're going to allow this event to be applied 
+		// locally, we want to stop the event from propagating above this container. This
+		// way, we make sure that an ancestor instance of [trapScroll], higher up in the
+		// Document Object Model (DOM) tree, doesn't accidentally interfere with the 
 		// default behavior being applied locally.
+		// --
+		// CAUTION: This will prevent the ability to perform some kinds of event 
+		// delegation. However, in Angular, event delegation is not used very often.
 		event.stopPropagation();
 
-		// If the given keyboard event won't produce a local scroll (since the element
-		// is fully scrolled in the given direction), let's prevent the default behavior
-		// so that the event doesn't creating scrolling at a higher level in the DOM.
-		if ( this.isScrolledInMaxDirection( this.getDirectionFromKeyboardEvent( event ) ) ) {
+		// If the given event won't produce a local scroll in the current element or one
+		// of its local descendants, then let's prevent the default behavior so that the
+		// event doesn't creating scrolling at a higher level in the DOM.
+		if ( ! this.willEventScrollElement( event ) ) {
 
 			event.preventDefault();
 
@@ -139,30 +143,36 @@ export class TrapScrollDirective implements OnInit, OnChanges, OnDestroy {
 	}
 
 
-	// I handle the wheel events for the local element.
-	// --
-	// CAUTION: Using fat-arrow binding for class method.
-	private handleWheelEvent = ( event: WheelEvent ) : void => {
+	// I determine if the given event is being trapped by the current element.
+	private isTrappingEvent( event: WheelEvent | KeyboardEvent ) : boolean {
 
 		if ( ! this.trapScroll ) {
 
-			return;
+			return( false );
 
 		}
 
-		// Regardless of whether or not we're going to allow this wheel event to be 
-		// applied locally, we want to stop the event from propagating. This way, we 
-		// make sure that an ancestor instance of [trapScroll], higher up in the 
-		// Document Object Model (DOM) tree, doesn't accidentally interfere with the
-		// default behavior being applied locally.
-		event.stopPropagation();
+		if ( ( event.type === "keydown" ) && ! this.trapKeyScroll ) {
 
-		// If the given wheel event won't produce a local scroll (since the element is
-		// fully scrolled in the given direction), let's prevent the default behavior so
-		// that the event doesn't creating scrolling at a higher level in the DOM.
-		if ( this.isScrolledInMaxDirection( this.getDirectionFromWheelEvent( event ) ) ) {
+			return( false );
 
-			event.preventDefault();
+		}
+
+		return( true );
+
+	}
+
+
+	// I get the direction from the given event.
+	private getDirectionFromEvent( event: WheelEvent | KeyboardEvent ) : Direction {
+
+		if ( event instanceof WheelEvent ) {
+
+			return( this.getDirectionFromWheelEvent( event ) );
+
+		} else {
+
+			return( this.getDirectionFromKeyboardEvent( event ) );
 
 		}
 
@@ -216,30 +226,41 @@ export class TrapScrollDirective implements OnInit, OnChanges, OnDestroy {
 	}
 
 
+	// I determine if the given element is scrollable.
+	private isScrollableElement( element: HTMLElement ) : boolean {
+
+		// If the scrollHeight is the same as the clientHeight, it should mean that 
+		// there is no content that is outside the visible bounds of the given element.
+		// Meaning, the element is only scrollable if these values don't match.
+		return( element.scrollHeight !== element.clientHeight );
+
+	}
+
+
 	// I determine if the element is currently scrolled to the maximum value in the
 	// given direction.
-	private isScrolledInMaxDirection( direction: Direction ) : boolean {
+	private isScrolledInMaxDirection( element: HTMLElement, direction: Direction ) : boolean {
 
 		return(
-			( ( direction === Direction.UP ) && this.isScrolledToTheTop() ) ||
-			( ( direction === Direction.DOWN ) && this.isScrolledToTheBottom() )
+			( ( direction === Direction.UP ) && this.isScrolledToTheTop( element ) ) ||
+			( ( direction === Direction.DOWN ) && this.isScrolledToTheBottom( element ) )
 		);
 
 	}
 
 
 	// I determine if the current element is scrolled all the way to the bottom.
-	private isScrolledToTheBottom() : boolean {
+	private isScrolledToTheBottom( element: HTMLElement ) : boolean {
 
-		return( ( this.element.clientHeight + this.element.scrollTop ) >= this.element.scrollHeight );
+		return( ( element.clientHeight + element.scrollTop ) >= element.scrollHeight );
 
 	}
 
 
 	// I determine if the current element is scrolled all the way to the top.
-	private isScrolledToTheTop() : boolean {
+	private isScrolledToTheTop( element: HTMLElement ) : boolean {
 
-		return( ! this.element.scrollTop );
+		return( ! element.scrollTop );
 
 	}
 
@@ -256,6 +277,33 @@ export class TrapScrollDirective implements OnInit, OnChanges, OnDestroy {
 			// want to consume it as a Truthy value.
 			!! value
 		);
+
+	}
+
+
+	// I determine if the given event will cause local scrolling at either the container
+	// level or in one of the embedded elements (such as a textarea or another element 
+	// with overflow: auto | scroll).
+	private willEventScrollElement( event: WheelEvent | KeyboardEvent ) : boolean {
+
+		var direction = this.getDirectionFromEvent( event );
+		var target = <HTMLElement>event.target;
+
+		// Check for embedded scrolling opportunities.
+		while ( target !== this.element ) {
+
+			if ( this.isScrollableElement( target ) && ! this.isScrolledInMaxDirection( target, direction ) ) {
+
+				return( true );
+
+			}
+
+			target = <HTMLElement>target.parentNode;
+
+		}
+
+		// Check for container scrolling opportunities.
+		return( ! this.isScrolledInMaxDirection( target, direction ) );
 
 	}
 
