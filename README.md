@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript! 
 
+* [Lazy Loading Images With The IntersectionObserver API In Angular 5.0.0](http://bennadel.github.io/JavaScript-Demos/demos/lazy-load-intersection-observer-angular5/)
 * [Prevent Scrolling In A Parent Element Using Directives In Angular 4.4.6](http://bennadel.github.io/JavaScript-Demos/demos/trap-scroll-angular4/)
 * [Creating A Direct-Click DOM Event Plug-in In Angular 4.4.6](http://bennadel.github.io/JavaScript-Demos/demos/direct-click-plugin-angular4/)
 * [Adding .delay(10) To ActivatedRoute Helps Prevent Unwanted Router Behaviors In Angular 4.4.6](http://bennadel.github.io/JavaScript-Demos/demos/activated-route-delay-angular4/)

@@ -1,0 +1,59 @@
+
+:host {
+	display: block ;
+	font-size: 18px ;
+}
+
+ul.contacts {
+	border: 1px solid #CCCCCC ;
+	height: 300px ;
+	list-style-type: none ;
+	margin: 0px 0px 0px 0px ;
+	overflow: auto ;
+	padding: 20px 20px 20px 20px ;
+
+	li {
+		align-items: center ;
+		background-color: #FAFAFA ;
+		border: 1px solid #CCCCCC ;
+		border-radius: 3px 3px 3px 3px ;
+		display: flex ;
+		margin: 10px 0px 10px 0px ;
+		padding: 10px 10px 10px 10px ;
+
+		&:first-child {
+			margin-top: 0px ;
+		}
+
+		&:last-child {
+			margin-bottom: 0px ;
+		}
+	}
+
+	img {
+		border-radius: 50px 50px 50px 50px ;
+		flex: 0 0 50px ;
+		height: 50px ;
+		margin-right: 12px ;
+		opacity: 0.0 ;
+		transition: opacity 1s ease ;
+
+		&.visible {
+			opacity: 1.0 ;
+		}
+	}
+
+	span {
+		flex: 1 1 auto ;
+		font-size: 26px ;
+	}
+}
+
+a {
+	color: red ;
+	cursor: pointer ;
+	text-decoration: underline ;
+	user-select: none ;
+		-moz-user-select: none ;
+		-webkit-user-select: none ;
+}
