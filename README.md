@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript! 
 
+* [CSS Flexbox: Creating The InVision Avatar Row Widget](http://bennadel.github.io/JavaScript-Demos/demos/flexbox-overlapping-avatars/)
 * [Prevent Routing To Secondary View If Page Refresh In Angular 5.0.0](http://bennadel.github.io/JavaScript-Demos/demos/prevent-secondary-view-on-refresh-angular5/)
 * [Matching Multiple Selectors On The Same Element Creates A Single Directive Instance In Angular 5.0.0](http://bennadel.github.io/JavaScript-Demos/demos/multiple-selectors-single-directive-angular5/)
 * [Lazy Loading Images With The IntersectionObserver API In Angular 5.0.0](http://bennadel.github.io/JavaScript-Demos/demos/lazy-load-intersection-observer-angular5/)
