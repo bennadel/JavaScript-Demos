@@ -1,0 +1,29 @@
+
+:host {
+	color: #1DA1F2 ;
+	display: inline-block ;
+	height: 20px ;
+	width: 20px ;
+}
+
+svg {
+	display: block ;
+	height: 100% ;
+	width: 100% ;
+}
+
+circle {
+	opacity: 1.0 ;
+	transition: stroke-dasharray ease 150ms, opacity ease-out 200ms ;
+}
+
+circle.empty {
+	/*
+		When the SVG circle has a first-dash of zero, it's still visible in the stroke.
+		As such, we want to hide the circle when there is no percentage. But, we don't
+		want to strip it out of the page, otherwise the transition won't work for the
+		"stroke-dasharray" property. As such, we'll use the opacity so that we can hide
+		it without janking the transition.
+	*/
+	opacity: 0.0 ;
+}
