@@ -22,6 +22,7 @@ import { Component } from "@angular/core";
 		<!-- STACKING CONTEXT -->
 		<div *ngIf="isShowingInbox" class="inbox">
 
+			<!-- STACKING CONTEXT -->
 			<header>
 				Header.
 
@@ -35,6 +36,7 @@ import { Component } from "@angular/core";
 				Content area.
 			</section>
 
+			<!-- STACKING CONTEXT -->
 			<footer>
 				Footer.
 			</footer>
