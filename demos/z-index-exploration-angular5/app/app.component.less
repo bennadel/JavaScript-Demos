@@ -1,0 +1,144 @@
+
+:host {
+	display: block ;
+	font-size: 18px ;
+}
+
+a {
+	color: red ;
+	cursor: pointer ;
+	text-decoration: underline ;
+	user-select: none ;
+		-moz-user-select: none ;
+		-webkit-user-select: none ;
+}
+
+header,
+section,
+footer {
+	background-color: inherit ;
+	border: 1px dashed #CCCCCC ;
+	margin: 10px 0px 10px 0px ;
+	padding: 10px 10px 10px 10px ;
+}
+
+*:before {
+	background-color: #FF3366 ;
+	border-radius: 3px 3px 3px 3px ;
+	color: #FFFFFF ;
+	display: block ;
+	margin-bottom: 10px ;
+	padding: 2px 10px 2px 10px ;
+}
+
+.inbox {
+	background-color: #FAFAFA ;
+	border: 2px solid #AAAAAA ;
+	border-radius: 3px 3px 3px 3px ;
+	height: 300px ;
+	left: 50px ;
+	padding: 20px 20px 20px 20px ;
+	position: absolute ;
+	top: 150px ;
+	width: 500px ;
+	z-index: 10 ;
+
+	&:before {
+		content: "z-index: 10" ;
+	}
+
+	header {
+		position: relative ;
+		z-index: 15 ;
+
+		*:before,
+		&:before {
+			background-color: darkorange ;
+		}
+
+		&:before {
+			content: "z-index: 15" ;
+		}
+
+		.menu {
+			background-color: #F0F0F0 ;
+			border: 1px solid #AAAAAA ;
+			height: 225px ;
+			padding: 10px 10px 10px 10px ;
+			position: absolute ;
+			right: 15px; 
+			top: 15px ;
+			width: 200px ;
+			z-index: 1515 ;
+
+			&:before {
+				content: "z-index: 1515" ;
+			}
+		}
+	}
+
+	footer {
+		position: relative ;
+		z-index: 17 ;
+
+		&:before {
+			content: "z-index: 17" ;
+		}
+	}
+
+	.sticky {
+		background-color: #FAFAFA ;
+		border: 2px solid #AAAAAA ;
+		border-radius: 3px 3px 3px 3px ;
+		bottom: 50px ;
+		height: 100px ;
+		left: 30px ;
+		padding: 10px 10px 10px 10px ;
+		position: fixed ;
+		width: 400px ;
+		z-index: 1010 ;
+
+		&:before {
+			content: "z-index: 1010" ;
+		}
+	}
+}
+
+.modals {
+	background-color: #FAFAFA ;
+	border: 2px solid #AAAAAA ;
+	border-radius: 3px 3px 3px 3px ;
+	height: 200px ;
+	left: 100px ;
+	padding: 20px 20px 20px 20px ;
+	position: absolute ;
+	top: 265px ;
+	width: 500px ;
+	z-index: 20 ;
+
+	*:before,
+	&:before {
+		background-color: darkturquoise ;
+	}
+
+	&:before {
+		content: "z-index: 20" ;
+	}
+
+	.sticky {
+		background-color: #FAFAFA ;
+		border: 2px solid #AAAAAA ;
+		border-radius: 3px 3px 3px 3px ;
+		bottom: 30px ;
+		height: 100px ;
+		left: 300px ;
+		padding: 10px 10px 10px 10px ;
+		position: fixed ;
+		width: 400px ;
+		z-index: -1 ;
+
+		&:before {
+			content: "z-index: -1" ;
+		}
+	}
+}
