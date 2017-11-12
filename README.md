@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript! 
 
+* [Sanity Check: Shared Style Urls Are Only Compiled Into Angular 5.0.1 Once](http://bennadel.github.io/JavaScript-Demos/demos/shared-style-urls-angular5/)
 * [Stacking Context Is The Key To Understanding CSS Z-Index In Angular 5.0.1](http://bennadel.github.io/JavaScript-Demos/demos/z-index-exploration-angular5/)
 * [Creating A Twitter-Inspired SVG Progress Indicator In Angular 5.0.1](http://bennadel.github.io/JavaScript-Demos/demos/twitter-progress-loop-angular5/)
 * [CSS Flexbox: Creating The InVision Avatar Row Widget](http://bennadel.github.io/JavaScript-Demos/demos/flexbox-overlapping-avatars/)
