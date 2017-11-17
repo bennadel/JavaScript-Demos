@@ -1,0 +1,47 @@
+
+:host {
+	display: block ;
+	font-size: 18px ;
+}
+
+a {
+	color: red ;
+	cursor: pointer ;
+	text-decoration: underline ;
+	user-select: none ;
+		-moz-user-select: none ;
+		-webkit-user-select: none ;
+
+	&.open {
+		background-color: red ;
+		border-radius: 3px 3px 3px 3px ;
+		color: white ;
+		display: inline-block ;
+		padding: 3px 10px 3px 10px ;
+	}
+}
+
+p {
+	margin-bottom: 40px ;
+}
+
+.modal {
+	background-color: fade( #000000, 70% ) ;
+	bottom: 0px ;
+	display: flex ;
+	left: 0px ;
+	overflow: auto ;
+	position: fixed ;
+	right: 0px ;
+	top: 0px ;
+}
+
+.modal__content {
+	background-color: #FFFFFF ;
+	border-radius: 5px 5px 5px 5px ;
+	box-shadow: 2px 3px 3px fade( #000000, 35% ) ;
+	height: 200px ;
+	margin: auto auto auto auto ;
+	padding: 20px 20px 20px 20px ;
+	width: 400px ;
+}
