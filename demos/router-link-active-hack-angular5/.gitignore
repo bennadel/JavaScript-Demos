@@ -1,0 +1,4 @@
+
+# Now that we're using Webpack, we can install modules locally and just ignore 
+# them since the assets are baked into the compiled modules.
+node_modules/
