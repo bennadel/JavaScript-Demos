@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript! 
 
+* [Creating An Input-Driven AutoFocus Directive In Angular 5.0.2](http://bennadel.github.io/JavaScript-Demos/demos/autofocus-angular5/)
 * [Forcing RouterLinkActive To Update Using An Inputs Hack In Angular 5.0.2](http://bennadel.github.io/JavaScript-Demos/demos/router-link-active-hack-angular5/)
 * [Prevent Body Scrolling With A WindowScrolling Service When Showing A Modal Window In Angular 5.0.2](http://bennadel.github.io/JavaScript-Demos/demos/window-scroll-service-angular5/)
 * [Sanity Check: Shared Style Urls Are Only Compiled Into Angular 5.0.1 Once](http://bennadel.github.io/JavaScript-Demos/demos/shared-style-urls-angular5/)
