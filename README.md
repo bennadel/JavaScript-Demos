@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript! 
 
+* [Fixing A 10-Year Gap In My Understanding Of How Form.submit() And Other DOM-Methods Work](http://bennadel.github.io/JavaScript-Demos/demos/trigger-dom-events-angular5/)
 * [Favoring Local Interfaces Over Imported Interfaces For Data Structures In Angular 5.0.2](http://bennadel.github.io/JavaScript-Demos/demos/local-data-interfaces-angular5/)
 * [Creating An Input-Driven AutoFocus Directive In Angular 5.0.2](http://bennadel.github.io/JavaScript-Demos/demos/autofocus-angular5/)
 * [Forcing RouterLinkActive To Update Using An Inputs Hack In Angular 5.0.2](http://bennadel.github.io/JavaScript-Demos/demos/router-link-active-hack-angular5/)
