@@ -30,8 +30,12 @@ import { Component } from "@angular/core";
 			<a (click)="ref3.click()">Click span</a>
 		</p>
 
-		<form #ref4 action="#hashy" (submit)="logEvent( 'Submit event handled' )">
-			<a (click)="ref4.submit()">Submit form</a> &mdash;
+		<form #ref4 (reset)="logEvent( 'Reset event handled' )">
+			<a (click)="ref4.reset()">Reset form</a>
+		</form>
+
+		<form #ref5 action="#hashy" (submit)="logEvent( 'Submit event handled' )">
+			<a (click)="ref5.submit()">Submit form</a> &mdash;
 			Compare with the <input type="submit" value="Submit Button" />
 		</form>
 	`
