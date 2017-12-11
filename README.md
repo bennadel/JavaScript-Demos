@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript! 
 
+* [Providing Services As Both A Multi-Collection And As An Individual Injectable In Angular 5.1.0](http://bennadel.github.io/JavaScript-Demos/demos/multi-use-existing-angular5/)
 * [Handling Global Keyboard Shortcuts Using Priority And Terminality In Angular 5.0.5](http://bennadel.github.io/JavaScript-Demos/demos/global-key-combos-angular5/)
 * [Fixing A 10-Year Gap In My Understanding Of How Form.submit() And Other DOM-Methods Work](http://bennadel.github.io/JavaScript-Demos/demos/trigger-dom-events-angular5/)
 * [Favoring Local Interfaces Over Imported Interfaces For Data Structures In Angular 5.0.2](http://bennadel.github.io/JavaScript-Demos/demos/local-data-interfaces-angular5/)
