@@ -8,7 +8,7 @@ blog, [BenNadel.com][1]. Basically, all the code is already on my blog; but,
 I wanted a way to easily create interactive demos that my readers could play 
 with.
 
-## My JavaScript Demos - I Love JavaScript! 
+## My JavaScript Demos - I Love JavaScript!
 
 * [Providing Services As Both A Multi-Collection And As An Individual Injectable In Angular 5.1.0](http://bennadel.github.io/JavaScript-Demos/demos/multi-use-existing-angular5/)
 * [Handling Global Keyboard Shortcuts Using Priority And Terminality In Angular 5.0.5](http://bennadel.github.io/JavaScript-Demos/demos/global-key-combos-angular5/)
