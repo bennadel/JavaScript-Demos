@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Using Data Attributes To Pass Configuration Into An Event Plug-in In Angular 5.1.1](http://bennadel.github.io/JavaScript-Demos/demos/event-plugin-data-angular5/)
 * [Providing Services As Both A Multi-Collection And As An Individual Injectable In Angular 5.1.0](http://bennadel.github.io/JavaScript-Demos/demos/multi-use-existing-angular5/)
 * [Handling Global Keyboard Shortcuts Using Priority And Terminality In Angular 5.0.5](http://bennadel.github.io/JavaScript-Demos/demos/global-key-combos-angular5/)
 * [Fixing A 10-Year Gap In My Understanding Of How Form.submit() And Other DOM-Methods Work](http://bennadel.github.io/JavaScript-Demos/demos/trigger-dom-events-angular5/)
