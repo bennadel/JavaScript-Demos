@@ -1,0 +1,107 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		CSS Flexbox: Aligning Content Slightly Off-Center
+	</title>
+
+	<style type="text/css">
+
+		div.workspace {
+			bottom: 0px ;
+			display: flex ;
+			flex-direction: column ;
+			left: 0px ;
+			position: fixed ;
+			text-align: center ;
+			right: 0px ;
+			top: 0px ;
+		}
+		
+		span.spacer {
+			background-color: rgba( 0, 0, 0, 0.03 ); ;
+		}
+
+		/**
+		* We have a Spacer element both before and after the "content". These spacers
+		* are what "center" the rest of the content. Notice that they have an uneven
+		* flex-basis (60% vs. 40%), which will cause the rest of the content to appear
+		* slightly off-center from the mid-line.
+		*/
+		span.spacer:first-child {
+			flex: 1 1 60% ;
+		}
+
+		span.spacer:last-child {
+			flex: 1 1 40% ;
+		}
+
+		div.title {
+			align-self: center ;
+			color: #282F3D ;
+			flex: 1 1 auto ;
+			font-family: sans-serif ;
+			font-size: 66px ;
+			line-height: 150% ;
+			margin-bottom: 20px ;
+			max-width: 700px ;
+		}
+
+		div.description {
+			align-self: center ;
+			color: #CCCCCC ;
+			flex: 1 1 auto ;
+			font-family: sans-serif ;
+			font-size: 34px ;
+			font-style: italic ;
+			font-weight: 100 ;
+			line-height: 150% ;
+			max-width: 700px ;
+		}
+
+		div.workspace::after {
+			border-top: 4px dashed #EAEAEA ;
+			content: "mid-line" ;
+			font-size: 14px ;
+			height: 0px ;
+			left: 0px ;
+			padding: 5px 5px 5px 5px ;
+			position: absolute ;
+			right: 0px ;
+			text-align: left ;
+			top: 50% ;
+			z-index: -1 ;
+		}
+
+	</style>
+</head>
+<body>
+
+	<h1>
+		CSS Flexbox: Aligning Content Slightly Off-Center
+	</h1>
+
+	<p>
+		<em>NOTE: This doesn't quite work in IE 11</em>.
+	</p>
+
+	<div class="workspace">
+
+		<span class="spacer"></span>
+
+		<div contentEditable="true" class="title">
+			Add a Title...
+		</div>
+
+		<div contentEditable="true" class="description">
+			Add a Description...
+		</div>
+
+		<span class="spacer"></span>
+
+	</div>
+
+</body>
+</html>
