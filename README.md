@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Sanity Check: Chrome 63 Still Causes Blurry Borders With Percentage-Based CSS Translation](http://bennadel.github.io/JavaScript-Demos/demos/css-translatey-blur/)
 * [CSS Flexbox: Aligning Content Slightly Off-Center](http://bennadel.github.io/JavaScript-Demos/demos/flexbox-off-center-alignment/)
 * [Using Data Attributes To Pass Configuration Into An Event Plug-in In Angular 5.1.1](http://bennadel.github.io/JavaScript-Demos/demos/event-plugin-data-angular5/)
 * [Providing Services As Both A Multi-Collection And As An Individual Injectable In Angular 5.1.0](http://bennadel.github.io/JavaScript-Demos/demos/multi-use-existing-angular5/)

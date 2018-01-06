@@ -1,0 +1,68 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Sanity Check: Chrome 63 Still Causes Blurry Borders With Percentage-Based CSS Translation
+	</title>
+
+	<style type="text/css">
+
+		div.popup {
+			background-color: #FFFFFF ;
+			border: 1px solid #000000 ;
+			border-radius: 4px 4px 4px 4px ;
+			box-sizing: border-box ;
+			font-size: 18px ;
+			left: 50% ;
+			padding: 20px 20px 20px 20px ;
+			position: absolute ;
+			top: 50% ;
+
+			/*
+				In this case, the height of the pop-up is being explicitly set to an ODD
+				pixel value (201px). This is causing the -50% translation to move the 
+				element to a half-pixel location in Chrome, which is, in turn, causing 
+				borders to become blurry (both on the element and on embedded elements).
+
+				DATE: 2018-01-06.
+			*/
+			height: 201px ;
+			width: 400px ;
+			transform: translateX( -50% ) translateY( -50% ) ;
+				-ms-transform: translateX( -50% ) translateY( -50% ) ;
+				-webkit-transform: translateX( -50% ) translateY( -50% ) ;
+		}
+
+		form {
+			margin: 25px 0px 25px 0px ;
+		}
+
+		input {
+			border: 1px solid #000000 ;
+			font-size: 18px ;
+			padding: 4px 6px 4px 6px ;
+		}
+
+	</style>
+</head>
+<body ng-controller="AppController">
+
+	<h1>
+		Sanity Check: Chrome 63 Still Causes Blurry Borders With Percentage-Based CSS Translation
+	</h1>
+
+	<div class="popup">
+		This pop-up is positioned in the middle of the page,
+		with ( -50% , -50% ) CSS transform.
+
+		<form>
+			<input placeholder="I am an input..." />
+		</form>
+
+		... and contains an input with a border.
+	</div>
+
+</body>
+</html>
