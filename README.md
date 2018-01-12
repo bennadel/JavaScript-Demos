@@ -10,8 +10,9 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
-* [Wildcard Routes (**) Can Redirect Relative To Their UrlTree Location In Angular 5.1.3](http://bennadel.github.io/JavaScript-Demos/demos/router-wildcard-paths2-angular5/)
-* [Wildcard Routes (**) Can Be Scoped To Route Sub-Trees In Angular 5.1.3](http://bennadel.github.io/JavaScript-Demos/demos/router-wildcard-paths-angular5/)
+* [Creating A Jump-To-Anchor Fragment Polyfill In Angular 5.2.0](http://bennadel.github.io/JavaScript-Demos/demos/router-jump-to-fragment-angular5/)
+* [Wildcard Routes (\*\*) Can Redirect Relative To Their UrlTree Location In Angular 5.1.3](http://bennadel.github.io/JavaScript-Demos/demos/router-wildcard-paths2-angular5/)
+* [Wildcard Routes (\*\*) Can Be Scoped To Route Sub-Trees In Angular 5.1.3](http://bennadel.github.io/JavaScript-Demos/demos/router-wildcard-paths-angular5/)
 * [Sanity Check: Chrome 63 Still Causes Blurry Borders With Percentage-Based CSS Translation](http://bennadel.github.io/JavaScript-Demos/demos/css-translatey-blur/)
 * [CSS Flexbox: Aligning Content Slightly Off-Center](http://bennadel.github.io/JavaScript-Demos/demos/flexbox-off-center-alignment/)
 * [Using Data Attributes To Pass Configuration Into An Event Plug-in In Angular 5.1.1](http://bennadel.github.io/JavaScript-Demos/demos/event-plugin-data-angular5/)
