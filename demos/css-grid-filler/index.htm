@@ -1,0 +1,237 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Filling In The Empty Cells When Using Grid-Auto-Flow: Dense In CSS Grid
+	</title>
+
+	<style type="text/css">
+
+		body {
+			margin: 20px 20px 20px 20px ;
+		}
+
+		div.grid {
+			display: grid ;
+			grid-auto-flow: dense ;
+			grid-auto-rows: 100px ;
+			grid-gap: 14px ;
+			grid-template-columns: repeat( auto-fit, minmax( 100px, 1fr ) ) ;
+		}
+
+		div.grid__item {
+			align-content: center ;
+			background-color: #F0F0F0 ;
+			border: 1px solid #333333 ;
+			border-radius: 4px 4px 4px 4px ;
+			display: grid ;
+			justify-content: center ;
+		}
+
+		div.grid__item--new {
+			background-color: gold ;
+			font-weight: 600 ;
+		}
+
+		div.grid__item--row-span-2 { grid-row: span 2 ; }
+		div.grid__item--row-span-3 { grid-row: span 3 ; }
+		div.grid__item--row-span-4 { grid-row: span 4 ; }
+		div.grid__item--column-span-2 { grid-column: span 2 ; }
+		div.grid__item--column-span-3 { grid-column: span 3 ; }
+		div.grid__item--column-span-4 { grid-column: span 4 ; }
+
+	</style>
+</head>
+<body>
+
+	<h1>
+		Filling In The Empty Cells When Using Grid-Auto-Flow: Dense In CSS Grid
+	</h1>
+
+	<div class="grid">
+		<!-- Filled dynamically. -->
+	</div>
+
+	<script type="text/javascript" src="../../vendor/lodash/lodash-4.17.2.min.js"></script>
+	<script type="text/javascript">
+
+		var grid = document.querySelector( "div.grid" );
+		var currentHeight = -1;
+		var resizeTimer = null;
+		var randomSizes = generateRandomSizes();
+
+		// Move 100 randomly-sized items into the grid.
+		populateGrid( 100 );
+		
+		// Fill-in an empty cells that are left over after the "dense" auto-flow has 
+		// moved elements around.
+		fillEmptyGridCells();
+
+		// Wire window-resize events into subsequent calls to fill-in empty cells as a
+		// newly-sized window will result in a different grid topology.
+		setupResizeBinding();
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+		// I fill in the empty cells in the gird. I use a brute-force method that starts
+		// adding new grid items until the HEIGHT of the grid changes. At that point, I 
+		// know the grid has been saturated.
+		function fillEmptyGridCells() {
+
+			var clientHeight = grid.clientHeight;
+
+			// Since this gets called as part of the window-resize event, it's possible
+			// that the resize didn't cause a HEIGHT-change, only a WIDTH-change. In that
+			// case, we can just bail-out as there should be no new empty cells (since
+			// the existing cells are based on fr - fractional - units and should extend
+			// horizontally to fill space).
+			if ( clientHeight === currentHeight ) {
+
+				return;
+
+			}
+
+			// Before we fill in the empty cells, let's first remove any existing items
+			// that were inserted during a previous attempt to fill-in empty cells. This
+			// way, each resize event doesn't compound the collection of fixes.
+			Array
+				.from( grid.querySelectorAll( "div.grid__item--new" ) )
+				.forEach(
+					function( node ) {
+
+						grid.removeChild( node );
+
+					}
+				)
+			;
+
+			// Keep track of the current un-altered grid height (so we can skip 
+			// insignificant window resize events in the future).
+			currentHeight = grid.clientHeight;
+
+			// Now, we're going to start iterating over our random-sizes collection and
+			// start inserting grid items with the given, random size. We'll continue to
+			// so until no new items can be inserted into the grid without affecting the
+			// original height of the grid. At that point, we'll remove the last-inserted
+			// grid item and know that the grid cells has been saturated.
+			// --
+			// NOTE: We know this will work because the random-sizes collection contains
+			// a 1x1 grid area, which will ultimately be able to fill in any remaining
+			// empty cells.
+			var newItemIndex = 0;
+			var fillerSizes = randomSizes.slice();
+			var indicesToDelete = [];
+
+			do {
+
+				fillerSizes.forEach(
+					function ( size, index ) {
+
+						var node = document.createElement( "div" );
+						node.classList.add(
+							"grid__item",
+							"grid__item--new",
+							`grid__item--column-span-${ size.columns }`,
+							`grid__item--row-span-${ size.rows }`
+						);
+
+						grid.appendChild( node );
+
+						// If the height of the grid has not changed, then we know that
+						// the inserted grid item fit into an empty cell.
+						if ( grid.clientHeight === currentHeight ) {
+
+							node.innerText = `New ${ ++newItemIndex }`;
+
+						// If the HEIGHT OF THE GRID HAS CHANGED, then we know that the
+						// inserted grid item did not fit cleanly into an empty cell.
+						} else {
+
+							// Remove the breaking item.
+							grid.removeChild( node );
+
+							// Let's also track this size as one to delete before the 
+							// next iteration. If it didn't fit this time, there's no
+							// reason to think it will fit in the next iteration.
+							indicesToDelete.push( index );
+
+						}
+
+					}
+				);
+
+				// Remove any random-size combinations that we know didn't get used in
+				// previous iteration (which means there's no point in trying them in the
+				// next iteration).
+				for ( var i = ( indicesToDelete.length - 1 ) ; i >= 0 ; i-- ) {
+
+					fillerSizes.splice( indicesToDelete[ i ], 1 );
+					indicesToDelete.splice( i, 1 );
+					
+				}
+
+			} while ( fillerSizes.length );
+
+		}
+
+
+		// I generate a randomly-sorted collection of grid-area sizes (column and row
+		// span combinations). These will be used to fill-in the empty grid cells.
+		function generateRandomSizes() {
+
+			var sizes = [];
+			
+			for ( var columns = 4 ; columns >= 1 ; columns-- ) {
+				for ( var rows = 4 ; rows >= 1 ; rows-- ) {
+
+					sizes.push({
+						columns: columns,
+						rows: rows
+					});
+
+				}
+			}
+
+			return( _.shuffle( sizes ) );
+
+		}
+
+
+		// I populate the grid with the given number of randomly-sized items.
+		function populateGrid( itemCount ) {
+
+			for ( var i = 1 ; i <= itemCount ; i++ ) {
+
+				var node = document.createElement( "div" );
+				node.innerText = `Item ${ i }`;
+				node.classList.add(
+					"grid__item",
+					`grid__item--column-span-${ _.random( 1, 4 ) }`,
+					`grid__item--row-span-${ _.random( 1, 4 ) }`
+				);
+
+				grid.appendChild( node );
+
+			}
+
+		}
+
+
+		// I wire the window-resize event into a call to fill in the empty grid cells.
+		function setupResizeBinding() {
+
+			window.addEventListener(
+				"resize",
+				_.debounce( fillEmptyGridCells, 200 ),
+				false
+			);
+
+		}
+		
+	</script>
+
+</body>
+</html>
