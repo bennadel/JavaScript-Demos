@@ -1,0 +1,234 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Practice: Progressively Enhancing A Flexbox Grid To Use CSS Grid
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./styles.css"></link>
+	<style type="text/css">
+
+		div.grid {
+			display: flex ;
+			flex-wrap: wrap ;
+		}
+
+		div.grid__item {
+			display: flex ;
+			margin: 0px 21px 20px 0px ;
+			width: 141px ;
+		}
+
+		div.grid__item--hidden {
+			display: none ;
+		}
+
+		span.widget {
+			background-color: #FAFAFA ;
+			border: 2px solid #CCCCCC ;
+			border-radius: 4px 4px 4px 4px ;
+			box-sizing: border-box ;
+			padding: 10px 10px 10px 10px ;
+			min-height: 150px ;
+			width: 100% ;
+		}
+
+	</style>
+	<style id="grid-style" type="text/css-disabled">
+
+		@supports ( display: grid ) {
+
+			div.grid {
+				display: grid ;
+				grid-column-gap: 28px ;
+				grid-row-gap: 20px ;
+				grid-template-columns: repeat( auto-fit, 141px ) ;
+				margin: 0px 0px 0px 0px ;
+				/*
+					Justify-content is nice when there's enough data to fill at least one
+					row; however, in this experiment, we can't use it because it because
+					the filtering will allow items to be hidden and this gets janky when 
+					there aren't enough visible items to fill up a the first row. As 
+					such, I'm leaning on grid-gap to space the items as best we can.
+					--
+					justify-content: space-between ;
+				*/
+			}
+
+			div.grid__item {
+				margin: 0px 0px 0px 0px ;
+				/* Resetting width - will be taken care of grid-template-columns. */
+				width: auto ;
+			}
+
+			span.widget {
+				border-color: gold ;
+			}
+
+		}
+
+	</style>
+</head>
+<body>
+
+	<h1>
+		Practice: Progressively Enhancing A Flexbox Grid To Use CSS Grid
+	</h1>
+
+	<div class="content">
+
+		<form class="form">
+			<div class="form__filter">
+				<input type="text" name="filter" placeholder="Filter..." />
+				<input type="button" value="Clear" />
+			</div>
+
+			<div class="form__supports">
+				<label class="form__technology">
+					<input type="radio" name="technology" value="flexbox" checked />
+					Flexbox
+				</label>
+				<label class="form__technology">
+					<input type="radio" name="technology" value="grid" />
+					Grid
+				</label>
+			</div>
+		</form>
+
+		<div class="grid">
+			<div class="grid__item">
+				<span class="widget">You're out of your element, Donny!</span>
+			</div>
+			<div class="grid__item">
+				<span class="widget">It ain't cool to be no jive turkey so close to Thanksgiving!</span>
+			</div>
+			<div class="grid__item">
+				<span class="widget">I'll be back!</span>
+			</div>
+			<div class="grid__item">
+				<span class="widget">Wheezing the juice!</span>
+			</div>
+			<div class="grid__item">
+				<span class="widget">Well exuuuuuse me!</span>
+			</div>
+			<div class="grid__item">
+				<span class="widget">Yes, they are, they're perfect. Don't matter if they're skinny, fat, blond or blue. If a woman is willing to give you her love, Harvard, it's the greatest gift in the world. Makes you taller, makes you smarter, makes your teeth shine. Boy, oh, boy, women are perfect.</span>
+			</div>
+			<div class="grid__item">
+				<span class="widget">Come with me if you want to live.</span>
+			</div>
+			<div class="grid__item">
+				<span class="widget">So you're saying there's a chance!</span>
+			</div>
+			<div class="grid__item">
+				<span class="widget">I wouldn't say I've been "missing" it, Bob.</span>
+			</div>
+			<div class="grid__item">
+				<span class="widget">Molly, you in danger girl!</span>
+			</div>
+			<div class="grid__item">
+				<span class="widget">As you wish!</span>
+			</div>
+			<div class="grid__item">
+				<span class="widget">I wish I could quit you!</span>
+			</div>
+		</div>
+
+	</div>
+
+	<script type="text/javascript">
+
+		var head = document.querySelector( "head" );
+		var styleTag = head.querySelector( "#grid-style" );
+		var form = document.querySelector( "form" );
+		var filterInput = form.querySelector( "input[ type = 'text' ]" );
+		var filterClear = form.querySelector( "input[ type = 'button' ]" );
+		var flexboxInput = form.querySelector( "input[ value = 'flexbox' ]" );
+		var gridInput = form.querySelector( "input[ value = 'grid' ]" );
+
+		form.reset();
+
+		form.addEventListener(
+			"submit",
+			function ( event ) {
+
+				event.preventDefault();
+
+			}
+		);
+
+		flexboxInput.addEventListener(
+			"click",
+			function ( event ) {
+
+				// NOTE: In order for Safari to acknowledge the attribute change, it
+				// looks like we have to remove it from the DOM and then add it back.
+				head.removeChild( styleTag );
+				styleTag.setAttribute( "type", "text/css-disabled" );
+				head.appendChild( styleTag );
+
+			}
+		);
+
+		gridInput.addEventListener(
+			"click",
+			function ( event ) {
+
+				// NOTE: In order for Safari to acknowledge the attribute change, it
+				// looks like we have to remove it from the DOM and then add it back.
+				head.removeChild( styleTag );
+				styleTag.setAttribute( "type", "text/css" );
+				head.appendChild( styleTag );
+
+			}
+		);
+
+		filterInput.addEventListener(
+			"input",
+			function ( event ) {
+
+				applyFilter( this.value.toLowerCase() );
+
+			}
+		);
+
+		filterClear.addEventListener(
+			"click",
+			function ( event ) {
+
+				applyFilter( filterInput.value = "" );
+
+			}
+		);
+
+		function applyFilter( filter ) {
+
+			var items = document.querySelectorAll( "div.grid__item" );
+
+			for ( var i = 0 ; i < items.length ; i++ ) {
+
+				var item = items[ i ];
+				var itemText = item.innerText.toLowerCase();
+
+				// If the filter is empty or matches the element text, then show the item.
+				if ( ! filter || ( itemText.indexOf( filter ) >= 0 ) ) {
+
+					item.classList.remove( "grid__item--hidden" );
+
+				// If the filter does NOT match the element text, then hide the item.
+				} else {
+
+					item.classList.add( "grid__item--hidden" );
+
+				}
+
+			}
+
+		}
+
+	</script>
+
+</body>
+</html>

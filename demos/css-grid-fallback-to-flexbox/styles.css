@@ -1,0 +1,35 @@
+
+div.content {
+	border: 5px solid #EAEAEA ;
+	margin: 0px auto 0px auto ;
+	width: 650px ;
+}
+
+form.form {
+	border-bottom: 1px solid #CCCCCC ;
+	display: flex ;
+	font-size: 16px ;
+	margin: 0px 0px 20px 0px ;
+	padding: 15px 15px 15px 15px ;
+}
+
+div.form__filter {
+	flex: 1 1 auto ;
+}
+div.form__filter input {
+	font-size: inherit ;
+}
+
+div.form__supports {
+	align-items: center ;
+	display: flex ;
+	flex: 0 1 auto ;
+	margin-left: auto ;
+}
+
+label.form__technology {}
+
+label.form__technology:first-of-type {
+	margin-right: 20px ;
+}
+
