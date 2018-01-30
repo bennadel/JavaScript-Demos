@@ -18,6 +18,7 @@
 		div.grid__item {
 			display: flex ;
 			margin: 0px 21px 20px 0px ;
+			min-height: 150px ;
 			width: 141px ;
 		}
 
@@ -31,7 +32,6 @@
 			border-radius: 4px 4px 4px 4px ;
 			box-sizing: border-box ;
 			padding: 10px 10px 10px 10px ;
-			min-height: 150px ;
 			width: 100% ;
 		}
 
@@ -42,25 +42,14 @@
 
 			div.grid {
 				display: grid ;
-				grid-column-gap: 28px ;
 				grid-row-gap: 20px ;
-				grid-template-columns: repeat( auto-fit, 141px ) ;
+				justify-content: space-between ;
+				grid-template-columns: repeat( 4, 141px ) ;
 				margin: 0px 0px 0px 0px ;
-				/*
-					Justify-content is nice when there's enough data to fill at least one
-					row; however, in this experiment, we can't use it because it because
-					the filtering will allow items to be hidden and this gets janky when 
-					there aren't enough visible items to fill up a the first row. As 
-					such, I'm leaning on grid-gap to space the items as best we can.
-					--
-					justify-content: space-between ;
-				*/
 			}
 
 			div.grid__item {
 				margin: 0px 0px 0px 0px ;
-				/* Resetting width - will be taken care of grid-template-columns. */
-				width: auto ;
 			}
 
 			span.widget {
