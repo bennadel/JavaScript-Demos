@@ -585,7 +585,7 @@ export class RetainScrollPolyfillService {
 				// on both sides of the navigation event (for reasons that are not fully
 				// obvious or logical -- basically, the window's scroll changes at a time
 				// that is not easy to tap into).
-				var scrollBufferWindow = 250;
+				var scrollBufferWindow = 100;
 
 				window.addEventListener(
 					"scroll",
