@@ -491,30 +491,49 @@ export class RetainScrollPolyfillService {
 
 						for ( var selector in this.previousPageState.elementStates ) {
 
-							if ( 
-								// We only care about selectors that are missing from the
-								// current page-state. If the selector exists, it means
-								// that the current page-state has the more up-to-date
-								// element state.
-								! currentPageState.elementStates[ selector ] &&
+							// We only care about selectors that are missing from the
+							// current page-state. If the selector exists, it means that
+							// the current page-state has the more up-to-date element 
+							// state.
+							if ( currentPageState.elementStates[ selector ] ) {
 
-								// We only care about the selectors that match elements
-								// that are still rendered on the page. A non-rendered
-								// element won't be relevant for a popstate navigation.
-								this.domUtils.exists( selector )
-								) {
-
-								console.group( "Pulling Scroll Offset Forward from Previous State" );
-								console.log( selector );
-								console.log( this.previousPageState.elementStates[ selector ].scrollTop );
-								console.groupEnd();
-
-								currentPageState.elementStates[ selector ] = {
-									selector: selector,
-									scrollTop: this.previousPageState.elementStates[ selector ].scrollTop
-								};
+								continue;
 
 							}
+
+							var target = this.domUtils.select( selector )
+
+							// We only care about the selectors that match elements that
+							// are still rendered on the page. A non-rendered element 
+							// won't be relevant for a future popstate navigation.
+							if ( ! target ) {
+
+								continue;
+
+							}
+
+							// We only care about targeted elements that are still at the
+							// same scroll offset as the previous state. If the offsets 
+							// don't match, then it's likely that the currently rendered
+							// page is not compatible with the previous state. This can
+							// happen if you navigate through a page that doesn't have
+							// sufficient content to create scrolling (usually on the 
+							// window object).
+							if ( this.domUtils.getScrollTop( target ) !== this.previousPageState.elementStates[ selector ].scrollTop ) {
+
+								continue;
+
+							}
+
+							console.group( "Pulling Scroll Offset Forward from Previous State" );
+							console.log( selector );
+							console.log( this.previousPageState.elementStates[ selector ].scrollTop );
+							console.groupEnd();
+
+							currentPageState.elementStates[ selector ] = {
+								selector: selector,
+								scrollTop: this.previousPageState.elementStates[ selector ].scrollTop
+							};
 
 						}
 
