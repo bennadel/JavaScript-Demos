@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Creating A Dynamic Favicon Service In Angular 5.2.4](http://bennadel.github.io/JavaScript-Demos/demos/dynamic-favicon-angular5/)
 * [Restoring Scroll Position With A Polyfill In Angular 5.2.3](http://bennadel.github.io/JavaScript-Demos/demos/router-retain-scroll-polyfill-angular5/)
 * [Practice: Progressively Enhancing A Flexbox Grid To Use CSS Grid](http://bennadel.github.io/JavaScript-Demos/demos/css-grid-fallback-to-flexbox/)
 * [Filling In The Empty Cells When Using Grid-Auto-Flow: Dense In CSS Grid](http://bennadel.github.io/JavaScript-Demos/demos/css-grid-filler/)
