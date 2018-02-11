@@ -1,0 +1,118 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Using Position Absolute Inside A Scrolling Overflow Container
+	</title>
+
+	<style type="text/css">
+
+		div.viewport {
+			border: 5px solid #CCCCCC ;
+			box-sizing: border-box ;
+			height: 300px ;
+			overflow: auto ;
+			width: 500px ;
+		}
+
+		span.box {
+			background-color: #FF3366 ;
+			color: #FFFFFF ;
+			padding: 7px 15px 7px 15px ;
+			position: absolute ;
+		}
+		span.tl { left: 0px ; top: 0px ; }
+		span.tr { right: 0px ; top: 0px ; }
+		span.bl { bottom: 0px ; left: 0px ; }
+		span.br { bottom: 0px ; right: 0px ; }
+
+	</style>
+</head>
+<body>
+
+	<h1>
+		Using Position Absolute Inside A Scrolling Overflow Container
+	</h1>
+
+	<h2>
+		With A Positioned Overflow Container
+	</h2>
+
+	<style type="text/css">
+
+		div.viewport-a {
+			padding: 5px 15px 5px 15px ;
+			/*
+				Here, the overflow container is, itself, acting as the anchor for the
+				positioned elements contained within. This caused the absolutely 
+				positioned elements to anchor to the actual viewport of the container.
+			*/
+			position: relative ;
+		}
+
+	</style>
+
+	<div class="viewport viewport-a">
+
+		<span class="box tl">Top Left</span>
+		<span class="box tr">Top Right</span>
+		<span class="box bl">Bottom Left</span>
+		<span class="box br">Bottom Right</span>
+
+		<p>Yay, content!</p><p>Yay, content!</p><p>Yay, content!</p><p>Yay, content!</p>
+		<p>Yay, content!</p><p>Yay, content!</p><p>Yay, content!</p><p>Yay, content!</p>
+		<p>Yay, content!</p><p>Yay, content!</p><p>Yay, content!</p><p>Yay, content!</p>
+		<p>Yay, content!</p><p>Yay, content!</p><p>Yay, content!</p><p>Yay, content!</p>
+
+	</div>
+
+	<!-- ---------------------------------------------------------------------------- -->
+	<!-- ---------------------------------------------------------------------------- -->
+
+	<h2>
+		With A Positioned Content Wrapper
+	</h2>
+
+	<style type="text/css">
+
+		div.viewport-b {
+			padding: 0px 0px 0px 0px ;
+		}
+
+		/*
+			Here, we're moving the position-anchoring off of the overflow container and
+			onto a content wrapper (contained within the overflow area). This allows the
+			absolutely positioned elements to anchor to the bounding box of the content,
+			not the viewport.
+		*/
+		div.viewport-wrapper {
+			padding: 5px 15px 5px 15px ;
+			position: relative ;
+		}
+
+	</style>
+
+	<div class="viewport viewport-b">
+		<!--
+			By wrapping the content in a non-overflow container, we create an anchoring
+			box that is sized to the content, not to the viewport.
+		-->
+		<div class="viewport-wrapper">
+
+			<span class="box tl">Top Left</span>
+			<span class="box tr">Top Right</span>
+			<span class="box bl">Bottom Left</span>
+			<span class="box br">Bottom Right</span>
+
+			<p>Yay, content!</p><p>Yay, content!</p><p>Yay, content!</p><p>Yay, content!</p>
+			<p>Yay, content!</p><p>Yay, content!</p><p>Yay, content!</p><p>Yay, content!</p>
+			<p>Yay, content!</p><p>Yay, content!</p><p>Yay, content!</p><p>Yay, content!</p>
+			<p>Yay, content!</p><p>Yay, content!</p><p>Yay, content!</p><p>Yay, content!</p>
+
+		</div>
+	</div>
+
+</body>
+</html>
