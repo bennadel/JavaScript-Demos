@@ -6,6 +6,7 @@
 // content may get bundled with your main application bundle, not your vendor bundle.
 import "@angular/core";
 // import "@angular/platform-browser/animations";
+import "@angular/forms";
 import "@angular/platform-browser-dynamic";
 import "@angular/router";
 import "lodash/find";
