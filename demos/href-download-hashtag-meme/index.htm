@@ -1,0 +1,364 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Using The Anchor Tag href And download Attributes To Force A File Download
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Open+Sans:400,600|Patrick+Hand+SC" />
+	<link rel="stylesheet" type="text/css" href="./styles.css" />
+</head>
+<body>
+
+	<h1>
+		Using The Anchor Tag href And download Attributes To Force A File Download
+	</h1>
+
+	<form class="form">
+
+		<div class="form__meme meme">
+			<canvas width="700" height="465" class="meme__canvas">
+				<img
+					src="./hashtag_hero_700.png"
+					alt="Based on the Jimmy Fallon skit: https://www.youtube.com/watch?v=57dzaMaouXA"
+					class="meme__img"
+				/>
+			</canvas>
+		</div>
+
+		<div class="form__field">
+			<label class="form__label">Add Tags (One per line):</label>
+			<textarea class="form__input"></textarea>
+			<a class="form__download">Download Image</a>
+		</div>
+
+	</form>
+
+	<span class="font-loader">
+		This is here to force the font to load.
+	</span>
+
+
+	<script type="text/javascript">
+
+		// We can't use the canvas until both the Image and the Font load.
+		window.addEventListener( "load", init );
+
+		function init() {
+
+			var img = document.querySelector( ".meme__img" );
+			var input = document.querySelector( ".form__input" );
+			var button = document.querySelector( ".form__download" );
+			var canvas = document.querySelector( ".meme__canvas" );
+			var context = canvas.getContext(
+				"2d",
+				{
+					alpha: false
+				}
+			);
+
+			// We only need to write the image to the canvas when the canvas is resized
+			// (which implicitly clears it). As such, we'll keep track of the canvas size
+			// and only write the image when necessary.
+			var previousCanvasHeight = 0;
+
+			// Rather than dealing with converting the natural dimensions of the image,
+			// I'm just hard-coding them so we can easily draw the scaled image.
+			var imageWidth = 700;
+			var imageHeight = 465;
+
+			// I define the padding that will surround the tags within the figure.
+			var tagPadding = {
+				top: 40,
+				right: 40,
+				bottom: 40,
+				left: 40
+			};
+
+			var initialTags = [
+				"homemade",
+				"oatmeal raisin",
+				"show me the cookie",
+				"getin my cookie on",
+				"i'm the real cookie monster",
+				"nom nom nom nom nom nom nom nom"
+			];
+
+			input.value = initialTags.join( "\n" );
+			input.addEventListener( "input", handleInput );
+			button.addEventListener( "click", saveImageOnButtonClick );
+
+			applyInputToCanvas();
+
+			// ---
+			// PRIVATE METHODS.
+			// ---
+
+			// I apply the current value of the textarea input to the canvas.
+			function applyInputToCanvas() {
+
+				renderTags( splitIntoTags( input.value ) );
+
+			}
+
+
+			// I handle changes to the textarea, turning them into updates to the canvas.
+			function handleInput( event ) {
+
+				applyInputToCanvas();
+
+			}
+
+
+			// I determine if the current browser Firefox. While we generally want to
+			// avoid vendor detection, there is a bug in the way Firefox prints text into
+			// a canvas, and we need to account for that.
+			function isFirefox() {
+
+				return( window.navigator.userAgent.toLowerCase().indexOf( "firefox" ) >= 0 );
+
+			}
+
+
+			// I render the given tags in the canvas, resizing it as necessary.
+			function renderTags( tags ) {
+
+				var contextFont = "42px 'Patrick Hand SC'";
+				var lineHeight = 38;
+				var lineSpacing = 20;
+
+				// There seem to be cross-browser discrepancies and bugs in how text is
+				// positioned on a canvas. As such, I am setting the baseline and a
+				// "nudging" value here as a variable so that I can tweak them based on
+				// the current browser context.
+				// --
+				// Read More: https://bugzilla.mozilla.org/show_bug.cgi?id=737852
+				var textBaseline = "middle";
+				var textNudge = isFirefox()	
+					? 22
+					: 18 // All the other things.
+				;
+
+				// When rendering text on the canvas, the default behavior is just to 
+				// write it all on one line - canvas has no concept of line-wrapping.
+				// But, it does give us the ability to measure the WIDTH of the rendered
+				// text. As such, we'll build up each line until it exceeds the available
+				// width; then, we'll move text to the next line, and continue building
+				// up the content.
+				context.font = contextFont;
+				var textMaxWidth = ( imageWidth - tagPadding.left - tagPadding.right );
+				var lines = [];
+				var line = "";
+
+				for ( var i = 0 ; i < tags.length ; i++ ) {
+
+					var tag = tags[ i ];
+					var pendingText = line
+						? ( line + " " + tag )
+						: tag
+					;
+
+					// Let's look at how much space WOULD BE taken up by the given text.
+					var pendingTextWidth = context.measureText( pendingText ).width;
+
+					// If the line with the new tag is too long, we'll persist the 
+					// pending line content and then start a new pending line with the 
+					// given tag.
+					if ( pendingTextWidth > textMaxWidth ) {
+
+						// If there's already a pending line, then let's persist the
+						// pending line and start a new line with current tag.
+						if ( line ) {
+
+							lines.push( line );
+							line = tag;
+
+						// If there's no pending line, then it means this tag is actually
+						// too large for any single line. In that case, just persist it
+						// as a line and we'll let it render outside the canvas bounds.
+						} else {
+
+							lines.push( pendingText );
+							line = "";
+
+						}
+
+					// If the line with the new tag fits within the bounds of a single
+					// line, keep it and let's move onto the next tag.
+					} else {
+
+						line = pendingText;
+
+					}
+
+				}
+
+				// If we have any pending line content left, persist it as a new line.
+				if ( line ) {
+
+					lines.push( line );
+
+				}
+
+				var lineCount = lines.length;
+				var spacingCount = ( lineCount - 1 );
+
+				// Calculate the dimensions of the figure given the tag content.
+				var figureWidth = imageWidth;
+				var figureHeight = (
+					tagPadding.top + 
+					tagPadding.bottom +
+					( lineCount * lineHeight ) + 
+					( spacingCount * lineSpacing )
+				);
+
+				// Calculate the dimensions of the canvas with the new tag content.
+				var canvasWidth = imageWidth;
+				var canvasHeight = ( imageHeight + figureHeight );
+
+				// Since the figure area is the only "dynamic" portion of the canvas, we
+				// only need to draw the image when the canvas resizes (which implicitly
+				// clears the canvas). And, since we know the HEIGHT is the only dynamic
+				// portion of the dimensions, that's what we'll check.
+				if ( canvasHeight !== previousCanvasHeight ) {
+
+					canvas.width = canvasWidth;
+					canvas.style.width = ( canvasWidth + "px" );
+					canvas.height = canvasHeight;
+					canvas.style.height = ( canvasHeight + "px" );
+					context.drawImage( img, 0, 0, imageWidth, imageHeight );
+					
+				}
+
+				// Clear the figure area.
+				context.fillStyle = "#1F1F1F";
+				context.fillRect( 0, imageHeight, figureWidth, figureHeight );
+
+				// Setup tag text and fill styles.
+				context.font = contextFont;
+				context.fillStyle = "#FFFFFF";
+				context.textAlign = "center";
+				context.textBaseline = textBaseline;
+
+				// Draw lines of tags to canvas.
+				for ( var i = 0 ; i < lines.length ; i++ ) {
+
+					var lineY = ( ( imageHeight + tagPadding.top ) + ( i * lineHeight ) + ( i * lineSpacing ) );
+					var textY = ( lineY + textNudge );
+
+					context.fillText( lines[ i ], ( figureWidth / 2 ), textY );
+
+					// This will show the line delimiters for debugging purposes.
+					if ( false ) {
+
+						context.fillRect( 0, lineY, canvasWidth, 1 );
+						context.fillRect( 0, ( lineY + lineHeight ), canvasWidth, 1 );
+						
+					}
+					
+				}
+
+			}
+
+
+			// I set the click-action of the button to be a request to save the content
+			// of the canvas as an exported PNG file. This will allow the user to save
+			// the canvas on-demand.
+			function saveImageOnButtonClick( event ) {
+
+				var filename = ( "hashtag-meme-" + Date.now() + ".png" );
+
+				// Check to see if the "download" property is defined; while it is 
+				// available in the modern browsers, it doesn't have historical support
+				// in Internet Explorer.
+				if ( typeof( button.download ) === "string" ) {
+
+					button.href = canvas.toDataURL();
+					button.download = filename;
+
+				// Try to fallback to IE-specific methods.
+				// --
+				// Credit: https://stackoverflow.com/questions/22665111/download-img-throught-hyperlink-a-in-ie11-using-javascript/22682521
+				} else if ( navigator.msSaveBlob ) {
+
+					navigator.msSaveBlob( canvas.msToBlob(), filename );
+
+				} else {
+
+					alert( "Downloading is not available for security reasons." );
+					
+				}
+
+			}
+
+
+			// I split the given multi-line value into a set of multi-word tags.
+			function splitIntoTags( value ) {
+
+				// Each tag can be a multi-word, space-delimited phrase, one per line.
+				var tags = trim( value )
+					.split( /\r\n?|\n/g )
+					.map(
+						function ( line ) {
+
+							// Clean each line up, removing invalid characters.
+							line = line.toLowerCase()
+								.replace( /[#-]/g, " " )
+								.replace( /[^\w\d ]+/g, "" )
+							;
+
+							if ( ! ( line = trim( line ) ) ) {
+
+								return( "" );
+
+							}
+
+							// Now, split the line up into tokens, and join them back
+							// together using camel-case (ex, "GoodMorningMyFriend").
+							var tag = line
+								.split( /\s+/g )
+								.map(
+									function ( token ) {
+
+										var head = token.slice( 0, 1 );
+										var tail = token.slice( 1 );
+
+										return( head.toUpperCase() + tail );
+
+									}
+								)
+								.join( "" )
+							;
+
+							return( "#" + tag );
+
+						}
+					)
+					.filter(
+						function ( tag ) {
+
+							return( !! tag );
+
+						}
+					)
+				;
+
+				return( tags );
+
+			}
+
+
+			// I remove the leading and trailing white-space from the given value.
+			function trim( value ) {
+
+				return( value.replace( /^\s+|\s+$/g, "" ) );
+
+			}
+
+		}
+
+	</script>
+
+</html>

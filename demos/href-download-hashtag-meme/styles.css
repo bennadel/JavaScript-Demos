@@ -1,0 +1,82 @@
+
+body {
+	font-family: "Open Sans", sans-serif ;
+	font-weight: 400 ;
+}
+
+h1 {
+	font-weight: 600 ;
+}
+
+.form {
+	margin: 0px auto 0px auto ;
+	width: 710px ;
+}
+
+.form__meme {}
+
+.form__field {
+	margin: 20px 0px 50px 0px ;
+}
+
+.form__label {
+	display: block ;
+	font-size: 20px ;
+	font-weight: bold ;
+	margin: 0px 0px 10px 0px ;
+}
+
+.form__input {
+	box-sizing: border-box ;
+	font-size: 18px ;
+	height: 150px ;
+	margin-bottom: 20px ;
+	padding: 7px 10px 7px 10px ;
+	width: 100% ;
+}
+
+.form__download {
+	background-color: #FF3366 ;
+	border-radius: 50px 50px 50px 50px ;
+	color: #FFFFFF ;
+	cursor: pointer ;
+	display: block ;
+	font-size: 16px ;
+	font-weight: 600 ;
+	line-height: 50px ;
+	margin: 0px auto 0px auto ;
+	text-align: center ;
+	text-decoration: none ;
+	text-transform: uppercase ;
+	transition: background-color 300ms ease ;
+	width: 250px ;
+}
+
+.form__download:hover {
+	background-color: #F33060 ;
+}
+
+.meme {
+	border: 5px solid #CCCCCC ;
+	margin: 0px auto 0px auto ;
+	width: 700px ;
+}
+
+.meme__canvas {
+	display: block ;
+	height: 465px ;
+	width: 700px ;
+}
+
+.meme__img {
+	display: block ;
+	height: 465px ;
+	width: 700px ;
+}
+
+.font-loader {
+	left: -1000px ;
+	font: 11px "Patrick Hand SC" ;
+	position: fixed ;
+	top: -1000px ;
+}

@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Using The Anchor Tag href And download Attributes To Force A File Download](http://bennadel.github.io/JavaScript-Demos/demos/href-download-hashtag-meme/)
 * [Experiment: Recreating The InVision App User Interface With The Angular 5.2.4 Router](http://bennadel.github.io/JavaScript-Demos/demos/router-playground-angular4/)
 * [Using Position Absolute Inside A Scrolling Overflow Container](http://bennadel.github.io/JavaScript-Demos/demos/css-position-overflow/)
 * [Creating A Dynamic Favicon Service In Angular 5.2.4](http://bennadel.github.io/JavaScript-Demos/demos/dynamic-favicon-angular5/)
