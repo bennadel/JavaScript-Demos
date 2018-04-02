@@ -1,0 +1,19 @@
+
+.initiator {
+	color: red ;
+	cursor: pointer ;
+	text-decoration: underline ;
+	user-select: none ;
+		-moz-user-select: none ;
+		-webkit-user-select: none ;
+}
+
+.images {}
+.images__img {
+	border: 2px solid #333333 ;
+	border-radius: 4px 4px 4px 4px ;
+	display: inline-block ;
+	height: 50px ;
+	margin: 0px 10px 0px 0px ;
+	width: 50px ;
+}

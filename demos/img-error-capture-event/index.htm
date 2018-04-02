@@ -1,0 +1,123 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<title>
+		Tracking Image Error Events Using Event Delegation In JavaScript
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css"></link>
+</head>
+<body>
+
+	<h1>
+		Tracking Image Error Events Using Event Delegation In JavaScript
+	</h1>
+
+	<p>
+		<a class="initiator initiator--working">Load working images</a> &mdash;
+		<a class="initiator initiator--failing">Load failing images</a>
+	</p>
+
+	<div class="images">
+		<!-- Images to be injected dynamically. -->
+	</div>
+
+
+	<script type="text/javascript">
+
+		// Setup our DOM references for the demo.
+		var refs = {};
+		refs.workingButton = document.querySelector( ".initiator--working" );
+		refs.failingButton = document.querySelector( ".initiator--failing" );
+		refs.images = document.querySelector( ".images" );
+		refs.body = document.body;
+
+		// The working images are expected to result in a 200 OK response. The failing
+		// images are expected to result in a 404 Not Found response.
+		var sources = {
+			working: [ "one.png", "two.png", "three.png", "four.png", "five.png" ],
+			failing: [ "one.GIF", "two.GIF", "three.GIF", "four.GIF", "five.GIF" ]
+		};
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+		// Listen for image ERROR events at the BODY level of the DOM tree.
+		refs.body.addEventListener(
+			"error",
+			handleErrorCapture,
+			// According to the DOM (Document Object Model) specification, the ERROR and
+			// LOAD events for Images do not BUBBLE up through the DOM tree. As such, we
+			// have to use the CAPTURE phase, which starts at the top of the DOM and 
+			// descends down into the DOM toward the target element.
+			true
+		);
+
+		// I handle ERROR events that have been captured going down on the DOM.
+		function handleErrorCapture ( event ) {
+
+			console.group( "Error Event Captured" );
+			console.log( "Target:", event.target );
+			console.log( "Image Source:", trimSrc( event.target.src ) );
+			console.groupEnd();
+
+		}
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+		// Setup click handlers.
+		refs.workingButton.addEventListener( "click", loadWorking, false );
+		refs.failingButton.addEventListener( "click", loadFailing, false );
+
+		// I load the working images.
+		function loadWorking ( event ) {
+
+			console.warn( "Loading working images..." );
+			renderImages( sources.working );
+
+		}
+
+
+		// I load the failing images (producing ERROR events).
+		function loadFailing ( event ) {
+
+			console.warn( "Loading failing images..." );
+			renderImages( sources.failing );
+
+		}
+
+
+		// I clear the existing images and render the given image sources.
+		function renderImages ( imageSources ) {
+			
+			refs.images.innerHTML = "";
+
+			imageSources.forEach(
+				function operator ( src ) {
+
+					var image = new Image();
+					image.src = ( "./img/" + src );
+					image.classList.add( "images__img" );
+
+					refs.images.appendChild( image );
+
+				}
+			);
+
+		}
+
+
+		// I slice off the portion of the SRC that is relevant for the demo (just to make
+		// the output easier to consume).
+		function trimSrc ( src ) {
+
+			return( src.slice( src.indexOf( "/img/" ) ) );
+
+		}
+
+	</script>
+
+</body>
+</html>

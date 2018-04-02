@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Tracking Image Error Events Using Event Delegation In JavaScript](http://bennadel.github.io/JavaScript-Demos/demos/img-error-capture-event/)
 * [Preventing Animation During The Initial Render Of ngFor In Angular 5.2.6](http://bennadel.github.io/JavaScript-Demos/demos/block-ng-for-animations-angular5/)
 * [Animating Modal Windows While Blocking Intra-Modal Transitions In Angular 5.2.6](http://bennadel.github.io/JavaScript-Demos/demos/animate-nested-router-views-angular5/)
 * [Using The Anchor Tag href And download Attributes To Force A File Download](http://bennadel.github.io/JavaScript-Demos/demos/href-download-hashtag-meme/)
