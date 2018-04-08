@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Reporting StatsD Metrics From The Browser In Angular 5.2.9](http://bennadel.github.io/JavaScript-Demos/demos/send-statsd-from-browser-angular5/)
 * [Tracking Image Error Events Using Event Delegation In JavaScript](http://bennadel.github.io/JavaScript-Demos/demos/img-error-capture-event/)
 * [Preventing Animation During The Initial Render Of ngFor In Angular 5.2.6](http://bennadel.github.io/JavaScript-Demos/demos/block-ng-for-animations-angular5/)
 * [Animating Modal Windows While Blocking Intra-Modal Transitions In Angular 5.2.6](http://bennadel.github.io/JavaScript-Demos/demos/animate-nested-router-views-angular5/)
