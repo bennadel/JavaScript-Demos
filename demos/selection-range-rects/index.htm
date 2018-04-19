@@ -1,0 +1,219 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<title>
+		Outlining Text Selections Using The Window Selection API
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./styles.css" />
+	<style type="text/css">
+
+		/*
+			Notice that the RECT elements are being positioned FIXED. This is because the
+			Range client rectangles are provided relative to the VIEWPORT, not the
+			document. If we wanted to get fancy, we'd have to translate the client rects
+			to a document-oriented coordinate system.
+		*/
+
+		div.bounding-rect {
+			border: 3px solid red ;
+			border-radius: 4px 4px 4px 4px ;
+			position: fixed ;
+			z-index: 2 ;
+		}
+
+		div.segment-rect {
+			border: 2px dashed blue ;
+			border-radius: 13px 13px 13px 13px ;
+			position: fixed ;
+			z-index: 3 ;
+		}
+
+	</style>
+</head>
+<body>
+
+	<h1>
+		Outlining Text Selections Using The Window Selection API
+	</h1>
+
+	<div class="content">
+		<p>
+			<input value="Testing for an input selection..." size="50" />
+		</p>
+
+		<p class="content__copy">
+			You're 5 foot nothin', 100 and nothin', and you have barely a speck of
+			athletic ability. And you hung in there with the best college football 
+			players in the land for 2 years. And you're gonna walk outta here with 
+			a degree from the University of Notre Dame. In this life, you don't have
+			to prove nothin' to nobody but yourself. And after what you've gone through,
+			if you haven't done that by now, it ain't gonna never happen.
+			<em>(Rudy &mdash; One of the best films of all time).</em>
+		</p>
+	</div>
+
+	<script type="text/javascript">
+
+		// As the user is highlighting text on the page, the "selectionchange" event
+		// fires at a high rate. In order to not have to manipulate the DOM  as
+		// frequently, we're going to debounce the event and only respond once the user
+		// has stopped changing their selection.
+		// --
+		// NOTE: IE11 doesn't seem to fire the first "selectionchange" event. But, it
+		// will fire a "select" event. As such, we can bind both, as they are going to
+		// be debounced anyway (if we omit IE, we only need the "selectionchange" event).
+		var selectionChangeTimer = null;
+		document.addEventListener( "selectionchange", handleSelectionChange, false );
+		document.addEventListener( "select", handleSelectionChange, false );
+
+		// Since our outline rectangles are positioned FIXED in this demo, they will be
+		// rendered out-of-position if the user scrolls the document or resizes the
+		// window. As such, we need to reposition the rectangles when the viewport
+		// changes. And, we're going to debounce this event such that we don't have to
+		// update the DOM too frequently.
+		var redrawTimer = null;
+		window.addEventListener( "scroll", redrawSelectionBoxes, false );
+		window.addEventListener( "resize", redrawSelectionBoxes, false );
+
+		// The outline boxes are being rendered a z-index above the content. This can
+		// make it difficult to make subsequent selections. As such, when the user
+		// mouses-down, we want to remove the boxes to enable copy selection.
+		window.addEventListener( "mousedown", clearCurrentSelectionBoxes, false );
+
+		// Add more copy to the page for a more robust demo surface area.
+		makeMoreCopy( 5 );
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+		// I get called continuously as the user changes the current selection. I
+		// debounce calls to draw the outline rectangles.
+		function handleSelectionChange () {
+
+			clearTimeout( selectionChangeTimer );
+			selectionChangeTimer = setTimeout( drawSelectionBoxes, 500 );
+
+		}
+
+
+		// I debounce the redrawing of the selection boxes.
+		function redrawSelectionBoxes ( event ) {
+
+			clearTimeout( redrawTimer );
+			redrawTimer = setTimeout( drawSelectionBoxes, 300 );
+
+		}
+
+
+		// I clear the fixed-position selection boxes that outline the current selection
+		// within the document.
+		function clearCurrentSelectionBoxes () {
+
+			var nodes = document.querySelectorAll( "div.bounding-rect, div.segment-rect" );
+
+			for ( var i = 0 ; i < nodes.length ; i++ ) {
+
+				nodes[ i ].parentNode.removeChild( nodes[ i ] );
+
+			}
+
+		}
+
+
+		// I draw the rectangles around the various Selection ranges.
+		function drawSelectionBoxes () {
+
+			clearCurrentSelectionBoxes();
+			var selection = window.getSelection();
+
+			// If the selection doesn't represent a range, let's ignore it.
+			// --
+			// NOTE: I'd rather use the "type" property (None, Range, Caret); however, in
+			// my testing, this does not appear to be supported in IE. As such, we'll use
+			// the rangeCount and test the range dimensions).
+			if ( ! selection.rangeCount ) {
+
+				return;
+
+			}
+
+			// Technically, a selection can have multiple ranges, as defined in the
+			// "Selection.rangeCount" property; but, for the most part, we are only going
+			// to deal with the first (and often only) selection range.
+			var range = selection.getRangeAt( 0 );
+
+			// Output the data about the various selection data and the client rects.
+			console.group( "Selection Change" );
+			console.log( selection );
+			console.log( range );
+			console.log( range.getBoundingClientRect() );
+			console.log( range.getClientRects() );
+			console.log( "To String::" );
+			console.log( window.getSelection().toString() );
+			console.groupEnd();
+
+			// NOTE: When the client-rectangles are reported, they include a RIGHT and
+			// BOTTOM property. However, I found that to be less than accurate. As such,
+			// I went with (left + width) and (top + height) in order to calculate the
+			// dimensions of each outline box.
+
+			var rect = range.getBoundingClientRect();
+
+			// Check to make sure the selection dimensions aren't zero.
+			if ( rect.width && rect.height ) {
+
+				var outline = document.createElement( "div" );
+				outline.classList.add( "bounding-rect" );
+				outline.style.top = ( rect.top + "px" );
+				outline.style.left = ( rect.left + "px" );
+				outline.style.width = ( rect.width + "px" );
+				outline.style.height = ( rect.height + "px" );
+				document.body.appendChild( outline );
+
+			}
+
+			var rects = range.getClientRects();
+
+			for ( var i = 0 ; i < rects.length ; i++ ) {
+
+				var rect = rects[ i ];
+
+				// Check to make sure the selection dimensions aren't zero.
+				if ( rect.width && rect.height ) {
+
+					var outline = document.createElement( "div" );
+					outline.classList.add( "segment-rect" );
+					outline.style.top = ( rect.top + "px" );
+					outline.style.left = ( rect.left + "px" );
+					outline.style.width = ( rect.width + "px" );
+					outline.style.height = ( rect.height + "px" );
+					document.body.appendChild( outline );
+					
+				}
+
+			}
+
+		}
+
+
+		// I duplicate the copy paragraph a few times in order to provide more text for
+		// the exploration landscape.
+		function makeMoreCopy ( count ) {
+
+			var content = document.querySelector( "div.content" );
+			var copy = content.querySelector( "p.content__copy" );
+
+			for ( var i = 0 ; i < count ; i++ ) {
+
+				content.appendChild( copy.cloneNode( true ) );
+
+			}
+
+		}
+
+	</script>
+
+</body>
+</html>

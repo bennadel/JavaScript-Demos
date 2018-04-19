@@ -1,0 +1,16 @@
+
+body {
+	font-size: 120% ;
+}
+
+::selection {
+	background: #EAEAEA ;
+}
+
+::-moz-selection {
+	background: #EAEAEA ;
+}
+
+p.content__copy {
+	line-height: 140% ;
+}
