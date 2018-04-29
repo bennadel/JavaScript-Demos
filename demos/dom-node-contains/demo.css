@@ -1,0 +1,16 @@
+
+body {
+	font-size: 20px ;
+}
+
+div.container {
+	border: 2px solid red ;
+	border-radius: 5px 5px 5px 5px ;
+	padding: 0px 16px 0px 16px ;
+}
+
+blockquote {
+	border-left: 5px solid #DADADA ;
+	margin-left: 0px ;
+	padding-left: 20px ;
+}

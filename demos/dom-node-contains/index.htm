@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>
+		Using Node.contains() To Determine If One DOM Node Is Inside Another
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css">
+</head>
+<body>
+
+	<h1>
+		Using Node.contains() To Determine If One DOM Node Is Inside Another
+	</h1>
+
+	<p>
+		This node is <strong>outside</strong> the <em>red node</em>.
+	</p>
+
+	<div class="container">
+		<p>
+			This node is <strong>inside</strong> the <em>red node</em>.
+		</p>
+
+		<blockquote>
+			<p>
+				<em>As is <u>this one</u>!</em>
+			</p>
+		</blockquote>
+	</div>
+
+	<p>
+		This node is <strong>outside</strong> the <em>red node</em>.
+	</p>
+
+	<script type="text/javascript">
+			
+		var container = document.querySelector( "div.container" );
+
+		// For the demo, we're going to use event-delegation on the document in order to
+		// allow the user to select any element on the page.
+		document.addEventListener( "click", handleClick, false );
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+		// I handle the event-delegation and check for the relative node relationship.
+		function handleClick( event ) {
+
+			console.group( "Checking Containership" );
+			console.log( "Container:", container );
+			console.log( "Target:", event.target );
+			console.log( "Is Local:", isLocalNode( container, event.target ) );
+			console.groupEnd();
+
+		}
+
+		// I determine if the given target is equal-to or contained within the given node.
+		function isLocalNode( node, target ) {
+
+			// In Internet Explorer (IE), Node.contains() only works on Element nodes,
+			// not Text nodes. As such, let's travel up to the nearest Element node.
+			// --
+			// NOTE: This doesn't necessarily apply to this demo, which only reacts to
+			// Element node interactions. However, I'm adding it here as a mental note.
+			while ( target && ( target.nodeType !== Node.ELEMENT_NODE ) ) {
+
+				target = target.parentNode;
+
+			}
+
+			return( node.contains( target ) );
+
+		}
+
+	</script>
+
+</body>
+</html>
