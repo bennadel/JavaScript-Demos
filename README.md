@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Translating Viewport Coordinates To Element-Local Coordinates Using .getBoundingClientRect()](http://bennadel.github.io/JavaScript-Demos/demos/translate-viewport-to-local/)
 * [Sanity Check: Manipulating Event Handlers And Timers Outside Of NgZone In Angular 5.2.10](http://bennadel.github.io/JavaScript-Demos/demos/zone-sanity-check-angular5/)
 * [Creating A Medium-Inspired Text Selection Directive In Angular 5.2.10](http://bennadel.github.io/JavaScript-Demos/demos/selection-range-directive-angular5/)
 * [Using Node.contains() To Determine If One DOM Node Is Inside Another](http://bennadel.github.io/JavaScript-Demos/demos/dom-node-contains/)

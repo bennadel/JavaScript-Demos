@@ -1,0 +1,51 @@
+
+div.box {
+	background-color: #FAFAFA ;
+	border: 3px solid #CCCCCC ;
+	border-radius: 5px 5px 5px 5px ;
+	cursor: pointer ;
+	margin: 20px 0px 20px 0px ;
+	overflow: hidden ;
+	position: relative ;
+}
+
+div.box-a {
+	height: 100px ;
+}
+
+div.box-b {
+	height: 200px ;
+	margin-left: 10% ;
+}
+
+div.box-c {
+	height: 300px ;
+	margin-left: 20% ;
+}
+
+div.box-d {
+	height: 400px ;
+	margin-left: 30% ;
+}
+
+div.box-e {
+	height: 500px ;
+	margin-left: 40% ;
+}
+
+div.box-f {
+	height: 600px ;
+	margin-left: 50% ;
+}
+
+div.point {
+	background-color: red ;
+	border-radius: 20px 20px 20px 20px ;
+	box-shadow: 1px 1px 3px rgba( 0, 0, 0, 0.4 ) ;
+	height: 20px ;
+	position: absolute ;
+	transform: translateX( -11px ) translateY( -11px ) ;
+		-ms-transform: translateX( -11px ) translateY( -11px ) ;
+		-webkit-transform: translateX( -11px ) translateY( -11px ) ;
+	width: 20px ;
+}
