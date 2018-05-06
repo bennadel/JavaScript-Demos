@@ -1,0 +1,34 @@
+{
+	"name": "angular-demo",
+	"version": "6.0.0",
+	"license": "ISC",
+	"scripts": {
+		"build": "webpack",
+		"watch": "webpack --watch"
+	},
+	"dependencies": {
+		"@angular/animations": "6.0.0",
+		"@angular/common": "6.0.0",
+		"@angular/compiler": "6.0.0",
+		"@angular/core": "6.0.0",
+		"@angular/forms": "6.0.0",
+		"@angular/http": "6.0.0",
+		"@angular/platform-browser": "6.0.0",
+		"@angular/platform-browser-dynamic": "6.0.0",
+		"@angular/router": "6.0.0",
+		"@types/lodash": "4.14.108",
+		"@types/node": "9.6.6",
+		"angular2-template-loader": "0.6.2",
+		"core-js": "2.5.5",
+		"html-webpack-plugin": "2.30.1",
+		"less": "3.0.2",
+		"less-loader": "4.1.0",
+		"lodash": "4.17.10",
+		"raw-loader": "0.5.1",
+		"rxjs": "6.1.0",
+		"ts-loader": "3.5.0",
+		"typescript": "2.8.3",
+		"webpack": "3.11.0",
+		"zone.js": "0.8.26"
+	}
+}
