@@ -1,0 +1,51 @@
+
+:host {
+	display: block ;
+	font-size: 18px ;
+}
+
+a {
+	color: red ;
+	cursor: pointer ;
+	text-decoration: underline ;
+	user-select: none ;
+		-moz-user-select: none ;
+		-webkit-user-select: none ;
+}
+
+.scroll-progress {
+	left: 0px ;
+	height: 7px ;
+	right: 0px ;
+	top: 0px ;
+	z-index: 2 ;
+
+	&__indicator {
+		background-color: #FF3366 ;
+		bottom: 0px ;
+		left: 0px ;
+		position: absolute ;
+		top: 0px ;
+		transition: 100ms ease width ;
+	}
+
+	&--fixed {
+		position: fixed ;
+	}
+
+	&--absolute {
+		position: absolute ;
+	}
+}
+
+.inner {
+	position: relative ;
+	width: 50% ;
+
+	&__content {
+		border: 1px solid #333333 ;
+		height: 300px ;
+		overflow: auto ;
+		padding: 10px 40px 10px 40px ;
+	}
+}

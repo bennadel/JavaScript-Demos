@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Monitoring Document And Element Scroll Percentages Using RxJS In Angular 6.0.2](http://bennadel.github.io/JavaScript-Demos/demos/element-scroll-directive-angular6/)
 * [Proof Of Concept: Using Axios As Your HTTP Client In Angular 6.0.0](http://bennadel.github.io/JavaScript-Demos/demos/axios-http-client-angular6/)
 * [Experiment: Injecting A Component Reference Into A Pipe Instance In Angular 6.0.0](http://bennadel.github.io/JavaScript-Demos/demos/pipe-component-method-angular6/)
 * [Translating Viewport Coordinates To Element-Local Coordinates Using .getBoundingClientRect()](http://bennadel.github.io/JavaScript-Demos/demos/translate-viewport-to-local/)
