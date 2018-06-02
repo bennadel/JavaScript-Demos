@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [jQuery's append() Methods Intercept Script Tag Insertion And Circumvent Load Handlers](http://bennadel.github.io/JavaScript-Demos/demos/jquery-script-onload/)
 * [Binding RxJS Observable Sources Outside Of The NgZone In Angular 6.0.2](http://bennadel.github.io/JavaScript-Demos/demos/rxjs-ngzone-angular6/)
 * [Monitoring Document And Element Scroll Percentages Using RxJS In Angular 6.0.2](http://bennadel.github.io/JavaScript-Demos/demos/element-scroll-directive-angular6/)
 * [Proof Of Concept: Using Axios As Your HTTP Client In Angular 6.0.0](http://bennadel.github.io/JavaScript-Demos/demos/axios-http-client-angular6/)
