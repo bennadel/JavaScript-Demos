@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>
+		Exploring Plain-Text Data URIs And The Anchor Download Attribute In JavaScript
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css" />
+</head>
+<body>
+	
+	<h1>
+		Exploring Plain-Text Data URIs And The Anchor Download Attribute In JavaScript
+	</h1>
+
+	<form>
+
+		<textarea name="input">I like to move it, move it.</textarea>
+
+		<!-- NOTE: Download attribute not supported in IE (but is in Edge). -->
+		<a href="javascript:void(0)" download="data.txt">
+			Download Text
+		</a>
+
+		<label for="useBase64">
+			<input type="checkbox" id="useBase64" name="useBase64" />
+			Use Base64 encoding?
+		</label>
+
+	</form>
+
+	<script type="text/javascript">
+
+		// Gather our DOM references.
+		var input = document.querySelector( "textarea[ name = 'input' ]" );
+		var download = document.querySelector( "a[ download ]" );
+		var useBase64 = document.querySelector( "input[ name = 'useBase64' ]" );
+
+		// Listen for relevant form changes so that we can dynamically update the HREF
+		// attribute of our download link to contain the proper Data URI.
+		input.addEventListener( "input", updateDownloadHref, false );
+		useBase64.addEventListener( "change", updateDownloadHref, false );
+
+		// Initialize the download link.
+		updateDownloadHref();
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+		// I update the HREF of the download link to point to the textarea payload.
+		function updateDownloadHref() {
+
+			var text = input.value;
+
+			// When we create a DATA URI for our download link, we don't have to encode
+			// the value as Base64. Base64 is only _required_ when we are representing a
+			// non-textual payload, like an Image. And, if we're not using Base64, we
+			// only have to worry about standard entity encoding for the URL.
+			if ( useBase64.checked ) {
+
+				download.setAttribute(
+					"href",
+					( "data:text/plain;charset=utf-8;base64," + base64Encode( text ) )
+				);
+
+			} else {
+
+				download.setAttribute(
+					"href",
+					( "data:text/plain;charset=utf-8," + encodeURIComponent( text ) )
+				);
+				
+			}
+
+		}
+
+
+		// I encode the given string as a Base64 value.
+		function base64Encode( stringInput ) {
+
+			// NOTE: This normalization technique for handling characters that require
+			// more than an 8-bit representation was provided on the Mozilla Developer
+			// Network website for Base64 encoding. They also provided a companion DECODE
+			// method. But, we don't need to decode in this demo.
+			// --
+			// READ MORE: https://developer.mozilla.org/en-US/docs/Web/API/WindowBase64/Base64_encoding_and_decoding#The_Unicode_Problem
+			var normalizedInput = encodeURIComponent( stringInput ).replace(
+				/%([0-9A-F]{2})/g,
+				function toSolidBytes( $0, hex ) {
+
+					return( String.fromCharCode( "0x" + hex ) );
+
+				}
+			);
+
+			return( btoa( normalizedInput ) );
+
+		}
+
+	</script>
+
+</body>
+</html>

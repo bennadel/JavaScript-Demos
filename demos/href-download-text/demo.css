@@ -1,0 +1,29 @@
+
+form {
+	width: 600px ;
+}
+
+textarea[ name = "input" ] {
+	box-sizing: border-box ;
+	display: block ;
+	font-size: 20px ;
+	height: 200px ;
+	margin-bottom: 13px ;
+	width: 100% ;
+}
+
+a[ download ] {
+	background-color: #F0F0F0 ;
+	border: 2px solid #CCCCCC ;
+	border-radius: 5px 5px 5px 5px ;
+	box-sizing: border-box ;
+	color: #333333 ;
+	display: block ;
+	font-size: 26px ;
+	height: 60px ;
+	line-height: 60px ;
+	margin-bottom: 15px ;
+	text-align: center ;
+	text-decoration: none ;
+	width: 100% ;
+}
