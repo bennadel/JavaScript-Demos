@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Enable Tabbing Within A Fenced Code-Block Inside A Markdown Textarea In JavaScript](http://bennadel.github.io/JavaScript-Demos/demos/fenced-code-block-tabbing/)
 * [Exploring Plain-Text Data URIs And The Anchor Download Attribute In JavaScript](http://bennadel.github.io/JavaScript-Demos/demos/href-download-text/)
 * [jQuery's append() Methods Intercept Script Tag Insertion And Circumvent Load Handlers](http://bennadel.github.io/JavaScript-Demos/demos/jquery-script-onload/)
 * [Binding RxJS Observable Sources Outside Of The NgZone In Angular 6.0.2](http://bennadel.github.io/JavaScript-Demos/demos/rxjs-ngzone-angular6/)
