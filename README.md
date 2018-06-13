@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Automatically Scroll The Window When The User Approaches The Viewport Edge In JavaScript](http://bennadel.github.io/JavaScript-Demos/demos/window-edge-scrolling/)
 * [Enable Tabbing Within A Fenced Code-Block Inside A Markdown Textarea In JavaScript](http://bennadel.github.io/JavaScript-Demos/demos/fenced-code-block-tabbing/)
 * [Exploring Plain-Text Data URIs And The Anchor Download Attribute In JavaScript](http://bennadel.github.io/JavaScript-Demos/demos/href-download-text/)
 * [jQuery's append() Methods Intercept Script Tag Insertion And Circumvent Load Handlers](http://bennadel.github.io/JavaScript-Demos/demos/jquery-script-onload/)
