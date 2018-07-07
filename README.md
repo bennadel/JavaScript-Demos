@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Accessing Parent Route Params Via paramsInheritanceStrategy In Angular 6.0.7](http://bennadel.github.io/JavaScript-Demos/demos/router-param-inheritance-angular6/)
 * [Collecting Route Params Across All Router Segments In Angular 6.0.7](http://bennadel.github.io/JavaScript-Demos/demos/router-global-param-collection-angular6/)
 * [Automatically Scroll The Window When The User Approaches The Viewport Edge In JavaScript](http://bennadel.github.io/JavaScript-Demos/demos/window-edge-scrolling/)
 * [Enable Tabbing Within A Fenced Code-Block Inside A Markdown Textarea In JavaScript](http://bennadel.github.io/JavaScript-Demos/demos/fenced-code-block-tabbing/)
