@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Timezone In Date .toTimeString() Is Not Always An Abbreviation In JavaScript
+	</title>
+</head>
+<body>
+
+	<h1>
+		Timezone In Date .toTimeString() Is Not Always An Abbreviation In JavaScript
+	</h1>
+
+	<p>
+		Use: 
+		<a href="./?short">Short Version</a> or
+		<a href="./?long">Long Version</a>
+	</p>
+
+	<script type="text/javascript">
+
+		// For the sake of the demo, we're going to hard-code the .toTimeString() value
+		// so that you can see how both version can be parsed. Let's look at the browser
+		// search string to see which version to use.
+		var time = ( location.search === "?short" )
+			? "06:26:43 GMT-0400 (EDT)"
+			: "06:26:43 GMT-0400 (Eastern Daylight Time)"
+		;
+
+		console.group( "Hard-Coded Values" );
+		console.log( "Time string:", time );
+
+		// Locate the "(EDT)" portion of the time string, taking into account that it
+		// may contain unexpected values. Essentially, we're grabbing all the characters
+		// in between the parenthesis (and the parenthesis themselves).
+		var parts = time.match( /\(([^)]+)\)/i );
+
+		// Extract the timezone string, which is the first capturing group in the matched
+		// RegExp pattern (so that we don't include the parenthesis in the capture).
+		var timezone = parts[ 1 ];
+
+		// If the parsed timezone value contains any non-word characters, let's extract
+		// the word-boundary letters and convert the long timezone into an abbreviation.
+		if ( timezone.search( /\W/ ) >= 0 ) {
+
+			console.warn( "Extracted timezone as:", timezone );
+
+			timezone = timezone
+				.match( /\b\w/g ) // Match first letter at each word boundary.
+				.join( "" )
+				.toUpperCase()
+			;
+
+		}
+
+		console.log( "Timezone:", timezone );
+		console.groupEnd();
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+		// As a control, let's see what your browser is reporting.
+		console.group( "Actual Browser Value" );
+		console.log( new Date().toTimeString() );
+		console.groupEnd();
+
+	</script>
+
+</body>
+</html>
