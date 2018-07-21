@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Downloading Text Using Blobs, URL.createObjectURL(), And The Anchor Download Attribute In JavaScript](http://bennadel.github.io/JavaScript-Demos/demos/href-download-text-blob/)
 * [Timezone In Date .toTimeString() Is Not Always An Abbreviation In JavaScript](http://bennadel.github.io/JavaScript-Demos/demos/date-timezone-parsing/)
 * [Accessing Parent Route Params Via paramsInheritanceStrategy In Angular 6.0.7](http://bennadel.github.io/JavaScript-Demos/demos/router-param-inheritance-angular6/)
 * [Collecting Route Params Across All Router Segments In Angular 6.0.7](http://bennadel.github.io/JavaScript-Demos/demos/router-global-param-collection-angular6/)

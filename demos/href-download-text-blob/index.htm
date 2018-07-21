@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>
+		Downloading Text Using Blobs, URL.createObjectURL(), And The Anchor Download Attribute In JavaScript
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css" />
+</head>
+<body>
+	
+	<h1>
+		Downloading Text Using Blobs, URL.createObjectURL(), And The Anchor Download Attribute In JavaScript
+	</h1>
+
+	<form>
+
+		<textarea name="input">Snakes. Why'd it have to be snakes?</textarea>
+
+		<!-- NOTE: Download attribute not supported in IE (but is in Edge). -->
+		<a href="javascript:void(0)" download="data.txt">
+			Download Text
+		</a>
+
+	</form>
+
+	<script type="text/javascript">
+
+		// Gather our DOM references.
+		var input = document.querySelector( "textarea[ name = 'input' ]" );
+		var download = document.querySelector( "a[ download ]" );
+
+		// In order to facilitate the download, we're going to allocate Object URLs.
+		// We'll need to keep track of those so we can manage the browser memory.
+		var downloadUrl = null;
+
+		// Listen for relevant form changes so that we can dynamically update the HREF
+		// attribute of our download link to contain the proper Object URL.
+		input.addEventListener( "input", updateDownloadHref, false );
+
+		// Initialize the download link.
+		updateDownloadHref();
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+		// I update the HREF of the download link to point to the textarea payload.
+		function updateDownloadHref() {
+
+			// Create a binary representation of the plain-text input.
+			var blob = new Blob(
+				[ input.value ], // Blob parts.
+				{
+					type : "text/plain;charset=utf-8"
+				}
+			);
+
+			// When we create Object URLs, the browser will keep them in memory until the
+			// document is unloaded or until the URL is explicitly released. Since we are
+			// going to create a new URL every time the user hits a key-stroke (in this
+			// particular demo), we need to be sure to release the previous Object URL
+			// before we create the new one.
+			if ( downloadUrl ) {
+
+				URL.revokeObjectURL( downloadUrl );
+
+			}
+
+			// Create an addressable version of the blob. 
+			// --
+			// CAUTION: At this point, the URL has been allocated and the blob will be
+			// kept in the document memory space until the document is unloaded or the
+			// URL is explicitly released (see above).
+			downloadUrl = URL.createObjectURL( blob );
+
+			// Tie the addressable version of the blob to the download link. 
+			download.setAttribute( "href", downloadUrl );
+
+			console.group( "Object URL" );
+			console.log( "Text:", input.value );
+			console.log( "URL:", downloadUrl );
+			console.groupEnd();
+
+		}
+
+	</script>
+
+</body>
+</html>
