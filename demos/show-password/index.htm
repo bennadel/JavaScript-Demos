@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>
+		Implementing A "Show Password" Checkbox On A Login Form In JavaScript
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css" />
+</head>
+<body>
+	
+	<h1>
+		Implementing A "Show Password" Checkbox On A Login Form In JavaScript
+	</h1>
+
+	<!-- NOTE: Using GET so we can see the results in the URL. -->
+	<form method="get" action="./" class="login">
+
+		<div class="login__field field">
+			<label for="username" class="field__label">
+				Username:
+			</label>
+			<input type="text" id="username" name="username" class="field__input" />
+		</div>
+
+		<div class="login__field field">
+			<label for="password" class="field__label">
+				Password:
+			</label>
+			<input type="password" id="password" name="password" class="field__input" />
+
+			<label for="show-password" class="field__toggle">
+				<input type="checkbox" id="show-password" class="field__toggle-input" />
+				Show password
+			</label>
+		</div>
+
+		<div class="login__actions actions">
+			<button type="submit" class="actions__button">
+				Login + Start Rocking &raquo;
+			</button>
+		</div>
+
+	</form>
+
+	<script type="text/javascript">
+
+		// Gather our DOM references.
+		var username = document.querySelector( "#username" );
+		var password = document.querySelector( "#password" );
+		var toggle = document.querySelector( "#show-password" );
+
+		// Set some default values just to make the demo easier to use.
+		username.value = "BenJamin2002";
+		password.value = "dontTazeMeBro!";
+
+		// NOTE: The "(input)" event doesn't work on checkboxes in Safari or IE. As such,
+		// I'm using the "(click)" event to make this work cross-browser.
+		toggle.addEventListener( "click", handleToggleClick, false );
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+		// I handle the toggle click, changing the TYPE of password input.
+		function handleToggleClick( event ) {
+
+			if ( this.checked ) {
+
+				console.warn( "Change input 'type' to: text" );
+				password.type = "text";
+
+			} else {
+				
+				console.warn( "Change input 'type' to: password" );
+				password.type = "password";
+
+			}
+
+		}
+
+	</script>
+
+</body>
+</html>

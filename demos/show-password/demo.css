@@ -1,0 +1,52 @@
+
+* {
+	box-sizing: border-box ;
+}
+
+.login {
+	border: 2px solid #F0F0F0 ;
+	border-radius: 5px 5px 5px 5px ;
+	font-size: 20px ;
+	padding: 20px 20px 20px 20px ;
+	width: 500px ;
+}
+
+.login__field {
+	margin-bottom: 20px ;
+}
+
+.login__actions {
+	margin-top: 20px ;
+}
+
+.field {}
+
+.field__label {
+	display: block ;
+	font-weight: bold ;
+	margin-bottom: 7px ;
+}
+
+.field__input {
+	display: block ;
+	font-size: 18px ;
+	padding: 7px 9px 7px 9px ;
+	width: 100% ;
+}
+
+.field__toggle {
+	color: #888888 ;
+	cursor: pointer ;
+	display: inline-block ;
+	font-size: 16px ;
+	margin-top: 8px ;
+}
+
+.actions {
+	display: flex ;
+	justify-content: flex-end ;
+}
+
+.actions__button {
+	font-size: 20px ;
+}
