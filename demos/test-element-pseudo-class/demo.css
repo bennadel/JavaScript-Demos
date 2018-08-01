@@ -1,0 +1,17 @@
+
+form {
+	font-size: 20px ;
+}
+
+form input,
+form button {
+	font-size: inherit ;
+}
+
+ul {
+	font-size: 20px ;
+}
+
+code {
+	color: red ;
+}

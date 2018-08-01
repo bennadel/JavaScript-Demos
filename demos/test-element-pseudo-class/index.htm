@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>
+		Checking To See If An Element Has A CSS Pseudo-Class In JavaScript
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css" />
+</head>
+<body>
+	
+	<h1>
+		Checking To See If An Element Has A CSS Pseudo-Class In JavaScript
+	</h1>
+
+	<form method="get" action="./">
+		<label for="username">Username:</label>
+		<input type="text" id="username" name="username" class="username" />
+		<button type="submit">Login</button>
+	</form>
+
+	<ul>
+		<li>
+			<a href="javascript:testFor( ':-webkit-autofill' )">
+				Test for <code>:-webkit-autofill</code>
+			</a>
+		</li>
+		<li>
+			<a href="javascript:testFor( ':hover' )">
+				Test for <code>:hover</code>
+			</a>
+		</li>
+		<li>
+			<a href="javascript:testFor( ':active' )">
+				Test for <code>:active</code>
+			</a>
+		</li>
+		<li>
+			<a href="javascript:testFor( ':focus' )">
+				Test for <code>:focus</code>
+			</a>
+		</li>
+	</ul>
+
+	<script type="text/javascript">
+
+		// Gather our DOM references.
+		var username = document.querySelector( "#username" );
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+		// I test the USERNAME input for the existence of the given pseudo-class.
+		function testFor( pseudoClass ) {
+
+			console.group( "Testing for Pseudo-Class" );
+			console.log( "Pseudo-class:", pseudoClass );
+			console.log( "Has pseudo-class:", matches( username, pseudoClass ) );
+			console.log( "Class list:", username.classList.toString() ); // IE doesn't support .value.
+			console.groupEnd();
+
+		}
+
+
+		// I determine if the given node matches the given selector.
+		function matches( node, selector ) {
+
+			// Most modern browsers support the ".matches" method. However, IE9+ uses a
+			// non-standard method name. As such, we can fall-back to the IE version when
+			// the standard one doesn't exist and that should cover all the modern
+			// browsers that are in use.
+			// --
+			// READ MORE: https://developer.mozilla.org/en-US/docs/Web/API/Element/matches
+			var nativeMatches = ( node.matches || node.msMatchesSelector );
+
+			// CAUTION: If an invalid pseudo-selector is used in Firefox or IE, the
+			// browser will throw a SyntaxError, "is not a valid selector". It will do
+			// the same for .querySelector() as well, just an FYI.
+			try {
+
+				return( nativeMatches.call( node, selector ) );
+
+			} catch ( error ) {
+
+				// In the case of an error, we're going to assume it's a pseudo-selector
+				// issue and NOT a general support issue (since we don't care about
+				// really old browsers).
+				return( false );
+
+			}
+
+		}
+
+	</script>
+
+</body>
+</html>
