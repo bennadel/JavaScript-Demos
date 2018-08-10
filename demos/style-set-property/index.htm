@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>
+		Using style.setProperty() To Keep CSS Property Names Consistent In JavaScript
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css">
+</head>
+<body>
+
+	<h1>
+		Using style.setProperty() To Keep CSS Property Names Consistent In JavaScript
+	</h1>
+
+	<p>
+		<a class="use-properties">Use Style Properties</a>
+		&mdash;
+		<a class="use-set-property">Use Style setProperty()</a>
+	</p>
+
+	<div class="box">
+		Goodbye cruel world.
+	</div>
+
+	<script type="text/javascript">
+
+		// Gather DOM references.
+		var useProperties = document.querySelector( ".use-properties" );
+		var userSetProperty = document.querySelector( ".use-set-property" );
+		var box = document.querySelector( ".box" );
+
+		// Setup our action handlers.
+		useProperties.addEventListener( "click", handleUseProperties, false );
+		userSetProperty.addEventListener( "click", handleUseSetProperty, false );
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+		// I set the box styling using the style object properties.
+		function handleUseProperties( event ) {
+
+			// Note the use of CAMEL-CASE.
+			box.style.backgroundColor = "#333333";
+			box.style.border = "2px solid #999999";
+			box.style.borderRadius = "4px 4px 4px 4px";
+			box.style.color = "#ffffff";
+			box.style.cssFloat = "left"; // CAUTION: Using "cssFloat", not "float".
+			
+			// Testing setting and destroying of properties (null destroys).
+			box.style.zIndex = null;
+			box.style.zoom = "1";
+
+		}
+
+		// I set the box styling using the style's setProperty() method.
+		function handleUseSetProperty( event ) {
+
+			// Note the use of KEBAB-CASE.
+			box.style.setProperty( "background-color", "#fafafa" );
+			box.style.setProperty( "border", "2px solid #cccccc" );
+			box.style.setProperty( "border-radius", "4px 4px 4px 4px" );
+			box.style.setProperty( "color", "#333333" );
+			box.style.setProperty( "float", "right" );
+			
+			// Testing setting and destroying of properties (null destroys).
+			box.style.setProperty( "z-index", "1" );
+			box.style.setProperty( "zoom", null );
+
+		}
+
+	</script>
+
+</body>
+</html>
