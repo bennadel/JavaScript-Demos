@@ -1,0 +1,16 @@
+
+.container {
+	border: 10px solid #dadada ;
+	margin-top: 25px ;
+	padding: 25px 30px 25px 30px ;
+}
+
+.toggle {
+	color: #000000 ;
+	cursor: pointer ;
+	text-decoration: underline ;
+	user-select: none ;
+		-moz-user-select: none ;
+		-ms-user-select: none ;
+		-webkit-user-select: none ;
+}

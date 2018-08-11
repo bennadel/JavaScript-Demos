@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>
+		Experimenting With CSS Variable / Custom Property DOM Inheritance
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css" />
+</head>
+<body>
+	
+	<h1>
+		Experimenting With CSS Variable / Custom Property DOM Inheritance
+	</h1>
+
+	<p>
+		The following <strong>links</strong> Add or Remove
+		<strong>CSS Variables</strong> from the contextual container.
+	</p>
+
+	<div class="container">
+		This is a container:
+		<a class="toggle none">None</a>,
+		<a class="toggle light">Light</a>,
+		<a class="toggle dark">Dark</a>
+
+		<div class="container">
+			This is a container:
+			<a class="toggle none">None</a>,
+			<a class="toggle light">Light</a>,
+			<a class="toggle dark">Dark</a>
+
+			<div class="container">
+				This is a container:
+				<a class="toggle none">None</a>,
+				<a class="toggle light">Light</a>,
+				<a class="toggle dark">Dark</a>
+			</div>
+		</div>
+	</div>
+
+	<p class="control">
+		I am a control case.
+	</p>
+
+	<!--
+		We're going to define COLOR and BACKGROUND-COLOR CSS variables at the root of the
+		document. Then, we're going to consume those variables at the CONTAINER level. At
+		each container level, we can then add or remove "branch-local" overrides.
+	-->
+	<style type="text/css">
+
+		:root {
+			--LIGHT-BACKGROUND-COLOR: #f5f5f5 ;
+			--LIGHT-COLOR: #333333 ;
+
+			--DARK-BACKGROUND-COLOR: #999999 ;
+			--DARK-COLOR: #ffffff ;
+
+			--background-color: var( --LIGHT-BACKGROUND-COLOR ) ;
+			--color: var( --LIGHT-COLOR ) ;
+		}
+
+		.container,
+		.control {
+			background-color: var( --background-color ) ;
+			color: var( --color ) ;
+		}
+
+	</style>
+
+	<script type="text/javascript">
+
+		document.addEventListener( "click", handleClick, false );
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+		// As the user clicks on the various TOGGLE links, we're going to add and
+		// remove CSS Variable values as the given level of the DOM-tree. CSS Variables
+		// are inherited just like any other property (which is probably why they are
+		// actually called "custom properties", not "variables"). As such, when we define
+		// an override on a given DOM element, the override will be implicitly inherited
+		// by all of its descendants.
+		function handleClick( event ) {
+
+			// If this wasn't a toggle click, ignore it.
+			if ( ! event.target.classList.contains( "toggle" ) ) {
+
+				return;
+
+			}
+			
+			var toggle = event.target;
+			var container = toggle.parentNode;
+
+			// Add the LIGHT OVERRIDE variable values.
+			if ( toggle.classList.contains( "light" ) ) {
+
+				container.style.setProperty( "--background-color", "var( --LIGHT-BACKGROUND-COLOR )" );
+				container.style.setProperty( "--color", "var( --LIGHT-COLOR )" );
+
+			// Add the DARK OVERRIDE variable values.
+			} else if ( toggle.classList.contains( "dark" ) ) {
+
+				container.style.setProperty( "--background-color", "var( --DARK-BACKGROUND-COLOR )" );
+				container.style.setProperty( "--color", "var( --DARK-COLOR )" );
+
+			// Remove the override variable values (allowing the current container to
+			// inherit the variable values from its DOM parent).
+			} else {
+
+				container.style.removeProperty( "--background-color" );
+				container.style.removeProperty( "--color" );
+
+			}
+
+		}
+
+	</script>
+
+</body>
+</html>
