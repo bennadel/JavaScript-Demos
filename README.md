@@ -10,7 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
-* [Experimenting With CSS Variable / Custom Property DOM Inheritance](http://bennadel.github.io/JavaScript-Demos/demos/css-variable-inheritance/)
+* [Creating A Pre-Bootstrap Loading Screen With window.postMessage() In Angular 6.1.2](http://bennadel.github.io/JavaScript-Demos/demos/pre-bootstrap-post-message-angular6/)
 * [Using style.setProperty() To Keep CSS Property Names Consistent In JavaScript](http://bennadel.github.io/JavaScript-Demos/demos/style-set-property/)
 * [Checking To See If An Element Has A CSS Pseudo-Class In JavaScript](http://bennadel.github.io/JavaScript-Demos/demos/test-element-pseudo-class/)
 * [Implementing A "Show Password" Checkbox On A Login Form In JavaScript](http://bennadel.github.io/JavaScript-Demos/demos/show-password/)

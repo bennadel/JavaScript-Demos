@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Creating A Pre-Bootstrap Loading Screen With window.postMessage() In Angular 6.1.2
+	</title>
+</head>
+<body>
+
+	<style type="text/css" class="preloader">
+		div.splash {
+			background-color: #ffffff ;
+			bottom: 0px ;
+			display: flex ;
+			left: 0px ;
+			position: fixed ;
+			right: 0px ;
+			top: 0px ;
+		}
+
+		div.splash--loaded {
+			opacity: 0.0 ;
+			transition: opacity 500ms ease ;
+		}
+
+		div.splash__message {
+			font-size: 26px ;
+			line-height: 31px ;
+			margin: auto auto auto auto ;
+			text-decoration: underline ;
+		}
+	</style>
+
+	<div class="preloader splash">
+		<div class="splash__message">
+			App is Loading
+		</div>
+	</div>
+
+	<script type="text/javascript" class="preloader">
+		(function listenForAppReadyEvent() {
+
+			// Gather DOM references.
+			var splash = document.querySelector( ".splash" );
+			var preloaders = document.querySelectorAll( ".preloader" );
+
+			// Listen for our "appready" message event.
+			window.addEventListener( "message", handleMessage, false );
+
+			// ----------------------------------------------------------------------- //
+			// ----------------------------------------------------------------------- //
+
+			// I handle "message" events on the current window.
+			function handleMessage( event ) {
+
+				if ( event.data === "appready" ) {
+
+					console.log( "AppReady event received!" );
+					window.removeEventListener( "message", handleMessage, false );
+					removeSplashScreen();
+
+				}
+
+				// NOTE ON SECURITY: According to the documentation on postMessage(), you
+				// should always test the Origin and [optionally] the Source attributes
+				// of the "message" event in order to make sure the event is coming from
+				// the expected place. However, for something as innocuous as the
+				// "splash page", I'm omitting such a security check. Since this handler
+				// does nothing but remove DOM elements from the static portion of the
+				// page, there's no security risk here that I can see. Such a test would
+				// add unnecessary complexity. That said, testing the origin is a best
+				// practice that should be done with anything that involves passing
+				// around sensitive data.
+
+			}
+
+			// I remove the splash screen and elements from the DOM, exposing the loaded
+			// application beneath them.
+			function removeSplashScreen() {
+
+				splash.classList.add( "splash--loaded" );
+
+				// Once the splash screen has been faded-out, let's rip all of the
+				// preloader-related DOM elements out of the document.
+				setTimeout(
+					function removeDomElements() {
+
+						for ( var i = 0 ; i < preloaders.length ; i++ ) {
+
+							var item = preloaders[ i ];
+							item.parentNode.removeChild( item );
+
+						}
+
+					},
+					500
+				);
+
+			}
+
+		})();
+	</script>
+
+
+	<h1>
+		Creating A Pre-Bootstrap Loading Screen With window.postMessage() In Angular 6.1.2
+	</h1>
+
+	<my-app></my-app>
+
+</body>
+</html>
