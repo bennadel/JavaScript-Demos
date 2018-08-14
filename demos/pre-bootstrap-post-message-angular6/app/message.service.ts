@@ -31,8 +31,11 @@ export class MessageService {
 	// ---
 
 	// I calculate the postMessage() origin that will lock the message target down to
-	// the current window (for tightest security). This makes sure we don't accidentally
-	// send messages to a malicious or unintended site.
+	// the current window (for tightest security).
+	// --
+	// NOTE: Technically, this isn't really necessary since we know that we're only
+	// sending messages to the SELF window. But, it's a good practice to always provide
+	// an explicit origin value.
 	private getOriginForSelf() : string {
 
 		// At this time, if the application is being loaded directly off disk (ie, not
