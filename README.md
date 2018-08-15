@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Replacing Double-Dashes With Em Dashes While Typing In JavaScript](http://bennadel.github.io/JavaScript-Demos/demos/dash-dash-emdash/)
 * [Creating A Pre-Bootstrap Loading Screen With window.postMessage() In Angular 6.1.2](http://bennadel.github.io/JavaScript-Demos/demos/pre-bootstrap-post-message-angular6/)
 * [Using style.setProperty() To Keep CSS Property Names Consistent In JavaScript](http://bennadel.github.io/JavaScript-Demos/demos/style-set-property/)
 * [Checking To See If An Element Has A CSS Pseudo-Class In JavaScript](http://bennadel.github.io/JavaScript-Demos/demos/test-element-pseudo-class/)

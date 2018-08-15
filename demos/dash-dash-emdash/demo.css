@@ -1,0 +1,13 @@
+
+body {
+	font-size: 1.2em ;
+}
+
+textarea.input {
+	display: block ;
+	font-size: inherit ;
+	height: 100px ;
+	margin-bottom: 16px ;
+	padding: 10px 10px 10px 10px ;
+	width: 600px ;
+}

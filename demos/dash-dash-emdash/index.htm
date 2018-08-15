@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>
+		Replacing Double-Dashes With Em Dashes While Typing In JavaScript
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css">
+</head>
+<body>
+
+	<h1>
+		Replacing Double-Dashes With Em Dashes While Typing In JavaScript
+	</h1>
+
+	<p>
+		In some of the following textareas, <strong>double-dashes</strong>
+		will be converted to <strong>em dashes</strong> as you type.
+	</p>
+
+	<textarea placeholder="Enabled..." class="input emdashify"></textarea>
+	<textarea placeholder="Enabled..." class="input emdashify"></textarea>
+	<textarea placeholder="Not enabled..." class="input"></textarea>
+
+	<script type="text/javascript">
+
+		var dash = "-";
+		var emdash = "—"; // Shift+Option+Hyphen
+
+		// Add our keydown event-handler. In this case, we're going to listen at the
+		// document level using event-delegation. Then, we'll activate our logic for
+		// inputs that contain the "emdashify" class token.
+		document.addEventListener( "keydown", handleKeydown, false );
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+		// I handle the keydown event. If the event is for a DASH that is about to
+		// follow an existing DASH, then we will replace the double-DASH with an EMDASH.
+		function handleKeydown( event ) {
+
+			var target = event.target;
+
+			// We only care about the dash - ignore any other key events at this time.
+			if ( event.key !== dash ) {
+
+				return;
+
+			}
+
+			// If the target input does not contain the "emdashify" class, then we don't
+			// want to alter they keydown behavior.
+			if ( ! target.classList.contains( "emdashify" ) ) {
+
+				return;
+
+			}
+
+			// Get the current offset of the carrot / cursor. This represents the
+			// location of the keydown event BEFORE the impending character has been
+			// added to the input value.
+			var offset = target.selectionStart;
+
+			// If the character right before the impending dash is another dash, then we
+			// want to cancel the current keyboard event (such that the impending dash
+			// is not rendered) and replace the existing dash with the emdash.
+			// --
+			// NOTE: If the offset is currently 0 (zero), then the -1 will return
+			// undefined, which will fail the === appropriately.
+			if ( target.value[ offset - 1 ] === dash ) {
+
+				event.preventDefault();
+
+				// Calculate the substrings that come before and after the dash that
+				// we're about to replace.
+				var beforeDash = target.value.slice( 0, ( offset - 1 ) );
+				var afterDash = target.value.slice( offset );
+
+				// Replace the existing dash with the emdash.
+				target.value = ( beforeDash + emdash + afterDash );
+
+				// In order to prevent the cursor from jumping to the end of the input
+				// value after we've set it programmatically, we have to explicitly
+				// define the selection as staying in the same place that it was before.
+				target.selectionStart = offset;
+				target.selectionEnd = offset;
+
+			}
+
+		}
+
+	</script>
+
+</body>
+</html>
