@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Using CSS Host-Context To Theme Components In Angular 6.1.3
+	</title>
+
+	<style type="text/css">
+		/* Clearing white-space so it can be defined to app-component. */
+		html,
+		body {
+			margin: 0px 0px 0px 0px ;
+			padding: 0px 0px 0px 0px ;
+		}
+
+		* {
+			box-sizing: border-box ;
+		}
+	</style>
+</head>
+<body>
+
+	<my-app>
+		<p>
+			<em>Loading files...</em>
+		</p>
+
+		<p>
+			npm Run Scripts:
+		</p>
+
+		<ul>
+			<li>
+				<strong>npm run build</strong> &mdash; Compiles the .ts file into bundles.
+			</li>
+			<li>
+				<strong>npm run watch</strong> &mdash; Compiles the .ts file into bundles and then watches files for changes.
+			</li>
+		</ul>
+	</my-app>
+
+<script type="text/javascript" src="build/manifest.js?a3ec04446d8b48cb95a8"></script><script type="text/javascript" src="build/polyfill.js?a3ec04446d8b48cb95a8"></script><script type="text/javascript" src="build/vendor.js?a3ec04446d8b48cb95a8"></script><script type="text/javascript" src="build/main.js?a3ec04446d8b48cb95a8"></script></body>
+</html>

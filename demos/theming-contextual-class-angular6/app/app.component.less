@@ -1,0 +1,57 @@
+
+@import "./variables.less" ;
+
+:host {
+	display: block ;
+	font-size: 18px ;
+	min-height: 100vh ;
+	padding: 1px 20px 1px 20px ;
+}
+
+:host-context( .light-theme ) {
+	background-color: @light-background-color ;
+	color: @light-color ;
+}
+
+:host-context( .dark-theme ) {
+	background-color: @dark-background-color ;
+	color: @dark-color ;
+}
+
+.layout {
+	margin: 0px auto 0px auto ;
+	width: 650px ;
+
+	&__header {}
+
+	&__canvas {
+		margin: 20px 0px 20px 0px ;
+	}
+
+	&__tools {
+		display: flex ;
+		margin-bottom: 20px ;
+	}
+
+	&__left-panel {
+		flex: 1 1 50% ;
+		margin-right: 30px ;
+	}
+
+	&__right-panel {
+		flex: 1 1 50% ;
+	}
+
+	&__footer {
+		margin-bottom: 20px ;
+	}
+}
+
+a {
+	cursor: pointer ;
+	text-decoration: underline ;
+	user-select: none ;
+		-moz-user-select: none ;
+		-ms-user-select: none ;
+		-webkit-user-select: none ;
+}

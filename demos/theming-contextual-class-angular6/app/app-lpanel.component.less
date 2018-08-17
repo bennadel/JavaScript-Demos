@@ -1,0 +1,74 @@
+
+@import "./variables.less" ;
+
+:host {
+	display: block ;
+	border-radius: 4px 4px 4px 4px ;
+	padding: 15px 15px 15px 15px ;
+}
+
+:host-context( .light-theme ) {
+	background-color: @light-panel-background-color ;
+	color: @light-panel-color ;
+}
+
+:host-context( .dark-theme ) {
+	background-color: @dark-panel-background-color ;
+	color: @dark-panel-color ;
+}
+
+.title {
+	font-size: 18px ;
+	line-height: 23px ;
+	margin: 0px 0px 12px 0px ;
+}
+
+.search {
+	display: flex ;
+	margin-bottom: 20px ;
+
+	&__input {
+		border: 1px solid transparent ;
+		border-radius: 4px 4px 4px 4px ;
+		flex: 1 1 auto ;
+		font-size: 16px ;
+		margin-right: 7px ;
+		padding: 3px 5px 3px 5px ;
+	}
+
+	&__submit {
+		border: 1px solid transparent ;
+		border-radius: 4px 4px 4px 4px ;
+		flex: 0 1 auto ;
+		font-size: 16px ;
+		padding: 3px 10px 3px 10px ;
+	}
+
+	:host-context( .light-theme ) & {
+		&__input {
+			background-color: @light-panel-input-background-color ;
+			color: @light-panel-input-color ;
+		}
+
+		&__submit {
+			border-color: @light-panel-button-border-color ;
+			background-color: @light-panel-button-background-color ;
+			color: @light-panel-button-color ;
+		}
+	}
+
+	:host-context( .dark-theme ) & {
+		&__input {
+			background-color: @dark-panel-input-background-color ;
+			color: @dark-panel-input-color ;
+		}
+
+		&__submit {
+			border-color: @dark-panel-button-border-color ;
+			background-color: @dark-panel-button-background-color ;
+			color: @dark-panel-button-color ;
+		}
+	}
+}
+
+.results {}

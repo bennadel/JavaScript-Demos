@@ -1,0 +1,75 @@
+
+@import "./variables.less" ;
+
+:host {
+	display: block ;
+}
+
+.canvas {
+	border: 3px solid transparent ;
+	border-radius: 4px 4px 4px 4px ;
+	display: flex ;
+
+	&__input {
+		flex: 1 1 auto ;
+	}
+
+	&__syllables {
+		flex: 0 1 70px ;
+	}
+
+	:host-context( .light-theme ) & {
+		border-color: @light-canvas-border-color ;
+	}
+
+	:host-context( .dark-theme ) & {
+		border-color: @dark-canvas-border-color ;
+	}
+}
+
+.input {
+	border: none ;
+	font-size: 18px ;
+	line-height: 25px ;
+	padding: 10px 15px 10px 15px ;
+
+	&:focus,
+	&:active {
+		outline: none ;
+	}
+
+	:host-context( .light-theme ) & {
+		background-color: @light-canvas-background-color ;
+		color: @light-canvas-color ;
+	}
+
+	:host-context( .dark-theme ) & {
+		background-color: @dark-canvas-background-color ;
+		color: @dark-canvas-color ;
+	}
+}
+
+.syllables {
+	font-size: 18px ;
+	font-weight: bold ;
+	line-height: 25px ;
+	list-style-type: none ;
+	margin: 0px 0px 0px 0px ;
+	min-height: 200px ;
+	padding: 10px 0px 10px 0px ;
+	text-align: center ;
+
+	&__item {
+		margin: 0px 0px 0px 0px ;
+	}
+
+	:host-context( .light-theme ) & {
+		background-color: @light-canvas-gutter-background-color ;
+		color: @light-canvas-gutter-color ;
+	}
+
+	:host-context( .dark-theme ) & {
+		background-color: @dark-canvas-gutter-background-color ;
+		color: @dark-canvas-gutter-color ;
+	}
+}
