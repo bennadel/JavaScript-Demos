@@ -1,0 +1,89 @@
+
+:root,
+:host( .light-theme ) {
+	--background-color: #ffffff ;
+	--color: #333333 ;
+
+	--canvas-background-color: #fafafa ;
+	--canvas-color: #333333 ;
+	--canvas-border-color: #cccccc ;
+	--canvas-gutter-background-color: #e0e0e0 ;
+	--canvas-gutter-color: #999999 ;
+
+	--panel-background-color: #f0f0f0 ;
+	--panel-color: #161616 ;
+	--panel-input-background-color: #ffffff ;
+	--panel-input-color: #333333 ;
+	--panel-button-background-color: #e0e0e0 ;
+	--panel-button-color: #121212 ;
+	--panel-button-border-color: #666666 ;
+}
+
+:host( .dark-theme ) {
+	--background-color: #121212 ;
+	--color: #f0f0f0 ;
+
+	--canvas-background-color: #282923 ;
+	--canvas-color: #f8f8f2 ;
+	--canvas-border-color: #42433f ;
+	--canvas-gutter-background-color: #20211C ;
+	--canvas-gutter-color: #999999 ;
+
+	--panel-background-color: #20211C ;
+	--panel-color: #999999 ;
+	--panel-input-background-color: #2e2f28 ;
+	--panel-input-color: #dadada ;
+	--panel-button-background-color: #121212 ;
+	--panel-button-color: #dadada ;
+	--panel-button-border-color: #333333 ;
+}
+
+// ----------------------------------------------------------------------------------- //
+// ----------------------------------------------------------------------------------- //
+
+:host {
+	background-color: var( --background-color ) ;
+	color: var( --color ) ;
+	display: block ;
+	font-size: 18px ;
+	min-height: 100vh ;
+	padding: 1px 20px 1px 20px ;
+}
+
+.layout {
+	margin: 0px auto 0px auto ;
+	width: 650px ;
+
+	&__header {}
+
+	&__canvas {
+		margin: 20px 0px 20px 0px ;
+	}
+
+	&__tools {
+		display: flex ;
+		margin-bottom: 20px ;
+	}
+
+	&__left-panel {
+		flex: 1 1 50% ;
+		margin-right: 30px ;
+	}
+
+	&__right-panel {
+		flex: 1 1 50% ;
+	}
+
+	&__footer {
+		margin-bottom: 20px ;
+	}
+}
+
+a {
+	cursor: pointer ;
+	text-decoration: underline ;
+	user-select: none ;
+		-moz-user-select: none ;
+		-ms-user-select: none ;
+		-webkit-user-select: none ;
+}

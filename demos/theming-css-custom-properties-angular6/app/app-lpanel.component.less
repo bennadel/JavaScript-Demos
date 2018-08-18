@@ -1,0 +1,42 @@
+
+:host {
+	background-color: var( --panel-background-color ) ;
+	color: var( --panel-color ) ;
+	display: block ;
+	border-radius: 4px 4px 4px 4px ;
+	padding: 15px 15px 15px 15px ;
+}
+
+.title {
+	font-size: 18px ;
+	line-height: 23px ;
+	margin: 0px 0px 12px 0px ;
+}
+
+.search {
+	display: flex ;
+	margin-bottom: 20px ;
+
+	&__input {
+		background-color: var( --panel-input-background-color ) ;
+		border: 1px solid transparent ;
+		border-radius: 4px 4px 4px 4px ;
+		color: var( --panel-input-color ) ;
+		flex: 1 1 auto ;
+		font-size: 16px ;
+		margin-right: 7px ;
+		padding: 3px 5px 3px 5px ;
+	}
+
+	&__submit {
+		background-color: var( --panel-button-background-color ) ;
+		border: 1px solid var( --panel-button-border-color ) ;
+		border-radius: 4px 4px 4px 4px ;
+		color: var( --panel-button-color ) ;
+		flex: 0 1 auto ;
+		font-size: 16px ;
+		padding: 3px 10px 3px 10px ;
+	}
+}
+
+.results {}
