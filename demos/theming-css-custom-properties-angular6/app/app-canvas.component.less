@@ -1,0 +1,49 @@
+
+:host {
+	display: block ;
+}
+
+.canvas {
+	border: 3px solid var( --canvas-border-color ) ;
+	border-radius: 4px 4px 4px 4px ;
+	display: flex ;
+
+	&__input {
+		flex: 1 1 auto ;
+	}
+
+	&__syllables {
+		flex: 0 1 70px ;
+	}
+}
+
+.input {
+	background-color: var( --canvas-background-color ) ;
+	border: none ;
+	color: var( --canvas-color ) ;
+	font-size: 18px ;
+	line-height: 25px ;
+	padding: 10px 15px 10px 15px ;
+
+	&:focus,
+	&:active {
+		outline: none ;
+	}
+}
+
+.syllables {
+	background-color: var( --canvas-gutter-background-color ) ;
+	color: var( --canvas-gutter-color ) ;
+	font-size: 18px ;
+	font-weight: bold ;
+	line-height: 25px ;
+	list-style-type: none ;
+	margin: 0px 0px 0px 0px ;
+	min-height: 200px ;
+	padding: 10px 0px 10px 0px ;
+	text-align: center ;
+
+	&__item {
+		margin: 0px 0px 0px 0px ;
+	}
+}
