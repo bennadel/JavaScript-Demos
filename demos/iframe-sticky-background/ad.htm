@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+
+	<style type="text/css">
+
+		html, body {
+			background-color: transparent ;
+			height: 100vh ;
+			margin: 0px 0px 0px 0px ;
+			padding: 0px 0px 0px 0px ;
+		}
+
+		a.link {
+			bottom: 0px ;
+			color: #ffffff ;
+			display: flex ;
+			font-size: 26px ;
+			font-weight: bold ;
+			left: 0px ;
+			position: fixed ;
+			right: 0px ;
+			text-decoration: none ;
+			text-shadow: 0px 0px 10px #000000 ;
+			top: 0px ;
+		}
+
+		a.link:hover {
+			text-decoration: underline ;
+		}
+
+		span.link__content {
+			margin: auto ;
+		}
+
+	</style>
+</head>
+<body>
+
+	<a href="javascript:console.log( 'clicked' );void( 0 );" class="link">
+		<span class="link__content">
+			Much Gooses! Such Wow!
+		</span>
+	</a>
+
+	<script type="text/javascript">
+
+		// Tell the parent frame to render the Ad. As part of this operation, we're going
+		// to tell the parent frame HOW TO STYLE the iframe and its viewport. This will
+		// allow us to create some interesting effects.
+		window.parent.postMessage(
+			{
+				viewport: {
+					styles: {
+						"background-image": "url( './goose.jpg' )",
+						"background-attachment": "fixed",
+						"display": "block",
+						"height": "300px",
+						"position": "relative",
+						"width": "600px"
+					}
+				},
+				frame: {
+					styles: {
+						"height": "100%",
+						"left": "0px",
+						"position": "absolute",
+						"right": "0px",
+						"width": "100%"
+					}
+				}
+			},
+			"*" // We don't care about CORS for this demo (same domain).
+		);
+
+	</script>
+
+</body>
+</html>

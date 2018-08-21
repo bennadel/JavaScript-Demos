@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>
+		Using Background-Attachment CSS To Create A Sticky IFrame Advertising Background In JavaScript
+	</title>
+</head>
+<body>
+
+	<h1>
+		Using Background-Attachment CSS To Create A Sticky IFrame Advertising Background In JavaScript
+	</h1>
+	
+	<p>Copy text.</p><p>Copy text.</p><p>Copy text.</p><p>Copy text.</p><p>Copy text.</p>
+	<p>Copy text.</p><p>Copy text.</p><p>Copy text.</p><p>Copy text.</p><p>Copy text.</p>
+	<p>Copy text.</p><p>Copy text.</p><p>Copy text.</p><p>Copy text.</p><p>Copy text.</p>
+	<p>Copy text.</p><p>Copy text.</p><p>Copy text.</p><p>Copy text.</p><p>Copy text.</p>
+	<p>Copy text.</p><p>Copy text.</p><p>Copy text.</p><p>Copy text.</p><p>Copy text.</p>
+
+	<!-- BEGIN: Advertisement. ------------------------------------------------------ -->
+
+	<div id="ad-viewport" style="display: none ;">
+		<iframe id="ad" src="./ad.htm" allowtransparency="true" frameborder="0"></iframe>
+	</div>
+
+	<script type="text/javascript">
+		(function() {
+
+			var adViewport = document.querySelector( "#ad-viewport" );
+			var adFrame = document.querySelector( "#ad" );
+
+			// Our Ad frame is going to be HIDDEN BY DEFAULT. We're going to wait for the
+			// ad frame to send a message indicating how it wants to be styled in the
+			// current page. This will allow us to attach dynamic styles to the frame and
+			// the viewport.
+			window.addEventListener( "message", handleMessage, false );
+
+			function handleMessage( event ) {
+
+				// CAUTION: For the sake of the demo, we're NOT CHECKING event.origin.
+				// Since this will be hosted on GitHub, I can't have multiple domains
+				// to simulate a CORS REQUIREMENT.
+
+				// Add all the supplied styles for the viewport.
+				for ( var prop in  event.data.viewport.styles ) {
+
+					adViewport.style.setProperty( prop, event.data.viewport.styles[ prop ] );
+
+				}
+
+				// Add all the supplied styles for the frame.
+				for ( var prop in  event.data.frame.styles ) {
+
+					adFrame.style.setProperty( prop, event.data.frame.styles[ prop ] );
+
+				}
+
+			}
+
+		})();
+	</script>
+
+	<!-- END: Advertisement. -------------------------------------------------------- -->
+
+	<p>Copy text.</p><p>Copy text.</p><p>Copy text.</p><p>Copy text.</p><p>Copy text.</p>
+	<p>Copy text.</p><p>Copy text.</p><p>Copy text.</p><p>Copy text.</p><p>Copy text.</p>
+	<p>Copy text.</p><p>Copy text.</p><p>Copy text.</p><p>Copy text.</p><p>Copy text.</p>
+	<p>Copy text.</p><p>Copy text.</p><p>Copy text.</p><p>Copy text.</p><p>Copy text.</p>
+	<p>Copy text.</p><p>Copy text.</p><p>Copy text.</p><p>Copy text.</p><p>Copy text.</p>
+
+</body>
+</html>
