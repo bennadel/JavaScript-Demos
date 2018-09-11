@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Hello World With Webpack 4.17.2 And Angular 6.1.7 And Ahead Of Time (AoT) Compiling](http://bennadel.github.io/JavaScript-Demos/demos/webpack4-angular6-aot/)
 * [Defining Dynamic AJAX-Driven Service Providers Using APP_INITIALIZER In Angular 6.1.4](http://bennadel.github.io/JavaScript-Demos/demos/app-initializer-angular6/)
 * [Using Background-Attachment CSS To Create A Sticky IFrame Advertising Background In JavaScript](http://bennadel.github.io/JavaScript-Demos/demos/iframe-sticky-background/)
 * [Using CSS Custom Properties To Theme Components In Angular 6.1.3](http://bennadel.github.io/JavaScript-Demos/demos/theming-css-custom-properties-angular6/)

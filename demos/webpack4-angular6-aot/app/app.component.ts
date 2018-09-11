@@ -12,9 +12,13 @@ import { Component } from "@angular/core";
 })
 export class AppComponent {
 
+	public createdAt: number;
+
 	// I initialize the app component.
 	constructor() {
-		// ...
+		
+		this.createdAt = Date.now();
+
 	}
 
 }
