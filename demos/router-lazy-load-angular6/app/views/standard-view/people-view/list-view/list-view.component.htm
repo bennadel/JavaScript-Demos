@@ -1,0 +1,66 @@
+
+<div class="m-standard-header">
+	<div class="m-standard-header__container">
+
+		<span routerLink="/" class="m-standard-header__logo">
+			in
+		</span>
+
+		<h1 class="m-standard-header__title">
+			People
+		</h1>
+
+	</div>
+</div>
+
+<div class="m-stndard-body">
+	<div class="m-standard-body__container">
+
+		<!-- BEGIN: Loading State. -->
+		<ng-template [ngIf]="isLoading">
+
+			<app-loading-indicator class="loading"></app-loading-indicator>
+
+		</ng-template>
+		<!-- END: Loading State. -->
+
+
+		<!-- BEGIN: Loaded State. -->
+		<ng-template [ngIf]="! isLoading">
+
+			<div class="title">
+				You Have {{ users.length }} Connections
+			</div>
+
+			<!-- <a [routerLink]="[ '/app', { outlets: { modal: 'modal/invite-user' } } ]" class="plus">+</a> -->
+
+			<ul class="users">
+				<li 
+					*ngFor="let user of users; let i = index ;"
+					class="users__item users__item--column-{{ ( ( i % 3 ) + 1 ) }}">
+
+					<a [routerLink]="[ '../', user.id ]" class="user">
+						<app-avatar
+							[initials]="user.initials"
+							[src]="user.avatarUrl"
+							class="user__avatar">
+						</app-avatar>
+						<span class="user__name">
+							{{ user.name }}
+						</span>
+						<span class="user__email">
+							{{ user.email }}
+						</span>
+						<span *ngIf="user.isOwner" class="user__tag">
+							Owner
+						</span>
+					</a>
+
+				</li>
+			</ul>
+
+		</ng-template>
+		<!-- END: Loaded State. -->	
+
+	</div>
+</div>

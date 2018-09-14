@@ -1,0 +1,279 @@
+
+:host {
+	bottom: 0px ;
+	display: flex ;
+	flex-direction: column ;
+	left: 0px ;
+	position: fixed ;
+	right: 0px ;
+	top: 0px ;
+}
+
+.loading {
+	height: 100% ;
+}
+
+.workspace {
+	flex: 1 0 auto ;
+	position: relative ;
+}
+
+.toolbar-toggle {
+	background-color: #1F2532 ;
+	border-radius: 0px 3px 0px 0px ;
+	bottom: 0px ;
+	color: #FFFFFF ;
+	cursor: pointer ;
+	font-size: 11px ;
+	font-weight: 700 ;
+	left: 0px ;
+	letter-spacing: 1px ;
+	line-height: 20px ;
+	opacity: 0.5 ;
+	padding: 0px 8px 0px 8px ;
+	position: absolute ;
+	text-decoration: none ;
+	text-transform: uppercase ;
+	transition: opacity 200ms ease ;
+
+	&:hover {
+		opacity: 1.0 ;
+	}
+}
+
+screen-browser {
+	bottom: 60px ;
+	left: 0px ;
+	position: absolute ;
+	right: 0px ;
+	top: 0px ;
+}
+
+.toolbar {
+	background-color: #1F2532 ;
+	display: flex ;
+	height: 60px ;
+	flex: 0 0 auto ;
+	justify-content: space-between ;
+
+	&__context {
+		flex: 1 1 50% ;
+	}
+
+	&__modes {
+		flex: 0 0 auto ;
+	}
+
+	&__secondary {
+		align-self: center ;
+		flex: 1 1 50% ;
+		height: 36px ;
+	}
+}
+
+.context {
+	display: flex ;
+	line-height: 60px ;
+
+	&__logo {
+		color: #FFFFFF ;
+		font-size: 26px ;
+		font-weight: 600 ;
+		padding: 0px 25px 0px 25px ;
+		text-decoration: none ;
+	}
+
+	&__prototype,
+	&__screen {
+		color: #99A0AF ;
+		font-size: 13px ;
+		font-weight: 400 ;
+		text-decoration: none ;
+		transition: color 100ms ease ;
+
+		&:hover {
+			color: #AAB2C4 ;
+		}
+	}
+
+	&__pipe {
+		color: #485369 ;
+		font-size: 16px ;
+		padding: 0px 25px 0px 25px ;
+
+		&:first-of-type {
+			padding-left: 0px ;
+		}
+	}
+}
+
+.modes {
+	display: flex ;
+	line-height: 60px ;
+
+	&__mode {
+		color: #8B909D ;
+		font-weight: 600 ;
+		position: relative ;
+		text-align: center ;
+		text-decoration: none ;
+		width: 60px ;
+
+		&--on {
+			&:before {
+				background-color: #FF3366 ;
+				content: "" ;
+				height: 3px ;
+				left: 0px ;
+				position: absolute ;
+				right: 0px ;
+				top: 0px ;
+			}
+
+			&.modes__mode {
+				&--preview {
+					color: #61D079 ;
+
+					&:before {
+						background-color: #61D079 ;
+					}
+				}
+
+				&--build {
+					color: #50A6DF ;
+
+					&:before {
+						background-color: #50A6DF ;
+					}
+				}
+
+				&--comment {
+					color: #FF3366 ;
+
+					&:before {
+						background-color: #FF3366 ;
+					}
+				}
+
+				&--inspect {
+					color: #FDC228 ;
+
+					&:before {
+						background-color: #FDC228 ;
+					}
+				}
+
+				&--history {
+					color: #2AB3AB ;
+
+					&:before {
+						background-color: #2AB3AB ;
+					}
+				}
+			}
+		}
+	}
+}
+
+.secondary {
+	display: flex ;
+	justify-content: flex-end ;
+	line-height: 34px ;
+	padding-right: 15px ;
+
+	&__button {
+		&--status {
+			box-sizing: border-box ;
+			height: 34px ;
+			margin-right: 20px ;
+			padding-top: 10px ;
+			width: 30px ;
+
+			&:before {
+				background-color: #8891A0 ;
+				border-radius: 7px 7px 7px 7px ;
+				content: "" ;
+				display: block ;
+				height: 14px ;
+				margin: 0px auto 0px auto ;
+				width: 14px ;
+			}
+		}
+
+		&--share {
+			border: 1px solid #2C3547 ;
+			border-radius: 2px 2px 2px 2px ;
+			color: #8891A0 ;
+			font-size: 10px ;
+			font-weight: 700 ;
+			padding: 0px 20px 0px 20px ;
+			text-decoration: none ;
+			text-transform: uppercase ;
+			transition:
+				background-color 200ms ease,
+				border-color 200ms ease,
+				color 200ms ease
+			;
+
+			&:hover {
+				background-color: #6CBD7D ;
+				border-color: #6CBD7D ;
+				color: #FFFFFF ;
+			}
+		}
+	}
+}
+
+.status-menu {
+	background-color: #1F2532 ;
+	border-radius: 4px 4px 4px 4px ;
+	bottom: 75px ;
+	box-shadow: 0px 0px 10px fade( #181C26, 38% ) ;
+	padding: 22px 0px 20px 0px ;
+	position: absolute ;
+	right: 21px ;
+	width: 240px ;
+
+	&__items {
+		list-style-type: none ;
+		margin: 0px 0px 0px 0px ;
+		padding: 0px 0px 0px 0px ;
+	}
+
+	&__item {
+		color: #9EA5B2 ;
+		font-size: 12px ;
+		line-height: 24px ;
+		margin: 0px 0px 0px 0px ;
+		padding: 8px 0px 8px 70px ;
+		position: relative ;
+		text-transform: uppercase ;
+
+		&:before {
+			border-radius: 7px 7px 7px 7px ;
+			content: "" ;
+			height: 14px ;
+			left: 35px ;
+			margin-top: -7px ;
+			position: absolute ;
+			top: 50% ;
+			width: 14px ;
+		}
+
+		&--on-hold:before {
+			background-color: #F88639 ;
+		}
+
+		&--in-progress:before {
+			background-color: #2E8EC1 ;
+		}
+
+		&--needs-review:before {
+			background-color: #F4C712 ;
+		}
+
+		&--approved:before {
+			background-color: #00A553 ;
+		}
+	}
+}

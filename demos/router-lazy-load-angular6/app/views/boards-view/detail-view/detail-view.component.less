@@ -1,0 +1,164 @@
+
+:host {
+	display: block ;
+}
+
+.header {
+	border-bottom: 1px solid #EAECF1 ;
+	display: flex ;
+	flex-direction: column ;
+	height: 40vh ;
+	min-height: 490px ;
+	position: relative ;
+
+	&__top-spacer {
+		flex: 1 1 60% ;
+	}
+
+	&__bottom-spacer {
+		flex: 1 1 40% ;
+	}
+
+	&__marquee {
+		margin: 0px auto 0px auto ;
+		width: 800px ;
+	}
+
+	&__in {
+		background-color: #3D3D3F ;
+		border-radius: 3px 3px 3px 3px ;
+		color: #FFFFFF ;
+		font-size: 26px ;
+		font-weight: 600 ;
+		height: 37px ;
+		line-height: 37px ;
+		left: 27px ;
+		position: absolute ;
+		text-align: center ;
+		text-decoration: none ;
+		top: 27px ;
+		width: 37px ;
+	}
+
+	&__tools {
+		position: absolute ;
+		right: 27px ;
+		top: 27px ;
+	}
+}
+
+.marquee {
+	&__title {
+		color: #282F3D ;
+		font-size: 66px ;
+		font-weight: 400 ;
+		line-height: 66px ;
+		margin: 0px 0px 0px 0px ;
+		text-align: center ;
+		text-transform: uppercase ;
+	}
+
+	&__description {
+		color: #888D9C ;
+		font-size: 34px ;
+		font-weight: 300 ;
+		line-height: 50px ;
+		margin-top: 15px ;
+		text-align: center ;
+	}
+
+	&__members {
+		display: flex ;
+		justify-content: center ;
+		margin-top: 50px ;
+	}
+}
+
+.member-actions {
+	display: flex ;
+	justify-content: center ;
+	text-align: center ;
+	text-decoration: none ;
+
+	&__plus {
+		box-sizing: border-box ;
+		border: 1px dashed #B6BAC7 ;
+		border-radius: 39px 39px 39px 39px ;
+		color: #B6BAC7 ;
+		height: 39px ;
+		font-size: 18px ;
+		font-weight: 600 ;
+		line-height: 38px ;
+		width: 39px ;
+
+		&:hover {
+			border-color: #D3D5DD ;
+			color: #D3D5DD ;
+		}
+	}
+
+	&__avatar {
+		background-color: #CACFD3 ;
+		color: #959BA1 ;
+		height: 39px ;
+		width: 39px ;
+		margin-left: 10px ;
+	}
+}
+
+.tools {
+	display: flex ;
+
+	&__item {
+		border: 1px solid #CCCED3 ;
+		border-radius: 37px 37px 37px 37px ;
+		height: 37px ;
+		line-height: 37px ;
+		margin-left: 9px ;
+		text-align: center ;
+		text-decoration: none ;
+		width: 37px ;
+	}
+}
+
+.content {
+	padding: 0px 0px 30px 0px ;
+}
+
+.items {
+	display: flex ;
+	flex-wrap: wrap ;
+	justify-content: center ;
+	list-style-type: none ;
+	margin: 50px auto 0px auto ;
+	padding: 0px 0px 0px 0px ;
+	width: 1170px ;
+
+	&__item {
+		flex: 0 0 auto ;
+		margin: 12px 10px 12px 10px ;
+	}
+}
+
+.item {
+	border: 1px solid #E5E6E8 ;
+	display: flex ;
+	flex-direction: column ;
+	height: 217px ;
+	text-decoration: none ;
+	width: 270px ;
+
+	&__preview {
+		background-color: #FAFAFA ;
+		flex: 1 1 100% ;
+	}
+
+	&__name {
+		border-top: 1px solid #E5E6E8 ;
+		color: #333C4E ;
+		flex: 0 0 auto ;
+		font-size: 14px ;
+		font-weight: 600 ;
+		padding: 14px 16px 14px 16px ;
+	}
+}

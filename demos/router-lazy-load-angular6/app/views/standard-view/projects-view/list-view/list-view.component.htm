@@ -1,0 +1,124 @@
+
+<div class="m-standard-header">
+	<div class="m-standard-header__container">
+
+		<span routerLink="/" class="m-standard-header__logo">
+			in
+		</span>
+
+		<h1 class="m-standard-header__title">
+			My Projects
+		</h1>
+
+	</div>
+</div>
+
+<div class="m-stndard-body">
+	<div class="m-standard-body__container">
+
+		<div class="filtering">
+
+			<form class="filtering__search search">
+
+				<input
+					type="text" 
+					name="filterText"
+					[(ngModel)]="filterText" 
+					(ngModelChange)="handleFilter()" 
+					(keydown.enter)="handleEnter()"
+					(focus)="filterTextHasFocus = true"
+					(blur)="filterTextHasFocus = false"
+					placeholder="Search for a project..." 
+					autocomplete="off"
+					autofocus
+					class="search__input" 
+				/>
+
+				<span *ngIf="( filterTextHasFocus && filterText.length )" class="search__tip">
+					&#8592; <strong>Tip:</strong> Hit <code class="search__key">Enter</code> to navigate to first item.
+				</span>
+
+			</form>
+
+			<ul class="filtering__categories categories">
+				<li class="categories__item">
+					<a 
+						(click)="showType( 'all' )"
+						class="categories__link"
+						[class.categories__link--on]="( filterType === 'all' )">
+						All
+					</a>
+				</li>
+				<li class="categories__item">
+					<a
+						(click)="showType( 'prototype' )"
+						class="categories__link"
+						[class.categories__link--on]="( filterType === 'prototype' )">
+						Prototypes
+					</a>
+				</li>
+				<li class="categories__item">
+					<a
+						(click)="showType( 'board' )"
+						class="categories__link"
+						[class.categories__link--on]="( filterType === 'board' )">
+						Boards
+					</a>
+				</li>
+				<li class="categories__item">
+					<a
+						(click)="showType( 'freehand' )"
+						class="categories__link"
+						[class.categories__link--on]="( filterType === 'freehand' )">
+						Freehands
+					</a>
+				</li>
+			</ul>
+
+		</div>
+
+		<!-- BEGIN: Loading State. -->
+		<ng-template [ngIf]="isLoading">
+
+			<app-loading-indicator class="loading"></app-loading-indicator>
+
+		</ng-template>
+		<!-- END: Loading State. -->
+
+
+		<!-- BEGIN: Loaded State. -->
+		<ng-template [ngIf]="! isLoading">
+
+			<a [routerLink]="[ '/app', { outlets: { modal: 'modal/create-project' } } ]" class="plus">+</a>
+
+			<ul class="projects">
+				<li 
+					*ngFor="let item of filteredProjects"
+					class="projects__item projects__item--column-{{ item.column }}"
+					[appShowBlock]="item.isVisible"
+					[ngSwitch]="item.type">
+
+					<ng-template ngSwitchCase="prototype">
+						<prototype-item [item]="item" class="projects__link"></prototype-item>
+					</ng-template>
+
+					<ng-template ngSwitchCase="board">
+						<board-item [item]="item" class="projects__link"></board-item>
+					</ng-template>
+
+					<ng-template ngSwitchCase="freehand">
+						<freehand-item [item]="item" class="projects__link"></freehand-item>
+					</ng-template>
+
+				</li>
+			</ul>
+
+			<p class="failure-case">
+				<a routerLink="/app/prototypes/999999">Goto Missing Project</a>
+			</p>
+
+		</ng-template>
+		<!-- END: Loaded State. -->	
+
+	</div>
+</div>

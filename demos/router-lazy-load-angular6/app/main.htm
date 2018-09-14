@@ -1,0 +1,172 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Experiment: Recreating The InVision App User Interface With The Angular 5.2.4 Router
+	</title>
+
+	<style type="text/css">
+		html {
+			margin: 0px 0px 0px 0px ;
+			min-height: 100vh ;
+			padding: 0px 0px 0px 0px ;
+		}
+
+		body {
+			font-family: "Open Sans", sans-serif ;
+			font-size: 16px ;
+			font-smoothing: antialiased ;
+				-webkit-font-smoothing: antialiased ;
+			font-weight: 300 ;
+			margin: 0px 0px 0px 0px ;
+			min-height: 100vh ;
+			padding: 0px 0px 0px 0px ;
+		}
+	</style>
+</head>
+<body>
+
+	<my-app>
+		<p>
+			<em>Loading files...</em>
+		</p>
+
+		<p>
+			npm Run Scripts:
+		</p>
+
+		<ul>
+			<li>
+				<strong>npm run build</strong> &mdash; Compiles the .ts file into bundles.
+			</li>
+			<li>
+				<strong>npm run watch</strong> &mdash; Compiles the .ts file into bundles and then watches files for changes.
+			</li>
+		</ul>
+	</my-app>
+
+	<div id="pre-bootstrap-container">
+		<!-- 
+			BEGIN: Pre-bootstrap loading container. 
+
+			This container exist outside of the Angular application so that we can render it
+			immediately (while the application is being bootstrapped) and then control the 
+			manner in which it is removed (if it were inside of the <my-app> block, it would 
+			be removed immediately after bootstrapping).
+			--
+			NOTE: The container only exists so we can rip all of this stuff out of the 
+			DOM at one time - there is no styling on it. 
+		-->
+
+		<style type="text/css">
+
+			#pre-bootstrap-content {
+				background-color: #181D28 ;
+				bottom: 0px ;
+				left: 0px ;
+				opacity: 1.0 ;
+				position: fixed ;
+				right: 0px ;
+				top: 0px ;
+				transition: all linear 300ms ;
+					-webkit-transition: all linear 300ms ;
+				z-index: 999999 ;
+			}
+
+			#pre-bootstrap-content.loaded {
+				opacity: 0.0 ;
+			}
+
+			#pre-bootstrap-content div.logo {
+				background-color: #0D1016 ;
+				border-radius: 20px 20px 20px 20px ;
+				color: #FFFFFF ;
+				font-size: 64px ;
+				left: 50% ;
+				padding: 17px 40px 17px 40px ;
+				position: absolute ;
+				text-align: center ;
+				top: 50% ;
+				transform: translateX( -50% ) translateY( -50% ) ;
+					-moz-transform: translateX( -50% ) translateY( -50% ) ;
+					-webkit-transform: translateX( -50% ) translateY( -50% ) ;
+			}
+
+			#pre-bootstrap-content div.warning {
+				animation: pulse 2s infinite ;
+				bottom: 50px ;
+				color: #9EA1A7 ;
+				font-size: 18px ;
+				left: 0px ;
+				position: absolute ;
+				right: 0px ;
+				text-align: center ;
+			}
+
+			@keyframes pulse {
+				0%, 
+				100% {
+					opacity: 0.5 ;
+				}
+				50% {
+					opacity: 1.0 ;
+				}
+			}
+
+		</style>
+
+		<div id="pre-bootstrap-content">
+			<div class="logo">
+				in
+			</div>
+			<div class="warning">
+				loading components&hellip;
+			</div>
+		</div>
+
+		<script type="text/javascript">
+
+			// Listen for the "appready" event, which will be emitted by the application
+			// and bubble up to the document root.
+			document.addEventListener( "appready", handleAppReady );
+
+
+			// I handle the "appready" event and teardown the loading screen.
+			function handleAppReady( event ) {
+
+				var preBootstrapContainer = document.getElementById( "pre-bootstrap-container" );
+				var preBootstrap = document.getElementById( "pre-bootstrap-content" );
+
+				// Add the class-name to initiate the transitions.
+				// --
+				// READ MORE: https://www.bennadel.com/blog/3285-using-element-classlist-to-manipulate-css-classes-on-the-dom.htm
+				preBootstrap.classList.add( "loaded" );
+
+				// Remove the bootstrap container after the transition has 
+				// completed (based on the known transition time).
+				setTimeout(
+					function removeLoadingScreen() {
+
+						preBootstrapContainer
+							.parentNode
+								.removeChild( preBootstrapContainer )
+						;
+
+					},
+					500
+				);
+
+			}
+
+		</script>
+
+	</div>
+	<!-- END: Pre-bootstrap loading container. -->
+
+	<!-- Load the fonts AFTER the loading screen is flushed. -->
+	<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700"></link>
+
+</body>
+</html>

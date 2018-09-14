@@ -1,0 +1,19 @@
+
+<!--
+	We are somewhat HACKING the idea of a routable component here. Because we need to
+	render the subview based on the PARENT ROUTE, we can't rely on the router-outlet.
+	Instead, we have to explicitly render these components AS IF THEY WERE ROUTABLE 
+	views. That said, these components will believe they are routable internally and
+	will use the ActivatedRoute injectable to gather data.
+-->
+<section class="detail-panel">
+	
+	<ng-template [ngIf]="( type === 'boards' )">
+		<board-conversation-view></board-conversation-view>
+	</ng-template>
+
+	<ng-template [ngIf]="( type === 'prototypes' )">
+		<prototype-conversation-view></prototype-conversation-view>
+	</ng-template>
+	
+</section>

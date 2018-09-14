@@ -1,0 +1,127 @@
+
+<div class="intro">
+
+	<div class="intro__hero">
+		<br />
+	</div>
+
+	<div class="intro__call-to-action">
+
+		<h1 class="intro__title">
+			Get the basics of InVision, plus pick up<br />
+			some advanced tips and tricks.
+		</h1>
+
+		<a class="intro__button">Get Started</a>
+
+	</div>
+
+</div>
+
+<nav class="nav">
+	<a routerLink="./" fragment="section_getting_started" class="nav__item nav__item--on">Getting Started</a>
+	<a routerLink="./" fragment="section_invision_101" class="nav__item">InVision 101</a>
+	<a routerLink="./" fragment="section_workflow_tips" class="nav__item">Workflow Tips</a>
+	<a routerLink="./" fragment="section_faq" class="nav__item">FAQ</a>
+</nav>
+
+<section id="section_invision_101" class="section">
+
+	<header class="section__header">
+
+		<h2 class="section__title">
+			InVision 101
+		</h2>
+
+		<div class="section__description">
+			Set yourself up for success with these basic tutorials.
+		</div>
+
+	</header>
+
+	<ul class="tutorials">
+		<li *ngFor="let tutorial of tutorials.invision101" class="tutorials__item">
+			<a class="tutorial">
+				<span class="tutorial__thumb">
+					<span class="tutorial__play">
+						▶
+					</span>
+				</span>
+				<span class="tutorial__name">
+					{{ tutorial.name }}
+				</span>
+			</a>
+		</li>
+	</ul>
+
+</section>
+
+<section id="section_workflow_tips" class="section">
+
+	<header class="section__header">
+		
+		<h2 class="section__title">
+			Workflow Tips
+		</h2>
+
+		<div class="section__description">
+			For advanced prototypers like yourself.
+		</div>
+
+	</header>
+
+	<ul class="tutorials">
+		<li *ngFor="let tutorial of tutorials.workflowTips" class="tutorials__item">
+			<a class="tutorial">
+				<span class="tutorial__thumb">
+					<span class="tutorial__play">
+						▶
+					</span>
+				</span>
+				<span class="tutorial__name">
+					{{ tutorial.name }}
+				</span>
+			</a>
+		</li>
+	</ul>
+	
+</section>
+
+<section id="section_faq" class="section">
+	
+	<header class="section__header">
+		
+		<h2 class="section__title">
+			FAQs
+		</h2>
+
+		<div class="section__description">
+			Still stumped? Check out these common questions.
+		</div>
+
+	</header>
+
+	<ul class="faqs">
+		<li *ngFor="let faq of faqs" class="faqs__item">
+			<a class="faq">
+				<span class="faq__name">
+					{{ faq.name }}
+				</span>
+			</a>
+		</li>
+		<li class="faqs__item">
+			<a class="more-faqs">
+				<span class="more-faqs__name">
+					More FAQs →
+				</span>
+			</a>
+		</li>
+	</ul>
+
+</section>
+
+<div class="webinar">
+
+	Prefer a guided tour? <a>Sign up for a webinar →</a>
+
+</div>

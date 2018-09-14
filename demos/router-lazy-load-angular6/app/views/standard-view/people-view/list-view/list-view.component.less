@@ -1,0 +1,117 @@
+
+:host {
+	display: block ;
+}
+
+.title {
+	color: #333C4E ;
+	font-size: 26px ;
+	font-weight: 400 ;
+	line-height: 31px ;
+}
+
+/*
+.plus {
+	background-color: #FF3366 ;
+	border-radius: 50px 50px 50px 50px ;
+	box-shadow: 0px 1px 5px fade( #000000, 28% ) ;
+	color: #FFFFFF ;
+	font-size: 34px ;
+	font-weight: 600 ;
+	height: 50px ;
+	line-height: 50px ;
+	position: absolute ;
+	right: 0px ;
+	text-align: center ;
+	text-decoration: none ;
+	top: -28px ;
+	transition: all 150ms ease ;
+	width: 50px ;
+
+	&:hover {
+		border-radius: 54px 54px 54px 54px ;
+		height: 54px ;
+		line-height: 54px ;
+		right: -2px ;
+		top: -30px ;
+		width: 54px ;
+	}
+}
+*/
+
+.users {
+	list-style-type: none ;
+	margin: 40px 0px 0px 0px ;
+	padding: 0px 0px 0px 0px ;
+
+	&:after {
+		clear: both ;
+		content: "" ;
+		display: table ;
+		height: 0px ;
+	}
+
+	&__item {
+		display: flex ;
+		justify-content: stretch ;
+		float: left ;
+		height: 315px ;
+		margin: 0px 45px 40px 0px ;
+		width: 360px ;
+
+		&--column-3 {
+			margin-right: 0px ;
+		}
+	}
+}
+
+.user {
+	background-color: #FFFFFF ;
+	border-radius: 3px 3px 3px 3px ;
+	box-shadow: 0px 1px 2px fade( #2B3B5D, 29% ) ;
+	flex: 1 0 auto ;
+	position: relative ;
+	text-decoration: none ;
+
+	&__avatar {
+		display: block ;
+		font-size: 48px ;
+		height: 148px ;
+		margin: 53px auto 20px auto ;
+		width: 148px ;
+	}
+
+	&__name {
+		color: #424956 ;
+		display: block ;
+		font-size: 20px ;
+		font-weight: 400 ;
+		line-height: 25px ;
+		margin-bottom: 5px ;
+		text-align: center ;
+	}
+
+	&__email {
+		color: #778295 ;
+		display: block ;
+		font-size: 15px ;
+		font-weight: 400 ;
+		line-height: 20px ;
+		text-align: center ;
+	}
+
+	&__tag {
+		background-color: #CDD4E0 ;
+		border-radius: 2px 2px 2px 2px ;
+		color: #FFFFFF ;
+		font-size: 11px ;
+		font-weight: 400 ;
+		letter-spacing: 0.8px ;
+		line-height: 25px ;
+		padding: 0px 10px 0px 10px ;
+		position: absolute ;
+		right: 20px ;
+		text-transform: uppercase ;
+		top: 20px ;
+	}
+}

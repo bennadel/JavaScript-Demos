@@ -1,0 +1,54 @@
+
+<header class="header">
+
+	<div class="header__headline">
+		Conversations
+	</div>
+
+	<div class="header__byline">
+		with InVision
+	</div>
+
+	<a [routerLink]="[ '/app', { outlets: { updates: null } } ]" class="header__close">
+		x
+	</a>
+
+</header>
+
+<section class="body">
+
+	<!-- BEGIN: Loading State. -->
+	<ng-template [ngIf]="isLoading">
+
+		<app-loading-indicator class="loading"></app-loading-indicator>
+
+	</ng-template>
+	<!-- END: Loading State. -->
+
+
+	<!-- BEGIN: Loaded State. -->
+	<ng-template [ngIf]="! isLoading">
+
+		<ul class="items">
+			<li *ngFor="let update of updates" class="items__item">
+
+				<a [routerLink]="[ './', update.id ]" class="message">
+					<app-avatar
+						[initials]="update.staff.initials"
+						class="message__avatar">
+					</app-avatar>
+					<span class="message__name">
+						{{ update.staff.name }}
+					</span>
+					<span class="message__teaser">
+						{{ update.message }}
+					</span>
+				</a>
+
+			</li>
+		</ul>
+
+	</ng-template>
+	<!-- END: Loaded State. -->
+
+</section>

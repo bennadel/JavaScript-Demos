@@ -1,0 +1,29 @@
+
+:host {
+	bottom: 0px ;
+	left: 0px ;
+	position: absolute ;
+	top: 0px ;
+}
+
+.detail-panel {
+	animation: conversations-view-list-panel-enter 200ms ;
+	background-color: #FFFFFF ;
+	border-left: 1px solid #E1E2E6 ;
+	bottom: 0px ;
+	display: block ;
+	left: 0px ;
+	position: absolute ;
+	top: 0px ;
+	width: 590px ;
+}
+
+// CAUTION: @keyframes names are not scoped to the current component.
+@keyframes conversations-view-list-panel-enter {
+	from {
+		left: -590px ;
+	}
+	to {
+		left: 0px ;
+	}
+}

@@ -1,0 +1,130 @@
+
+:host {
+	background-color: fade( #323A45, 96% ) ;
+	bottom: 0px ;
+	display: flex ;
+	left: 0px ;
+	overflow: auto ;
+	position: absolute ;
+	right: 0px ;
+	top: 0px ;
+}
+
+.modal {
+	background-color: #F9F9FB ;
+	border-radius: 4px 4px 4px 4px ;
+	box-sizing: border-box ;
+	margin: auto auto auto auto ;
+	position: relative ;
+	width: 630px ;
+}
+
+.close {
+	color: #999999 ;
+	font-size: 20px ;
+	font-weight: 600 ;
+	height: 50px ;
+	line-height: 50px ;
+	position: absolute ;
+	right: 0px ;
+	text-align: center ;
+	text-decoration: none ;
+	top: 0px ;
+	transition: color 200ms ease ;
+	width: 50px ;
+
+	&:after {
+		content: "\2715" ;
+	}
+
+	&:hover {
+		color: #000000 ;
+	}
+}
+
+.header {
+	background-color: #FFFFFF ;
+	border-radius: 4px 4px 0px 0px ;
+	padding-top: 50px ;
+
+	&__avatar {
+		font-size: 16px ;
+		height: 60px ;
+		display: block ;
+		margin: 0px auto 20px auto ;
+		width: 60px ;
+	}
+
+	&__title {
+
+	}
+}
+
+.body {
+	border-top: 1px solid #EAECF1 ;
+}
+
+h1 {
+	color: #464D5D ;
+	font-size: 28px ;
+	font-weight: 600 ;
+	line-height: 33px ;
+	margin: 0px 0px 12px 0px ;
+	text-align: center ;
+}
+
+.project-types {
+	display: flex ;
+	flex-direction: row ;
+	justify-content: center ;
+	line-height: 17px ;
+
+	&__type {
+		color: #A4ABB1 ;
+		flex: 0 0 auto ;
+		font-size: 12px ;
+		margin: 0px 7px 0px 7px ;
+		padding: 21px 10px 22px 10px ;
+		position: relative ;
+		text-decoration: none ;
+		text-transform: uppercase ;
+
+		&--on {
+			color: #464D5D ;
+
+			&:after {
+				background-color: #52B266 ;
+				bottom: 0px ;
+				content: "" ;
+				height: 2px ;
+				left: 0px ;
+				position: absolute ;
+				right: 0px ;
+			}
+		}
+	}
+}
+
+.footer {
+	padding: 40px 0px 40px 0px ;
+
+	&__update {
+		background-color: #64BA76 ;
+		border: 1px solid #4BA75E ;
+		border-radius: 3px 3px 3px 3px ;
+		color: #FFFFFF ;
+		display: block ;
+		font-size: 14px ;
+		font-weight: 600 ;
+		margin: 0px auto 0px auto ;
+		padding: 16px 0px 15px 0px ;
+		text-align: center ;
+		text-decoration: none ;
+		text-transform: uppercase ;
+		width: 293px ;
+
+		&:hover {
+			background-color: #7EC58D ;
+		}
+	}
+}

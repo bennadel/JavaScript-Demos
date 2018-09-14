@@ -1,0 +1,30 @@
+
+<ul class="prototypes">
+	<li *ngFor="let prototype of parentView.prototypes" class="prototypes__item">
+
+		<a 
+			(click)="parentView.togglePrototype( prototype )"
+			class="toggle"
+			[class.toggle--on]="parentView.selectedPrototypes[ prototype.id ]">
+
+			<span class="toggle__thumbnail">
+				<br />
+			</span>
+
+			<span class="toggle__details">
+				<span class="toggle__name">
+					{{ prototype.name }}
+				</span>
+				<span class="toggle__date">
+					Last updated a long time ago.
+				</span>
+			</span>
+
+			<span class="toggle__checkbox">
+				+
+			</span>
+
+		</a>
+
+	</li>
+</ul>

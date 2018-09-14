@@ -1,0 +1,137 @@
+
+:host {
+	display: block ;
+}
+
+.header {
+	color: #434C5E ;
+	font-weight: 400 ;
+	text-align: center ;
+	
+	&__title {
+		font-size: 30px ;
+		line-height: 35px ;
+		margin-bottom: 20px ;
+	}
+
+	&__subtitle {
+		font-size: 16px ;
+		margin-bottom: 75px ;
+	}
+}
+
+.plans {
+	display: flex ;
+	justify-content: center ;
+	list-style-type: none ;
+	margin: 0px 0px 0px 0px ;
+	padding: 0px 0px 0px 0px ;
+
+	&__item {
+		flex: 0 0 auto ;
+		height: 417px ;
+		margin: 0px 10px 0px 10px ;
+		position: relative ;
+		width: 220px ;
+	}
+}
+
+.plan {
+	border-radius: 5px 5px 5px 5px ;
+	border-top: 6px solid #596377 ;
+	bottom: 0px ;
+	box-shadow: 0px -1px 1px fade( #000000, 5% ), 0px 1px 2px fade( #000000, 20% ) ;
+	display: flex ;
+	flex-direction: column ;
+	left: 0px ;
+	padding: 34px 20px 40px 20px ;
+	position: absolute ;
+	right: 0px ;
+	text-align: center ;
+	text-decoration: none ;
+	top: 0px ;
+	transition: ease 200ms box-shadow ;
+
+	&:hover {
+		box-shadow: 0px 4px 16px fade( #000000, 20% ) ;
+	}
+
+	&__name {
+		color: #596377 ;
+		font-size: 14px ;
+		font-weight: 600 ;
+		line-height: 19px ;
+		margin-bottom: 20px ;
+		text-transform: uppercase ;
+	}
+
+	&__description {
+		color: #8C96A9 ;
+		font-size: 12px ;
+		font-style: italic ;
+		font-weight: 400 ;
+		line-height: 18px ;
+		margin-bottom: 30px ;
+	}
+
+	&__features {
+		color: #8C96A9 ;
+		flex: 2 0 auto ;
+		font-size: 13px ;
+	}
+
+	&__price {
+		margin-bottom: 20px ;
+	}
+
+	&__cta {
+		align-self: center ;
+		background-color: #11B683 ;
+		border-radius: 36px 36px 36px 36px ;
+		color: #FFFFFF ;
+		font-size: 10px ;
+		font-weight: 600 ;
+		letter-spacing: 0.5px ;
+		line-height: 36px ;
+		width: 150px ;
+		text-align: center ;
+		text-transform: uppercase ;
+	}
+
+	// -- variations.
+
+	&--enterprise {
+		border-top-color: #1E8FE1 ;
+
+		.plan__cta {
+			background-color: #1E8FE1 ;
+		}
+	}
+}
+
+.price {
+	display: flex ;
+	justify-content: center ;
+
+	&__currency {
+		align-self: flex-start ;
+		color: #434C5E ;
+		font-size: 20px ;
+		font-weight: 300 ;
+	}
+
+	&__amount {
+		color: #434C5E ;
+		font-size: 48px ;
+		font-weight: 400 ;
+		line-height: 1 ;
+		margin: 0px 4px 0px 4px ;
+	}
+
+	&__term {
+		align-self: flex-end ;
+		color: #8C96A9 ;
+		font-size: 14px ;
+		font-weight: 400 ;
+	}
+}

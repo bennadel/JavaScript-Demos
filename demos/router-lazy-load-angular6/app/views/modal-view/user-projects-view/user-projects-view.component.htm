@@ -1,0 +1,59 @@
+
+<div class="modal">
+
+	<a [routerLink]="[ '/app', { outlets: { modal: null } } ]" class="close"></a>
+
+
+	<!-- BEGIN: Loading State. -->
+	<ng-template [ngIf]="isLoading">
+
+		<app-loading-indicator class="loading"></app-loading-indicator>
+
+	</ng-template>
+	<!-- END: Loading State. -->
+
+
+	<!-- BEGIN: Loaded State. -->
+	<ng-template [ngIf]="! isLoading">
+
+		<header class="header">
+
+			<app-avatar
+				[initials]="user.initials"
+				[src]="user.avatarUrl"
+				class="header__avatar">
+			</app-avatar>
+			
+			<h1 class="header__title">
+				{{ user.name }}
+			</h1>
+
+			<nav class="header__nav project-types">
+				<a routerLink="./prototypes" class="project-types__type" routerLinkActive="project-types__type--on">
+					Prototypes
+				</a>
+				<a routerLink="./boards" class="project-types__type" routerLinkActive="project-types__type--on">
+					Boards
+				</a>
+			</nav>
+
+		</header>
+
+		<section class="body">
+
+			<router-outlet></router-outlet>
+
+		</section>
+
+		<footer class="footer">
+
+			<a (click)="updateProjects()" class="footer__update">
+				Update Project Memberships
+			</a>
+
+		</footer>
+
+	</ng-template>
+	<!-- END: Loaded State. -->
+
+</div>

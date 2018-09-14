@@ -1,0 +1,113 @@
+
+<a [routerLink]="[ '/app', { outlets: { modal: null } } ]" class="close"></a>
+
+<h1>
+	Create New Project
+</h1>
+
+<!-- BEGIN: Project Type Selection. -->
+<ng-template [ngIf]="! projectType">
+	
+	<h2>
+		Choose a project type
+	</h2>
+
+	<ul class="project-types">
+		<li class="project-types__item project-types__item--col1">
+
+			<a [routerLink]="[{ projectType: 'prototype' }]" class="project-types__type project-type project-type">
+
+				<span class="project-type__thumbnail"></span>
+				<span class="project-type__name">
+					Prototype
+				</span>
+				<span class="project-type__description">
+					Interactive mockup of a web,<br />
+					mobile or wearable experience.
+				</span>
+				<span class="project-type__cta">
+					Create New Prototype
+				</span>
+
+			</a>
+
+		</li>
+		<li class="project-types__item project-types__item--col2">
+
+			<a [routerLink]="[{ projectType: 'board' }]" class="project-types__type project-type">
+				
+				<span class="project-type__thumbnail"></span>
+				<span class="project-type__name">
+					Board
+				</span>
+				<span class="project-type__description">
+					Collaborative moodboard, brandboard,<br />
+					design story or collection.
+				</span>
+				<span class="project-type__cta">
+					Create New Board
+				</span>
+
+			</a>
+
+		</li>
+		<li class="project-types__item project-types__item--col3">
+
+			<a [routerLink]="[{ projectType: 'freehand' }]" class="project-types__type project-type">
+				
+				<span class="project-type__thumbnail"></span>
+				<span class="project-type__name">
+					Freehand
+				</span>
+				<span class="project-type__description">
+					Sketch, collaborate on design changes,<br />
+					or co-draw in real time.
+				</span>
+				<span class="project-type__cta">
+					Create New Freehand
+				</span>
+
+			</a>
+
+		</li>
+	</ul>
+
+</ng-template>
+<!-- END: Project Type Selection. -->
+
+
+<!-- BEGIN: Project Form. -->
+<ng-template [ngIf]="projectType">
+
+	<a [routerLink]="[{ projectType: '' }]" class="back"></a>
+
+	<form (submit)="processForm()">
+
+		<input name="name" [(ngModel)]="form.name" placeholder="Add a project name" autofocus class="input" />
+		
+		<ul *ngIf="options.length" class="project-options project-options--length-{{ options.length }}">
+			<li *ngFor="let option of options" class="project-options__item">
+
+				<a
+					(click)="selectOption( option )"
+					class="project-options__option project-option"
+					[class.project-option--on]="( option === selectedOption )">
+
+					<span class="project-option__thumbnail"></span>
+					<span class="project-option__name">
+						{{ option }}
+					</span>
+
+				</a>
+
+			</li>
+		</ul>
+
+		<a (click)="processForm()" class="get-started">
+			Get Started
+		</a>
+
+	</form>
+
+</ng-template>
+<!-- END: Project Form. -->

@@ -1,0 +1,5 @@
+
+<div class="layout" [ngSwitch]="!! src">
+	<img *ngSwitchCase="true" [src]="src" />
+	<span *ngSwitchCase="false">{{ initials }}</span>
+</div>

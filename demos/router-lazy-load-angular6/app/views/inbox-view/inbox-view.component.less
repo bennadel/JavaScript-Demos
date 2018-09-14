@@ -1,0 +1,149 @@
+
+:host {
+	bottom: 0px ;
+	left: 0px ;
+	position: fixed ;
+	right: 0px ;
+	top: 0px ;
+	z-index: 102 ;
+}
+
+.backdrop {
+	background-color: rgba( 0, 0, 0, 0.5 ) ;
+	bottom: 0px ;
+	cursor: pointer ;
+	left: 0px ;
+	position: absolute ;
+	right: 0px ;
+	top: 0px ;
+}
+
+.close {
+	background-color: #FFFFFF ;
+	border-radius: 40px 40px 40px 40px ;
+	color: #333333 ;
+	cursor: pointer ;
+	height: 40px ;
+	line-height: 40px ;
+	position: absolute ;
+	right: 30px ;
+	text-align: center ;
+	text-decoration: none ;
+	top: 25px ;
+	width: 40px ;
+
+	&:after {
+		content: "\2715" ;
+	}
+}
+
+.list-panel {
+	animation: inbox-view-list-panel-enter 200ms ;
+	background-color: #1F2532 ;
+	bottom: 0px ;
+	display: block ;
+	left: 0px ;
+	position: absolute ;
+	top: 0px ;
+	width: 270px ;
+	z-index: 2 ; // Slides out OVER the detail-panel.
+}
+
+// CAUTION: @keyframes names are not scoped to the current component.
+@keyframes inbox-view-list-panel-enter {
+	from {
+		left: -270px ;
+	}
+	to {
+		left: 0px ;
+	}
+}
+
+.detail-panel {
+	animation: inbox-view-detail-panel-enter 200ms ;
+	bottom: 0px ;
+	left: 270px ;
+	position: absolute ;
+	top: 0px ;
+	z-index: 1 ; // Slides out UNDER the list-panel.
+}
+
+// CAUTION: @keyframes names are not scoped to the current component.
+@keyframes inbox-view-detail-panel-enter {
+	from {
+		left: 0px ;
+	}
+	to {
+		left: 270px ;
+	}
+}
+
+.logo {
+	color: #FFFFFF ;
+	cursor: pointer ;
+	font-size: 30px ;
+	font-weight: 600 ;
+	left: 25px ;
+	line-height: 30px ;
+	position: absolute ;
+	top: 27px ;
+}
+
+.loading {
+	bottom: 0px ;
+	left: 0px ;
+	position: absolute ;
+	right: 0px ;
+	top: 0px ;
+}
+
+.list {
+	bottom: 0px ;
+	left: 0px ;
+	overflow: auto ;
+	padding: 25px 0px 25px 0px ;
+	position: absolute ;
+	right: 0px ;
+	top: 80px ;
+}
+
+.list__header {
+	color: #DADEE6 ;
+	font-size: 10px ;
+	font-weight: 600 ;
+	margin: 0px 0px 15px 25px ;
+	text-transform: uppercase ;
+}
+
+.list__items {
+	list-style-type: none ;
+	margin: 0px 0px 0px 0px ;
+	padding: 0px 0px 0px 0px ;
+}
+
+.list__item {
+	padding-right: 20px ;
+}
+
+.list__link {
+	border-radius: 0px 3px 3px 0px ;
+	color: #91949A ;
+	cursor: pointer ;
+	display: block ;
+	font-size: 13px ;
+	font-weight: 400 ;
+	padding: 10px 10px 11px 25px ;
+	text-decoration: none ;
+
+	&:hover {
+		background-color: #252D3D ;
+	}
+
+	// Variations.
+
+	&--on,
+	&--on:hover {
+		background-color: #1E8FE1 ;
+		color: #EBEDF2 ;
+	}
+}

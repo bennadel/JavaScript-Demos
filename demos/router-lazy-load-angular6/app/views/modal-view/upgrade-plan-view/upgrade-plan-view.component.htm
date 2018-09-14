@@ -1,0 +1,35 @@
+
+<div class="sidebar-column">
+
+	<a [routerLink]="[ '/app', { outlets: { modal: null } } ]" class="in">
+		in
+	</a>
+
+	<div class="testimonials">
+		<div class="testimonials__content">
+
+			<div class="testimonials__quote">
+				With InVision, we can get feedback not just from drivers we see in San
+				Francisco but from all around the world.
+			</div>
+
+			<div class="testimonials__customer">
+				Molly Nix, Uber
+			</div>
+
+			<div class="testimonials__company">
+				Uber
+			</div>			
+
+		</div>
+	</div>
+
+</div>
+
+<div class="content-column">
+	<div class="content-column__content">
+
+		<router-outlet></router-outlet>
+
+	</div>
+</div>

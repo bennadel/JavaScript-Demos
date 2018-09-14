@@ -1,0 +1,113 @@
+
+:host {
+	bottom: 0px ;
+	left: 0px ;
+	overflow: auto ;
+	position: absolute ;
+	right: 0px ;
+	top: 0px ;
+}
+
+.loading {
+	height: 100% ;
+}
+
+.header {
+	margin: 26px 0px 50px 0px ;
+
+	&__prototype-name {
+		color: #8C96A9 ;
+		font-size: 11px ;
+		font-weight: 600 ;
+		line-height: 16px ;
+		margin: 0px 0px 2px 0px ;
+		text-align: center ;
+		text-transform: uppercase ;
+	}
+
+	&__screen-name {
+		color: #3D4356 ;
+		font-size: 14px ;
+		font-weight: 600 ;
+		line-height: 19px ;
+		margin: 0px 0px 17px 0px ;
+		text-align: center ;
+	}
+
+	&__figure {
+		background-color: #E0E0E0 ;
+		display: block ;
+		height: 210px ;
+		margin: 0px auto 0px auto ;
+		overflow: hidden ;
+		position: relative ;
+		text-decoration: none ;
+		width: 520px ;
+
+		&:hover {
+			.header__conversation-label {
+				height: 36px ;
+				margin: -18px 0px 0px -18px ;
+				line-height: 36px ;
+				width: 36px ;
+			}
+		}
+	}
+
+	&__conversation-label {
+		background-color: #FF4070 ;
+		border-radius: 36px 36px 36px 36px ;
+		color: #FFFFFF ;
+		font-size: 12px ;
+		font-weight: 700 ;
+		height: 32px ;
+		left: 30% ;
+		margin: -16px 0px 0px -16px ;
+		line-height: 32px ;
+		position: absolute ;
+		text-align: center ;
+		top: 40% ;
+		width: 32px ;
+	}
+}
+
+.comments {
+	list-style-type: none ;
+	margin: 26px auto 26px auto ;
+	padding: 0px 0px 0px 0px ;
+	width: 520px ;
+
+	&__item {
+		margin: 20px 0px 20px 0px ;
+		padding: 0px 0px 0px 0px ;
+	}
+}
+
+.comment {
+	padding-left: 55px ;
+	position: relative ;
+
+	&__avatar {
+		background-color: #8D96AA ;
+		font-size: 12px ;
+		height: 35px ;
+		left: 0px ;
+		position: absolute ;
+		top: 3px ;
+		width: 35px ;
+	}
+
+	&__author {
+		color: #333C4E ;
+		font-size: 14px ;
+		font-weight: 600 ;
+		margin-bottom: 4px ;
+	}
+
+	&__content {
+		color: #3F495C ;
+		font-size: 13px ;
+		font-weight: 400 ;
+		line-height: 20px ;
+	}
+}

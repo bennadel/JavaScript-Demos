@@ -1,0 +1,37 @@
+
+:host {
+	display: block ;
+	font-family: "Open Sans", sans-serif ;
+	font-size: 16px ;
+	font-smoothing: antialiased ;
+		-webkit-font-smoothing: antialiased ;
+	font-weight: 300 ;
+	margin: 0px 0px 0px 0px ;
+	min-height: 100vh ;
+	padding: 0px 0px 0px 0px ;
+
+	// The min-height of 100vh causes some unexpected margin-collapsing. This will prevent
+	// some of that unexpected behavior.
+	&:after {
+		content: "" ;
+		display: table ;
+		height: 0px ;
+	}
+}
+
+// Global styles - these will be accessible to all views of the application.
+
+::ng-deep {
+	a {
+		cursor: pointer ;
+		text-decoration: underline ;
+	}
+
+	input,
+	select,
+	textarea {
+		font-family: "Open Sans", sans-serif ;
+		font-size: 16px ;
+		font-weight: 300 ;
+	}
+}

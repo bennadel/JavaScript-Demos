@@ -1,0 +1,48 @@
+
+<div [routerLink]="[ '/app', { outlets: { inbox: null } } ]" class="backdrop">
+	<a [routerLink]="[ '/app', { outlets: { inbox: null } } ]" class="close"></a>
+</div>
+
+<section class="list-panel">
+
+	<span [routerLink]="[ '/app', { outlets: { inbox: null } } ]" class="logo">in</span>
+
+
+	<!-- BEGIN: Loading State. -->
+	<ng-template [ngIf]="isLoading">
+
+		<app-loading-indicator theme="dark" class="loading"></app-loading-indicator>
+
+	</ng-template>
+	<!-- END: Loading State. -->
+
+
+	<!-- BEGIN: Loaded State. -->
+	<ng-template [ngIf]="! isLoading">
+
+		<div class="list">
+
+			<h2 class="list__header">
+				Recent Conversations
+			</h2>
+
+			<ul class="list__items">
+				<li *ngFor="let inbox of inboxes" class="list__item">
+					<a routerLink="{{ inbox.resource }}" class="list__link" routerLinkActive="list__link--on">
+						{{ inbox.name }}
+					</a>
+				</li>
+			</ul>
+
+		</div>
+
+	</ng-template>
+	<!-- END: Loaded State. -->
+
+</section>
+
+<section class="detail-panel">
+	
+	<router-outlet></router-outlet>
+
+</section>

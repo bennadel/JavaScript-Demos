@@ -1,0 +1,259 @@
+
+:host {
+	background-color: #FFFFFF ;
+	bottom: 0px ;
+	left: 0px ;
+	overflow: auto ;
+	position: absolute ;
+	right: 0px ;
+	top: 0px ;
+}
+
+.close {
+	background-color: #FFFFFF ;
+	border-radius: 40px 40px 40px 40px ;
+	color: #333333 ;
+	cursor: pointer ;
+	height: 40px ;
+	line-height: 40px ;
+	position: absolute ;
+	right: 30px ;
+	text-align: center ;
+	text-decoration: none ;
+	top: 25px ;
+	transition: background-color 200ms ease ;
+	width: 40px ;
+
+	&:after {
+		content: "\2715" ;
+	}
+
+	&:hover {
+		background-color: #CCCCCC ;
+	}
+}
+
+.back {
+	background-color: #FFFFFF ;
+	border-radius: 40px 40px 40px 40px ;
+	color: #333333 ;
+	cursor: pointer ;
+	height: 40px ;
+	left: 30px ;
+	line-height: 40px ;
+	position: absolute ;
+	text-align: center ;
+	text-decoration: none ;
+	top: 25px ;
+	transition: background-color 200ms ease ;
+	width: 40px ;
+
+	&:after {
+		content: "\2190" ;
+	}
+
+	&:hover {
+		background-color: #CCCCCC ;
+	}
+}
+
+h1 {
+	color: #8C96A9 ;
+	font-size: 12px ;
+	font-weight: 600 ;
+	line-height: 16px ;
+	margin: 80px 0px 5px 0px ;
+	text-align: center ;
+	text-transform: uppercase ;
+}
+
+h2 {
+	color: #434C5E ;
+	font-size: 30px ;
+	font-weight: 300 ;
+	line-height: 35px ;
+	margin: 0px 0px 40px 0px ;
+	text-align: center ;
+}
+
+.project-types {
+	height: 475px ;
+	list-style-type: none ;
+	margin: 0px auto 0px auto ;
+	padding: 0px 0px 0px 0px ;
+	position: relative ;
+	width: 1120px ;
+
+	&__item {
+		height: 478px ;
+		margin: 0px 0px 0px 0px ;
+		padding: 0px 0px 0px 0px ;
+		position: absolute ;
+		top: 0px ;
+		width: 320px ;
+
+		&--col1 {
+			left: 0px ;
+		}
+
+		&--col2 {
+			left: 400px ;
+		}
+
+		&--col3 {
+			right: 0px ;
+		}
+	}
+}
+
+.project-type {
+	background-color: #FFFFFF ;
+	display: block ;
+	padding: 1px 0px 1px 0px ;
+	text-align: center ;
+	text-decoration: none ;
+	width: 320px ;
+
+	&__thumbnail {
+		background-color: #F0F0F0 ;
+		border-radius: 10px 10px 10px 10px ;
+		display: block ;
+		height: 222px ;
+		margin: 10px 10px 30px 10px ;
+		width: 300px ;
+	}
+
+	&__name {
+		color: #596377 ;
+		display: block ;
+		font-size: 14px ;
+		font-weight: 700 ;
+		letter-spacing: 1.23px ;
+		line-height: 19px ;
+		margin-bottom: 20px ;
+		text-transform: uppercase ;
+	}
+
+	&__description {
+		color: #8B95A9 ;
+		display: block ;
+		font-size: 13px ;
+		line-height: 20px ;
+		margin-bottom: 30px ;
+	}
+
+	&__cta {
+		background-color: #FF3366 ;
+		border-radius: 40px 40px 40px 40px ;
+		color: #FFFFFF ;
+		display: block ;
+		font-size: 13px ;
+		font-weight: 600 ;
+		height: 40px ;
+		letter-spacing: 1.1px ;
+		line-height: 40px ;
+		margin: 0px auto 40px auto ;
+		text-transform: uppercase ;
+		width: 220px ;
+	}
+
+	&:hover {
+		box-shadow: 0px 10px 30px fade( #000000, 10% ), 0px -1px 1px 1px fade( #000000, 2% ) ;
+	}
+}
+
+.input {
+	border: 0px solid #A5ACBA ;
+	border-bottom-width: 1px ;
+	color: #434C5E ;
+	display: block ;
+	font-size: 30px ;
+	margin: 0px auto 40px auto ;
+	outline: 0px ;
+	padding: 16px 0px 16px 0px ;
+	text-align: center ;
+	width: 540px ;
+
+	&::placeholder {
+		color: #CCCCCC ;
+	}
+}
+
+.project-options {
+	list-style-type: none ;
+	margin: 0px auto 0px auto ;
+	padding: 0px 0px 30px 0px ;
+	width: 880px ;
+
+	&__item {
+		float: left ;
+		height: 173px ;
+		margin: 10px 10px 10px 10px ;
+		padding: 0px 0px 0px 0px ;
+		width: 200px ;
+	}
+
+	&:after {
+		clear: both ;
+		content: "" ;
+		display: table ;
+		height: 0px ;
+	}
+
+	&--length-3 {
+		width: 660px ;
+	}
+}
+
+.project-option {
+	display: block ;
+	height: 173px ;
+	padding-top: 1px ;
+	text-decoration: none ;
+	width: 200px ;
+
+	&__thumbnail {
+		background-color: #F0F0F0 ;
+		border-radius: 10px 10px 10px 10px ;
+		display: block ;
+		height: 120px ;
+		margin: 10px auto 10px auto ;
+		width: 180px ;
+	}
+
+	&__name {
+		color: #596377 ;
+		display: block ;
+		font-size: 14px ;
+		font-weight: 400 ;
+		line-height: 19px ;
+		text-align: center ;
+	}
+
+	&:hover {
+		box-shadow: 0px 10px 30px fade( #000000, 10% ), 0px -1px 1px 1px fade( #000000, 2% ) ;
+	}
+
+	&--on {
+		.project-option__thumbnail {
+			background-color: fade( #FF3366, 10% ) ;
+		}
+	}
+}
+
+.get-started {
+	background-color: #14B876 ;
+	border-radius: 44px 44px 44px 44px ;
+	color: #FFFFFF ;
+	display: block ;
+	font-size: 12px ;
+	font-weight: 600 ;
+	height: 44px ;
+	letter-spacing: 1px ;
+	line-height: 44px ;
+	margin: 0px auto 80px auto ;
+	text-align: center ;
+	text-decoration: none ;
+	text-transform: uppercase ;
+	width: 180px ;
+}

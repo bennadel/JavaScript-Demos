@@ -1,0 +1,31 @@
+
+<div class="header">
+	Send board to mobile device
+</div>
+
+<div class="description">
+	Send <strong>{{ parentView.board.name }}</strong> via SMS or visit the private 
+	URL on the mobile device to install this board directly to the device.
+</div>
+
+<form class="form">
+	
+	<label class="form__label">
+		Send Via SMS:
+	</label>
+
+	<div class="form__field">
+
+		<input autofocus class="form__input" />
+
+		<a class="form__button">
+			<span>Send</span>
+		</a>
+
+	</div>
+
+	<div class="form__url">
+		<strong>Share Url:</strong> {{ parentView.shareUrl }}
+	</div>
+
+</form>

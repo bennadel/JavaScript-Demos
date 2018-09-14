@@ -1,0 +1,165 @@
+
+:host {
+	background-color: fade( #323A45, 96% ) ;
+	bottom: 0px ;
+	display: flex ;
+	left: 0px ;
+	overflow: auto ;
+	position: absolute ;
+	right: 0px ;
+	top: 0px ;
+}
+
+.modal {
+	background-color: #F9F9FB ;
+	border-radius: 4px 4px 4px 4px ;
+	box-sizing: border-box ;
+	margin: auto auto auto auto ;
+	position: relative ;
+	width: 630px ;
+}
+
+.close {
+	color: #999999 ;
+	font-size: 20px ;
+	font-weight: 600 ;
+	height: 50px ;
+	line-height: 50px ;
+	position: absolute ;
+	right: 0px ;
+	text-align: center ;
+	text-decoration: none ;
+	top: 0px ;
+	transition: color 200ms ease ;
+	width: 50px ;
+	z-index: 1 ;
+
+	&:after {
+		content: "\2715" ;
+	}
+
+	&:hover {
+		color: #000000 ;
+	}
+}
+
+.header {
+	background-color: #FFFFFF ;
+	border-bottom: 1px solid #EAECF1 ;
+	border-radius: 4px 4px 0px 0px ;
+	padding: 50px 0px 35px 0px ;
+
+	&__title {
+		color: #464D5D ;
+		font-size: 28px ;
+		font-weight: 600 ;
+		line-height: 33px ;
+		margin: 0px 0px 30px 0px ;
+		text-align: center ;
+	}
+
+	&__input {
+		border: 1px solid #DEE3E9 ;
+		box-sizing: border-box ;
+		display: block ;
+		font-size: 14px ;
+		font-weight: 400 ;
+		margin: 0px auto 0px auto ;
+		padding: 15px 18px 15px 18px ;
+		width: 550px; ;
+	}
+}
+
+.body {
+	border-radius: 0px 0px 4px 4px ;
+}
+
+.users {
+	height: 223px ;
+	list-style-type: none ;
+	margin: 0px 0px 0px 0px ;
+	overflow-y: auto ;
+	padding: 35px 40px 40px 40px ;
+
+	&__item {
+		border-bottom: 1px solid #DEE3E9 ;
+		margin: 0px 0px 0px 0px ;
+
+		&:first-child {
+			border-top-width: 0px ;
+		}
+	}
+}
+
+.user-toggle {
+	align-items: center ;
+	cursor: pointer ;
+	display: flex ;
+	padding: 14px 0px 14px 0px ;
+	text-decoration: none ;
+
+	&__avatar {
+		flex: 0 0 auto ;
+		margin-right: 13px ;
+	}
+
+	&__name {
+		color: #7E8890 ;
+		flex: 1 1 100% ;
+		font-size: 16px ;
+		font-weight: 400 ;
+	}
+
+	&__checkbox {
+		align-items: center ;
+		background-color: #FFFFFF ;
+		border: 1px solid #DADADA ;
+		border-radius: 100% ;
+		color: #DADADA ;
+		display: flex ;
+		font-size: 21px ;
+		flex: 0 0 auto ;
+		justify-content: center ;
+		height: 31px ;
+		width: 31px ;
+	}
+
+	&--on {
+		.user-toggle {
+			&__name {
+				color: #6CBB7D ;
+			}
+
+			&__checkbox {
+				border-color: #6CBB7D ;
+				color: #6CBB7D ;
+				font-weight: 600 ;
+			}
+		}
+	}
+}
+
+.footer {
+	padding: 40px 0px 40px 0px ;
+
+	&__update {
+		background-color: #64BA76 ;
+		border: 1px solid #4BA75E ;
+		border-radius: 3px 3px 3px 3px ;
+		color: #FFFFFF ;
+		display: block ;
+		font-size: 14px ;
+		font-weight: 600 ;
+		margin: 0px auto 0px auto ;
+		padding: 16px 0px 15px 0px ;
+		text-align: center ;
+		text-decoration: none ;
+		text-transform: uppercase ;
+		width: 183px ;
+
+		&:hover {
+			background-color: #7EC58D ;
+		}
+	}
+}
+

@@ -1,0 +1,237 @@
+
+:host {
+	display: block ;
+}
+
+.intro {
+	height: 590px ;
+	position: relative ;
+
+	&__hero {
+		background-color: #1A212C ;
+		bottom: 0px ;
+		left: 0px ;
+		position: absolute ;
+		right: 0px ;
+		top: -60px ;
+		z-index: 1 ;
+	}
+
+	&__call-to-action {
+		padding-top: 170px ;
+		position: relative ;
+		z-index: 2 ;
+	}
+
+	&__title {
+		color: #FFFFFF ;
+		font-size: 42px ;
+		font-weight: 300 ;
+		line-height: 58px ;
+		margin: 0px 0px 34px 0px ;
+		text-align: center ;
+	}
+
+	&__button {
+		background-color: #FC3768 ;
+		border-radius: 55px 55px 55px 55px ;
+		color: #FFFFFF ;
+		display: block ;
+		font-size: 14px ;
+		font-weight: 400 ;
+		height: 55px ;
+		line-height: 55px ;
+		margin: 0px auto 0px auto ;
+		text-align: center ;
+		text-decoration: none ;
+		text-transform: uppercase ;
+		width: 210px ;
+	}
+}
+
+.nav {
+	display: flex ;
+	justify-content: center ;
+	margin: 0px auto 0px auto ;
+
+	&__item {
+		border-top: 2px solid transparent ;
+		color: #7E8890 ;
+		font-size: 13px ;
+		font-weight: 600 ;
+		letter-spacing: 0.5px ;
+		margin: 0px 25px 0px 25px ;
+		padding: 16px 0px 16px 0px ;
+		text-decoration: none ;
+		text-transform: uppercase ;
+
+		&--on {
+			border-color: #FC3768 ;
+			color: #464D5D ;
+		}
+	}
+}
+
+.section {
+	margin: 57px auto 0px auto ;
+	text-align: center ;
+	width: 1170px ;
+
+	&:first-of-type {
+		margin-top: 87px ;
+	}
+
+	&__title {
+		color: #1F2532 ;
+		font-size: 35px ;
+		font-weight: 300 ;
+		line-height: 40px ;
+		margin: 0px 0px 15px 0px ;
+	}
+
+	&__description {
+		color: #7E8890 ;
+		font-size: 16px ;
+		font-weight: 400 ;
+		line-height: 21px ;
+		margin: 0px 0px 43px 0px ;
+	}
+}
+
+.tutorials {
+	display: flex ;
+	flex-wrap: wrap ;
+	justify-content: space-between ;
+	list-style-type: none ;
+	margin: 0px 0px 0px 0px ;
+	padding: 0px 0px 0px 0px ;
+
+	&__item {
+		height: 285px ;
+		margin: 0px 0px 30px 0px ;
+		padding: 0px 0px 0px 0px ;		
+		position: relative ;
+		width: 368px ;
+	}
+}
+
+.tutorial {
+	border-radius: 3px 3px 3px 3px ;
+	bottom: 0px ;
+	box-shadow: 0px 1px 2px fade( #2B3B5D, 30% ) ;
+	display: flex ;
+	flex-direction: column ;
+	left: 0px ;
+	position: absolute ;
+	right: 0px ;
+	text-decoration: none ;
+	top: 0px ;
+
+	&__thumb {
+		background-color: #5C6270 ;
+		border-radius: 3px 3px 0px 0px ;
+		display: flex ;
+		flex: 1 1 100% ;
+		transition: background-color ease 200ms ;
+	}
+
+	&__play {
+		background-color: #FC3768 ;
+		border-radius: 54px 54px 54px 54px ;
+		color: #FFFFFF ;
+		height: 54px ;
+		line-height: 54px ;
+		margin: auto auto auto auto ;
+		width: 54px ;
+	}
+
+	&__name {
+		background-color: #FFFFFF ;
+		border-radius: 0px 0px 3px 3px ;
+		border-top: 1px solid #EAEAEA ;
+		color: #47506E ;
+		flex: 1 0 auto ;
+		font-size: 18px ;
+		font-weight: 400 ;
+		padding: 25px 10px 26px 10px ;
+		text-align: center ;
+	}
+
+	&:hover {
+		.tutorial {
+			&__thumb {
+				background-color: #3F434E ;
+			}
+		}
+	}
+}
+
+.faqs {
+	display: flex ;
+	flex-wrap: wrap ;
+	justify-content: space-between ;
+	list-style-type: none ;
+	margin: 0px 0px 0px 0px ;
+	padding: 0px 0px 0px 0px ;
+
+	&__item {
+		display: flex ;
+		justify-content: stretch ;
+		height: 200px ;
+		margin: 0px 0px 30px 0px ;
+		padding: 0px 0px 0px 0px ;
+		width: 368px ;
+	}
+}
+
+.faq {
+	border-radius: 3px 3px 3px 3px ;
+	background-color: #FFFFFF ;
+	box-shadow: 0px 1px 2px fade( #2B3B5D, 29% ) ;
+	display: flex ;
+	flex: 1 0 auto ;
+	text-decoration: none ;
+
+	&__name {
+		color: #47506E ;
+		font-size: 16px ;
+		font-weight: 400 ;
+		line-height: 28px ;
+		margin: auto auto auto auto ;
+		max-width: 300px ;
+	}
+}
+
+.more-faqs {
+	border-radius: 3px 3px 3px 3px ;
+	background-color: #F9F9F9 ;
+	border: 1px solid #DADADA ;
+	display: flex ;
+	flex: 1 0 auto ;
+	text-decoration: none ;
+
+	&__name {
+		color: #47506E ;
+		font-size: 16px ;
+		font-weight: 400 ;
+		line-height: 28px ;
+		margin: auto auto auto auto ;
+		max-width: 300px ;
+	}
+}
+
+.webinar {
+	background-color: #ECECF1 ;
+	color: #5F697A ;
+	font-size: 18px ;
+	font-weight: 400 ;
+	line-height: 23px ;
+	margin: 50px 0px 0px 0px ;
+	padding: 40px 0px 40px 0px ;
+	text-align: center ;
+
+	a {
+		color: #347CBB ;
+		text-decoration: none ;
+	}
+}

@@ -1,0 +1,89 @@
+
+:host {
+	background-color: #FFFFFF ;
+	bottom: 0px ;
+	display: flex ;
+	left: 0px ;
+	position: absolute ;
+	right: 0px ;
+	top: 0px ;
+}
+
+.sidebar-column {
+	position: relative ;
+	flex: 1 1 auto ;
+	width: 22% ;
+}
+
+.content-column {
+	box-sizing: border-box ;
+	display: flex ;
+	flex: 1 1 auto ;
+	padding: 20px 20px 20px 20px ;
+	overflow: auto ;
+	width: 78% ;
+
+	&__content {
+		margin: auto auto auto auto ;
+	}
+}
+
+.in {
+	background-color: #3D3D3F ;
+	border-radius: 3px 3px 3px 3px ;
+	color: #FFFFFF ;
+	font-size: 26px ;
+	font-weight: 600 ;
+	height: 40px ;
+	line-height: 40px ;
+	left: 40px ;
+	position: absolute ;
+	text-align: center ;
+	text-decoration: none ;
+	top: 40px ;
+	width: 40px ;
+	z-index: 2 ;
+}
+
+.testimonials {
+	background-color: #F0F0F0 ;
+	bottom: 0px ;
+	left: 0px ;
+	position: absolute ;
+	right: 0px ;
+	top: 0px ;
+	z-index: 1 ;
+
+	&__content {
+		bottom: 45px ;
+		color: #333333 ;
+		left: 40px ;
+		position: absolute ;
+		right: 40px ;
+	}
+
+	&__quote {
+		font-size: 14px ;
+		font-style: italic ;
+		font-weight: 400 ;
+		line-height: 24px ;
+		margin-bottom: 40px ;
+	}
+
+	&__customer {
+		font-size: 11px ;
+		font-weight: 600 ;
+		letter-spacing: 1px ;
+		line-height: 16px ;
+		margin-bottom: 15px ;
+		text-transform: uppercase ;
+	}
+
+	&__company {
+		font-size: 20px ;
+		font-weight: 600 ;
+		letter-spacing: 1px ;
+		line-height: 22px ;
+		text-transform: uppercase ;
+	}
+}

@@ -1,0 +1,30 @@
+
+<!-- BEGIN: Loading State. -->
+<ng-template [ngIf]="isLoading">
+
+	<app-loading-indicator class="loading"></app-loading-indicator>
+
+</ng-template>
+<!-- END: Loading State. -->
+
+
+<!-- BEGIN: Loaded State. -->
+<ng-template [ngIf]="! isLoading">
+
+	<header class="header">
+
+		<a [routerLink]="[ '/app/projects/list', { filterType: 'freehand' } ]" class="header__in">in</a>
+
+		<div class="header__title">
+			{{ freehand.name }}
+		</div>
+
+	</header>
+
+	<p class="teaser">
+		( This page opens in an entirely different system in production &mdash;
+		<a [routerLink]="[ '/app/projects/list', { filterType: 'freehand' } ]" class="teaser__back">go back</a> )
+	</p>
+
+</ng-template>
+<!-- END: Loaded State. -->

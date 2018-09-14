@@ -1,0 +1,211 @@
+
+:host {
+	background-color: #F9F9FB ;
+	display: block ;
+	min-height: 100vh ;
+
+	// The min-height of 100vh causes some unexpected margin-collapsing. This will prevent
+	// some of that unexpected behavior.
+	&:after {
+		content: "" ;
+		display: table ;
+		height: 0px ;
+	}
+}
+
+.nav {
+	background-color: #1F2532 ;
+
+	&__inner {
+		display: flex ;
+		height: 60px ;
+		margin: 0px auto 0px auto ;
+		position: relative ;
+		width: 1170px ;
+	}
+
+	&__logo {
+		color: #79808F ;
+		cursor: pointer ;
+		font-size: 18px ;
+		font-weight: 600 ;
+		height: 60px ;
+		line-height: 58px ;
+		position: absolute ;
+		left: -60px ;
+		text-align: center ;
+		top: 0px ;
+		width: 40px ;
+	}
+
+	&__primary {
+		flex: 1 0 auto ;
+	}
+
+	&__secondary {
+		flex: 0 0 auto ;
+	}
+
+	// -- Variations.
+
+	&--learn {
+		background-color: transparent ;
+		position: relative ;
+		z-index: 50 ; // Same z-index as the dropdown menu.
+	}
+}
+
+.primary {
+	&__item {
+		color: #757B8C ;
+		cursor: pointer ;
+		font-size: 13px ;
+		font-weight: 600 ;
+		height: 60px ;
+		line-height: 60px ;
+		padding: 0px 20px 0px 20px ;
+		text-decoration: none ;
+		text-transform: uppercase ;
+		transition: color 100ms ease ;
+			-moz-transition: color 100ms ease ;
+			-webkit-transition: color 100ms ease ;
+		
+		&:first-of-type {
+			padding-left: 0px ;
+		}
+
+		&:hover {
+			color: #ACB1BE ;
+		}
+
+		// -- Variations.
+
+		&--on {
+			color: #ACB1BE ;
+		}
+	}
+}
+
+.secondary {
+	&__item {
+		color: #757B8C ;
+		cursor: pointer ;
+		font-size: 13px ;
+		font-weight: 600 ;
+		height: 60px ;
+		line-height: 60px ;
+		padding: 0px 20px 0px 20px ;
+		text-decoration: none ;
+		text-transform: uppercase ;
+		transition: color 100ms ease ;
+			-moz-transition: color 100ms ease ;
+			-webkit-transition: color 100ms ease ;
+		
+		&:last-of-type {
+			padding-right: 0px ;
+		}
+
+		&:hover {
+			color: #ACB1BE ;
+		}
+	}
+}
+
+.arrow-down {
+	font-size: 10px ;
+}
+
+.user-dropdown {
+	background-color: #FFFFFF ;
+	border-radius: 3px 3px 3px 3px ;
+	box-shadow: 0px 0px 1px fade( #4C5667, 25% ), 0px 2px 18px fade( #1F2532, 32% ) ;
+	padding: 34px 34px 34px 34px ;
+	position: absolute ;
+	right: -34px ;
+	top: 60px ;
+	width: 272px ;
+	z-index: 50 ;
+
+	&__badge {
+		display: flex ;
+	}
+
+	&__avatar {
+		flex: 0 0 74px ;
+		margin-right: 17px ;
+
+		img {
+			border-radius: 3px 3px 3px 3px ;
+			display: block ;
+			height: 74px ;
+			width: 74px ;
+		}
+	}
+
+	&__details {
+		flex: 1 0 auto ;
+	}
+
+	&__name {
+		color: #4B5362 ;
+		font-size: 16px ;
+		font-weight: 400 ;
+		line-height: 21px ;
+	}
+
+	&__email {
+		color: #8799B6 ;
+		font-size: 12px ;
+		line-height: 17px ;
+		margin-bottom: 9px ;
+	}
+
+	&__profile {
+		background-color: #FF4070 ;
+		border-radius: 2px 2px 2px 2px ;
+		color: #FFFFFF ;
+		display: block ;
+		font-size: 10px ;
+		font-weight: 600 ;
+		letter-spacing: 0.4px ;
+		line-height: 28px ;
+		text-align: center ;
+		text-decoration: none ;
+		text-transform: uppercase ;
+		width: 113px ;
+	}
+
+	&__menu {
+		border-top: 1px solid #E8E9EA ;
+		margin-top: 24px ;
+		padding-top: 12px ;
+
+		&-item {
+			color: #6F7685 ;
+			display: block ;
+			font-size: 12px ;
+			font-weight: 400 ;
+			letter-spacing: 0.8px ;
+			line-height: 17px ;
+			padding: 8px 0px 8px 0px ;
+			text-decoration: none ;
+			text-transform: uppercase ;
+		}
+	}
+}
+
+.help {
+	background-color: #191D28 ;
+	border-radius: 40px 40px 40px 40px ;
+	bottom: 30px ;
+	color: #FFFFFF ;
+	cursor: pointer ;
+	font-size: 16px ;
+	font-weight: 600 ;
+	height: 38px ;
+	line-height: 38px ;
+	padding: 0px 20px 0px 20px ;
+	position: fixed ;
+	right: 25px ;
+	text-decoration: none ;
+}

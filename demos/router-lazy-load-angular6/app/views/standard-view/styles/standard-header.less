@@ -1,0 +1,106 @@
+
+.m-standard-header {
+	background-color: #1F2532 ; 
+	display: block ;
+	position: relative ;
+
+	&__container {
+		margin: 0px auto 0px auto ;
+		padding: 25px 0px 48px 0px ;
+		position: relative ;
+		width: 1170px ;
+
+		// -- Variations.
+
+		&--with-nav {
+			padding-bottom: 0px ;
+		}
+	}
+
+	&__logo {
+		border-right: 1px solid #2C3242 ;
+		color: #FFFFFF ;
+		cursor: pointer ;
+		font-size: 30px ;
+		font-weight: 600 ;
+		height: 36px ;
+		line-height: 36px ;
+		outline: 0px ;
+		padding-right: 20px ;
+		position: absolute ;
+		left: -84px ;
+		text-align: center ;
+		top: 25px ;
+		width: 40px ;
+	}
+
+	&__title {
+		color: #FFFFFF ;
+		font-size: 32px ;
+		font-weight: 300 ;
+		line-height: 36px ;
+		margin: 0px 0px 0px 0px ;
+	}
+
+	&__nav {
+		margin-left: -20px ;
+		margin-top: 30px ;
+
+		&:after {
+			clear: both ;
+			content: "" ;
+			display: table ;
+		}
+	}
+
+	&__nav-item {
+		color: #898F9A ;
+		float: left ;
+		font-size: 13px ;
+		font-weight: 400 ;
+		letter-spacing: 0.8px ;
+		margin-right: 10px ;
+		padding: 10px 20px 18px 20px ;
+		position: relative ;
+		text-decoration: none ;
+		text-transform: uppercase ;
+		transition: color 100ms ease ;
+			-moz-transition: color 100ms ease ;
+			-webkit-transition: color 100ms ease ;
+
+		&:hover {
+			color: #ACB1BE ;
+		}
+
+		// -- Variations.
+	
+		&--on {
+			color: #F9F9FB ;
+
+			&:after {
+				background-color: #FF3366 ;
+				bottom: 0px ;
+				content: "" ;
+				height: 2px ;
+				left: 0px ;
+				position: absolute ;
+				right: 0px ;
+			}
+
+			&:hover {
+				color: #F9F9FB ;
+			}
+		}	
+	}
+} // END: m-standard-header.
+
+.m-standard-body {
+	display: block ;
+
+	&__container {
+		margin: 0px auto 0px auto ;
+		padding-top: 50px ;
+		position: relative ;
+		width: 1170px ;
+	}
+} // END: m-standard-body.

@@ -1,0 +1,79 @@
+
+:host {
+	background-color: #FAFAFA ;
+	border-radius: 2px 2px 2px 2px ;
+	box-shadow: 0px -1px 1px fade( #000000, 5% ), 0px 1px 2px fade( #000000, 20% ) ;
+	box-sizing: border-box ;
+	display: block ;
+	position: relative ;
+	transition: all 200ms ease ;
+
+	&:hover {
+		box-shadow: 0px 0px 13px fade( #000000, 10% ), 0px 1px 2px fade( #000000, 25% ) ;
+	}
+}
+
+.link {
+	bottom: 0px ;
+	left: 0px ;
+	position: absolute ;
+	right: 0px ;
+	top: 0px ;
+
+	&__cta {
+		border: 1px solid #CCCCCC ;
+		border-radius: 36px 36px 36px 36px ;
+		color: #333333 ;
+		font-size: 12px ;
+		font-weight: 400 ;
+		height: 36px ;
+		left: 50% ;
+		line-height: 36px ;
+		margin-left: -84px ;
+		opacity: 0 ;
+		position: absolute ;
+		text-align: center ;
+		text-transform: uppercase ;
+		top: 62px ;
+		transition: all 200ms ease ;
+		width: 166px ;
+
+		&:hover {
+			background-color: #1FC281 ;
+			border-color: #1FC281 ;
+			color: #FFFFFF ;
+		}
+	}
+
+	&__footer {
+		background-color: #FFFFFF ;
+		border-radius: 0px 0px 2px 2px ;
+		border-top: 1px solid #EAEAEA ;
+		bottom: 0px ;
+		height: 90px ;
+		left: 0px ;
+		position: absolute ;
+		right: 0px ;
+	}
+
+	&__name {
+		bottom: 30px ;
+		color: #333333 ;
+		font-size: 16px ;
+		max-width: 65% ;
+		left: 28px ;
+		line-height: 22px ;
+		overflow: hidden ;
+		position: absolute ;
+		text-overflow: ellipsis ;
+		white-space: nowrap ;
+	}
+
+	// -- Variations.
+
+	&:hover {
+		.link__cta {
+			opacity: 1 ;
+		}
+	}
+}
