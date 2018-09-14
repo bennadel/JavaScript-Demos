@@ -1,0 +1,16 @@
+
+<p>
+	Hello from aside.
+</p>
+
+<p>
+	<a [routerLink]="[ '/app', { outlets: { aside: null } } ]">Close aside</a>
+</p>
+
+<p>
+	<a routerLink="./tab-1">Tab 1</a> &mdash;
+	<a routerLink="./tab-2">Tab 2</a> &mdash;
+	<a routerLink="./">Close</a>
+</p>
+
+<router-outlet></router-outlet>

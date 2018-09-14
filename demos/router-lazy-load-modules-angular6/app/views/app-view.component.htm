@@ -1,0 +1,14 @@
+
+App View
+
+<p>
+	<a routerLink="/app/">Home</a> &mdash;
+	<a routerLink="/app/feature-a">Feature A</a> &mdash;
+	<a routerLink="/app/feature-b">Feature B</a> &mdash;
+	<a routerLink="/app/feature-c">Feature C</a> &mdash;
+	<a [routerLink]="[ '/app', { outlets: { aside: 'aside' } } ]">Aside</a>
+</p>
+
+<router-outlet></router-outlet>
+
+<router-outlet name="aside"></router-outlet>
