@@ -1,0 +1,186 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Updating InVision Router Experiment To Use Lazy Loading Feature Modules In Angular 6.1.9
+	</title>
+
+	<style type="text/css">
+		html {
+			margin: 0px 0px 0px 0px ;
+			min-height: 100vh ;
+			padding: 0px 0px 0px 0px ;
+		}
+
+		body {
+			font-family: "Open Sans", sans-serif ;
+			font-size: 16px ;
+			font-smoothing: antialiased ;
+				-webkit-font-smoothing: antialiased ;
+			font-weight: 300 ;
+			margin: 0px 0px 0px 0px ;
+			min-height: 100vh ;
+			padding: 0px 0px 0px 0px ;
+		}
+	</style>
+</head>
+<body>
+
+	<style type="text/css" class="preloader">
+
+		.splash {
+			background-color: #181D28 ;
+			bottom: 0px ;
+			left: 0px ;
+			opacity: 1.0 ;
+			position: fixed ;
+			right: 0px ;
+			top: 0px ;
+			transition: all linear 300ms ;
+				-webkit-transition: all linear 300ms ;
+			z-index: 999999 ;
+		}
+
+		.splash.loaded {
+			opacity: 0.0 ;
+		}
+
+		.splash__logo {
+			background-color: #0D1016 ;
+			border-radius: 20px 20px 20px 20px ;
+			color: #FFFFFF ;
+			font-size: 64px ;
+			left: 50% ;
+			padding: 17px 40px 17px 40px ;
+			position: absolute ;
+			text-align: center ;
+			top: 50% ;
+			transform: translateX( -50% ) translateY( -50% ) ;
+				-moz-transform: translateX( -50% ) translateY( -50% ) ;
+				-webkit-transform: translateX( -50% ) translateY( -50% ) ;
+		}
+
+		.splash__warning {
+			animation: pulse 2s infinite ;
+			bottom: 50px ;
+			color: #9EA1A7 ;
+			font-size: 18px ;
+			left: 0px ;
+			position: absolute ;
+			right: 0px ;
+			text-align: center ;
+		}
+
+		@keyframes pulse {
+			0%, 
+			100% {
+				opacity: 0.5 ;
+			}
+			50% {
+				opacity: 1.0 ;
+			}
+		}
+
+	</style>
+
+	<div class="splash preloader">
+		<div class="splash__logo">
+			in
+		</div>
+		<div class="splash__warning">
+			loading components&hellip;
+		</div>
+	</div>
+
+	<script type="text/javascript" class="preloader">
+		(function listenForAppReadyEvent() {
+
+			// Gather DOM references.
+			var splash = document.querySelector( ".splash" );
+			var preloaders = document.querySelectorAll( ".preloader" );
+
+			// Listen for our "appready" message event.
+			window.addEventListener( "message", handleMessage, false );
+
+			// ----------------------------------------------------------------------- //
+			// ----------------------------------------------------------------------- //
+
+			// I handle "message" events on the current window.
+			function handleMessage( event ) {
+
+				if ( event.data === "appready" ) {
+
+					console.log( "AppReady event received!" );
+					window.removeEventListener( "message", handleMessage, false );
+					removeSplashScreen();
+
+				}
+
+				// NOTE ON SECURITY: According to the documentation on postMessage(), you
+				// should always test the Origin and [optionally] the Source attributes
+				// of the "message" event in order to make sure the event is coming from
+				// the expected place. However, for something as innocuous as the
+				// "splash page", I'm omitting such a security check. Since this handler
+				// does nothing but remove DOM elements from the static portion of the
+				// page, there's no security risk here that I can see. Such a test would
+				// add unnecessary complexity. That said, testing the origin is a best
+				// practice that should be done with anything that involves passing
+				// around sensitive data.
+
+			}
+
+			// I remove the splash screen and elements from the DOM, exposing the loaded
+			// application beneath them.
+			function removeSplashScreen() {
+
+				splash.classList.add( "splash--loaded" );
+
+				// Once the splash screen has been faded-out, let's rip all of the
+				// preloader-related DOM elements out of the document.
+				setTimeout(
+					function removeDomElements() {
+
+						for ( var i = 0 ; i < preloaders.length ; i++ ) {
+
+							var item = preloaders[ i ];
+							item.parentNode.removeChild( item );
+
+						}
+
+					},
+					500
+				);
+
+			}
+
+		})();
+	</script>
+
+
+	<my-app>
+		<p>
+			<em>Loading files...</em>
+		</p>
+
+		<p>
+			npm Run Scripts:
+		</p>
+
+		<ul>
+			<li>
+				<strong>npm run build</strong> &mdash; Compiles the .ts file into bundles.
+			</li>
+			<li>
+				<strong>npm run watch</strong> &mdash; Compiles the .ts file into bundles and then watches files for changes.
+			</li>
+		</ul>
+	</my-app>
+
+
+	<!-- Load the fonts AFTER the loading screen is flushed. -->
+	<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700"></link>
+
+</body>
+</html>

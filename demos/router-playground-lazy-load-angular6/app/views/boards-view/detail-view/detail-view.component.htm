@@ -1,0 +1,100 @@
+
+
+<!-- BEGIN: Loading State. -->
+<ng-template [ngIf]="isLoading">
+
+	<app-loading-indicator class="loading"></app-loading-indicator>
+
+</ng-template>
+<!-- END: Loading State. -->
+
+
+<!-- BEGIN: Loaded State. -->
+<ng-template [ngIf]="! isLoading">
+
+	<div class="header">
+
+		<span class="header__top-spacer"></span>
+
+		<div class="header__marquee marquee">
+
+			<h1 class="marquee__title">
+				{{ board.name }}
+			</h1>
+
+			<div class="marquee__description">
+				Add a description here...
+			</div>
+
+			<div class="marquee__members">
+				
+				<a [routerLink]="[ '/app', { outlets: { modal: [ 'modal', 'board-members', board.id ] } } ]" class="member-actions">
+					<span class="member-actions__plus">+</span>
+
+					<app-avatar
+						*ngFor="let member of members"
+						[initials]="member.initials"
+						[src]="member.avatarUrl"
+						[title]="member.name"
+						class="member-actions__avatar">
+					</app-avatar>
+				</a>
+
+			</div>
+
+		</div>
+
+		<span class="header__bottom-spacer"></span>
+
+
+		<a [routerLink]="[ '/app/projects/list', { filterType: 'board' } ]" class="header__in">in</a>
+
+		<div class="header__tools tools">
+			
+			<!--
+			<a
+				[routerLink]="[ '/app', { outlets: { modal: [ 'modal', 'board-settings', board.id ] } } ]"
+				class="tools__item">
+				S
+			</a>
+
+			<a class="tools__item">
+				C
+			</a>
+			-->
+			
+			<a
+				[routerLink]="[ '/app', { outlets: { modal: [ 'modal', 'share-board', board.id ] } } ]"
+				class="tools__item">
+				S
+			</a>
+
+		</div>
+
+	</div>
+
+	<div class="content">
+
+		<ul class="items">
+			<li *ngFor="let item of items" class="items__item">
+
+				<a routerLink="./items/{{ item.id }}" class="item">
+					<span class="item__preview">
+						<br />
+					</span>
+					<span class="item__name">
+						{{ item.name }}
+					</span>
+				</a>
+
+			</li>
+		</ul>
+
+	</div>
+
+	<router-outlet></router-outlet>
+
+</ng-template>
+<!-- END: Loaded State. -->
+
+

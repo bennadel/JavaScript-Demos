@@ -1,0 +1,30 @@
+
+<div class="description">
+	You are about to share the prototype, <strong>{{ parentView.prototype.name }}</strong>. 
+	This will give other people access to your prototype content.
+</div>
+
+<form class="form">
+	
+	<label class="form__label">
+		Copy This Priavte URL To Share:
+	</label>
+
+	<div class="form__field">
+		
+		<input 
+			#input
+			[value]="parentView.shareUrl"
+			(click)="input.select()"
+			readonly
+			autofocus
+			class="form__input"
+		/>
+
+		<a class="form__button">
+			<span>Copy</span>
+		</a>
+
+	</div>
+
+</form>

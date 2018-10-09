@@ -1,0 +1,158 @@
+
+@headerHeight: 80px ;
+
+:host {
+	bottom: 0px ;
+	left: 0px ;
+	position: absolute ;
+	top: 0px ;
+}
+
+.list-panel {
+	animation: threads-view-list-panel-enter 200ms ;
+	background-color: #F6F6F6 ;
+	bottom: 0px ;
+	left: 0px ;
+	position: absolute ;
+	top: 0px ;
+	width: 348px ;
+	z-index: 2 ; // Slides out OVER the detail-panel.
+}
+
+// CAUTION: @keyframes names are not scoped to the current component.
+@keyframes threads-view-list-panel-enter {
+	from {
+		left: -348px ;
+	}
+	to {
+		left: 0px ;
+	}
+}
+
+.detail-panel {
+	animation: threads-view-detail-panel-enter 200ms ;
+	bottom: 0px ;
+	left: 348px ;
+	position: absolute ;
+	top: 0px ;
+	z-index: 1 ; // Slides out UNDER the list-panel.
+}
+
+// CAUTION: @keyframes names are not scoped to the current component.
+@keyframes threads-view-detail-panel-enter {
+	from {
+		left: 0px ;
+	}
+	to {
+		left: 348px ;
+	}
+}
+
+.loading {
+	height: 100% ;
+}
+
+.header {
+	background-color: #FFFFFF ;
+	border-bottom: 1px solid #E1E2E6 ;
+	height: @headerHeight ;
+	left: 0px ;
+	position: absolute ;
+	right: 0px ;
+	top: 0px ;
+
+	&__title {
+		color: #3D4356 ;
+		font-size: 14px ;
+		font-weight: 600 ;
+		left: 29px ;
+		line-height: @headerHeight ;
+		position: absolute ;
+		top: 0px ;
+		text-transform: uppercase ;
+	}
+}
+
+.notifications {
+	bottom: 0px ;
+	left: 0px ;
+	overflow: auto ;
+	position: absolute ;
+	right: 0px ;
+	top: @headerHeight ;
+
+	&__list {
+		list-style-type: none ;
+		margin: 0px 0px 0px 0px ;
+		padding: 0px 0px 0px 0px ;
+	}
+
+	&__item {
+		border-bottom: 1px solid #E1E2E6 ;
+	}
+
+	&__link {}
+}
+
+.notification {
+	display: block ;
+	padding: 15px 15px 15px 84px ;
+	position: relative ;
+	text-decoration: none ;
+
+	&__avatar {
+		background-color: #8D96AA ;
+		font-size: 12px ;
+		height: 35px ;
+		left: 30px ;
+		position: absolute ;
+		top: 35px ;
+		width: 35px ;
+	}
+
+	&__screen-name {
+		color: #8C96A9 ;
+		display: block ;
+		font-size: 11px ;
+		text-transform: uppercase ;
+	}
+
+	&__teaser {
+		color: #333C4E ;
+		display: block ;
+		font-size: 13px ;
+		font-weight: 400 ;
+		line-height: 19px ;
+		margin: 7px 0px 10px 0px ;
+	}
+
+	&__author {
+		color: #8C96A9 ;
+		display: block ;
+		font-size: 11px ;
+	}
+
+	// Variations.
+
+	&--on {
+		background-color: #1E81D6 ;
+
+		.notification {
+			&__avatar {
+				background-color: #78B3E6 ;
+			}
+
+			&__screen-name {
+				color: #85B5DE ;
+			}
+
+			&__teaser {
+				color: #FFFFFF ;
+			}
+
+			&__author {
+				color: #85B5DE ;
+			}
+		}
+	}
+}

@@ -1,0 +1,26 @@
+
+<ul class="boards">
+	<li *ngFor="let board of parentView.boards" class="boards__item">
+
+		<a 
+			(click)="parentView.toggleBoard( board )"
+			class="toggle"
+			[class.toggle--on]="parentView.selectedBoards[ board.id ]">
+
+			<span class="toggle__details">
+				<span class="toggle__name">
+					{{ board.name }}
+				</span>
+				<span class="toggle__date">
+					Last updated some time ago.
+				</span>
+			</span>
+
+			<span class="toggle__checkbox">
+				+
+			</span>
+
+		</a>
+
+	</li>
+</ul>

@@ -1,0 +1,76 @@
+
+<div class="modal">
+
+	<a [routerLink]="[ '/app', { outlets: { modal: null } } ]" class="close"></a>
+
+
+	<!-- BEGIN: Loading State. -->
+	<ng-template [ngIf]="isLoading">
+
+		<app-loading-indicator class="loading"></app-loading-indicator>
+
+	</ng-template>
+	<!-- END: Loading State. -->
+
+
+	<!-- BEGIN: Loaded State. -->
+	<ng-template [ngIf]="! isLoading">
+
+		<header class="header">
+			
+			<h1 class="header__title">
+				Add or Remove Board Members
+			</h1>
+
+			<input
+				type="text" 
+				name="filterText"
+				[(ngModel)]="filterText" 
+				(ngModelChange)="handleFilter()" 
+				placeholder="Search {{ users.length }} connections..." 
+				autocomplete="off"
+				class="header__input" 
+			/>
+
+		</header>
+
+		<section class="body">
+			
+			<ul class="users">
+				<li *ngFor="let user of users" [appShowBlock]="renderedUsers[ user.id ]" class="users__item">
+
+					<a (click)="toggleUser( user )" class="user-toggle" [class.user-toggle--on]="selectedUsers[ user.id ]">
+
+						<app-avatar
+							[initials]="user.initials"
+							[src]="user.avatarUrl"
+							class="user-toggle__avatar">
+						</app-avatar>
+
+						<span class="user-toggle__name">
+							{{ user.name }}
+						</span>
+
+						<span class="user-toggle__checkbox">
+							+
+						</span>
+
+					</a>
+
+				</li>
+			</ul>
+
+		</section>
+
+		<footer class="footer">
+
+			<a (click)="update()" class="footer__update">
+				Update
+			</a>
+
+		</footer>
+
+	</ng-template>
+	<!-- END: Loaded State. -->
+
+</div>

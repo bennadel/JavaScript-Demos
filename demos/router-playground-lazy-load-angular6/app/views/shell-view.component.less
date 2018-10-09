@@ -1,0 +1,78 @@
+
+:host {
+	display: block ;
+	font-family: "Open Sans", sans-serif ;
+	font-size: 16px ;
+	font-smoothing: antialiased ;
+		-webkit-font-smoothing: antialiased ;
+	font-weight: 300 ;
+	margin: 0px 0px 0px 0px ;
+	min-height: 100vh ;
+	padding: 0px 0px 0px 0px ;
+
+	// The min-height of 100vh causes some unexpected margin-collapsing. This will prevent
+	// some of that unexpected behavior.
+	&:after {
+		content: "" ;
+		display: table ;
+		height: 0px ;
+	}
+}
+
+// On a fast network connection, the lazy-loaded modules will load almost instantly. In
+// such a case, we don't want to bother showing the asynchronous loading indicator as it
+// will simply flash the UI and create a distracting user experience. As such, we want to
+// put a small delay on the "observability" of the loading indicator. This way, on a fast
+// connection, it will be removed before the delay is consumed; and, on a slower network
+// connection, it will be shown to the user soon after the asynchronous load starts.
+// --
+// CAUTION: keyframes are not "protected" by Angular's simulated encapsulation. As such,
+// this animation name needs to be universally unique to the application.
+@keyframes route-load-indicator-animation {
+	from {
+		opacity: 0.0 ;
+	}
+
+	to {
+		opacity: 1.0 ;
+	}
+}
+
+.route-load-indicator {
+	// Delay the animation for a fast network connection (so users don't see the loader).
+	animation-delay: 100ms ;
+	animation-duration: 200ms ;
+	animation-fill-mode: both ;
+	animation-name: route-load-indicator-animation ;
+	// --
+	background-color: #ffdc73 ;
+	border-radius: 5px 5px 5px 5px ;
+	box-shadow: 0px 2px 2px fade( #000000, 20% ) ;
+	color: #000000 ;
+	font-family: monospace ;
+	font-size: 16px ;
+	left: 50% ;
+	padding: 7px 15px 7px 15px ;
+	position: fixed ;
+	text-transform: lowercase ;
+	top: 10px ;
+	transform: translateX( -50% ) ;
+	z-index: 104 ;
+}
+
+// Global styles - these will be accessible to all views of the application.
+
+::ng-deep {
+	a {
+		cursor: pointer ;
+		text-decoration: underline ;
+	}
+
+	input,
+	select,
+	textarea {
+		font-family: "Open Sans", sans-serif ;
+		font-size: 16px ;
+		font-weight: 300 ;
+	}
+}

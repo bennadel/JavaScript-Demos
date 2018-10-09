@@ -1,0 +1,59 @@
+
+<div class="nav" [class.nav--learn]="learn.isActive">
+	<nav class="nav__inner">
+		
+		<span *ngIf="learn.isActive" routerLink="/" class="nav__logo">
+			in
+		</span>
+
+		<nav class="nav__primary primary">
+			<a routerLink="/app/projects" class="primary__item" routerLinkActive="primary__item--on">Projects</a>
+			<a routerLink="/app/activity" class="primary__item" routerLinkActive="primary__item--on">Activity</a>
+			<a routerLink="/app/people" class="primary__item" routerLinkActive="primary__item--on">People</a>
+			<a routerLink="/app/learn" #learn="routerLinkActive" class="primary__item" routerLinkActive="primary__item--on">Learn</a>
+			<a routerLink="/app/dsm" class="primary__item" routerLinkActive="primary__item--on">DSM ( disabled )</a>
+		</nav>
+
+		<nav class="nav__secondary secondary">
+			<a [routerLink]="[ '/app', { outlets: { inbox: 'inbox' } } ]" class="secondary__item">Inbox</a>
+			<a (click)="toggleUserDropdown()" class="secondary__item userDropdownTrigger">{{ user.name }} <span class="arrow-down">▼</span></a>
+		</nav>
+
+		<div 
+			*ngIf="isShowingUserDropdown"
+			(mousedownoutside)="hideUserDropdown()"
+			data-ignoreMousedownOutside="a.userDropdownTrigger"
+			class="user-dropdown">
+
+			<div class="user-dropdown__badge">
+				<div class="user-dropdown__avatar">
+					<img [src]="user.avatarUrl" />
+				</div>
+				<div class="user-dropdown__details">
+					<div class="user-dropdown__name">
+						{{ user.name }}
+					</div>
+					<div class="user-dropdown__email">
+						{{ user.email }}
+					</div>
+
+					<a [routerLink]="[ '/app/people', user.id, 'profile' ]" class="user-dropdown__profile">View Profile</a>
+				</div>
+			</div>
+
+			<nav class="user-dropdown__menu">
+				<a [routerLink]="[ '/app', { outlets: { modal: 'modal/upgrade-plan' } } ]" class="user-dropdown__menu-item">Upgrade Plan</a>
+				<a [routerLink]="[ '/app', { outlets: { updates: 'product-updates' } } ]" class="user-dropdown__menu-item">Product Updates</a>
+				<a class="user-dropdown__menu-item">Sign Out</a>
+			</nav>
+
+		</div>
+
+	</nav>
+</div>
+
+<router-outlet></router-outlet>
+
+<a (click)="openHelp()" class="help">
+	Help
+</a>

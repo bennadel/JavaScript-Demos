@@ -1,0 +1,28 @@
+
+<router-outlet></router-outlet>
+
+<!--
+	This is our SECONDARY route for the updates.
+	--
+	NOTE: Really, I wanted this to be inside the Standard View so that it was only 
+	visible when the Standard View was rendered; however, the standard view starts with
+	an empty ("") parent route, which makes secondary views impossible to use. As such,
+	it's being moved up to the Shell view where it will be harder to "hide". Oh well.
+
+	I could have just included it as a Component in the Standard View; but, I wanted the
+	view to be navigable using the back-button (as this is the expected behavior).
+-->
+<router-outlet name="updates"></router-outlet>
+
+<!-- This is our SECONDARY route for the inbox. -->
+<router-outlet name="inbox"></router-outlet>
+
+<!-- This is our SECONDARY route for the modal window. -->
+<router-outlet name="modal"></router-outlet>
+
+<!-- I indicate that a route module is being loaded asynchronously. -->
+<div
+	*ngIf="isShowingRouteLoadIndicator"
+	class="route-load-indicator">
+	Loading Module
+</div>

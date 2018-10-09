@@ -1,0 +1,81 @@
+
+<!-- BEGIN: Loading State. -->
+<ng-template [ngIf]="isLoading">
+
+	<app-loading-indicator class="loading"></app-loading-indicator>
+
+</ng-template>
+<!-- END: Loading State. -->
+
+
+<!-- BEGIN: Loaded State. -->
+<ng-template [ngIf]="! isLoading">
+
+	<div class="filtering">
+
+		<form class="filtering__search search">
+
+			<input
+				type="text" 
+				name="filterText"
+				[(ngModel)]="filterText" 
+				(ngModelChange)="handleFilter()" 
+				(keydown.enter)="handleEnter()"
+				(focus)="filterTextHasFocus = true"
+				(blur)="filterTextHasFocus = false"
+				placeholder="Search for a screen..." 
+				autocomplete="off"
+				autofocus
+				class="search__input" 
+			/>
+
+			<span *ngIf="( filterTextHasFocus && filterText.length )" class="search__tip">
+				&#8592; <strong>Tip:</strong> Hit <code class="search__key">Enter</code> to navigate to first item.
+			</span>
+
+		</form>
+
+		<ul class="filtering__categories categories">
+			<li class="categories__item">
+				<a 
+					(click)="showType( 'active' )"
+					class="categories__link"
+					[class.categories__link--on]="( filterType === 'active' )">
+					Active
+				</a>
+			</li>
+			<li class="categories__item">
+				<a
+					(click)="showType( 'archived' )"
+					class="categories__link"
+					[class.categories__link--on]="( filterType === 'archived' )">
+					Archived
+				</a>
+			</li>
+		</ul>
+
+	</div>
+
+
+	<a class="plus">+</a>
+
+
+	<ul class="screens">
+		<li 
+			*ngFor="let item of filteredScreens"
+			class="screens__item screens__item--column-{{ item.column }}"
+			[appShowBlock]="item.isVisible">
+
+			<a [routerLink]="item.resource" class="screens__link screen">
+				<span class="screen__cta">View Screen</span>
+				<span class="screen__footer">
+					<span class="screen__name">{{ item.screen.name }}</span>
+					<span class="screen__filename">{{ item.screen.filename }}</span>
+				</span>
+			</a>
+
+		</li>
+	</ul>
+
+</ng-template>
+<!-- END: Loaded State. -->

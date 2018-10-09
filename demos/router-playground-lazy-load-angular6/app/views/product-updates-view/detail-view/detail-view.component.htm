@@ -1,0 +1,52 @@
+
+<!-- BEGIN: Loading State. -->
+<ng-template [ngIf]="isLoading">
+
+	<app-loading-indicator class="loading"></app-loading-indicator>
+
+</ng-template>
+<!-- END: Loading State. -->
+
+
+<!-- BEGIN: Loaded State. -->
+<ng-template [ngIf]="! isLoading">
+
+	<header class="header">
+
+		<a routerLink="../" class="header__back">
+			&laquo;
+		</a>
+
+		<app-avatar
+			[initials]="update.staff.initials"
+			class="header__avatar">
+		</app-avatar>
+
+		<div class="header__name">
+			{{ update.staff.name }}
+		</div>
+
+		<div class="header__status">
+			Away
+		</div>
+
+		<a [routerLink]="[ '/app', { outlets: { updates: null } } ]" class="header__close">
+			x
+		</a>
+
+	</header>
+
+	<section class="body">
+		<div class="body__viewport">
+			<div [innerHTML]="update.messageSafe" class="body__content">
+				<!-- HTML is being injected via property. -->
+			</div>
+		</div>
+	</section>
+
+	<footer class="footer">
+		<br />
+	</footer>
+
+</ng-template>
+<!-- END: Loaded State. -->

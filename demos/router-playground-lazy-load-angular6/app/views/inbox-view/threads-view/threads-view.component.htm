@@ -1,0 +1,57 @@
+
+<section class="list-panel">
+
+	<!-- BEGIN: Loading State. -->
+	<ng-template [ngIf]="isLoading">
+
+		<app-loading-indicator class="loading"></app-loading-indicator>
+
+	</ng-template>
+	<!-- END: Loading State. -->
+
+
+	<!-- BEGIN: Loaded State. -->
+	<ng-template [ngIf]="! isLoading">
+
+		<div class="header">
+			<span class="header__title">{{ type }} Name</span>
+		</div>
+
+		<div class="notifications">
+
+			<ul class="notifications__list">
+				
+				<ng-template ngFor let-thread [ngForOf]="threads">
+
+					<li class="notifications__item">
+						
+						<a [routerLink]="[ 'conversations', thread.id ]" class="notifications__link notification" routerLinkActive="notification--on">
+							<app-avatar
+								[initials]="thread.user.initials"
+								[src]="thread.user.avatarUrl"
+								[title]="thread.user.name"
+								class="notification__avatar">
+							</app-avatar>
+							<span class="notification__screen-name">{{ thread.name }}</span>
+							<span class="notification__teaser">{{ thread.teaser }}</span>
+							<span class="notification__author">{{ thread.user.name }}</span>				
+						</a>
+
+					</li>
+
+				</ng-template>
+
+			</ul>
+
+		</div>
+
+	</ng-template>
+	<!-- END: Loaded State. -->
+
+</section>
+
+<section class="detail-panel">
+
+	<router-outlet></router-outlet>
+
+</section>

@@ -1,0 +1,27 @@
+
+<div class="description">
+	You are about to share the board, <strong>{{ parentView.board.name }}</strong>. 
+	This will give other people access to your board content.
+</div>
+
+<form class="form">
+	
+	<label class="form__label">
+		Email This Priavte URL To Others:
+	</label>
+
+	<div class="form__field">
+
+		<input autofocus class="form__input" />
+
+		<a class="form__button">
+			<span>Send</span>
+		</a>
+
+	</div>
+
+	<div class="form__url">
+		<strong>Share Url:</strong> {{ parentView.shareUrl }}
+	</div>
+
+</form>

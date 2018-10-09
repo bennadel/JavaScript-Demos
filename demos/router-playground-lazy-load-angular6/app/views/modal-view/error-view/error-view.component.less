@@ -1,0 +1,59 @@
+
+:host {
+	background-color: fade( #323A45, 96% ) ;
+	bottom: 0px ;
+	display: flex ;
+	left: 0px ;
+	overflow: auto ;
+	position: absolute ;
+	right: 0px ;
+	top: 0px ;
+}
+
+.modal {
+	background-color: #FFFFFF ;
+	border-radius: 4px 4px 4px 4px ;
+	box-sizing: border-box ;
+	margin: auto auto auto auto ;
+	padding: 40px 40px 40px 40px ;
+	position: relative ;
+	width: 630px ;
+}
+
+.close {
+	color: #999999 ;
+	font-size: 20px ;
+	font-weight: 600 ;
+	height: 50px ;
+	line-height: 50px ;
+	position: absolute ;
+	right: 0px ;
+	text-align: center ;
+	text-decoration: none ;
+	top: 0px ;
+	transition: color 200ms ease ;
+	width: 50px ;
+
+	&:after {
+		content: "\2715" ;
+	}
+
+	&:hover {
+		color: #000000 ;
+	}
+}
+
+.title {
+	color: #464D5D ;
+	font-size: 28px ;
+	font-weight: 600 ;
+	line-height: 33px ;
+	margin: 0px 0px 20px 0px ;
+}
+
+.message {
+	font-size: 16px ;
+	font-weight: 400 ;
+	line-height: 26px ;
+	margin: 0px 0px 0px 0px ;
+}

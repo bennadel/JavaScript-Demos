@@ -1,0 +1,83 @@
+
+<!-- BEGIN: Loading State. -->
+<ng-template [ngIf]="isLoading">
+
+	<app-loading-indicator class="loading"></app-loading-indicator>
+
+</ng-template>
+<!-- END: Loading State. -->
+
+
+<!-- BEGIN: Loaded State. -->
+<ng-template [ngIf]="! isLoading">
+
+	<div class="m-standard-header">
+		<div class="m-standard-header__container m-standard-header__container--with-nav">
+
+			<span routerLink="/app/prototypes" class="m-standard-header__logo">
+				in
+			</span>
+
+			<h1 class="m-standard-header__title">
+				{{ prototype.name }}
+			</h1>
+
+			<div class="prototype-meta">
+
+				<div class="prototype-meta__share-actions share-actions">
+					<a class="share-actions__item share-actions__item--user-test">
+						UT
+					</a>
+					<a class="share-actions__item share-actions__item--liveshare">
+						LS
+					</a>
+					<a
+						[routerLink]="[ '/app', { outlets: { modal: [ 'modal', 'share-prototype', prototype.id ] } } ]"
+						class="share-actions__item share-actions__item--share">
+						Share
+					</a>
+				</div>
+
+				<div class="prototype-meta__member-actions">
+					
+					<a [routerLink]="[ '/app', { outlets: { modal: [ 'modal', 'prototype-members', prototype.id ] } } ]" class="member-actions">
+						<span *ngFor="let member of members" class="member-actions__item">
+							<app-avatar
+								[initials]="member.initials"
+								[src]="member.avatarUrl"
+								class="member-actions__avatar">
+							</app-avatar>
+						</span>
+						<span class="member-actions__item">
+							<span class="member-actions__overage">+3</span>
+						</span>
+						<span class="member-actions__item">
+							<span class="member-actions__plus">+</span>
+						</span>
+					</a>
+
+				</div>
+
+			</div>
+
+			<nav class="m-standard-header__nav">
+				<a routerLink="./screens" class="m-standard-header__nav-item" routerLinkActive="m-standard-header__nav-item--on">Screens</a>
+				<a routerLink="./workflow" class="m-standard-header__nav-item" routerLinkActive="m-standard-header__nav-item--on">Workflow</a>
+				<a routerLink="./activity" class="m-standard-header__nav-item" routerLinkActive="m-standard-header__nav-item--on">Activity</a>
+				<a routerLink="./comments" class="m-standard-header__nav-item" routerLinkActive="m-standard-header__nav-item--on">Comments</a>
+				<a routerLink="./assets" class="m-standard-header__nav-item" routerLinkActive="m-standard-header__nav-item--on">Assets</a>
+			</nav>
+
+		</div>
+	</div>
+
+	<div class="m-standard-body">
+		<div class="m-standard-body__container">
+
+			<router-outlet></router-outlet>
+
+		</div>
+	</div>
+
+</ng-template>
+<!-- END: Loaded State. -->

@@ -1,0 +1,166 @@
+
+:host {
+	display: flex ;
+	flex-direction: column ;
+}
+
+.titlebar {
+	background-color: #1F2532 ;
+	display: flex ;
+	flex: 0 0 auto ;
+	height: 60px ;
+	line-height: 60px ;
+}
+
+.count {
+	color: #8C94A1 ;
+	flex: 1 1 auto ;
+	font-size: 14px ;
+	font-weight: 600 ;
+	padding-left: 20px ;
+}
+
+.close {
+	color: #8C94A1 ;
+	font-size: 16px ;
+	font-weight: 600 ;
+	text-align: center ;
+	text-decoration: none ;
+	transition: color 200ms ease ;
+	width: 60px ;
+
+	&:after {
+		content: "\2715" ;
+	}
+
+	&:hover {
+		color: #FFFFFF ;
+	}
+}
+
+.body {
+	background-color: #252C3A ;
+	border-bottom: 1px solid #2D3544 ;
+	border-top: 1px solid #2D3544 ;
+	flex: 1 1 auto ;
+	overflow: auto ;
+	padding: 50px 0px 30px 0px ;
+
+	&::-webkit-scrollbar {
+		background-color: inherit ;
+		width: 8px ; // For vertical scrollbar.
+		height: 8px ; // For horizontal scrollbar.
+	}
+
+	&::-webkit-scrollbar-thumb {
+		background-color: #42516A ;
+		border-radius: 4px 4px 4px 4px ;
+	}
+
+	&::-webkit-scrollbar-track {
+		background-color: #1F2532 ;
+	}
+}
+
+.search {
+	display: flex ;
+	margin: 0px auto 40px auto ;
+	width: 1170px ;
+
+	&__input {
+		background: none ;
+		border: none ;
+		border-bottom: 1px solid #2D3544 ;
+		color: #C6CEDA ;
+		font-size: 13px ;
+		padding: 10px 20px 10px 20px ;
+		width: 200px ;
+	}
+
+	&__tip {
+		align-self: center ;
+		color: #FFFFFF ;
+		font-size: 14px ;
+		margin-left: 15px ;
+	}
+
+	&__key {
+		background-color: #1C3E54 ;
+		border: 1px solid #50A6DF ;
+		border-radius: 4px 4px 4px 4px ;
+		color: #FFFFFF ;
+		display: inline-block ;
+		margin: 0px 2px 0px 2px ;
+		padding: 1px 7px 2px 7px ;
+	}
+}
+
+.items {
+	list-style-type: none ;
+	margin: 0px auto 0px auto ;
+	padding: 0px 0px 0px 0px ;
+	width: 1170px ;
+
+	&:after {
+		clear: both ;
+		content: "" ;
+		display: table ;
+		height: 0px ;
+	}
+
+	&__item {
+		float: left ;
+		margin: 0px 56px 20px 0px ;
+		width: 250px ;
+
+		// ---
+		// VARIATIONS.
+		// ---
+
+		&--column-4 {
+			margin-right: 0px ;
+		}
+	}
+}
+
+.screen {
+	display: block ;
+	text-decoration: none ;
+
+	&__thumbnail {
+		background-color: #222222 ;
+		border: 1px solid #111111 ;
+		border-radius: 3px 3px 3px 3px ;
+		display: block ;
+		height: 150px ;
+		margin-bottom: 10px ;
+		transition: background-color 100ms ease ;
+	}
+
+	&__name {
+		color: #757B8C ;
+		display: block ;
+		text-align: center ;
+		transition: color 100ms ease ;
+	}
+
+	&--selected {
+		.screen {
+			&__thumbnail {
+				border-color: #2F7BBD ;
+			}
+		}
+	}
+
+	&:hover {
+		.screen {
+			&__thumbnail {
+				background-color: #111111 ;
+			}
+
+			&__name {
+				color: #ACB1BE ;
+			}
+		}
+	}
+}

@@ -1,0 +1,147 @@
+
+:host {
+	display: block ;
+}
+
+.filtering {
+	&__search {
+		float: left ;
+	}
+
+	&__categories {
+		float: right ;
+	}
+
+	&:after {
+		clear: both ;
+		content: "" ;
+		display: table ;
+		height: 0px ;
+	}
+}
+
+.search {
+	&__input {
+		border: 0px solid #CCCCCC ;
+		border-bottom-width: 1px ;
+		outline: 0px ;
+		padding: 10px 20px 10px 10px ;
+		width: 300px ;
+	}
+
+	&__tip {
+		color: #666666 ;
+		display: inline-block ;
+		font-size: 14px ;
+		margin-left: 15px ;
+		vertical-align: middle ;
+	}
+
+	&__key {
+		background-color: #FAFAFA ;
+		border: 1px solid #DADADA ;
+		border-radius: 4px 4px 4px 4px ;
+		color: #CC0000 ;
+		display: inline-block ;
+		margin: 0px 2px 0px 2px ;
+		padding: 1px 7px 2px 7px ;
+	}
+}
+
+.categories {
+	list-style-type: none ;
+	margin: 0px 0px 0px 0px ;
+	padding: 0px 0px 0px 0px ;
+
+	&__item {
+		float: left ;
+		margin: 0px 0px 0px 0px ;
+		padding: 0px 0px 0px 25px ;		
+	}
+
+	&__link {
+		color: #8C96A9 ;
+		display: block ;
+		font-size: 12px ;
+		font-weight: 600 ;
+		line-height: 42px ;
+		padding: 0px 5px 0px 5px ;
+		text-decoration: none ;
+		text-transform: uppercase ;
+
+		&:hover:not( .categories__link--on ) {
+			color: #596378 ;
+		}
+
+		&--on {
+			border-bottom: 2px solid #FF3366 ;
+			color: #FF3366 ;
+		}
+	}
+}
+
+.plus {
+	background-color: #FF3366 ;
+	border-radius: 50px 50px 50px 50px ;
+	box-shadow: 0px 1px 5px fade( #000000, 28% ) ;
+	color: #FFFFFF ;
+	font-size: 34px ;
+	font-weight: 600 ;
+	height: 50px ;
+	line-height: 50px ;
+	position: absolute ;
+	right: 0px ;
+	text-align: center ;
+	text-decoration: none ;
+	top: -28px ;
+	transition: all 150ms ease ;
+	width: 50px ;
+
+	&:hover {
+		border-radius: 54px 54px 54px 54px ;
+		height: 54px ;
+		line-height: 54px ;
+		right: -2px ;
+		top: -30px ;
+		width: 54px ;
+	}
+}
+
+.projects {
+	list-style-type: none ;
+	margin: 40px 0px 0px 0px ;
+	padding: 0px 0px 0px 0px ;
+
+	&:after {
+		clear: both ;
+		content: "" ;
+		display: table ;
+	}
+
+	&__item {
+		float: left ;
+		height: 250px ;
+		margin: 20px 48px 20px 0px ;
+		position: relative ;
+		width: 356px ;
+
+		// ---
+		// VARIATIONS.
+		// ---
+
+		&--column-3 {
+			margin-right: 0px ;
+		}
+	}
+
+	&__link {
+		height: 250px ;
+		width: 356px ;
+	}
+}
+
+.failure-case {
+	a {
+		color: #999999 ;
+	}
+}

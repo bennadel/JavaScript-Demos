@@ -1,0 +1,151 @@
+
+:host {
+	display: block ;
+}
+
+.prototype-meta {
+	top: 25px ;
+	position: absolute ;
+	right: 0px ;
+
+	&:after {
+		clear: all ;
+		content: "" ;
+		display: table ;
+		height: 0px ;
+	}
+
+	&__share-actions {
+		float: left ;
+	}
+
+	&__member-actions {
+		float: left ;
+		margin-left: 10px ;
+	}
+}
+
+.share-actions {
+	&:after {
+		clear: all ;
+		content: "" ;
+		display: table ;
+		height: 0px ;
+	}
+
+	&__item {
+		border-radius: 36px 36px 36px 36px ;
+		box-sizing: border-box ;
+		float: left ;
+		height: 36px ;
+		line-height: 36px ;
+		text-decoration: none ;
+
+		&--user-test,
+		&--liveshare {
+			border: 1px solid #464D5D ;
+			margin-right: 7px ;
+			width: 36px ;
+
+			// Temp before icon.
+			color: #FFFFFF ;
+			font-size: 11px ;
+			font-weight: 600 ;
+			text-align: center ;
+		}
+
+		&--share {
+			background-color: #11B683 ;
+			color: #FFFFFF ;
+			font-size: 11px ;
+			font-weight: 600 ;
+			margin-left: 18px ;
+			padding: 0px 30px 0px 30px ;
+			text-transform: uppercase ;
+		}
+	}
+}
+
+.member-actions {
+	display: block ;
+
+	&:after {
+		clear: all ;
+		content: "" ;
+		display: table ;
+		height: 0px ;
+	}
+
+	&__item {
+		height: 36px ;
+		float: left ;
+		position: relative ;
+		overflow: visible ;
+		width: 35px ;
+
+		@zIndex: 50;
+
+		&:nth-child( 1 ) {
+			z-index: ( @zIndex - 1 ) ;
+		}
+		&:nth-child( 2 ) {
+			z-index: ( @zIndex - 2 ) ;
+		}
+		&:nth-child( 3 ) {
+			z-index: ( @zIndex - 3 ) ;
+		}
+		&:nth-child( 4 ) {
+			z-index: ( @zIndex - 4 ) ;
+		}
+		&:nth-child( 5 ) {
+			z-index: ( @zIndex - 5 ) ;
+		}
+		&:nth-child( 6 ) {
+			z-index: ( @zIndex - 6 ) ;
+		}
+	}
+
+	&__avatar,
+	&__overage,
+	&__plus {
+		border-radius: 40px 40px 40px 40px ;
+		box-sizing: border-box ;
+		color: #FFFFFF ;
+		display: block ;
+		height: 40px ;
+		left: 0px ;
+		position: absolute ;
+		top: -2px ;
+		width: 40px ;
+	}
+
+	&__overage,
+	&__plus {
+		letter-spacing: 1px ;
+		line-height: 36px ;
+		text-align: center ;
+	}
+
+	&__avatar {
+		background-color: #959BA1 ;
+		border: 2px solid #1F2532 ;
+	}
+
+	&__overage {
+		background-color: #1E8FE1 ;
+		border: 2px solid #1F2532 ;
+		font-size: 10px ;
+		font-weight: 700 ;
+	}
+
+	&__plus {
+		border: 1px dashed #464D5D ;
+		font-size: 20px ;
+		font-weight: 600 ;
+		line-height: 38px ;
+
+		&:hover {
+			border-color: #676E7A ;
+		}
+	}
+}
