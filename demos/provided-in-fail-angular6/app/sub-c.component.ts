@@ -2,22 +2,25 @@
 // Import the core angular services.
 import { Component } from "@angular/core";
 
+// Import the application components and services.
+import { ThingCService } from "./thing-c.service";
+
 // ----------------------------------------------------------------------------------- //
 // ----------------------------------------------------------------------------------- //
 
 @Component({
-	selector: "my-app",
-	styleUrls: [ "./app.component.less" ],
+	selector: "sub-b",
 	template:
 	`
-		<p>
-			<a routerLink="./">Goto home</a> &mdash;
-			<a routerLink="./sub">Goto sub module</a>
-		</p>
-
-		<router-outlet></router-outlet>
+		Sub-C Component is here!
 	`
 })
-export class AppComponent {
-	// ...
+export class SubCComponent {
+
+	constructor( thingCService: ThingCService ) {
+
+		console.log( "Thing C Service:", thingCService );
+
+	}
+
 }

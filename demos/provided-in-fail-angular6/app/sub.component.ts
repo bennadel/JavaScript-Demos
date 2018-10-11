@@ -6,18 +6,22 @@ import { Component } from "@angular/core";
 // ----------------------------------------------------------------------------------- //
 
 @Component({
-	selector: "my-app",
-	styleUrls: [ "./app.component.less" ],
+	selector: "sub-a",
 	template:
 	`
+		<h2>
+			Sub Module
+		</h2>
+
 		<p>
-			<a routerLink="./">Goto home</a> &mdash;
-			<a routerLink="./sub">Goto sub module</a>
+			<a routerLink="./a">Sub-A</a> &mdash;
+			<a routerLink="./b">Sub-B</a> &mdash;
+			<a routerLink="./c">Sub-C</a>
 		</p>
 
 		<router-outlet></router-outlet>
 	`
 })
-export class AppComponent {
+export class SubComponent {
 	// ...
 }

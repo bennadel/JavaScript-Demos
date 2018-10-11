@@ -19,8 +19,8 @@ import { Injectable } from "@angular/core";
 @Injectable({
 	providedIn: "root"
 })
-export class ThingAService {
-
-	public label: string = "Thing A";
+export class ThingCService {
+	
+	public label: string = "Thing C";
 
 }

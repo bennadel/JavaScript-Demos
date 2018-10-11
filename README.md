@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [ProvidedIn FeatureModule Is A Confusing Concept For Me In Angular 6.1.9](http://bennadel.github.io/JavaScript-Demos/demos/provided-in-fail-angular6/)
 * [Preloading Lazy-Loaded Feature Modules In Angular 6.1.9](http://bennadel.github.io/JavaScript-Demos/demos/router-lazy-load-modules-preload-angular6/)
 * [Showing A Loading Indicator For Lazy-Loaded Route Modules In Angular 6.1.7](http://bennadel.github.io/JavaScript-Demos/demos/router-lazy-load-modules-indicator-angular6/)
 * [Experimenting With Lazy Loaded Modules, Ahead Of Time (AoT) Compiling, And Webpack 4 In Angular 6.1.7](http://bennadel.github.io/JavaScript-Demos/demos/router-lazy-load-modules-angular6/)
