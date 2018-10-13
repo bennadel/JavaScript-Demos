@@ -1,0 +1,43 @@
+
+<!-- Define the recursive template. -->
+<ng-template #nodeTemplateRef let-node="node">
+
+	<div class="node" [class.node--selected]="( node === selectedTreeNode )">
+
+		<a (click)="selectNode( node )" class="node__label">
+			{{ node.label }}
+		</a>
+
+		<div *ngIf="node.children.length" class="node__children">
+
+			<ng-template ngFor let-child [ngForOf]="node.children">
+
+				<!-- Invoke the recursive template. -->
+				<ng-template
+					[ngTemplateOutlet]="nodeTemplateRef"
+					[ngTemplateOutletContext]="{ node: child }">
+					<!--
+						Because we are using nested ngTemplates (rather than the template
+						input of the ngFor directive), we have more control over how the
+						data is made available to the recursive template. In this case,
+						we're passing "child" through as "node".
+					-->
+				</ng-template>
+
+			</ng-template>
+
+		</div>
+
+	</div>
+
+</ng-template>
+
+<!-- Initiate the recursive template rendering. -->
+<ng-template
+	[ngTemplateOutlet]="nodeTemplateRef"
+	[ngTemplateOutletContext]="{ node: data.root }">
+</ng-template>
+
+<p class="note">
+	<em>(alternative) Ng-Template Template Rendering</em>
+</p>

@@ -1,0 +1,35 @@
+
+:host {
+	display: block ;
+	font-size: 18px ;
+}
+
+.node {
+	&__label {
+		color: red ;
+		cursor: pointer ;
+		text-decoration: underline ;
+	}
+
+	&__children {
+		border-left: 3px solid #CCCCCC ;
+		margin: 5px 0px 5px 30px ;
+		padding-left: 10px ;
+	}
+
+	&--selected {
+		> .node {
+			&__label {
+				background-color: red ;
+				color: white ;
+				font-weight: bold ;
+			}
+		}
+	}
+}
+
+.note {
+	color: #999999 ;
+	font-size: 15px ;
+	font-style: italic ;
+}
