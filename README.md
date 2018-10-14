@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Playing With Recursive Components In Angular 6.1.10](http://bennadel.github.io/JavaScript-Demos/demos/recursive-components-angular6/)
 * [Playing With Recursive Ng-Template References In Angular 6.1.10](http://bennadel.github.io/JavaScript-Demos/demos/recursive-templates-angular6/)
 * [Updating InVision Router Experiment To Use Lazy Loading Feature Modules In Angular 6.1.9](http://bennadel.github.io/JavaScript-Demos/demos/router-playground-lazy-load-angular6/)
 * [ProvidedIn FeatureModule Is A Confusing Concept For Me In Angular 6.1.9](http://bennadel.github.io/JavaScript-Demos/demos/provided-in-fail-angular6/)

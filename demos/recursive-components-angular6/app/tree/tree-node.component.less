@@ -1,0 +1,29 @@
+
+:host {
+	display: block ;
+}
+
+.label {
+	border-radius: 9px 9px 9px 9px ;
+	color: red ;
+	cursor: pointer ;
+	display: inline-block ;
+	padding: 0px 6px 0px 6px ;
+	text-decoration: underline ;
+}
+
+.children {
+	border-left: 3px solid #CCCCCC ;
+	margin: 5px 0px 5px 30px ;
+	padding-left: 10px ;
+}
+
+:host( .selected ) {
+	> .label {
+		background-color: darkslateblue ;
+		color: white ;
+		cursor: default ;
+		font-weight: bold ;
+		text-decoration: none ;
+	}
+}
