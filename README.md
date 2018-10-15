@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Emulated Encapsulation Host And Content Attributes Are Calculated Once Per Application Life-Cycle In Angular 6.1.10](http://bennadel.github.io/JavaScript-Demos/demos/emulated-encapsulation-attributes-angular6/)
 * [Playing With Recursive Components In Angular 6.1.10](http://bennadel.github.io/JavaScript-Demos/demos/recursive-components-angular6/)
 * [Playing With Recursive Ng-Template References In Angular 6.1.10](http://bennadel.github.io/JavaScript-Demos/demos/recursive-templates-angular6/)
 * [Updating InVision Router Experiment To Use Lazy Loading Feature Modules In Angular 6.1.9](http://bennadel.github.io/JavaScript-Demos/demos/router-playground-lazy-load-angular6/)
