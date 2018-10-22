@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>
+		THIS IS US Opening Titles Animation Using CSS Animations
+	</title>
+</head>
+<body>
+
+	<h1>
+		THIS IS US Opening Titles Animation Using CSS Animations
+	</h1>
+
+	<div class="titles">
+		<div class="titles__anchor">
+			<span class="titles__this">
+				This
+			</span>
+			<span class="titles__is">
+				Is
+			</span>
+			<span class="titles__us">
+				Us
+			</span>
+		</div>
+	</div>
+
+	<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Open+Sans:300">
+	<style type="text/css">
+
+		.titles {
+			background-color: #000000 ;
+			bottom: 0px ;
+			color: #f3ca3e ;
+			font-family: "Open Sans", verdana, arial, sans-serif ;
+			font-size: 40px ;
+			font-weight: 300 ;
+			left: 0px ;
+			line-height: 44px ;
+			position: fixed ;
+			right: 0px ;
+			text-transform: uppercase ;
+			top: 0px ;
+		}
+
+		/**
+		* At first, I tried to position each of the titles using percentages. However,
+		* since the browser has flexible values in both the Vertical and Horizontal
+		* dimensions, it was easier to create a positioned anchor from which the titles
+		* could be positioned with explicit pixels. This won't scale with the browser;
+		* but, it makes the animation easier to put together.
+		*/
+		.titles__anchor {
+			left: 65% ;
+			margin-top: -22px ;
+			position: absolute ;
+			top: 50% ;
+		}
+
+		@keyframes titles-this-in {
+			0% {
+				left: -200px ;
+				opacity: 0.0 ;
+				top: -180px ;
+			}
+			20% {
+				opacity: 1.0 ;
+			}
+			49% {
+				left: -200px ;
+				top: 0px ;
+			}
+			51% {
+				left: -200px ;
+				top: 0px ;
+			}
+			100% {
+				left: 0px ;
+				top: 0px ;
+			}
+		}
+
+		@keyframes titles-is-in {
+			0% {
+				left: -100px ;
+				opacity: 0.0 ;
+				top: 50px ;
+			}
+			20% {
+				opacity: 1.0 ;
+			}
+			24% {
+				left: -30px ;
+				top: 50px ;
+			}
+			26% {
+				left: -30px ;
+				top: 50px ;
+			}
+			49% {
+				left: -30px ;
+				top: 0px ;
+			}
+			51% {
+				left: -30px ;
+				top: 0px ;
+			}
+			100% {
+				left: 112px ;
+				top: 0px ;
+			}
+		}
+
+		@keyframes titles-us-in {
+			0% {
+				left: 175px ;
+				opacity: 0.0 ;
+				top: 130px ;
+			}
+			55% {
+				opacity: 0.0 ;
+				top: 130px ;
+			}
+			80% {
+				opacity: 1.0 ;
+			}
+			100% {
+				left: 170px ;
+				top: 0px ;
+			}
+		}
+
+		.titles__this,
+		.titles__is,
+		.titles__us {
+			animation-duration: 5s ;
+			animation-fill-mode: both ;
+			animation-timing-function: ease-in-out ;
+			position: absolute ;
+		}
+
+		.titles__this {
+			animation-name: titles-this-in ;
+		}
+
+		.titles__is {
+			animation-name: titles-is-in ;
+		}
+
+		.titles__us {
+			animation-name: titles-us-in ;
+		}
+
+	</style>
+
+	<script type="text/javascript">
+		(function() {
+
+			var titles = document.querySelector( ".titles" );
+			var titlesAnchor = titles.querySelector( ".titles__anchor" );
+
+			setupAnimationHandlers();
+
+			// ----------------------------------------------------------------------- //
+			// ----------------------------------------------------------------------- //
+
+			function setupAnimationHandlers() {
+
+				// In order to get the animation to repeat without a "infinite" iteration
+				// count, we have to remove the nodes from the DOM and then re-inject
+				// them. The  animation will naturally restart when the elements are
+				// re-added to the DOM.
+				// --
+				// NOTE: I opted not to look at the "animationend" event since it would
+				// have been triggered by all three animating titles. Using a timer
+				// seemed like the more straightforward, cross-browser approach.
+				setTimeout( removeTitles, 7000 );
+				setTimeout( addTitles, 8000 );
+				setTimeout( setupAnimationHandlers, 8000 );
+
+			}
+
+			function removeTitles() {
+
+				titles.removeChild( titlesAnchor );
+
+			}
+
+			function addTitles() {
+
+				titles.appendChild( titlesAnchor );
+
+			}
+			
+		})();
+	</script>
+
+</body>
+</html>

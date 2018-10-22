@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [THIS IS US Opening Titles Animation Using CSS Animations](http://bennadel.github.io/JavaScript-Demos/demos/this-is-us-css-animation/)
 * [Sanity Check: Shared Style URLs And Emulated Encapsulation Attributes In Angular 6.1.10](http://bennadel.github.io/JavaScript-Demos/demos/shared-style-urls-angular6/)
 * [Emulated Encapsulation Host And Content Attributes Are Calculated Once Per Application Life-Cycle In Angular 6.1.10](http://bennadel.github.io/JavaScript-Demos/demos/emulated-encapsulation-attributes-angular6/)
 * [Playing With Recursive Components In Angular 6.1.10](http://bennadel.github.io/JavaScript-Demos/demos/recursive-components-angular6/)
