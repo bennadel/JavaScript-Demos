@@ -1,5 +1,5 @@
 
-# JavaScript Demos
+# JavaScript Demos 
 
 by [Ben Nadel][1] (on [Google+][2])
 
