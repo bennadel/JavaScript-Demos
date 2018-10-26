@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Experimenting With The Runtime Abstraction For State Management In Angular 7.0.3](http://bennadel.github.io/JavaScript-Demos/demos/runtime-abstraction-angular7/)
 * [Creating A Simple setState() Store Using An RxJS BehaviorSubject In Angular 6.1.10 - Part 2](http://bennadel.github.io/JavaScript-Demos/demos/simple-store-set-state-callback-angular6/)
 * [Creating A Simple setState() Store Using An RxJS BehaviorSubject In Angular 6.1.10](http://bennadel.github.io/JavaScript-Demos/demos/simple-store-set-state-angular6/)
 * [Trying To Create A Message Bus Using An RxJS Subject In Angular 6.1.10](http://bennadel.github.io/JavaScript-Demos/demos/message-bus-actions-angular6/)

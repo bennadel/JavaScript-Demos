@@ -1,0 +1,98 @@
+
+:host {
+	display: block ;
+	font-size: 18px ;
+}
+
+.nav {
+	display: flex ;
+	margin-bottom: 25px ;
+
+	&__item {
+		border: 1px solid red ;
+		border-radius: 3px 3px 3px 3px ;
+		color: red ;
+		cursor: pointer ;
+		flex: 0 1 auto ;
+		margin-right: 10px ;
+		padding: 7px 15px 7px 15px ;
+
+		&:last-child {
+			margin-right: 0px ;
+		}
+
+		&--selected {
+			background-color: red ;
+			color: white ;
+		}
+	}
+}
+
+.list-view {
+	border-left: 4px solid #cccccc ;
+	margin: 20px 0px 20px 0px ;
+	padding: 10px 0px 10px 20px ;
+
+	&__form {
+		margin: 0px 0px 20px 0px ;
+	}
+
+	&__list {
+		margin: 20px 0px 0px 0px ;
+	}
+}
+
+.intake {
+	display: flex ;
+
+	&__name {
+		flex: 0 0 auto ;
+		font-size: 18px ;
+		margin-right: 8px ;
+		width: 200px ;
+	}
+
+	&__submit {
+		background-color: #f0f0f0 ;
+		border: 1px solid #cccccc ;
+		flex: 0 0 auto ;
+		font-size: 16px ;
+	}
+}
+
+.list {
+	list-style-type: none ;
+	margin: 0px 0px 0px 0px ;
+	padding: 0px 0px 0px 0px ;
+	width: 600px ;
+
+	&__item {
+		border-top: 1px solid #cccccc ;
+		margin: 0px 0px 0px 0px ;
+		padding: 10px 3px 10px 3px ;
+
+		&:last-child {
+			border-bottom: 1px solid #cccccc ;
+		}
+	}
+}
+
+.person {
+	display: flex ;
+
+	&__name {
+		flex: 1 1 auto ;
+	}
+
+	&__delete {
+		color: #999999 ;
+		cursor: pointer ;
+		flex: 0 1 auto ;
+		text-decoration: underline ;
+		text-transform: lowercase ;
+
+		&:hover {
+			color: red ;
+		}
+	}
+}
