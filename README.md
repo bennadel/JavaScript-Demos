@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Creating A Simple setState() Store Using An RxJS BehaviorSubject In Angular 6.1.10](http://bennadel.github.io/JavaScript-Demos/demos/simple-store-set-state-angular6/)
 * [Trying To Create A Message Bus Using An RxJS Subject In Angular 6.1.10](http://bennadel.github.io/JavaScript-Demos/demos/message-bus-actions-angular6/)
 * [THIS IS US Opening Titles Animation Using CSS Animations](http://bennadel.github.io/JavaScript-Demos/demos/this-is-us-css-animation/)
 * [Sanity Check: Shared Style URLs And Emulated Encapsulation Attributes In Angular 6.1.10](http://bennadel.github.io/JavaScript-Demos/demos/shared-style-urls-angular6/)
