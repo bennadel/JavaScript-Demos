@@ -29,7 +29,6 @@
 		"lodash": "4.17.11",
 		"npm": "6.4.1",
 		"raw-loader": "0.5.1",
-		"redux": "^4.0.1",
 		"rxjs": "6.3.3",
 		"typescript": "2.9.2",
 		"webpack": "4.20.2",
