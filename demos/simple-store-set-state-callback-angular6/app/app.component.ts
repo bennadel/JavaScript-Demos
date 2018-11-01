@@ -1,6 +1,7 @@
 
 // Import the core angular services.
 import { Component } from "@angular/core";
+import { Observable } from "rxjs";
 
 // Import the application components and services.
 import { SimpleStore } from "./simple.store";
@@ -8,9 +9,8 @@ import { SimpleStore } from "./simple.store";
 // ----------------------------------------------------------------------------------- //
 // ----------------------------------------------------------------------------------- //
 
-interface NameStore {
-	girl: string;
-	boy: string;
+interface CounterStore {
+	counter: number;
 };
 
 @Component({
@@ -18,68 +18,54 @@ interface NameStore {
 	styleUrls: [ "./app.component.less" ],
 	template:
 	`
-		<em>See console output</em>.
+		<p class="counter">
+			<strong>Counter:</strong> {{ counter | async }}
+		</p>
+
+		<p class="buttons">
+			<button (click)="increment( 1 )"> Increment </button>
+			<button (click)="increment( -1 )"> Decrement </button>
+		</p>
 	`
 })
 export class AppComponent {
 
+	public counter: Observable<number>;
+
+	private counterStore: SimpleStore<CounterStore>;
+
 	// I initialize the app component.
 	constructor() {
 
-		// Create a simple store for baby name selection.
-		var babyNames = new SimpleStore<NameStore>({
-			girl: "Jill",
-			boy: "John"
+		this.counterStore = new SimpleStore({
+			counter: 0
+		});
+		this.counter = this.counterStore.select( "counter" );
+
+		// Use normal "partial" to update the simple store.
+		this.counterStore.setState({
+			counter: 10
 		});
 
-		// --
+	}
 
-		// Subscribe to any changes in the state (a new state object is created every
-		// time setState() is called).
-		babyNames.getState().subscribe(
+	// ---
+	// PUBLIC METHODS.
+	// ---
+
+	// I increment the counter value in the simple store.
+	public increment( delta: number ) : void {
+
+		// Use updater "function" to update the simple store.
+		this.counterStore.setState(
 			( state ) => {
-				console.log( "New state..." );
+
+				return({
+					counter: ( state.counter + delta )
+				});
+
 			}
 		);
-
-		// Subscribe to the individual name selections. Since these are unique changes,
-		// these callbacks will be called far less often than the getState() stream.
-		babyNames.select( "girl" ).subscribe(
-			( name ) => {
-				console.log( "Girl's Name:", name );
-			}
-		);
-		babyNames.select( "boy" ).subscribe(
-			( name ) => {
-				console.log( "Boy's Name:", name );
-			}
-		);
-
-		// --
-
-		// Try changing up some state! 
-		babyNames.setState({
-			girl: "Kim"
-		});
-		babyNames.setState({
-			girl: "Kim" // Duplicate.
-		});
-		babyNames.setState({
-			girl: "Kim", // Duplicate.
-			boy: "Tim"
-		});
-		babyNames.setState({
-			girl: "Kim" // Duplicate.
-		});
-		babyNames.setState({
-			girl: "Joanna"
-		});
-		babyNames.setState({
-			girl: "Joanna" // Duplicate.
-		});
-		babyNames.setState({
-			girl: "Joanna" // Duplicate.
-		});
 
 	}
 
