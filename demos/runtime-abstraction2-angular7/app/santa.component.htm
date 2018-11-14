@@ -1,0 +1,50 @@
+
+<h2>
+	Santa's Christmas List
+</h2>
+
+<nav class="nav">
+	<a
+		(click)="showList( 'nice' )"
+		class="nav__item"
+		[class.nav__item--selected]="( selectedListType === 'nice' )">
+		Nice ({{ niceCount }})
+	</a>
+	<a
+		(click)="showList( 'naughty' )"
+		class="nav__item"
+		[class.nav__item--selected]="( selectedListType === 'naughty' )">
+		Naughty ({{ naughtyCount }})
+	</a>
+</nav>
+
+<div class="list-view">
+
+	<form (submit)="processIntake()" class="list-view__form intake">
+		<input
+			type="text"
+			name="name"
+			[(ngModel)]="intake.name"
+			placeholder="Name..."
+			class="intake__name"
+		/>
+		<button type="submit" class="intake__submit">
+			Add Person
+		</button>
+	</form>
+
+	<ul *ngIf="people.length" class="list-view__list list">
+		<li *ngFor="let person of people" class="list__item person">
+
+			<span class="person__name">
+				{{ person.name }}
+			</span>
+
+			<a (click)="removePerson( person )" class="person__delete">
+				Delete
+			</a>
+
+		</li>
+	</ul>
+
+</div>

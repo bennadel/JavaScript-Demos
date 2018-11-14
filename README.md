@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Using Presentation Components In Order To Hide Async Pipe Complexity In Angular 7.0.3](http://bennadel.github.io/JavaScript-Demos/demos/runtime-abstraction2-angular7/)
 * [Async Pipe "as" Syntax Is Just The $implicit View Context Property In Angular 7.0.3](http://bennadel.github.io/JavaScript-Demos/demos/async-pipe-as-syntax-angular7/)
 * [Experimenting With The Runtime Abstraction For State Management In Angular 7.0.3](http://bennadel.github.io/JavaScript-Demos/demos/runtime-abstraction-angular7/)
 * [Creating A Simple setState() Store Using An RxJS BehaviorSubject In Angular 6.1.10 - Part 2](http://bennadel.github.io/JavaScript-Demos/demos/simple-store-set-state-callback-angular6/)
