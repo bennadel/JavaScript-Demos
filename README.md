@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Restoring And Resetting The Scroll Position Using The NavigationStart Event In Angular 7.0.4](http://bennadel.github.io/JavaScript-Demos/demos/router-retain-scroll-polyfill-angular7/)
 * [Using Router Events To Detect Back And Forward Browser Navigation In Angular 7.0.4](http://bennadel.github.io/JavaScript-Demos/demos/nav-trigger-angular7/)
 * [Using Presentation Components In Order To Hide Async Pipe Complexity In Angular 7.0.3](http://bennadel.github.io/JavaScript-Demos/demos/runtime-abstraction2-angular7/)
 * [Async Pipe "as" Syntax Is Just The $implicit View Context Property In Angular 7.0.3](http://bennadel.github.io/JavaScript-Demos/demos/async-pipe-as-syntax-angular7/)
