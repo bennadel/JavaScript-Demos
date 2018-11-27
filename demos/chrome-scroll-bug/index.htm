@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>
+		Chrome Browser Bug: Scroll Wheel Randomly Stops Working In Overflow Container
+	</title>
+
+	<style type="text/css">
+
+		html {
+			box-sizing: border-box ;
+		}
+
+		*, *:before, *:after {
+			box-sizing: inherit ;
+		}
+
+		/* BEGIN: Layout-A - It uses FLEXBOX and Overflow. */
+		.layout-a {
+			border: 2px solid #cccccc ;
+			display: flex ;
+			flex-direction: column ;
+			height: 500px ;
+			margin: -250px 0px 0px 0px ;
+			position: absolute ;
+			right: 51% ;
+			top: 50% ;
+			width: 300px ;
+		}
+
+		.layout-a__top-panel {
+			flex: 1 1 auto ;
+			overflow: auto ;
+		}
+
+		.layout-a__bottom-panel {
+			border-top: 1px solid #cccccc ;
+			flex: 0 0 auto ;
+			height: 100px ;
+			padding: 20px 20px 20px 20px ;
+		}
+		/* END: Layout-A. */
+
+		/* BEGIN: Layout-B - It uses POSITION ABSOLUTE and Overflow. */
+		.layout-b {
+			border: 2px solid #cccccc ;
+			height: 500px ;
+			left: 51% ;
+			margin: -250px 0px 0px 0px ;
+			position: absolute ;
+			top: 50% ;
+			width: 300px ;
+		}
+
+		.layout-b__top-panel {
+			bottom: 100px ;
+			left: 0px ;
+			overflow: auto ;
+			position: absolute ;
+			right: 0px ;
+			top: 0px ;
+		}
+
+		.layout-b__bottom-panel {
+			border-top: 1px solid #cccccc ;
+			bottom: 0px ;
+			height: 100px ;
+			left: 0px ;
+			padding: 20px 20px 20px 20px ;
+			position: absolute ;
+			right: 0px ;
+		}
+		/* END: Layout-B. */
+
+		.content p {
+			margin: 0px 0px 0px 0px ;
+			padding: 25px 20px 22px 20px ;
+		}
+
+		.content p:nth-child( even ) {
+			background-color: #f0f0f0 ;
+		}
+
+	</style>
+</head>
+<body>
+
+	<h1>
+		Chrome Browser Bug: Scroll Wheel Randomly Stops Working In Overflow Container
+	</h1>
+
+	<!-- BEGIN: Layout-A. -->
+	<section class="layout-a">
+		<div class="layout-a__top-panel">
+
+			<div class="content">
+				<p>Content</p>
+				<p>Content</p>
+				<p>Content</p>
+				<p>Content</p>
+				<p>Content</p>
+				<p>Content</p>
+				<p>Content</p>
+				<p>Content</p>
+				<p>Content</p>
+				<p>Content</p>
+				<p>Content</p>
+				<p>Content</p>
+			</div>
+
+		</div>
+		<div class="layout-a__bottom-panel">
+
+			Using <strong>Flexblox</strong>
+
+		</div>
+	</section>
+	<!-- END: Layout-A. -->
+
+	<!-- BEGIN: Layout-B. -->
+	<section class="layout-b">
+		<div class="layout-b__top-panel">
+
+			<div class="content">
+				<p>Content</p>
+				<p>Content</p>
+				<p>Content</p>
+				<p>Content</p>
+				<p>Content</p>
+				<p>Content</p>
+				<p>Content</p>
+				<p>Content</p>
+				<p>Content</p>
+				<p>Content</p>
+				<p>Content</p>
+				<p>Content</p>
+			</div>
+
+		</div>
+		<div class="layout-b__bottom-panel">
+
+			Using <strong>Position Absolute</strong>
+
+		</div>
+	</section>
+	<!-- END: Layout-B. -->
+
+	<script type="text/javascript">
+
+		// Theoretically, the "wheel" event and the "scroll" event should go hand-in-hand
+		// as long as there is room to scroll the content of a container. However, in
+		// Chrome, the scrolling of the mouse-wheel will suddenly stop working (at least
+		// as of Chrome/70.0.3538.102). In that case, we can see the "wheel" event being
+		// logged without a corresponding "scroll" event.
+
+		window.addEventListener(
+			"wheel",
+			function handleWheelEvent( event ) {
+
+				var direction = ( event.deltaY >= 0 )
+					? "DOWN"
+					: "UP"
+				;
+
+				console.log( "Event: wheel,", direction, event.target );
+
+			},
+			true
+		);
+
+		window.addEventListener(
+			"scroll",
+			function handleScrollEvent( event ) {
+
+				console.log( "Event: scroll" );
+
+			},
+			true
+		);
+
+	</script>
+
+</body>
+</html>
