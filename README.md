@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Polyfilling The Second-Click Of A RouterLink Fragment In Angular 7.1.1](https://bennadel.github.io/JavaScript-Demos/demos/router-second-fragment-angular7/)
 * [Host Bindings Don't Prevent Default Event Behavior Until After All Event Handlers Have Executed In Angular 7.1.1](https://bennadel.github.io/JavaScript-Demos/demos/event-prevent-default-angular7/)
 * [Chrome Browser Bug: Scroll Wheel Randomly Stops Working In Overflow Container](https://bennadel.github.io/JavaScript-Demos/demos/chrome-scroll-bug/)
 * [Restoring And Resetting The Scroll Position Using The NavigationStart Event In Angular 7.0.4](https://bennadel.github.io/JavaScript-Demos/demos/router-retain-scroll-polyfill-angular7/)
