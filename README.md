@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Host Bindings Don't Prevent Default Event Behavior Until After All Event Handlers Have Executed In Angular 7.1.1](http://bennadel.github.io/JavaScript-Demos/demos/event-prevent-default-angular7/)
 * [Chrome Browser Bug: Scroll Wheel Randomly Stops Working In Overflow Container](http://bennadel.github.io/JavaScript-Demos/demos/chrome-scroll-bug/)
 * [Restoring And Resetting The Scroll Position Using The NavigationStart Event In Angular 7.0.4](http://bennadel.github.io/JavaScript-Demos/demos/router-retain-scroll-polyfill-angular7/)
 * [Using Router Events To Detect Back And Forward Browser Navigation In Angular 7.0.4](http://bennadel.github.io/JavaScript-Demos/demos/nav-trigger-angular7/)
