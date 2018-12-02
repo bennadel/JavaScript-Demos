@@ -1,0 +1,40 @@
+
+:host {
+	border: 1px solid #cccccc ;
+	border-radius: 3px 3px 3px 3px ;
+	display: inline-block ;
+	max-width: 400px ;
+	padding: 2px 2px 2px 2px ;
+}
+
+label {
+	display: flex ;
+	flex-wrap: wrap ;
+}
+
+.tag {
+	background-color: #f0f0f0 ;
+	border-radius: 3px 3px 3px 3px ;
+	color: #333333 ;
+	display: flex ;
+	flex: 0 0 auto ;
+	margin: 5px 5px 5px 5px ;
+
+	&__name {
+		padding: 3px 12px 3px 12px ;
+	}
+
+	&__delete {
+		color: red ;
+		cursor: pointer ;
+		padding: 3px 12px 3px 0px ;
+	}
+}
+
+input {
+	border-width: 0px 0px 1px 0px ;
+	flex: 1 0 auto ;
+	margin: 5px 5px 5px 5px ;
+	font-size: inherit ;
+	width: 75px ;
+}
