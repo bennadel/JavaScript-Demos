@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Using The "Definite Assignment Assertion" To Define Required Input Bindings In Angular 7.1.1](https://bennadel.github.io/JavaScript-Demos/demos/required-input-binding-angular7/)
 * [On The Irrational Demonization Of Two-Way Data-Binding In Angular](https://bennadel.github.io/JavaScript-Demos/demos/two-way-data-binding-demonization-angular7/)
 * [Polyfilling The Second-Click Of A RouterLink Fragment In Angular 7.1.1](https://bennadel.github.io/JavaScript-Demos/demos/router-second-fragment-angular7/)
 * [Host Bindings Don't Prevent Default Event Behavior Until After All Event Handlers Have Executed In Angular 7.1.1](https://bennadel.github.io/JavaScript-Demos/demos/event-prevent-default-angular7/)

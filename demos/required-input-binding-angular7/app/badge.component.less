@@ -1,0 +1,43 @@
+
+:host {
+	border: 1px solid #cccccc ;
+	border-radius: 3px 3px 3px 3px ;
+	display: inline-block ;
+}
+
+.layout {
+	display: flex ;
+	padding: 10px 10px 10px 10px ;
+
+	&__avatar {
+		flex: 0 0 auto ;
+		margin-right: 13px ;
+	}
+
+	&__info {
+		flex: 1 1 auto ;
+	}
+}
+
+.avatar {
+	display: block ;
+	border-radius: 5px 5px 5px 5px ;
+	height: 40px ;
+	width: 40px ;
+}
+
+.info {
+	font-size: 16px ;
+	line-height: 21px ;
+	
+	&__name {
+		color: #333333 ;
+		font-weight: bold ;
+		margin-bottom: 2px ;
+		margin-top: 1px ;
+	}
+
+	&__email {
+		color: #999999 ;
+	}
+}
