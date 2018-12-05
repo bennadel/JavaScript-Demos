@@ -3,6 +3,7 @@
 import { ChangeDetectionStrategy } from "@angular/core";
 import { Component } from "@angular/core";
 import { OnChanges } from "@angular/core";
+import { OnInit } from "@angular/core";
 import { SimpleChanges } from "@angular/core";
 
 // ----------------------------------------------------------------------------------- //
@@ -37,7 +38,7 @@ interface User {
 		</div>
 	`
 })
-export class BadgeComponent implements OnChanges {
+export class BadgeComponent implements OnInit, OnChanges {
 
 	// Since the user is provided by an outside context (as a required input binding),
 	// it's defined value will not be know at instantiation time. As such, we'll use the
@@ -62,12 +63,35 @@ export class BadgeComponent implements OnChanges {
 	// ---
 
 	// I get called after input bindings have been changed.
+	// --
+	// CAUTION: If the calling context provides no input bindings on the bn-badge tag,
+	// this method will never get called.
 	public ngOnChanges( changes: SimpleChanges ) : void {
 
-		// CAUTION: If the "user" is undefined, the component rendering will actually
-		// break before it ever gets to this line. This logic is here for documentation
-		// purposes - expressing the requirements of the input binding more so than the
-		// actual data validation and error handling.
+		this.assertUser();
+
+	}
+
+
+	// I get called after the input bindings have been defined for the first time.
+	// --
+	// NOTE: This method still gets called even if there are no input bindings. This is
+	// different from the ngOnChanges() method above, which will only get called if input
+	// bindings are actually defined.
+	public ngOnInit() : void {
+
+		this.assertUser();
+
+	}
+
+	// ---
+	// PRIVATE METHODS.
+	// ---
+
+	// I assert that the user is defined (ie, that the required input binding was
+	// actually provided by the calling context).
+	private assertUser() : void {
+
 		if ( ! this.user ) {
 
 			throw( new Error( "Required input [user] not provided." ) );
