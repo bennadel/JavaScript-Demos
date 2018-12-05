@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Strict Mode Settings In JavaScript Are Scoped To The Script Tag](https://bennadel.github.io/JavaScript-Demos/demos/use-strict-scoping/)
 * [Using The "Definite Assignment Assertion" To Define Required Input Bindings In Angular 7.1.1](https://bennadel.github.io/JavaScript-Demos/demos/required-input-binding-angular7/)
 * [On The Irrational Demonization Of Two-Way Data-Binding In Angular](https://bennadel.github.io/JavaScript-Demos/demos/two-way-data-binding-demonization-angular7/)
 * [Polyfilling The Second-Click Of A RouterLink Fragment In Angular 7.1.1](https://bennadel.github.io/JavaScript-Demos/demos/router-second-fragment-angular7/)

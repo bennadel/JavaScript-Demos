@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>
+		Strict Mode Settings In JavaScript Are Scoped To The Script Tag
+	</title>
+</head>
+<body>
+
+	<h1>
+		Strict Mode Settings In JavaScript Are Scoped To The Script Tag
+	</h1>
+
+	<script type="text/javascript">
+
+		// !!! STRICT MODE ASSERTION HERE !!!
+		"use strict";
+
+		function sloppyMethod() {
+
+			accidentallyGlobalVariable = "kablamo!";
+
+		}
+
+		// In this test, we're going to confirm that the sloppy-method can't be invoked
+		// in the strict mode context. This test is our CONTROL case. We are expecting
+		// this try/catch to result in catch-block execution.
+		console.group( "Test One" );
+
+		try {
+
+			sloppyMethod();
+			console.log( "STRICT mode allowed sloppy method." );
+
+		} catch ( error ) {
+
+			console.log( "STRICT Mode prevented sloppy method." );
+
+		}
+
+		console.groupEnd();
+
+	</script>
+	<!-- ---------------------------------------------------------------------------- -->
+	<!-- ---------------------------------------------------------------------------- -->
+	<script type="text/javascript">
+
+		// In this test, we're going to see what happens if we take a function that was
+		// defined in a STRICT mode and try to use it in SLOPPY mode.
+		console.group( "Test Two" );
+
+		try {
+
+			sloppyMethod();
+			console.log( "SLOPPY mode allowed ORIGINAL sloppy method." );
+
+		} catch ( error ) {
+
+			console.log( "SLOPPY Mode prevented ORIGINAL sloppy method." );
+
+		}
+
+		console.groupEnd();
+
+	</script>
+	<!-- ---------------------------------------------------------------------------- -->
+	<!-- ---------------------------------------------------------------------------- -->
+	<script type="text/javascript">
+
+		function anotherSloppyMethod() {
+
+			anotherAccidentallyGlobalVariable = "kablamo!";
+
+		}
+
+		// In this test, we're going to see what happens if we define a NEW SLOPPY
+		// function and try to use it in SLOPPY mode. This will allow us to determine how
+		// the "use strict" assertion is scoped: to the page or to the Script tag.
+		console.group( "Test Three" );
+
+		try {
+
+			anotherSloppyMethod();
+			console.log( "SLOPPY mode allowed ANOTHER sloppy method." );
+
+		} catch ( error ) {
+
+			console.log( "SLOPPY Mode prevented ANOTHER sloppy method." );
+
+		}
+
+		console.groupEnd();
+
+	</script>
+
+</body>
+</html>
