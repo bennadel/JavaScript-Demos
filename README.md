@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [ngOnChanges() Life Cycle Hook Only Gets Invoked If Calling Context Actually Provides Input Bindings In Angular 7.1.1](https://bennadel.github.io/JavaScript-Demos/demos/ng-on-changes-no-inputs-angular7/)
 * [Strict Mode Settings In JavaScript Are Scoped To The Script Tag](https://bennadel.github.io/JavaScript-Demos/demos/use-strict-scoping/)
 * [Using The "Definite Assignment Assertion" To Define Required Input Bindings In Angular 7.1.1](https://bennadel.github.io/JavaScript-Demos/demos/required-input-binding-angular7/)
 * [On The Irrational Demonization Of Two-Way Data-Binding In Angular](https://bennadel.github.io/JavaScript-Demos/demos/two-way-data-binding-demonization-angular7/)
