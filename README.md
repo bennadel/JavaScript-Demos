@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Using A "Drag Shield" To Block Mouse Events During A Drag-And-Drop Workflow In Angular 7.1.2](https://bennadel.github.io/JavaScript-Demos/demos/drag-shield-angular7/)
 * [ngOnChanges() Life Cycle Hook Only Gets Invoked If Calling Context Actually Provides Input Bindings In Angular 7.1.1](https://bennadel.github.io/JavaScript-Demos/demos/ng-on-changes-no-inputs-angular7/)
 * [Strict Mode Settings In JavaScript Are Scoped To The Script Tag](https://bennadel.github.io/JavaScript-Demos/demos/use-strict-scoping/)
 * [Using The "Definite Assignment Assertion" To Define Required Input Bindings In Angular 7.1.1](https://bennadel.github.io/JavaScript-Demos/demos/required-input-binding-angular7/)

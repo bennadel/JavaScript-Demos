@@ -1,0 +1,61 @@
+
+:host {
+	display: block ;
+	font-size: 18px ;
+}
+
+.drag-shield {
+	bottom: 0px ;
+	border: 10px solid #ff3366 ;
+	cursor: grabbing ;
+	display: flex ;
+	left: 0px ;
+	position: fixed ;
+	right: 0px ;
+	top: 0px ;
+	user-select: none ;
+		-moz-user-select: none ;
+		-webkit-user-select: none ;
+	z-index: 2 ;
+
+	&__message {
+		background-color: #ff3366 ;
+		border-radius: 5px 5px 5px 5px ;
+		color: #ffffff ;
+		margin: auto auto 20px auto ;
+		padding: 10px 20px 10px 20px ;
+	}
+}
+
+my-draggable {
+	border: 2px solid #cccccc ;
+	border-radius: 4px 4px 4px 4px ;
+	height: 500px ;
+	overflow: hidden ;
+	width: 600px ;
+}
+
+.item {
+	background-color: #333333 ;
+	border-radius: 50px 50px 50px 50px ;
+	color: #ffffff ;
+	cursor: pointer ;
+	font-size: 24px ;
+	font-weight: bold ;
+	height: 50px ;
+	line-height: 50px ;
+	text-align: center ;
+	width: 50px ;
+
+	&:hover {
+		background-color: #ff3366 ;
+	}
+}
+
+.toggle {
+	cursor: pointer ;
+	display: block ;
+	font-size: 15px ;
+	line-height: 20px ;
+	margin-top: 10px ;
+}
