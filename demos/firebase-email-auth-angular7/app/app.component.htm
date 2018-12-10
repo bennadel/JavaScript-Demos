@@ -1,0 +1,122 @@
+<!--
+	For the sake of simplicity, we are going to keep this demo as SIMPLE AS POSSIBLE.
+	Each phase of the passwordless / magic email link authentication workflow will be
+	modeled by one of the following "views".
+-->
+<div [ngSwitch]="view">
+
+	<!--
+		PHASE ONE: Status Unknown - after we initialize the Firebase client instance, we
+		don't know the user's authentication status right away. The status is reported
+		asynchronously. As such, we want to represent the app as "loading" until will,
+		at the very least, know whether or not the user is logged-in.
+	-->
+	<div *ngSwitchCase="( 'loading' )">
+
+		<p>
+			<em>Loading....</em>
+		</p>
+
+	</div>
+
+	<!--
+		PHASE TWO: Not Logged-In - once we know that the user does not have a Firebase
+		user session, we can present them with a login form. Since we are using the magic
+		email link / passwordless authentication, the user only needs to provide their
+		email address, to which we will send a one-time-use magic email link.
+	-->
+	<div *ngSwitchCase="( 'login' )">
+
+		<h2>
+			Login With Magic Email Link
+		</h2>
+
+		<div *ngIf="errorMessage" class="error">
+			{{ errorMessage }}
+		</div>
+
+		<form (submit)="sendMagicLink( emailInput.value.trim() ); $event.preventDefault()">
+			<strong>Email:</strong>
+			<input #emailInput type="text" size="25" />
+			<button type="submit">Send Magic Email Link</button>
+		</form>
+
+	</div>
+
+	<!--
+		PHASE TWO (continued): Email Link Sent - once the magic email link has been sent,
+		the user will need to go do their email client (ex, Gmail) and either click on
+		the link we sent her; or, copy-paste the link back into this browser.
+	-->
+	<div *ngSwitchCase="( 'sent' )">
+
+		<h2>
+			Login With Magic Email Link
+		</h2>
+
+		<p>
+			<strong>We've sent you an email</strong> - in order to complete your login,
+			please click on the link in the email; or, copy-paste it back into this
+			browser navigation bar.
+		</p>
+
+		<p>
+			<a (click)="setView( 'login' )">Return to login</a>
+		</p>
+
+	</div>
+
+	<!--
+		PHASE THREE: Pending Authentication - Firebase has sent out the one-time-use
+		magic email link for passwordless authentication. The user now needs to confirm
+		the email address associated with the link (as a security precaution to prevent
+		session fixation attacks).
+		// --
+		NOTE: If we store the user's email address in something like LocalStorage, then
+		we can implicitly process this step without asking the user to do anything.
+	-->
+	<div *ngSwitchCase="( 'authenticate' )">
+
+		<h2>
+			Complete Passwordless Authentication
+		</h2>
+
+		<div *ngIf="errorMessage" class="error">
+			{{ errorMessage }}
+		</div>
+
+		<form (submit)="authenticate( emailInput.value.trim() ); $event.preventDefault()">
+			<strong>Confirm Email:</strong>
+			<input #emailInput type="text" size="25" />
+			<button type="submit">Sign-In</button>
+		</form>
+
+		<p>
+			<a (click)="setView( 'login' )">Return to login</a>
+		</p>
+
+	</div>
+
+	<!--
+		PHASE FOUR: Authenticated User - once the user confirms their email address, we
+		are able to process the email-link URL. This will result in a Firebase use
+		session. This session is long-lived by default (but can be adjusted); which makes
+		it important to provide an explicit sign-out call-to-action.
+	-->
+	<div *ngSwitchCase="( 'home' )">
+
+		<h2>
+			Welcome <code>{{ user.email }}</code>.
+		</h2>
+
+		<p>
+			What a glorious day to be using Angular 7 and Firebase!
+		</p>
+
+		<p>
+			<a (click)="signout()">Sign-Out</a>
+		</p>
+
+	</div>
+
+</div>
