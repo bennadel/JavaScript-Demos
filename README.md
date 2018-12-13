@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Trapping The Wheel Event May Prevent Chrome Browser Bug In Which The Scroll Wheel Stops Working In Overflow Container](https://bennadel.github.io/JavaScript-Demos/demos/chrome-scroll-bug-trap-wheel/)
 * [Using Magic Email Links To Authenticate Users With Firebase 5.7.0 In Angular 7.1.2](https://bennadel.github.io/JavaScript-Demos/demos/firebase-email-auth-angular7/)
 * [Using A "Drag Shield" To Block Mouse Events During A Drag-And-Drop Workflow In Angular 7.1.2](https://bennadel.github.io/JavaScript-Demos/demos/drag-shield-angular7/)
 * [ngOnChanges() Life Cycle Hook Only Gets Invoked If Calling Context Actually Provides Input Bindings In Angular 7.1.1](https://bennadel.github.io/JavaScript-Demos/demos/ng-on-changes-no-inputs-angular7/)

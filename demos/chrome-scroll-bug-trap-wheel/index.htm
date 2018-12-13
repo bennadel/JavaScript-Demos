@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>
+		Trapping The Wheel Event May Prevent Chrome Browser Bug In Which The Scroll Wheel Stops Working In Overflow Container
+	</title>
+
+	<style type="text/css">
+
+		html {
+			box-sizing: border-box ;
+		}
+
+		*, *:before, *:after {
+			box-sizing: inherit ;
+		}
+
+		.layout {
+			background-color: #ffffff ;
+			border: 2px solid #cccccc ;
+			height: 500px ;
+			margin: -250px 0px 0px 0px ;
+			position: absolute ;
+			top: 50% ;
+			width: 300px ;
+		}
+
+		.layout--a {
+			right: 51% ;
+		}
+
+		.layout--b {
+			left: 51% ;
+		}
+
+		.layout__top-panel {
+			bottom: 100px ;
+			left: 0px ;
+			overflow: auto ; /* The panel becomes SCROLLABLE due to content overflow. */
+			position: absolute ;
+			right: 0px ;
+			top: 0px ;
+		}
+
+		.layout__bottom-panel {
+			border-top: 1px solid #cccccc ;
+			bottom: 0px ;
+			height: 100px ;
+			left: 0px ;
+			padding: 20px 20px 20px 20px ;
+			position: absolute ;
+			right: 0px ;
+		}
+
+		.content p {
+			margin: 0px 0px 0px 0px ;
+			padding: 25px 20px 22px 20px ;
+		}
+
+		.content p:nth-child( even ) {
+			background-color: #f0f0f0 ;
+		}
+
+	</style>
+</head>
+<body>
+
+	<h1>
+		Trapping The Wheel Event May Prevent Chrome Browser Bug In Which The Scroll Wheel Stops Working In Overflow Container
+	</h1>
+
+	<!-- BEGIN: Layout-A. -->
+	<section class="layout layout--a">
+		<div class="layout__top-panel">
+
+			<div class="content">
+				<p>Content</p><p>Content</p><p>Content</p><p>Content</p><p>Content</p>
+				<p>Content</p><p>Content</p><p>Content</p><p>Content</p><p>Content</p>
+				<p>Content</p><p>Content</p><p>Content</p><p>Content</p><p>Content</p>
+				<p>Content</p><p>Content</p><p>Content</p><p>Content</p><p>Content</p>
+			</div>
+
+		</div>
+		<div class="layout__bottom-panel">
+
+			No Behavior Modification
+
+		</div>
+	</section>
+	<!-- END: Layout-A. -->
+
+	<!-- BEGIN: Layout-B. -->
+	<section class="layout layout--b">
+		<div class="layout__top-panel">
+
+			<div class="content">
+				<p>Content</p><p>Content</p><p>Content</p><p>Content</p><p>Content</p>
+				<p>Content</p><p>Content</p><p>Content</p><p>Content</p><p>Content</p>
+				<p>Content</p><p>Content</p><p>Content</p><p>Content</p><p>Content</p>
+				<p>Content</p><p>Content</p><p>Content</p><p>Content</p><p>Content</p>
+			</div>
+
+		</div>
+		<div class="layout__bottom-panel">
+
+			Trapping Wheel Event
+
+		</div>
+	</section>
+	<!-- END: Layout-B. -->
+
+	<script type="text/javascript">
+
+		// Theoretically, the "wheel" event and the "scroll" event should go hand-in-hand
+		// as long as there is room to scroll the content of a container. However, in
+		// Chrome, the scrolling of the mouse-wheel will suddenly stop working (at least
+		// as of Chrome/70.0.3538.110). In that case, we can see the "wheel" event being
+		// logged without a corresponding "scroll" event.
+
+		window.addEventListener(
+			"wheel",
+			function handleWheelEvent( event ) {
+
+				var direction = ( event.deltaY >= 0 )
+					? "DOWN"
+					: "UP"
+				;
+
+				console.log( "Event: wheel,", direction, event.target );
+
+			},
+			true
+		);
+
+		window.addEventListener(
+			"scroll",
+			function handleScrollEvent( event ) {
+
+				console.log( "Event: scroll" );
+
+			},
+			true
+		);
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+		// One theory as to why the scroll wheel stops working is that Chrome is getting
+		// confused as to which element it needs to apply the scroll action to. If you
+		// have nested scrollable elements then on each scroll action, the browser will
+		// try to apply the scroll to the parent element if the nested element runs out
+		// of offset. As such, let's see if we can "fix the bug" by prevent the WHEEL
+		// event's default behavior in the parent. That is, if the nested element runs
+		// out of scrollable offset, let's prevent the current WHEEL event so as to
+		// prevent Chrome from trying to apply the event to the parent container (ie, the
+		// BODY in this case).
+
+		// Since this bug only applies to Chrome, let's bail-out if we're not in chrome.
+		if ( isChromeBrowser() ) {
+
+			// This is the DOM element that is going to trap WHEEL events.
+			var panel = document.querySelector( ".layout--b .layout__top-panel" );
+
+			panel.addEventListener(
+				"wheel",
+				function handleWheelEvent( event ) {
+
+					// The wheel event represents some requested delta in a given
+					// direction. Get the direction from the event so that we can
+					// calculate whether or not to let the wheel event "happen".
+					var direction = getDirectionFromEvent( event );
+
+					// If the panel is already scrolled to its directional maximum, then
+					// we run the risk of Chrome trying to parle the wheel event into a
+					// scroll action on a parent container. As such, prevent the default
+					// behavior of the wheel event when we know it can't be applied to
+					// the panel.
+					if ( isScrolledInMaxDirection( panel, direction ) ) {
+
+						console.warn( "Preventing WHEEL event default behavior." );
+						event.preventDefault();
+
+					}
+
+					// CAUTION: Binding to the WHEEL event can have a negative impact on
+					// the smooth scrolling experience of the browser since the browser
+					// has to block and wait to see if the event is being "prevented." As
+					// such, this approach should be used judiciously.
+
+				},
+				false
+			);
+
+		} else {
+			
+			console.warn( "Not trapping wheel - this is not the CHROME browser." );
+
+		}
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+		 // I get the direction, "UP" or "DOWN", from the given event.
+		function getDirectionFromEvent( event ) {
+
+			var delta = ( event.deltaY || event.detail );
+
+			return( ( delta <= 0 ) ? "UP" : "DOWN" );
+
+		}
+
+
+		// I determine if the given element is scrolled to the maximum offset in the
+		// given direction ("UP" or "DOWN").
+		function isScrolledInMaxDirection( element, direction ) {
+
+			if ( direction === "UP" ) {
+
+				return( ! element.scrollTop );
+
+			} else {
+
+				return( ( element.clientHeight + element.scrollTop ) >= element.scrollHeight );
+
+			}
+
+		}
+
+
+		// I use feature detection to determine if the current browser is Chrome.
+		function isChromeBrowser() {
+
+			return( !! ( window.chrome && window.chrome.webstore ) );
+
+		}
+
+	</script>
+
+</body>
+</html>
