@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Creating A DOM Events Plug-In That Configures Host Bindings Outside Of The Angular Zone In Angular 7.1.4](https://bennadel.github.io/JavaScript-Demos/demos/custom-host-event-no-change-angular7/)
 * [Creating A Mouse-Over Hesitation Directive In Angular 7.1.4](https://bennadel.github.io/JavaScript-Demos/demos/hesitate-directive-angular7/)
 * [Enabling The Second-Click Of A RouterLink Fragment Using onSameUrlNavigation Reload In Angular 7.1.3](https://bennadel.github.io/JavaScript-Demos/demos/router-second-fragment2-angular7/)
 * [Trapping The Wheel Event May Prevent Chrome Browser Bug In Which The Scroll Wheel Stops Working In Overflow Container](https://bennadel.github.io/JavaScript-Demos/demos/chrome-scroll-bug-trap-wheel/)
