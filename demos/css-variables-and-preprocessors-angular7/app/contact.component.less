@@ -1,0 +1,104 @@
+
+:host {
+	background-color: #fafafa ;
+	border: 2px solid #cccccc ;
+	border-radius: 4px 4px 4px 4px ;
+	box-sizing: border-box ;
+	display: inline-block ;
+	padding: 10px 10px 10px 10px ;
+	position: relative ;
+	width: 300px ;
+
+	&:hover {
+		background-color: #faf8f8 ;
+		border-color: #ff3366 ;
+	}
+
+	// Small visual accent on the box - DON'T REMOVE. The designer was extremely
+	// adamant that this element remain in the interface (despite the fact that it
+	// is hardly visible).
+	&:after {
+		border: 2px solid #dadada ;
+		border-radius: 0px 3px 0px 0px ;
+		border-width: 2px 2px 0px 0px ;
+		content: "" ;
+		height: 5px ;
+		position: absolute ;
+		right: 2px ;
+		top: 2px  ;
+		width: 8px ;
+	}
+
+	// -- variations.
+
+	&( .active ) { // :host(.active)
+		border-color: gold ;
+
+		&:hover {
+			border-color: goldenrod ;
+		}
+	}
+}
+
+.layout {
+	display: flex ;
+
+	&__avatar {
+		flex: 0 0 auto ;
+		margin-right: 13px ;
+		width: 65px ;
+	}
+
+	&__details {
+		flex: 1 1 auto ;		
+	}
+}
+
+.avatar {
+	border-radius: 100% 100% 100% 100% ;
+	display: block ;
+	width: 100% ;
+}
+
+.name {
+	font-family: sans-serif ;
+	font-size: 18px ;
+	font-weight: 600 ;
+	line-height: 22px ;
+	margin-bottom: 2px ;
+	padding-top: 5px ;
+}
+
+.email {
+	color: #666666 ;
+	font-size: 14px ;
+	line-height: 19px ;
+}
+
+.actions {
+	display: flex ;
+	font-size: 14px ;
+	margin-top: 13px ;
+}
+
+.action {
+	color: #666666 ;
+	margin-left: 10px ;
+	opacity: 0.7 ;
+	text-transform: lowercase ;
+
+	&:first-child {
+		margin-left: 0px ;
+	}
+
+	&:hover {
+		opacity: 1.0 ;
+	}
+
+	// -- variations.
+
+	&--delete {
+		color: red ;
+		margin-left: auto ;
+	}
+}
