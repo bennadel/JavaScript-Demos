@@ -1,0 +1,53 @@
+.friend[data-v-5bd7d2e9] {
+  border: 2px solid #cccccc;
+  border-radius: 4px 4px 4px 4px ;
+  display: flex ;
+  padding: 10px 15px 10px 15px ;
+}
+.name[data-v-5bd7d2e9] {
+  flex: 1 1 auto ;
+}
+.actions[data-v-5bd7d2e9] {
+  flex: 0 1 auto ;
+}
+.action[data-v-5bd7d2e9] {
+  color: red ;
+  cursor: pointer ;
+  text-decoration: underline ;
+}
+
+.form[data-v-a038fb54] {
+  display: flex ;
+}
+.input[data-v-a038fb54] {
+  font-size: inherit ;
+  margin-right: 10px ;
+  width: 200px ;
+}
+.submit[data-v-a038fb54] {
+  font-size: inherit ;
+}
+
+.items[data-v-7a9c9d38] {
+  list-style-type: none ;
+  margin: 0px 0px 0px 0px ;
+  padding: 0px 0px 0px 0px ;
+  width: 400px ;
+}
+.items__item[data-v-7a9c9d38] {
+  margin: 20px 0px 20px 0px ;
+  padding: 0px 0px 0px 0px ;
+}
+.friend[data-v-7a9c9d38] {
+  border-width: 4px ;
+}
+.no-data[data-v-7a9c9d38] {
+  color: #cccccc;
+  font-size: 20px ;
+  line-height: 25px ;
+  margin-top: 30px ;
+  width: 400px ;
+}
+
+
+/*# sourceMappingURL=main.7e6adb1714c3acb91fd8.css.map*/
