@@ -1,10 +1,11 @@
 
 // Import the core angular services.
+import { animate } from "@angular/animations";
 import { Component } from "@angular/core";
-import { state as animationState } from "@angular/animations";
-import { style as animationStyle } from "@angular/animations";
-import { transition as animationTransition } from "@angular/animations";
-import { trigger as animationTrigger } from "@angular/animations";
+import { state } from "@angular/animations";
+import { style } from "@angular/animations";
+import { transition } from "@angular/animations";
+import { trigger } from "@angular/animations";
 
 // Import the application components and services.
 import data from "./data";
@@ -22,26 +23,22 @@ interface Movie {
 	selector: "my-app",
 	styleUrls: [ "./app.component.less" ],
 	animations: [
-		animationTrigger(
+		trigger(
 			"movieIndex",
 			[
-				animationState(
-					"0",
-					animationStyle({
-						marginLeft: "0px"
-					})
-				),
-				animationState(
-					"1",
-					animationStyle({
-						marginLeft: "100px"
-					})
-				),
-				animationState(
-					"2",
-					animationStyle({
-						marginLeft: "200px"
-					})
+				transition(
+					"* <=> *",
+					[
+						style({
+							transform: "translateY( 1000px )"
+						}),
+						animate(
+							1000,
+							style({
+								transform: "translateY( 0px )"
+							})
+						)
+					]
 				)
 			]
 		)
