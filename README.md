@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Creating A Bind-Once Structural Directive In Angular 7.1.4](https://bennadel.github.io/JavaScript-Demos/demos/bind-once-angular7/)
 * [Updating Reactive Values Can Cause Some Non-Reactive Values To Re-Render In Vue.js 2.5.21](https://bennadel.github.io/JavaScript-Demos/demos/reactive-test-vue2/)
 * [Creating A Vue.js Inspired Event-Modifier DOM Plug-In In Angular 7.1.4](https://bennadel.github.io/JavaScript-Demos/demos/event-modifiers-vue-angular7/)
 * [Hello World With Webpack 4.28.2 And Vue.js 2.5.21](https://bennadel.github.io/JavaScript-Demos/demos/webpack4-vue2/)
