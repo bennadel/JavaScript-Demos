@@ -1,0 +1,85 @@
+
+.app {
+	font-size: 18px ;
+}
+
+.movies {
+	list-style-type: none ;
+	margin: 20px 0px 20px 0px ;
+	padding: 0px 0px 0px 0px ;
+	width: 600px ;
+}
+
+.movie {
+	background-color: #fafafa ;
+	border: 2px solid #cccccc ;
+	border-radius: 5px 5px 5px 5px ;
+	display: flex ;
+	margin: 0px 0px 12px 0px ;
+}
+
+.title {
+	align-self: center ;
+	display: inline-flex ;
+	flex: 1 1 auto ;
+	font-size: 20px ;
+	padding: 0px 20px 0px 20px ;
+}
+
+.link {
+	color: red ;
+	cursor: pointer ;
+	margin-right: 10px ;
+
+	&:hover {
+		text-decoration: underline ;
+	}
+}
+
+.release-date {
+	color: #cccccc ;
+	font-style: italic ;
+}
+
+.tools {
+	display: flex ;
+	flex: 0 0 auto ;
+	flex-direction: column ;
+	user-select: none ;
+		-moz-user-select: none ;
+		-webkit-user-select: none ;
+	width: 130px ;
+
+	&__group {
+		display: flex ;
+		flex: 1 1 auto ;
+		font-size: 15px ;
+		height: 30px ;
+		line-height: 31px ;
+	}
+}
+
+.move-up,
+.move-down {
+	cursor: pointer ;
+	flex: 0 0 auto ;
+	text-align: center ;
+	width: 55px ;
+}
+
+.move-top,
+.move-bottom {
+	cursor: pointer ;
+	flex: 1 1 auto ;
+	text-align: center ;
+}
+
+.move-up,
+.move-down,
+.move-top,
+.move-bottom {
+	&:hover {
+		color: red ;
+		text-decoration: underline ;
+	}
+}
