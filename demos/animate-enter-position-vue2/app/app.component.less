@@ -1,0 +1,38 @@
+
+.app {
+	font-size: 18px ;
+}
+
+.items {
+	display: flex ;
+	flex-wrap: wrap ;
+	list-style-type: none ;
+	margin: 0px 0px 0px 0px ;
+	padding: 0px 0px 0px 0px ;
+	width: 500px ;
+}
+
+.item {
+	background-color: #ff3366 ;
+	border-radius: 30px 30px 30px 30px ;
+	flex: 0 0 auto ;
+	height: 30px ;
+	margin: 0px 12px 12px 0px ;
+	padding: 0px 0px 0px 0px ;
+	width: 30px ;
+}
+
+.click-capture {
+	bottom: 0px ;
+	cursor: pointer ;
+	left: 0px ;
+	position: fixed ;
+	right: 0px ;
+	top: 0px ;
+	// Since clicking around the document will often lead to text-selection, let's just
+	// remove the ability to select text in this demo.
+	user-select: none ;
+		-moz-user-select: none ;
+		-webkit-user-select: none ;
+	z-index: 2 ;
+}
