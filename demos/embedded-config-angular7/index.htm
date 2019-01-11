@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Using Embedded Data To Provide Request-Specific Application Configuration In Angular 7.2.0
+	</title>
+
+	<script type="text/javascript">
+
+		// Simulate request-specific, dynamic configuration using random values.
+		switch ( ( Math.floor( Math.random() * 10 ) % 3 ) + 1 ) {
+			case 1:
+
+				var company = {
+					"id": 1,
+					"name": "Acme Corp",
+					"established": 1908
+				};
+
+			break;
+			case 2:
+
+				var company = {
+					"id": 2,
+					"name": "Evil Corp",
+					"established": 2007
+				};
+
+			break;
+			case 3:
+
+				var company = {
+					"id": 3,
+					"name": "Happy Corp",
+					"established": 1980
+				};
+
+			break;
+		}
+
+		// Provide external configuration data on a global key so that it can be consumed
+		// by the Angular application bootstrapping process.
+		window.appConfig = {
+			"company": company,
+			"version": "2019.01.11.6.19.0"
+		};
+
+	</script>
+</head>
+<body>
+
+	<h1>
+		Using Embedded Data To Provide Request-Specific Application Configuration In Angular 7.2.0
+	</h1>
+
+	<my-app>
+		<p>
+			<em>Loading files...</em>
+		</p>
+
+		<p>
+			npm Run Scripts:
+		</p>
+
+		<ul>
+			<li>
+				<strong>npm run build</strong> &mdash; Compiles the .ts file into bundles.
+			</li>
+			<li>
+				<strong>npm run watch</strong> &mdash; Compiles the .ts file into bundles and then watches files for changes.
+			</li>
+		</ul>
+	</my-app>
+
+<script type="text/javascript" src="build/main.205133e77faef2c0e2b7.js"></script><script type="text/javascript" src="build/runtime.f0dde21f71700b84f182.js"></script><script type="text/javascript" src="build/vendors~main.a7b483fcdb35e174d85f.js"></script></body>
+</html>

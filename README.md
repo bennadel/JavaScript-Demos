@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Using Embedded Data To Provide Request-Specific Application Configuration In Angular 7.2.0](https://bennadel.github.io/JavaScript-Demos/demos/embedded-config-angular7/)
 * [Animating Elements In From A Mouse-Event Location In Vue.js 2.5.21](https://bennadel.github.io/JavaScript-Demos/demos/animate-enter-position-vue2/)
 * [Creating A Pandora Radio Station List Animation In Vue.js 2.5.21](https://bennadel.github.io/JavaScript-Demos/demos/pandora-list-vue2/)
 * [Creating A Bind-Once Structural Directive In Angular 7.1.4](https://bennadel.github.io/JavaScript-Demos/demos/bind-once-angular7/)
