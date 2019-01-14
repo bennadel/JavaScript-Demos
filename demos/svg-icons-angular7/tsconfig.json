@@ -1,0 +1,27 @@
+{
+	"compilerOptions": {
+		"baseUrl": "",
+		"emitDecoratorMetadata": true,
+		"experimentalDecorators": true,
+		"lib": [
+			"DOM",
+			"ES6"
+		],
+		"module": "commonjs",
+		"moduleResolution": "node",
+		"noImplicitAny": true,
+		"paths": {
+			"~/app/*": [ "app/*" ]
+		},
+		"pretty": true,
+		"removeComments": false,
+		"sourceMap": true,
+		"strictNullChecks": true,
+		"strictPropertyInitialization": true,
+		"suppressImplicitAnyIndexErrors": true,
+		"target": "es5",
+		"types": [
+			"node"
+		]
+	}
+}

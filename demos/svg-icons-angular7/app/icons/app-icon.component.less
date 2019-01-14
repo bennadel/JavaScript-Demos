@@ -1,0 +1,22 @@
+
+:host {
+	color: inherit ;
+	display: inline-block ;
+
+	// Let the app-icon naturally scale with the font-size. Since this is bound to the
+	// host element, it can easily be overridden by contextual styling.
+	height: 1em ;
+	width: 1em ;
+}
+
+svg {
+	// Let the app-icon fill color take on the same color as the contextual text.
+	color: inherit ;
+	fill: currentColor ;
+
+	display: block ;
+
+	// Scale the SVG to cover the whole app-icon container.
+	height: 100% ;
+	width: 100% ;
+}

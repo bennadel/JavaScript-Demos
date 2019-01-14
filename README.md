@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Creating SVG Icon Components And SVG Icon Sprites In Angular 7.2.0](https://bennadel.github.io/JavaScript-Demos/demos/svg-icons-angular7/)
 * [Using Embedded Data To Provide Request-Specific Application Configuration In Angular 7.2.0](https://bennadel.github.io/JavaScript-Demos/demos/embedded-config-angular7/)
 * [Animating Elements In From A Mouse-Event Location In Vue.js 2.5.21](https://bennadel.github.io/JavaScript-Demos/demos/animate-enter-position-vue2/)
 * [Creating A Pandora Radio Station List Animation In Vue.js 2.5.21](https://bennadel.github.io/JavaScript-Demos/demos/pandora-list-vue2/)

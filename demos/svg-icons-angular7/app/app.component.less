@@ -1,0 +1,48 @@
+
+:host {
+	display: block ;
+	font-size: 18px ;
+}
+
+.counter {
+	display: flex ;
+
+	&__left,
+	&__right {
+		background: transparent ;
+		border: none ;
+		cursor: pointer ;
+		flex: 0 0 auto ;
+		height: 100px ;
+		margin: 0px 0px 0px 0px ;
+		padding: 0px 0px 0px 0px ;
+		width: 100px ;
+
+		&:hover {
+			color: #ff3366 ;
+		}
+	}
+
+	&__icon {
+		height: 100% ;
+		width: 100% ;
+	}
+
+	&__value {
+		font-size: 60px ;
+		line-height: 100px ;
+		margin: 0px 30px 0px 30px ;
+	}
+}
+
+.small-icons {
+	display: flex ;
+	margin-top: 30px ;
+
+	& app-icon {
+		flex: 0 0 auto ;
+		height: 16px ;
+		margin-right: 10px ;
+		width: 16px ;
+	}
+}
