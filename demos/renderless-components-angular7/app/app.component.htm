@@ -1,0 +1,36 @@
+
+<!-- USING DEFAULT LAYOUT (tags-input). -->
+
+<tags-input [(tags)]="tags"></tags-input>
+
+
+<!--
+	USING CUSTOM LAYOUT (tags-input-lite).
+	// --
+	With the custom layout, we use a different Element selector (-lite). Then, we
+	get a reference to the TagsInput component (#tagsInput) and invoke methods
+	directly on the reference (instead of on our own host component).
+-->
+
+<tags-input-lite #tagsInput [(tags)]="tags">
+
+	<form (submit)="tagsInput.addTag( name.value ) ; name.value = '' ;" class="form">
+		<input type="text" #name placeholder="New tag" class="form__input" />
+		<button type="submit" class="form__submit">
+			Add
+		</button>
+	</form>
+
+	<ul class="tags">
+		<li *ngFor="let tag of tagsInput.tags" class="tags__tag">
+			<span class="tags__label">
+				{{ tag }}
+			</span>
+
+			<a (click)="tagsInput.removeTag( tag )" class="tags__remove">
+				Remove
+			</a>
+		</li>
+	</ul>
+
+</tags-input-lite>

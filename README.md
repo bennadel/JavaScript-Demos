@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Renderless Components In Angular 7.2.0](https://bennadel.github.io/JavaScript-Demos/demos/renderless-components-angular7/)
 * [Providing Module Configuration Using forRoot() And Ahead-Of-Time Compiling In Angular 7.2.0](https://bennadel.github.io/JavaScript-Demos/demos/provide-for-root-options-aot-angular7/)
 * [Experiment: Using Service Barrels As A De Facto Dependency-Injection Container In Vue.js 2.5.22](https://bennadel.github.io/JavaScript-Demos/demos/services-without-di-vue2/)
 * [Creating SVG Icon Components And SVG Icon Sprites In Angular 7.2.0](https://bennadel.github.io/JavaScript-Demos/demos/svg-icons-angular7/)

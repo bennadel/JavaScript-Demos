@@ -1,0 +1,43 @@
+
+:host {
+	display: inline-block ;
+	background-color: #ffffff ;
+	border: 1px solid #cccccc ;
+	border-radius: 5px 5px 5px 5px ;
+}
+
+.wrapper {
+	display: flex ;
+	flex-wrap: wrap ;
+	padding: 6px 6px 6px 6px ;
+}
+
+.tag {
+	background-color: #666666 ;
+	border-radius: 3px 3px 3px 3px ;
+	display: inline-flex ;
+	flex: 0 0 auto ;
+	margin: 4px 4px 4px 4px ;
+	white-space: nowrap ;
+
+	&__label {
+		color: #ffffff ;
+		flex: 1 1 auto ;
+		font-variant: small-caps ;
+		padding: 4px 8px 4px 13px ;
+	}
+
+	&__remove {
+		color: #cccccc ;
+		cursor: pointer ;
+		font-weight: bold ;
+		padding: 4px 10px 4px 4px ;
+	}
+}
+
+.input {
+	flex: 1 1 auto ;
+	font-size: inherit ;
+	margin: 4px 4px 4px 4px ;
+	min-width: 100px ;
+}
