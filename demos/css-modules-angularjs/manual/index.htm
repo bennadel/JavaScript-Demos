@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en" ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Hacking Scoped CSS Modules Into A Brownfield AngularJS 1.2.22 Application
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Permanent+Marker" />
+</head>
+<body>
+
+	<h1>
+		Hacking Scoped CSS Modules Into A Brownfield AngularJS 1.2.22 Application
+	</h1>
+
+	<h2>
+		Using "manual" Approach
+	</h2>
+
+	<bn:name-tag style="margin-right: 30px ;">
+		Ben
+	</bn:name-tag>
+
+	<bn:name-tag style="background-color: blue ;">
+		Kimmie
+	</bn:name-tag>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../../vendor/angularjs/angular-1.2.22.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+	</script>
+	<script type="text/javascript">
+
+		app.directive(
+			"bnNameTag",
+			function bnNameTagDirective() {
+
+				// Return the directive configuration.
+				return({
+					link: link,
+					restrict: "E",
+					scope: {},
+					templateUrl: "bn-name-tag.htm",
+					transclude: true
+				});
+
+				// I bind the JavaScript events to the local scope.
+				function link( scope, element, attributes ) {
+
+					// Because we don't have native CSS module support, I am injecting
+					// the module class name on the host element at runtime. To keep
+					// the class names small and globally unique, I'm just taking the
+					// first 6-letters of the hash of the directive element name.
+					// --
+					// MD5 ("bn:name-tag") = ee8f6b215d4299bac64b16c3d804f7f8
+					element.addClass( "m-ee8f6b" );
+
+				}
+
+			}
+		);
+
+	</script>
+	<style type="text/less">
+
+		// NOTE: Because we're using BEM-style (Block Element Modifier) CSS architecture
+		// here, I only need to add the class prefix at the top. Then, every nested class
+		// just extends from there using "__" delimiters.
+		// --
+		.m-ee8f6b {
+			background-color: #ff0000 ;
+			border: 10px solid #ffffff ;
+			border-radius: 15px 15px 15px 15px ; 
+			box-shadow: 0px 0px 6px rgba( 0, 0, 0, 0.2 ) ;
+			box-sizing: border-box ;
+			display: inline-block ;
+			min-width: 300px ;
+
+			&__wrapper {
+				padding: 0px 0px 13px 0px ;
+			}
+
+			&__header {
+				color: #ffffff ;
+				padding: 10px 0px 10px 0px ;
+				font-family: helvetica, arial, sans-serif ;
+				text-align: center ;
+				text-transform: uppercase ;
+			}
+
+			&__title {
+				display: block ;
+				font-size: 38px ;
+				font-weight: bold ;
+				line-height: 43px ;
+				letter-spacing: 4px ;
+			}
+
+			&__sub-title {
+				display: block ;
+				font-size: 18px ;
+				line-height: 22px ;
+				letter-spacing: 1px ;
+			}
+
+			&__name {
+				background-color: #ffffff ;
+				color: inherit ;
+				font-family: "Permanent Marker", sans-serif ;
+				font-size: 36px ;
+				letter-spacing: 3px ;
+				line-height: 41px ;
+				padding: 25px 20px 26px 20px ;
+				text-align: center ;
+			}
+		}
+
+	</style>
+	<script type="text/ng-template" id="bn-name-tag.htm">
+
+		<div class="m-ee8f6b__wrapper">
+
+			<header class="m-ee8f6b__header">
+				<span class="m-ee8f6b__title">
+					Hello
+				</span>
+				<span class="m-ee8f6b__sub-title">
+					My name is
+				</span>
+			</header>
+
+			<div class="m-ee8f6b__name" ng-transclude>
+				<!-- Name goes here. -->
+			</div>
+
+		</div>
+
+	</script>
+
+	<!-- The browser-based LESS compiler has to be included AFTER the LESS blocks. -->
+	<script type="text/javascript" src="../../../vendor/less/3.9.0/less.min.js"></script>
+
+</body>
+</html>
