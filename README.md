@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Trying To Implement 9-Slice Scaling With SVG Components In Angular 7.2.4](https://bennadel.github.io/JavaScript-Demos/demos/svg-9-slice-scaling-angular7/)
 * [Hacking Scoped CSS Modules Into A Brownfield AngularJS 1.2.22 Application](https://bennadel.github.io/JavaScript-Demos/demos/css-modules-angularjs/)
 * [Renderless Components In Angular 7.2.0](https://bennadel.github.io/JavaScript-Demos/demos/renderless-components-angular7/)
 * [Providing Module Configuration Using forRoot() And Ahead-Of-Time Compiling In Angular 7.2.0](https://bennadel.github.io/JavaScript-Demos/demos/provide-for-root-options-aot-angular7/)
