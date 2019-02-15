@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Projecting Content Into The Root Application Component Using Slots In Vue.js 2.6.6](https://bennadel.github.io/JavaScript-Demos/demos/projecting-root-content-vue2/)
 * [Using A Wild Card Route (**) To Traverse Arbitrarily Nested Data In Angular 7.2.4](https://bennadel.github.io/JavaScript-Demos/demos/router-folder-like-structure-angular7/)
 * [Trying To Implement 9-Slice Scaling With SVG Components In Angular 7.2.4](https://bennadel.github.io/JavaScript-Demos/demos/svg-9-slice-scaling-angular7/)
 * [Hacking Scoped CSS Modules Into A Brownfield AngularJS 1.2.22 Application](https://bennadel.github.io/JavaScript-Demos/demos/css-modules-angularjs/)
