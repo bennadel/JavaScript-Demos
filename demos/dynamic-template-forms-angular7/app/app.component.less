@@ -1,0 +1,51 @@
+
+:host {
+	display: block ;
+	font-size: 18px ;
+}
+
+input, select, button {
+	font-size: inherit ;
+}
+
+.pet {
+	border: 2px solid #ffffff ;
+	border-radius: 8px 8px 8px 8px ;
+	display: flex ;
+	margin-bottom: 10px ;
+	padding: 5px 5px 5px 5px ;
+	width: 600px ;
+
+	&--invalid {
+		border-color: #fc0000 ;
+	}
+
+	&:hover:not( &--invalid ) {
+		border-color: #cccccc ;
+	}
+
+	& > select,
+	& > input {
+		margin-right: 10px ;
+	}
+
+	.remove {
+		align-self: center ;
+		cursor: pointer ;
+		font-family: monospace ;
+		font-size: 25px ;
+		line-height: 25px ;
+		margin-left: auto ;
+	}
+}
+
+.actions {
+	a {
+		color: red ;
+		cursor: pointer ;
+		text-decoration: underline ;
+		user-select: none ;
+			-moz-user-select: none ;
+			-webkit-user-select: none ;
+	}
+}
