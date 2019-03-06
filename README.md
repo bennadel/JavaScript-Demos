@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Using Pure Pipes To Generate NgFor TrackBy Identity Functions In Angular 7.2.7](https://bennadel.github.io/JavaScript-Demos/demos/ng-for-track-by-pipe-angular7/)
 * [Using Dynamic Template-Driven Forms In Angular 7.2.7](https://bennadel.github.io/JavaScript-Demos/demos/dynamic-template-forms-angular7/)
 * [Creating Shortcuts By Mapping Multiple Routes On To The Same View-Component In Angular 7.2.5](https://bennadel.github.io/JavaScript-Demos/demos/url-shortcuts2-view-angular7/)
 * [Using A Wild Card Shortcuts Route To Hide The Internal Routing Implementation In Angular 7.2.5](https://bennadel.github.io/JavaScript-Demos/demos/url-shortcuts-view-angular7/)
