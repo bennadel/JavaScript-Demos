@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Code Kata: Parsing Simple Timespan Strings Like 3h:12m:57s Using JavaScript
+	</title>
+</head>
+<body>
+
+	<h1>
+		Code Kata: Parsing Simple Timespan Strings Like 3h:12m:57s Using JavaScript
+	</h1>
+
+	<p>
+		<em>View the console for output...</em>
+	</p>
+
+	<script type="text/javascript">
+
+		// I parse a simple timespan string (ex, "12h,30m,17s") into a number of SECONDS.
+		// Supports the following units (must be lowercase):
+		// --
+		// * d = days
+		// * h = hours
+		// * m = minutes
+		// * s = seconds
+		// --
+		// Input may contain other delimiters, as desired, in order to make the input
+		// more readable by the developers.
+		function parseTimespan( input ) {
+
+			// CAUTION: On its own, this pattern does not require the input to only
+			// contain tokens that can be matched by this pattern. Depending on how hard
+			// you squint, this can be a good or bad thing.
+			var pattern = /(\d+)(d|h|m|s)/g;
+			var multiplier = {
+				d: 86400,
+				h: 3600,
+				m: 60,
+				s: 1
+			};
+
+			var timespan = 0;
+			var match;
+
+			// Apply each matched magnitude-unit combination to the running total.
+			while ( match = pattern.exec( input ) ) {
+
+				var magnitude = match[ 1 ];
+				var unit = match[ 2 ];
+
+				timespan += ( magnitude * multiplier[ unit ] );
+
+			}
+
+			return( timespan );
+
+		}
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+		console.group( "Single Units" );
+		console.log( "2s =>", parseTimespan( "2s" ) );
+		console.log( "2m =>", parseTimespan( "2m" ) );
+		console.log( "2h =>", parseTimespan( "2h" ) );
+		console.log( "2d =>", parseTimespan( "2d" ) );
+		console.groupEnd();
+
+		// Notice that the parseTimespan() function doesn't care about how you format
+		// your input string; you could use spaces, commas, colons, etc. While this does
+		// open the door for subtle errors (of omission), it grants you the flexibility
+		// to choose a formatting option that sparks the most joy.
+		console.group( "Mixed Units" );
+		console.log( "1m2s =>", parseTimespan( "1m2s" ) );
+		console.log( "2s 1m =>", parseTimespan( "2s 1m" ) );
+		console.log( "3d..2h..16m..18s =>", parseTimespan( "3d..2h..16m..18s" ) );
+		console.log( "16m, 2h, 18s, 3d =>", parseTimespan( "16m, 2h, 18s, 3d" ) );
+		console.log( "10s:15s:20s =>", parseTimespan( "10s:15s:20s" ) );
+		console.groupEnd();
+
+	</script>
+
+</body>
+</html>

@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Code Kata: Parsing Simple Timespan Strings Like 3h:12m:57s Using JavaScript](https://bennadel.github.io/JavaScript-Demos/demos/simple-timespan-parsing/)
 * [Revisited: Using Pure Pipes To Generate NgFor TrackBy Identity Functions In Angular 7.2.7](https://bennadel.github.io/JavaScript-Demos/demos/ng-for-track-by-pipe2-angular7/)
 * [Using Pure Pipes To Generate NgFor TrackBy Identity Functions In Angular 7.2.7](https://bennadel.github.io/JavaScript-Demos/demos/ng-for-track-by-pipe-angular7/)
 * [Using Dynamic Template-Driven Forms In Angular 7.2.7](https://bennadel.github.io/JavaScript-Demos/demos/dynamic-template-forms-angular7/)
