@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Scrolling An Overflow-Container Back To The Top On Content Change In Angular 7.2.7](https://bennadel.github.io/JavaScript-Demos/demos/embracing-dom-access-scrollto-angular7/)
 * [Embracing Tightly-Coupled DOM Access In Angular 7.2.7](https://bennadel.github.io/JavaScript-Demos/demos/embracing-dom-access-angular7/)
 * [Code Kata: Parsing Simple Timespan Strings Like 3h:12m:57s Using JavaScript](https://bennadel.github.io/JavaScript-Demos/demos/simple-timespan-parsing/)
 * [Revisited: Using Pure Pipes To Generate NgFor TrackBy Identity Functions In Angular 7.2.7](https://bennadel.github.io/JavaScript-Demos/demos/ng-for-track-by-pipe2-angular7/)

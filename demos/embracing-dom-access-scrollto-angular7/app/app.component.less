@@ -1,0 +1,53 @@
+
+:host {
+	display: block ;
+	font-size: 18px ;
+}
+
+.tabs {
+	width: 600px ;
+
+	&__nav {
+		border-bottom: 2px solid #ff3366 ;
+		display: flex ;
+	}
+
+	&__nav-item {
+		background-color: #f0f0f0 ;
+		border-radius: 5px 5px 0px 0px ;
+		cursor: pointer ;
+		margin-right: 4px ;
+		padding: 10px 25px 10px 25px ;
+
+		&:hover {
+			background-color: #e0e0e0 ;
+		}
+
+		&--on {
+			background-color: #ff3366 ;
+			color: #ffffff ;
+
+			&:hover {
+				background-color: #ff3366 ;
+			}
+		}
+	}
+
+	&__content {
+		border: 1px solid #cccccc ;
+		border-top-width: 0px ;
+		height: 300px ;
+		overflow: auto ;
+		padding: 25px 25px 25px 25px ;
+	}
+
+	&__tab {
+		& > *:first-child {
+			margin-top: 0px ;
+		}
+
+		& > *:last-child {
+			margin-bottom: 0px ;
+		}
+	}
+}
