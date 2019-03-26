@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Reporting The User's Timezone Offset To The Server Using An API Client In Angular 7.2.10](https://bennadel.github.io/JavaScript-Demos/demos/timezone-offset-http-angular7/)
 * [Scrolling An Overflow-Container Back To The Top On Content Change In Angular 7.2.7](https://bennadel.github.io/JavaScript-Demos/demos/embracing-dom-access-scrollto-angular7/)
 * [Embracing Tightly-Coupled DOM Access In Angular 7.2.7](https://bennadel.github.io/JavaScript-Demos/demos/embracing-dom-access-angular7/)
 * [Code Kata: Parsing Simple Timespan Strings Like 3h:12m:57s Using JavaScript](https://bennadel.github.io/JavaScript-Demos/demos/simple-timespan-parsing/)
