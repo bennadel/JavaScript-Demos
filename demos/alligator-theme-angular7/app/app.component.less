@@ -1,0 +1,37 @@
+
+:host {
+	display: block ;
+	font-size: 18px ;
+}
+
+.themer {
+	cursor: pointer ;
+	text-decoration: underline ;
+	user-select: none ;
+		-moz-user-select: none ;
+		-webkit-user-select: none ;
+
+	&--on {
+		font-weight: bold ;
+		text-decoration: none ;
+	}
+}
+
+.quote {
+	border-left: 5px solid #d0d0d0 ;
+	margin: 20px 0px 20px 10px ;
+	padding: 10px 20px 10px 20px ;
+
+	&__text {
+		margin: 0px 0px 15px 0px ;
+	}
+
+	&__attribution {
+		font-style: italic ;
+		margin-left: 10px ;
+	}
+
+	:host-context( .theme--dark ) & {
+		border-color: #266aab ;
+	}
+}

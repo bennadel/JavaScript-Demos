@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Alligator.io Code Kata: Defaulting Theme Based On Time-Of-Day In Angular 7.2.11
+	</title>
+
+	<script type="text/javascript">
+		(function initializeTheme(){
+
+			var hours = ( new Date() ).getHours();
+
+			// The default theme is going to be based on the user's local date/time. 
+			// Working hours - the so-called "9-to-5" hours - will be considered the
+			// light theme; everything else will be the dark theme.
+			var theme = ( ( 9 <= hours ) && ( hours <= 17 ) )
+				? "theme--light"
+				: "theme--dark"
+			;
+
+			// NOTE: We're adding the theme to the root element, rather than the body,
+			// because the body isn't available yet in the page processing.
+			document.documentElement.classList.add( theme );
+
+		})();
+	</script>
+	<style type="text/css">
+
+		html.theme--light body {
+			background-color: #ffffff ;
+			color: #333333 ;
+		}
+
+		html.theme--dark body {
+			background-color: #222831 ;
+			color: #f9ffee ;
+		}
+
+	</style>
+</head>
+<body>
+
+	<h1>
+		Alligator.io Code Kata: Defaulting Theme Based On Time-Of-Day In Angular 7.2.11
+	</h1>
+
+	<my-app>
+		<!-- App will be injected here, like a boss. -->
+	</my-app>
+
+</body>
+</html>
