@@ -1,0 +1,51 @@
+
+:host {
+	display: block ;
+	font-size: 18px ;
+}
+
+.section {
+	margin: 20px 0px 20px 0px ;
+
+	&__header {
+		background-color: #ffffff ;
+		border-bottom: 1px solid #cccccc ;
+		box-sizing: border-box ;
+		color: #333333 ;
+		display: flex ;
+		padding: 15px 0px 15px 0px ;
+		transition:
+			500ms ease background-color,
+			500ms ease color,
+			500ms padding
+		;
+
+		&--stuck {
+			background-color: #e0e0e0 ;
+			box-shadow: 0px 2px 0px rgba( 0, 0, 0, 0.1 ) ;
+			color: #000000 ;
+			padding-left: 20px ;
+			padding-right: 20px ;
+			transition:
+				2500ms ease background-color,
+				2500ms ease color,
+				500ms padding
+			;
+		}
+	}
+
+	&__title {
+		flex: 1 1 auto ;
+		margin: 0px 0px 0px 0px ;
+	}
+
+	&__toggle {
+		color: #999999 ;
+		flex: 0 1 auto ;
+		text-transform: lowercase ;
+	}
+
+	&__body {
+		margin-top: 20px ;
+	}
+}

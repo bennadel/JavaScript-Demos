@@ -1,0 +1,44 @@
+<h2>
+	A Rather Sticky Exploration
+</h2>
+
+<section
+	*ngFor="let section of sections"
+	[id]="section.id"
+	class="section">
+
+	<!--
+		The Sticky-Header will automatically apply "position: sticky" to itself. And,
+		will add the [stickyClass] CSS class to itself whenever the header enters the
+		"sticky" state. This can be used to alter the visual styling of the header when
+		it is stuck to the top of the Viewport.
+	-->
+	<my-sticky-header
+		class="section__header"
+		stickyClass="section__header--stuck">
+
+		<h3 class="section__title">
+			{{ section.title }}
+		</h3>
+
+		<a
+			href="#{{ section.id }}"
+			(click)="toggleSection( section )"
+			class="section__toggle"
+			[ngSwitch]="section.isCollapsed">
+
+			<ng-template [ngSwitchCase]="false"> Collapse </ng-template>
+			<ng-template [ngSwitchCase]="true"> Expand </ng-template>
+		</a>
+
+	</my-sticky-header>
+
+	<div *ngIf="( ! section.isCollapsed )" class="section__body">
+
+		<p *ngFor="let i of [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]">
+			This is the body of the section ....
+		</p>
+
+	</div>
+
+</section>

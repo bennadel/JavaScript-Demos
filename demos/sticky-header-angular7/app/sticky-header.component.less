@@ -1,0 +1,31 @@
+
+:host {
+	display: block ;
+	position: relative ;
+
+	// Only apply sticky override if supported by the browser.
+	@supports ( position: sticky ) or ( position: -webkit-sticky ) {
+		position: sticky ;
+			position: -webkit-sticky ;
+		top: 0px ;
+	}
+}
+
+.top-marker,
+.bottom-marker {
+	height: 0px ;
+	left: 0px ;
+	position: absolute ;
+	width: 0px ;
+}
+
+// The "markers" are positioned just outside of the sticky-header. This allows the
+// intersection of these markers with the Viewport to help us determine when the header
+// element is stuck to the top of the Viewport.
+.top-marker {
+	top: -1px ;
+}
+
+.bottom-marker {
+	bottom: -1px ;
+}
