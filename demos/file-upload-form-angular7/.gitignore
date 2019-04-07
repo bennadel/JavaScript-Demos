@@ -1,0 +1,5 @@
+
+api/uploads/*
+!api/uploads/.gitkeep
+
+node_modules/

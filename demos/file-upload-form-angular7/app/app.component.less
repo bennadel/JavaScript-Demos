@@ -1,0 +1,51 @@
+
+:host {
+	display: block ;
+	font-size: 18px ;
+}
+
+form {
+	width: 650px ;
+}
+
+.field {
+	display: flex ;
+	margin: 15px 0px 15px 0px ;
+
+	&__label {
+		flex: 0 0 auto ;
+		font-weight: bold ;
+		margin-right: 10px ;
+		padding-top: 5px ;
+		text-align: right ;
+		width: 150px ;
+	}
+
+	&__input,
+	&__textarea {
+		box-sizing: border-box ;
+		flex: 1 0 auto ;
+		font-size: inherit ;
+		padding: 5px 5px 5px 5px ;
+	}
+
+	&__textarea {
+		height: 100px ;
+	}
+}
+
+.actions {
+	display: flex ;
+	margin-left: 160px ;
+	margin-top: 25px ;
+
+	&__primary {
+		border-width: 0px 0px 0px 0px ;
+		background-color: #0093ff ;
+		border-radius: 7px 7px 7px 7px ;
+		color: #ffffff ;
+		cursor: pointer ;
+		font-size: inherit ;
+		padding: 10px 20px 10px 20px ;
+	}
+}

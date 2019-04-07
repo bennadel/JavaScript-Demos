@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Uploading Multiple Files In A Single "Form Post" With HttpClient In Angular 7.2.12](https://bennadel.github.io/JavaScript-Demos/demos/file-upload-form-angular7/)
 * [Creating A "position: sticky" Header Component Using IntersectionObserver In Angular 7.2.11](https://bennadel.github.io/JavaScript-Demos/demos/sticky-header-angular7/)
 * [Alligator.io Code Kata: Defaulting Theme Based On Time-Of-Day In Angular 7.2.11](https://bennadel.github.io/JavaScript-Demos/demos/alligator-theme-angular7/)
 * [Uploading Files With HttpClient In Angular 7.2.11](https://bennadel.github.io/JavaScript-Demos/demos/file-upload-angular7/)
