@@ -1,0 +1,15 @@
+{
+	"name": "webpack4-demo",
+	"version": "4.29.6",
+	"license": "ISC",
+	"scripts": {
+		"build": "webpack --mode production",
+		"watch": "webpack --mode development --watch"
+	},
+	"dependencies": {
+		"clean-webpack-plugin": "2.0.1",
+		"html-webpack-plugin": "4.0.0-beta.5",
+		"webpack": "4.29.6",
+		"webpack-cli": "3.3.0"
+	}
+}
