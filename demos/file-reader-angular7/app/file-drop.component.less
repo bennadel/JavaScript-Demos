@@ -1,0 +1,40 @@
+
+:host {
+	bottom: 0px ;
+	display: none ;
+	left: 0px ;
+	position: fixed ;
+	right: 0px ;
+	top: 0px ;
+	z-index: 2 ;
+
+	&.active {
+		display: flex ;
+	}
+}
+
+.drag-shield {
+	bottom: 0px ;
+	left: 0px ;
+	position: absolute ;
+	right: 0px ;
+	top: 0px ;
+	z-index: 2 ;
+
+	:host.active & {
+		border: 6px solid #ff3366 ;
+	}
+}
+
+.call-to-action {
+	color: #ff3366 ;
+	flex: 0 0 auto ;
+	font-family: monospace ;
+	font-size: 28px ;
+	font-weight: bold ;
+	margin: auto auto auto auto ;
+
+	// These are needed by IE in order to center the flex-item.
+	height: 30px ;
+	line-height: 30px ;
+}

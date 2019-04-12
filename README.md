@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Loading Text File Content With FileReader During A Drag-And-Drop Interaction In Angular 7.2.12](https://bennadel.github.io/JavaScript-Demos/demos/file-reader-angular7/)
 * [Webpack 4 Automatically Makes process.env.NODE_ENV Available In Your JavaScript](https://bennadel.github.io/JavaScript-Demos/demos/webpack4-mode-node-env/)
 * [Using NgModel With Input Type="File" And A Custom ControlValueAccessor In Angular 7.2.12](https://bennadel.github.io/JavaScript-Demos/demos/ng-model-accessor-file-input-angular7/)
 * [Uploading Multiple Files In A Single "Form Post" With HttpClient In Angular 7.2.12](https://bennadel.github.io/JavaScript-Demos/demos/file-upload-form-angular7/)
