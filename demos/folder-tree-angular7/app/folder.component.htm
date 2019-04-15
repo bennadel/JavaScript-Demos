@@ -1,0 +1,57 @@
+
+<header class="header">
+	<a (click)="toggleFolder( folder )" class="header__toggle">
+
+		<svg
+			viewBox="0 0 32 32"
+			class="header__icon"
+			[class.header__icon--expanded]="isExpanded">
+			<path fill="currentColor" d="M24.291,14.276L14.705,4.69c-0.878-0.878-2.317-0.878-3.195,0l-0.8,0.8c-0.878,0.877-0.878,2.316,0,3.194  L18.024,16l-7.315,7.315c-0.878,0.878-0.878,2.317,0,3.194l0.8,0.8c0.878,0.879,2.317,0.879,3.195,0l9.586-9.587  c0.472-0.471,0.682-1.103,0.647-1.723C24.973,15.38,24.763,14.748,24.291,14.276z" />
+		</svg>
+
+		<span class="header__label">
+			{{ folder.name }}
+		</span>
+
+	</a>
+</header>
+
+<section *ngIf="isExpanded" class="contents">
+
+	<!-- Sub-folders. -->
+	<ul *ngIf="folder.folders.length" class="folders">
+		<li *ngFor="let subfolder of folder.folders" class="folders__item">
+
+			<!--
+				RECURSIVE COMPONENT: The Folder component is using itself to render the
+				nested folders within its own contents.
+				--
+				Notice that all "toggle" events from the sub-folders are simply being
+				passed-up through the event-emitter chain.
+			-->
+			<my-folder
+				[folder]="subfolder"
+				[expandedFolders]="expandedFolders"
+				(toggleFolder)="toggleFolder( $event )">
+			</my-folder>
+
+		</li>
+	</ul>
+
+	<!-- Files. -->
+	<ul *ngIf="folder.files.length" class="files">
+		<li *ngFor="let subfile of folder.files" class="files__item">
+
+			{{ subfile.name }}
+
+		</li>
+	</ul>
+
+	<!-- If there are NO folders and NO files, show an empty message. -->
+	<ng-template [ngIf]="( ! folder.folders.length && ! folder.files.length )">
+		<em class="empty">
+			Folder is empty.
+		</em>
+	</ng-template>
+
+</section>

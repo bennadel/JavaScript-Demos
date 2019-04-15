@@ -1,0 +1,80 @@
+
+:host {
+	display: block ;
+}
+
+.header {
+	&__toggle {
+		cursor: pointer ;
+		display: flex ;
+		border: 2px solid #e0e0e0 ;
+		border-radius: 3px 3px 3px 3px ;
+		align-items: center ;
+		padding: 5px 10px 5px 10px ;
+		user-select: none ;
+			-moz-user-select: none ;
+			-webkit-user-select: none ;
+
+		&:hover {
+			border-color: #ff3366 ;
+		}
+	}
+
+	&__icon {
+		color: #666666 ;
+		height: 16px ;
+		width: 16px ;
+		transition:
+			color 150ms ease,
+			transform 150ms ease
+		;
+
+		&--expanded {
+			color: #ff3366 ;
+			transform: rotate( 90deg ) ;
+		}
+	}
+
+	&__label {
+		margin-left: 7px ;
+	}
+}
+
+.contents {
+	border-left: 1px dashed #ff3366 ;
+	margin: 0px 0px 0px 20px ;
+	padding: 5px 0px 5px 15px ;
+}
+
+.folders {
+	list-style-type: none ;
+	margin: 0px 0px 0px 0px ;
+	padding: 0px 0px 0px 0px ;
+
+	&__item {
+		margin: 3px 0px 3px 0px ;
+		padding: 0px 0px 0px 0px ;
+	}
+}
+
+.files {
+	list-style-type: none ;
+	margin: 0px 0px 0px 0px ;
+	padding: 0px 0px 0px 0px ;
+
+	&__item {
+		margin: 3px 0px 3px 0px ;
+		padding: 0px 0px 0px 0px ;		
+	}
+
+	.folders + & {
+		margin-top: 15px ;
+	}
+}
+
+.empty {
+	color: #999999 ;
+	display: block ;
+	font-style: italic ;
+	padding: 10px 10px 10px 10px ;
+}

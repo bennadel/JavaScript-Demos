@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [More Fun With Recursive Components, Tree State, And One-Way Data Flow In Angular 7.2.13](https://bennadel.github.io/JavaScript-Demos/demos/folder-tree-angular7/)
 * [Chaining Absolute And Local Redirects With The Router In Angular 7.2.13](https://bennadel.github.io/JavaScript-Demos/demos/router-chained-absolute-redirect-angular7/)
 * [Loading Text File Content With FileReader During A Drag-And-Drop Interaction In Angular 7.2.12](https://bennadel.github.io/JavaScript-Demos/demos/file-reader-angular7/)
 * [Webpack 4 Automatically Makes process.env.NODE_ENV Available In Your JavaScript](https://bennadel.github.io/JavaScript-Demos/demos/webpack4-mode-node-env/)
