@@ -1,0 +1,151 @@
+
+<form #petsForm="ngForm" (submit)="processForm( petsForm )">
+
+	<h2>
+		TemplateForm&lt;Pets&gt;
+	</h2>
+
+	<ng-template ngFor let-pet [ngForOf]="form.pets">
+
+		<!--
+			Since each ngModel control needs to have a unique name within its PARENT
+			control, we're going to use the NgModelGroup to create a unique parent per
+			ngFor iteration (both for Pets and Nicknames). This will allow our input
+			names to be a bit more sane (deferring the weird naming to the NgModelGroup).
+			--
+			NOTE: With template-driven forms, it doesn't seem possible to define the
+			group as an ARRAY. As such, we are using the various "id" values to calculate
+			a unique group-name per parent context.
+		-->
+		<div
+			#petModelGroup="ngModelGroup"
+			ngModelGroup="pet_{{ pet.id }}"
+			class="pet"
+			[class.pet--invalid]="( petModelGroup.touched && petModelGroup.invalid )">
+
+			<!--
+				NOTE: While our "name" attributes only have to be unique to the parent,
+				the "for" attributes still have to be globally-unique for the page. As
+				such, we still have to use complex interpolation for our LABELS.
+			-->
+
+			<div class="field">
+				<label for="type_{{ pet.id }}" class="field__label">
+					Type:
+				</label>
+				<div class="field__control">
+					<select id="type_{{ pet.id }}" name="type" [(ngModel)]="pet.type">
+						<option value="Dog">Dog</option>
+						<option value="Cat">Cat</option>
+					</select>
+				</div>
+			</div>
+
+			<div class="field">
+				<label for="name_{{ pet.id }}" class="field__label">
+					Name:
+				</label>
+				<div class="field__control">
+					<input
+						type="text"
+						id="name_{{ pet.id }}"
+						name="name"
+						[(ngModel)]="pet.name"
+						required
+						autofocus
+						size="20"
+						placeholder="Name..."
+					/>
+
+					<div class="nicknames">
+
+						<ng-template ngFor let-nickname [ngForOf]="pet.nicknames">
+
+							<!-- Create a local group context for ngModel. -->
+							<div
+								ngModelGroup="nickname_{{ nickname.id }}"
+								class="nicknames__item">
+
+								<input
+									type="text"
+									name="nickname"
+									[(ngModel)]="nickname.value"
+									required
+									autofocus
+									size="20"
+									placeholder="Nickname..."
+								/>
+
+								<a
+									(click)="removeNickname( pet, nickname )"
+									title="Remove Nickname"
+									class="nicknames__remove">
+									&times;
+								</a>
+
+							</div>
+
+						</ng-template>
+
+						<a (click)="addNickname( pet )" class="nicknames__add">
+							+ nickname
+						</a>
+
+					</div>
+				</div>
+			</div>
+
+			<div class="field">
+				<label for="age_{{ pet.id }}" class="field__label">
+					Age:
+				</label>
+				<div class="field__control">
+					<input
+						type="text"
+						id="age_{{ pet.id }}"
+						name="age"
+						[(ngModel)]="pet.age"
+						size="10"
+						placeholder="Age..."
+					/>
+				</div>
+			</div>
+
+			<div class="field">
+				<label for="isPastOn_{{ pet.id }}" class="field__label">
+					Passed:
+				</label>
+				<div class="field__control">
+					<input
+						type="checkbox"
+						id="isPastOn_{{ pet.id }}"
+						name="isPastOn"
+						[(ngModel)]="pet.isPastOn"
+					/>
+					( ie, is deceased )
+				</div>
+			</div>
+
+			<a (click)="removePet( pet )" title="Remove Pet" class="pet__remove">
+				&times;
+			</a>
+
+		</div>
+
+	</ng-template>
+
+	<p class="actions">
+		<a (click)="addPet()">Add Another Pet</a>
+	</p>
+
+	<!--
+		Since we are [implicitly] registering each form control with the parent NgForm
+		and NgModelGroup instances, the validity of the form will be an aggregation of
+		the individual control validity. As such, we can disable the form submission if
+		the form looks invalid as a whole.
+	-->
+	<button type="submit" [disabled]="( ! form.pets.length || ! petsForm.form.valid )">
+		Process Form
+	</button>
+
+</form>

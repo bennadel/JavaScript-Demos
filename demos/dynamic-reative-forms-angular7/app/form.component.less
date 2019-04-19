@@ -1,0 +1,79 @@
+
+:host {
+	display: block ;
+}
+
+input, select, button {
+	font-size: inherit ;
+}
+
+.pet {
+	border: 2px solid #e0e0e0 ;
+	border-radius: 5px 5px 5px 5px ;
+	margin-bottom: 10px ;
+	padding: 10px 10px 10px 10px ;
+	position: relative ;
+	width: 600px ;
+
+	&--invalid {
+		border-color: #fc0000 ;
+	}
+
+	&__remove {
+		cursor: pointer ;
+		font-family: monospace ;
+		font-size: 25px ;
+		line-height: 25px ;
+		position: absolute ;
+		right: 10px ;
+		top: 10px ;
+	}
+}
+
+.field {
+	display: flex ;
+	margin: 14px 0px 14px 0px ;
+
+	&__label {
+		flex: 0 0 auto ;
+		font-weight: bold ;
+		margin-right: 10px ;
+		text-align: right ;
+		width: 75px ;
+	}
+
+	&__control {}
+}
+
+.nicknames {
+	&__item {
+		display: flex ;
+		margin-top: 7px ;
+
+		& input {
+			margin-right: 10px ;
+		}
+	}
+
+	&__remove {
+		cursor: pointer ;
+	}
+
+	&__add {
+		color: red ;
+		cursor: pointer ;
+		font-size: 16px ;
+		line-height: 19px ;
+	}
+}
+
+.actions {
+	a {
+		color: red ;
+		cursor: pointer ;
+		text-decoration: underline ;
+		user-select: none ;
+			-moz-user-select: none ;
+			-webkit-user-select: none ;
+	}
+}

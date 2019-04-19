@@ -1,0 +1,160 @@
+
+<form [formGroup]="form" (submit)="processForm( form )">
+
+	<h2>
+		ReactiveForm&lt;Pets&gt;
+	</h2>
+
+	<!--
+		Defines the "form.pets" context. It seems that I have to create this arbitrary
+		container in order for the control-mapping to work properly based on index.
+	-->
+	<div formArrayName="pets">
+
+		<!--
+			NOTE: I need to get the pets from a method call because we need to CAST the
+			value to a FormArray. If we try to access "form.pets.controls" directly, we
+			get the error, "Property 'controls' does not exist on type 'AbstractControl'".
+		-->
+		<ng-template ngFor let-pet let-petIndex="index" [ngForOf]="getPets().controls">
+
+			<!--
+				The formGroupName uses the index of the FormArray iteration, essentially
+				mapping form.pets[ petIndex ] to the current FormGroup.
+			-->
+			<div
+				[formGroupName]="petIndex"
+				class="pet"
+				[class.pet--invalid]="( pet.touched && pet.invalid )">
+
+				<!--
+					NOTE: While we don't need a NAME attribute to bind our inputs to our
+					FormControls, we DO NEED to create a unique FOR/ID combination for
+					our labels. As such, we need to reach into the pet VALUE in order to
+					access the pseudo-control, "id".
+				-->
+
+				<div class="field">
+					<label for="type_{{ pet.value.id }}" class="field__label">
+						Type:
+					</label>
+					<div class="field__control">
+						<select id="type_{{ pet.value.id }}" formControlName="type">
+							<option value="Dog">Dog</option>
+							<option value="Cat">Cat</option>
+						</select>
+					</div>
+				</div>
+
+				<div class="field">
+					<label for="name_{{ pet.value.id }}" class="field__label">
+						Name:
+					</label>
+					<div class="field__control">
+						<input
+							type="text"
+							id="name_{{ pet.value.id }}"
+							formControlName="name"
+							required
+							autofocus
+							size="20"
+							placeholder="Name..."
+						/>
+
+						<!-- Create a local array context for pet.nicknames. -->
+						<div formArrayName="nicknames" class="nicknames">
+
+							<ng-template
+								ngFor
+								let-nickname
+								let-nicknameIndex="index"
+								[ngForOf]="getNicknames( pet ).controls">
+
+								<!-- Create a local group context for nickname. -->
+								<div
+									[formGroupName]="nicknameIndex"
+									class="nicknames__item">
+
+									<input
+										type="text"
+										formControlName="value"
+										required
+										autofocus
+										size="20"
+										placeholder="Nickname..."
+									/>
+
+									<a
+										(click)="removeNickname( pet, nickname )"
+										title="Remove Nickname"
+										class="nicknames__remove">
+										&times;
+									</a>
+
+								</div>
+
+							</ng-template>
+
+							<a (click)="addNickname( pet )" class="nicknames__add">
+								+ nickname
+							</a>
+
+						</div>
+
+					</div>
+				</div>
+
+				<div class="field">
+					<label for="age_{{ pet.value.id }}" class="field__label">
+						Age:
+					</label>
+					<div class="field__control">
+						<input
+							type="text"
+							id="age_{{ pet.value.id }}"
+							formControlName="age"
+							size="10"
+							placeholder="Age..."
+						/>
+					</div>
+				</div>
+
+				<div class="field">
+					<label for="isPastOn_{{ pet.value.id }}" class="field__label">
+						Passed:
+					</label>
+					<div class="field__control">
+						<input
+							type="checkbox"
+							id="isPastOn_{{ pet.value.id }}"
+							formControlName="isPastOn"
+						/>
+						( ie, is deceased )
+					</div>
+				</div>
+
+				<a (click)="removePet( pet )" title="Remove Pet" class="pet__remove">
+					&times;
+				</a>
+
+			</div>
+
+		</ng-template>
+
+		<p class="actions">
+			<a (click)="addPet()">Add Another Pet</a>
+		</p>
+
+	</div>
+
+	<!--
+		Since we have explicitly defined each FormControl inside of a set of nested
+		FormGroup classes, the validity of the form will be an aggregation of the
+		individual control validity. As such, we can disable the form submission if
+		the form looks invalid as a whole.
+	-->
+	<button type="submit" [disabled]="( ! getPets().length || ! form.valid )">
+		Process Form
+	</button>
+
+</form>
