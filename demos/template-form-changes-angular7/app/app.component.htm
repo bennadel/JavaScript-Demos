@@ -1,0 +1,63 @@
+<!--
+	In the following template, the [reactiveBridge] selector is attaching a directive
+	to the existing NgForm, NgModelGroup, and NgModel directives that exposes the two
+	(statusChange) and (valueChange) EventEmitters that are powered by the reactive
+	event streams of the underlying FormGroup and FormControl classes.
+-->
+<form
+	#ngFormRef="ngForm"
+	(submit)="handleSubmit( ngFormRef )"
+
+	reactiveBridge
+	(statusChange)="handleFormStatusChange( $event )"
+	(valueChange)="handleFormValueChange( $event )">
+
+	<!-- NgModelGroup is used to create a context for the "name" of our NgModel. -->
+	<span
+		#ngModelGroupRef="ngModelGroup"
+		ngModelGroup="pet"
+
+		reactiveBridge
+		(statusChange)="handleModelGroupStatusChange( $event )"
+		(valueChange)="handleModelGroupValueChange( $event )">
+
+		<input
+			#ngModelRef="ngModel"
+			type="text"
+			name="name"
+			[(ngModel)]="form.pet.name"
+			(ngModelChange)="handleModelChange( $event )"
+			required
+
+			reactiveBridge
+			(statusChange)="handleModelStatusChange( $event )"
+			(valueChange)="handleModelValueChange( $event )"
+		/>
+
+	</span>
+
+	<button type="submit" [disabled]="( ! ngFormRef.valid )">
+		Submit Form
+	</button>
+
+</form>
+
+<!--
+	Let's output the Path and State of the various NgForm directives so that we	can see
+	that the normal NgForm (and related) directives expose state that we can use to drive
+	other user-interface styling.
+-->
+<ul>
+	<li>
+		<strong>NgForm[ {{ ngFormRef.path }} ]</strong>:
+		{{ ngFormRef.valid }}
+	</li>
+	<li>
+		<strong>NgModelGroup[ {{ ngModelGroupRef.path }} ]</strong>:
+		{{ ngModelGroupRef.valid }}
+	</li>
+	<li>
+		<strong>NgModel[ {{ ngModelRef.path }} ]</strong>:
+		{{ ngModelRef.valid }}
+	</li>
+</ul>
