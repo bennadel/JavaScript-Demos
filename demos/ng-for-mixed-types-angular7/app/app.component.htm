@@ -1,0 +1,42 @@
+
+<!-- 
+	When rendering a list that contains components, it's always helpful to separate out
+	the "layout concerns" from the "content concerns". Meaning, UL and LI elements here
+	don't concern themselves with the list content - only with the rendering of the list
+	infrastructure.
+-->
+<ul class="items">
+	<li
+		*ngFor="let thing of things"
+		class="items__item"
+		[ngSwitch]="thing.type">
+
+		<!--
+			Inside of the list-item, we can now focus on the items that we are actually
+			displaying. And to cope with a "mixed list", let's use the ngSwitch directive
+			(above) and the ngSwitchCase directive (below) to conditionally render the
+			appropriate component based on the item Type.
+			--
+			NOTE: We could have put the *ngSwitchCase directly on the Thing Components;
+			but, using an ng-template helps to articulate the mutually-exclusive nature
+			of the components within the list context.
+		-->
+		<ng-template ngSwitchCase="a">
+
+			<my-thing-a
+				[value]="thing.value"
+				(click)="handlClick( thing )">
+			</my-thing-a>
+
+		</ng-template>
+		<ng-template ngSwitchCase="b">
+
+			<my-thing-b
+				[value]="thing.value"
+				(click)="handlClick( thing )">
+			</my-thing-b>
+
+		</ng-template>
+
+	</li>
+</ul>

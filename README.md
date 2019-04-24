@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Rendering A List Of Mixed Components Using NgFor And NgSwitch In Angular 7.2.13](https://bennadel.github.io/JavaScript-Demos/demos/ng-for-mixed-types-angular7/)
 * [An Experiment In Consuming Reactive-Form Events From Template-Driven Forms In Angular 7.2.13](https://bennadel.github.io/JavaScript-Demos/demos/template-form-changes-angular7/)
 * [My First - And Possibly Last - Look At Reactive Forms In Angular 7.2.13](https://bennadel.github.io/JavaScript-Demos/demos/dynamic-reative-forms-angular7/)
 * [Using "replaceUrl" In Order To Honor The Back-Button While Chaining Absolute Redirects In Angular 7.2.13](https://bennadel.github.io/JavaScript-Demos/demos/router-chained-absolute-redirect2-angular7/)
