@@ -1,0 +1,175 @@
+
+<!--
+	You don't strictly need a Form when dealing with form inputs. However, since I am
+	also using an NgModelGroup for my "user" inputs, I need to provide a "container"
+	within which that group will register itself. Plus, the Form gives you access to
+	the submit event and the NgForm export reference.
+-->
+<form #ngForm="ngForm" (submit)="processForm( ngForm )">
+
+	<h3>
+		User Profile
+	</h3>
+
+	<div ngModelGroup="form.user">
+
+		<p>
+			<label>
+				<strong>Name:</strong><br />
+				<!--
+					Text-based inputs are the bread-and-butter of template-driven forms.
+					You just bind to the view-model with [(ngModel)] and it just works.
+				-->
+				<input
+					type="text"
+					name="name"
+					[(ngModel)]="form.user.name"
+					size="20"
+				/>
+			</label>
+		</p>
+
+		<p>
+			<label>
+				<strong>Bio:</strong><br />
+				<!--
+					Textarea are just a different form of text-based inputs. As such,
+					they also work seamlessly with [(ngModel)].
+				-->
+				<textarea
+					name="bio"
+					[(ngModel)]="form.user.bio"
+					rows="5"
+					cols="70"
+				></textarea>
+			</label>
+		</p>
+
+	</div>
+
+	<h3>
+		Favorite Movie
+	</h3>
+
+	<ul>
+		<li *ngFor="let movie of movies">
+			<label>
+				<!--
+					Unlike a text-based input, Radio controls are a bit different in that
+					they have both a value AND a "state" (checked). As such, we need to
+					provide two references: the current view-model value (form.favoriteMovie)
+					and the value of the control (movie). The RadioControlValueAccessor
+					directive overrides the [value] input binding of the native control,
+					intercepting it and using it to determine if the radio's NgModel
+					value matches the [value] reference.
+				-->
+				<input
+					type="radio"
+					name="favoriteMovie"
+					[(ngModel)]="form.favoriteMovie"
+					[value]="movie"
+				/>
+				{{ movie.name }} ( {{ movie.releasedAt }} )
+			</label>
+		</li>
+		<li>
+			<label>
+				<!-- We can use a [value]="null" option to clear the radio choice. -->
+				<input
+					type="radio"
+					name="favoriteMovie"
+					[(ngModel)]="form.favoriteMovie"
+					[value]="null"
+				/>
+				None / Clear
+			</label>
+		</li>
+	</ul>
+
+	<h3>
+		Favorite Genres
+	</h3>
+
+	<ul>
+		<li *ngFor="let genre of genres">
+			<label>
+				<!--
+					The checkbox control is similar to the radio control in that it has
+					both a value and a state (checked); but, unlike the RadioControlValueAccessor,
+					the CheckboxControlValueAccessor directive deals exclusively with
+					Booleans. As such, it doesn't have to override any [value] input
+					binding - the NgModel view-model must reference a Boolean, which
+					is how the directive drives the [checked] state.
+				-->
+				<input
+					type="checkbox"
+					name="favoriteGenre_{{ genre.id }}"
+					[(ngModel)]="form.favoriteGenres[ genre.id ]"
+				/>
+				{{ genre.name }}
+			</label>
+		</li>
+	</ul>
+
+	<h3>
+		Favorite Snacks
+	</h3>
+
+	<p>
+		<!--
+			Just as with the Radio control, the Select control seeks to match the view-
+			model value with a set of possible values. As such, we need to provide two
+			references: the current view-model value (form.favoriteSnacks) and the value
+			of the option (snackOption). However, unlike the Radio control, the Select
+			control uses [ngValue] to provide the option value in its child elements.
+			--
+			NOTE: Since we're using "multiple", the selected values are collected in
+			an Array.
+		-->
+		<select
+			name="favoriteSnacks"
+			[(ngModel)]="form.favoriteSnacks"
+			multiple
+			size="5">
+			<option *ngFor="let snackOption of snacks" [ngValue]="snackOption">
+				{{ snackOption.name }}
+			</option>
+		</select>
+	</p>
+
+	<h3>
+		Movie Watching Behavior
+	</h3>
+
+	<p>
+		<!--
+			The single Select works just like the "multiple" Select; except, it doesn't
+			gather the options in an Array - it just binds the selected option [ngValue]
+			to the view-model (form.watchOption).
+		-->
+		<select name="watchOption" [(ngModel)]="form.watchOption">
+			<option [ngValue]="null">
+				Please select an option.
+			</option>
+			<option *ngFor="let option of watchOptions" [ngValue]="option">
+				{{ option.label }}
+			</option>
+		</select>
+	</p>
+
+	<p>
+		<button type="submit">
+			Submit Form
+		</button>
+	</p>
+
+</form>
+
+
+<hr />
+
+<h2>
+	Form View-Model Current State
+</h2>
+
+<pre><code>{{ form | json }}</code></pre>
