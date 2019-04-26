@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [@Directive().inputs And @Input() Are Not Functionally Equivalent In Angular 7.2.13](https://bennadel.github.io/JavaScript-Demos/demos/input-binding-notation-angular7/)
 * [Quick Reference For NgModel Values And Template-Driven Forms In Angular 7.2.13](https://bennadel.github.io/JavaScript-Demos/demos/form-controls-reference-angular7/)
 * [Rendering A List Of Mixed Components Using NgFor And NgSwitch In Angular 7.2.13](https://bennadel.github.io/JavaScript-Demos/demos/ng-for-mixed-types-angular7/)
 * [An Experiment In Consuming Reactive-Form Events From Template-Driven Forms In Angular 7.2.13](https://bennadel.github.io/JavaScript-Demos/demos/template-form-changes-angular7/)
