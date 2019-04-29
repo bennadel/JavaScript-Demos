@@ -1,0 +1,59 @@
+
+<ng-template
+	ngFor
+	[ngForOf]="[ 'foo', 'bar', 'bar', 'foo', 'foo', 'bar', 'baz' ]"
+	[ngForTemplate]="ngForTemplateRef">
+</ng-template>
+
+<!--
+	When passing a TemplateRef to a structural directive, the context variables need to
+	be accessed on the TemplateRef, not on the structural directive. So, for example, the
+	"let-value" here is accessing the $implicit context value from the [ngFor] directive
+	above.
+-->
+<ng-template #ngForTemplateRef let-value>
+
+	<p>
+		<strong>{{ value }}</strong>
+
+		<ng-template
+			[ngIf]="( value === 'foo' )"
+			[ngIfThen]="ngIfThenRef"
+			[ngIfElse]="ngIfElseRef">
+		</ng-template>
+
+		<!--
+			Since templates are lexically-bound, they should have access to all template
+			variables declared in-scope, including other TemplateRef values in the parent
+			context. As such, the ngForTemplateRef can reference the sibling template,
+			exclamationRef.
+		-->
+		<ng-template
+			[ngTemplateOutlet]="exclamationRef">
+		</ng-template>
+	</p>
+
+	<!--
+		Just as with the "let-value" above, the "let-condition" template variable on
+		the following TemplateRefs are accessing the "$implicit" context value from the
+		[ngIf] directive above.
+
+		Since these ng-template's are being declared inside another ng-template, they are
+		lexically-bound to the "let-value" template variable. As such, these templates
+		can access both their local variables (let-condition) as well as the local
+		variables declared by the parent template (let-value).
+	-->
+
+	<ng-template #ngIfThenRef let-condition>
+		( [ {{ condition }} ] Noice, '{{ value }}' is 'foo' )
+	</ng-template>
+
+	<ng-template #ngIfElseRef let-condition>
+		( [ {{ condition }} ] Oh noes, '{{ value }}' is not 'foo' )
+	</ng-template>
+
+</ng-template>
+
+<ng-template #exclamationRef>
+	!!
+</ng-template>
