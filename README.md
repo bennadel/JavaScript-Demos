@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Thought Experiment: Partially-Applying Ng-Template References In Angular 7.2.13](https://bennadel.github.io/JavaScript-Demos/demos/partially-applied-templates-angular7/)
 * [Sanity Check: Nested Templates Maintain Lexical Binding In Angular 7.2.13](https://bennadel.github.io/JavaScript-Demos/demos/nested-template-variables-angular7/)
 * [Sub-Classing NgForOf In Order To Make It A "Pure" Directive In Angular 7.2.13](https://bennadel.github.io/JavaScript-Demos/demos/ng-pure-for-angular7/)
 * [@Directive().inputs And @Input() Are Not Functionally Equivalent In Angular 7.2.13](https://bennadel.github.io/JavaScript-Demos/demos/input-binding-notation-angular7/)

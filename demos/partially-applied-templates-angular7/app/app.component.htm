@@ -1,0 +1,86 @@
+
+<!--
+	To start this experiment for the partial-application of templates, we're going to
+	start out with a template that will ultimately act as an [NgForTemplate] renderer.
+	This template will expect the implicit" and "index" variables from the [NgFor];
+	but, will also look for several other variables, "arg2" and "arg3", that we will
+	partially-apply to the template before we pass it to the [NgForTemplate] binding.
+-->
+<ng-template
+	#ngForTemplateRef
+	let-implicit
+	let-index="index"
+	let-arg2="arg2"
+	let-arg3="arg3">
+
+	<p>
+		( {{ index }} ): {{ implicit }} , {{ arg2 }} , {{ arg3 }}
+	</p>
+
+</ng-template>
+
+<!--
+	STEP TWO: Partially-Apply "arg2".
+	--
+	In order to partially-apply the "arg2" variable (ie, hard-code it), we'll need to
+	define all arguments, but hard-code "arg2" as we "render" the previous template.
+-->
+<ng-template
+	#partialTemplateRef
+	let-implicit
+	let-index="index"
+	let-arg2="arg2"
+	let-arg3="arg3">
+
+	<ng-template
+		[ngTemplateOutlet]="ngForTemplateRef"
+		[ngTemplateOutletContext]="{
+			$implicit: implicit,
+			index: index,
+			arg2: 'applied-arg2',
+			arg3: arg3
+		}">
+	</ng-template>
+
+</ng-template>
+
+<!--
+	STEP THREE: Partially-Apply "arg3".
+	--
+	In order to partially-apply the "arg3" variable, we'll need to define all the
+	non-applied variables from the previous template, but hard-code "arg3" as we "render"
+	the previous template. Remember, since "arg2" was hard-code above, we don't need to
+	include it here.
+	--
+	NOTE: We could have combined this step with the last step; but, I am breaking them
+	apart to make the partial-application a bit more interesting.
+-->
+<ng-template
+	#partialTemplateRef2
+	let-implicit
+	let-index="index"
+	let-arg3="arg3">
+
+	<ng-template
+		[ngTemplateOutlet]="partialTemplateRef"
+		[ngTemplateOutletContext]="{
+			$implicit: implicit,
+			index: index,
+			arg3: 'applied-arg3'
+		}">
+	</ng-template>
+
+</ng-template>
+
+<!--
+	STEP FOUR: Consume Partially-Applied Template.
+	--
+	Now that "arg2" and "arg3" have been partially-applied to our original template,
+	we can consume the partially-applied template. It will naturally pick-up the
+	"let-implicit" and "let-index" variables as those are provided by [NgForOf].
+-->
+<ng-template
+	ngFor
+	[ngForOf]="[ 'foo', 'bar', 'baz' ]"
+	[ngForTemplate]="partialTemplateRef2">
+</ng-template>
