@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Performing A SublimeText-Inspired Fuzzy Search For String Matching In Angular 7.2.15](https://bennadel.github.io/JavaScript-Demos/demos/fuzzy-match-angular7/)
 * [Using replaceUrl To Persist Search Filters In The URL Without Messing Up The Browser History In Angular 7.2.14](https://bennadel.github.io/JavaScript-Demos/demos/router-filter-replace-state-angular7/)
 * [Creating A Proxy For Analytics Libraries In Order To Defer Loading And Parsing Overhead In Angular 7.2.13](https://bennadel.github.io/JavaScript-Demos/demos/delayed-script-load-proxy-service-angular7/)
 * [Thought Experiment: Partially-Applying Ng-Template References In Angular 7.2.13](https://bennadel.github.io/JavaScript-Demos/demos/partially-applied-templates-angular7/)
