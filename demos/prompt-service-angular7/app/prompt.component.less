@@ -1,0 +1,68 @@
+
+:host {
+	background-color: rgba( 255, 255, 255, 0.85 ) ;
+	bottom: 0px ;
+	display: flex ;
+	left: 0px ;
+	position: fixed ;
+	right: 0px ;
+	top: 0px ;
+}
+
+.form {
+	animation-duration: 150ms ;
+	animation-fill-mode: forwards ;
+	animation-name: app-prompt-open-animation ;
+	animation-timing-function: ease-out ;
+	background-color: #f0f0f0 ;
+	border-bottom: 1px solid #cccccc ;
+	border-radius: 7px 7px 7px 7px ;
+	margin: 50px auto auto auto ;
+	padding: 30px 30px 30px 30px ;
+	width: 300px ;
+}
+
+@keyframes app-prompt-open-animation {
+	from {
+		transform: translateY( -100px ) ;
+	}
+	to {
+		transform: translateY( 0px ) ;
+	}
+}
+
+.message {
+	font-size: 18px ;
+	line-height: 23px ;
+	margin-bottom: 25px ;
+}
+
+.input {
+	box-sizing: border-box ;
+	display: block ;
+	font-size: 18px ;
+	margin-bottom: 20px ;
+	width: 100% ;
+}
+
+.buttons {
+	display: flex ;
+	justify-content: flex-end ;
+}
+
+.submit {
+	background-color: #ff3366 ;
+	border: none ;
+	border-radius: 5px 5px 5px 5px ;
+	color: #ffffff ;
+	cursor: pointer ;
+	font-size: 14px ;
+	letter-spacing: 1px ;
+	margin-left: 10px ;
+	padding: 8px 23px 8px 23px ;
+	text-transform: uppercase ;
+
+	&--cancel {
+		background-color: #333333 ;
+	}
+}

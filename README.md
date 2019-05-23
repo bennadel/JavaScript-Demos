@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Managing Confirm And Prompt Modals Outside Of The Router In Angular 7.2.15](https://bennadel.github.io/JavaScript-Demos/demos/prompt-service-angular7/)
 * [Most Of Your Modal Windows Should Be Directly Accessible By Route In Angular 7.2.15](https://bennadel.github.io/JavaScript-Demos/demos/router-routable-modals-angular7/)
 * [Prevent Routing To Secondary View If Page Refresh In Angular 7.2.15](https://bennadel.github.io/JavaScript-Demos/demos/prevent-secondary-view-on-refresh-angular7/)
 * [Performing A SublimeText-Inspired Fuzzy Search For String Matching In Angular 7.2.15](https://bennadel.github.io/JavaScript-Demos/demos/fuzzy-match-angular7/)

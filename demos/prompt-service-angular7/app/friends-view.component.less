@@ -1,0 +1,38 @@
+
+:host {
+	display: block ;
+}
+
+a {
+	color: red ;
+	cursor: pointer ;
+	text-decoration: underline ;
+	user-select: none ;
+		-moz-user-select: none ;
+		-webkit-user-select: none ;
+}
+
+.friend {
+	align-items: center ;
+	display: flex ;
+	width: 300px ;
+
+	&__name {
+		flex: 1 1 auto ;
+	}
+
+	&__remove {
+		color: #999999 ;
+		flex: 0 1 auto ;
+		font-size: 14px ;
+		text-decoration: none ;
+
+		&:hover {
+			text-decoration: underline ;
+		}
+	}
+
+	&:hover &__name {
+		font-weight: bold ;
+	}
+}
