@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Styling A Movie Cast List Using A Definition List And Flexbox
+	</title>
+
+	<style type="text/css">
+
+		a {
+			color: red ;
+		}
+		
+		dl.cast-list {
+			font-family: monospace ;
+			font-size: 20px ;
+			width: 500px ;
+		}
+
+		dl.cast-list div {
+			/* Setup the DT (character) and DD (cast) items as a flexible layout. */
+			display: flex ;
+			margin: 5px 0px 5px 0px ;
+		}
+
+		dl.cast-list dt {
+			/*
+				Setup the DT element as a NESTED flexible layout. This will control the
+				IMPLICIT TEXT element (character) and the :after pseudo-element (dots)
+				layouts.
+			*/
+			display: flex ;
+			/* Setup the DT (character) element to grow and take-up space. */
+			flex: 1 1 auto ;
+			margin: 0px 0px 0px 0px ;
+		}
+
+		dl.cast-list dt:after {
+			border-bottom: 2px dotted #787878 ;
+			content: "" ;
+			/*
+				Setup the pseudo-element (dots) to grow and take-up space. This will fill
+				the white-space with "dots" because it growing inside of another layout
+				which is also growing.
+			*/
+			flex: 1 1 auto ;
+			margin: 0px 12px 5px 12px ;
+		}
+
+		dl.cast-list dd {
+			/* Setup the DD (cast) element to shrink, allow for dots to fill space. */
+			flex: 0 1 auto ;
+			margin: 0px 0px 0px 0px ;
+		}
+
+	</style>
+</head>
+<body>
+
+	<h1>
+		Styling A Movie Cast List Using A Definition List And Flexbox
+	</h1>
+
+	<h2>
+		<a href="https://www.imdb.com/title/tt0168987/">
+			Better Than Chocolate
+		</a>
+	</h2>
+
+	<dl class="cast-list">
+		<div>
+			<dt>Lila</dt>
+			<dd>Wendy Crewson</dd>
+		</div>
+		<div>
+			<dt>Maggie</dt>
+			<dd>Karyn Dwyer</dd>
+		</div>
+		<div>
+			<dt>Kim</dt>
+			<dd>Christina Cox</dd>
+		</div>
+		<div>
+			<dt>Frances</dt>
+			<dd>Ann-Marie MacDonald</dd>
+		</div>
+		<div>
+			<dt>Carla</dt>
+			<dd>Marya Delver</dd>
+		</div>
+	</dl>
+
+</body>
+</html>
