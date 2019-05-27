@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Revisiting: Styling A Movie Cast List Using A Definition List And Flexbox](https://bennadel.github.io/JavaScript-Demos/demos/cast-list-flexbox2/)
 * [Styling A Movie Cast List Using A Definition List And Flexbox](https://bennadel.github.io/JavaScript-Demos/demos/cast-list-flexbox/)
 * [Managing Confirm And Prompt Modals Outside Of The Router In Angular 7.2.15](https://bennadel.github.io/JavaScript-Demos/demos/prompt-service-angular7/)
 * [Most Of Your Modal Windows Should Be Directly Accessible By Route In Angular 7.2.15](https://bennadel.github.io/JavaScript-Demos/demos/router-routable-modals-angular7/)

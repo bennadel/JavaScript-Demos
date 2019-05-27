@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Revisiting: Styling A Movie Cast List Using A Definition List And Flexbox
+	</title>
+
+	<style type="text/css">
+
+		a {
+			color: red ;
+		}
+		
+		dl.cast-list {
+			font-family: monospace ;
+			font-size: 20px ;
+			width: 500px ;
+		}
+
+		dl.cast-list div {
+			/*
+				Setup the DT (character), DD (cast), and pseudo-element items as a
+				flexible layout.
+			*/
+			display: flex ;
+			margin: 5px 0px 5px 0px ;
+		}
+
+		dl.cast-list dt {
+			/*
+				Setup the DT (character) element to shrink, allowing for the dots to fill
+				up the free space.
+			*/
+			flex: 0 1 auto ;
+			margin: 0px 0px 0px 0px ;
+			order: 1 ;
+		}
+
+		dl.cast-list div:after {
+			border-bottom: 2px dotted #787878 ;
+			content: "" ;
+			/*
+				Define the pseudo-element as a SIBLING to both the DT and DD elements.
+				Configure it to grow, taking up all the free space with dots.
+				--
+				NOTE: We are using "order: 2" to place the ":after" element IN BEWTEEN
+				the DT and DD elements, VISUALLY, even through it is PHYSICALLY the last
+				child in the flex container.
+			*/
+			flex: 1 1 auto ;
+			margin: 0px 12px 5px 12px ;
+			order: 2 ;
+		}
+
+		dl.cast-list dd {
+			/*
+				Setup the DD (cast) element to shrink, allowing for the dots to fill up
+				the free space.
+			*/
+			flex: 0 1 auto ;
+			margin: 0px 0px 0px 0px ;
+			order: 3 ;
+		}
+
+	</style>
+</head>
+<body>
+
+	<h1>
+		Revisiting: Styling A Movie Cast List Using A Definition List And Flexbox
+	</h1>
+
+	<h2>
+		Using "order" &mdash; Thanks To Ilya Streltsyn
+	</h2>
+
+	<h3>
+		<a href="https://www.imdb.com/title/tt0168987/">
+			Better Than Chocolate
+		</a>
+	</h3>
+
+	<dl class="cast-list">
+		<div>
+			<dt>Lila</dt>
+			<dd>Wendy Crewson</dd>
+		</div>
+		<div>
+			<dt>Maggie</dt>
+			<dd>Karyn Dwyer</dd>
+		</div>
+		<div>
+			<dt>Kim</dt>
+			<dd>Christina Cox</dd>
+		</div>
+		<div>
+			<dt>Frances</dt>
+			<dd>Ann-Marie MacDonald</dd>
+		</div>
+		<div>
+			<dt>Carla</dt>
+			<dd>Marya Delver</dd>
+		</div>
+	</dl>
+
+</body>
+</html>
