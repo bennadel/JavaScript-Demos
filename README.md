@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Trying To Center A Text-Overflow Ellipsis Using CSS Flexbox In Angular 7.2.15](https://bennadel.github.io/JavaScript-Demos/demos/center-ellipsis-angular7/)
 * [Revisiting: Styling A Movie Cast List Using A Definition List And Flexbox](https://bennadel.github.io/JavaScript-Demos/demos/cast-list-flexbox2/)
 * [Styling A Movie Cast List Using A Definition List And Flexbox](https://bennadel.github.io/JavaScript-Demos/demos/cast-list-flexbox/)
 * [Managing Confirm And Prompt Modals Outside Of The Router In Angular 7.2.15](https://bennadel.github.io/JavaScript-Demos/demos/prompt-service-angular7/)

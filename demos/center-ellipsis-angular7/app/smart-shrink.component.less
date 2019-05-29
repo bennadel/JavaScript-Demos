@@ -1,0 +1,19 @@
+
+:host {
+	display: flex ;
+}
+
+.left {
+	// The left side CANNOT GROW, it can ONLY SHRINK (and add an ellipsis at the end).
+	flex: 0 1 auto ;
+	overflow: hidden ;
+	text-overflow: ellipsis ;
+	white-space: pre ;
+}
+
+.right {
+	// The right side can grow, but NOT SHRINK.
+	flex: 1 0 auto ;
+	overflow: hidden ;
+	white-space: pre ;
+}
