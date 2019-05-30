@@ -1,0 +1,53 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Desktop Safari Seems To Add Extra Padding To CSS Flexbox Item Inside List Item
+	</title>
+</head>
+<body>
+
+	<h1>
+		Desktop Safari Seems To Add Extra Padding To CSS Flexbox Item Inside List Item
+	</h1>
+
+	<!-- A simple Flexbox container in the DOM. -->
+	<div class="flexbox-container">
+		<span class="flexbox-item1">I am the first item</span>
+		<span class="flexbox-item2">I am the second item</span>
+	</div>
+
+	<ul>
+		<li>
+
+			<!-- The SAME simple Flexbox container, this time in a UL/LI context. -->
+			<div class="flexbox-container">
+				<span class="flexbox-item1">I am the first item</span>
+				<span class="flexbox-item2">I am the second item</span>
+			</div>
+
+		</li>
+	</ul>
+
+	<style type="text/css">
+		
+		.flexbox-container {
+			display: flex ;
+		}
+
+		.flexbox-item1 {
+			border: 2px solid red ;
+			white-space: nowrap ;
+		}
+
+		.flexbox-item2 {
+			border: 2px solid blue ;
+			white-space: nowrap ;
+		}
+
+	</style>
+
+</body>
+</html>
