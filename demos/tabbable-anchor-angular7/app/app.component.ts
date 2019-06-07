@@ -21,7 +21,7 @@ import { Component } from "@angular/core";
 			<a (click)="logClick( 'Item four' )">Item Four</a>
 		</p>
 
-		<!-- NOTE: The [x-no-tabbing] attribute will cause demo Directive to not omitted. -->
+		<!-- NOTE: The [x-no-tabbing] attribute will cause demo Directive to be omitted. -->
 		<p class="actions">
 			<a x-no-tabbing (click)="logClick( 'Item one' )">Item One</a>
 			<a x-no-tabbing (click)="logClick( 'Item two' )">Item Two</a>
