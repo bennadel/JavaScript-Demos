@@ -1,0 +1,67 @@
+<p>
+	<a href="#">Native Href link</a> (experiment control)
+</p>
+
+<p>
+	Styled <code>&lt;A&gt;</code> elements:
+</p>
+
+<div class="actions">
+	<a (click)="logClick( 'Download item one' )">
+		<svg aria-hidden="true">
+			<use xlink:href="#sprite-button-icon" />
+		</svg>
+		Download One
+	</a>
+	<a (click)="logClick( 'Download item two' )">
+		<svg aria-hidden="true">
+			<use xlink:href="#sprite-button-icon" />
+		</svg>
+		Download Two
+	</a>
+	<a (click)="logClick( 'Download item three' )">
+		<svg aria-hidden="true">
+			<use xlink:href="#sprite-button-icon" />
+		</svg>
+		Download Three
+	</a>
+</div>
+
+<p>
+	Styled <code>&lt;BUTTON&gt;</code> elements:
+</p>
+
+<div class="actions">
+	<button (click)="logClick( 'Download item one' )">
+		<svg aria-hidden="true">
+			<use xlink:href="#sprite-button-icon" />
+		</svg>
+		Download One
+	</button>
+	<button (click)="logClick( 'Download item two' )">
+		<svg aria-hidden="true">
+			<use xlink:href="#sprite-button-icon" />
+		</svg>
+		Download Two
+	</button>
+	<button (click)="logClick( 'Download item three' )">
+		<svg aria-hidden="true">
+			<use xlink:href="#sprite-button-icon" />
+		</svg>
+		Download Three
+	</button>
+</div>
+
+<!--
+	NOTE: Usually, the SVG spite is placed high in the document. However, for this demo,
+	I am placing it low down just to get it out of the way. It still seems to function
+	as you would hope.
+-->
+<svg style="display: none ;">
+	<symbol id="sprite-button-icon" viewBox="0 0 24 16" aria-labelledby="sprite-button-icon-label">
+		<title id="sprite-button-icon-label">
+			Download Icon
+		</title>
+		<path d="M19.4,6 C18.7,2.6 15.7,0 12,0 C9.1,0 6.6,1.6 5.4,4 C2.3,4.4 0,6.9 0,10 C0,13.3 2.7,16 6,16 L19,16 C21.8,16 24,13.8 24,11 C24,8.4 21.9,6.2 19.4,6 L19.4,6 Z M17,9 L12,14 L7,9 L10,9 L10,5 L14,5 L14,9 L17,9 L17,9 Z" />
+	</symbol>
+</svg>

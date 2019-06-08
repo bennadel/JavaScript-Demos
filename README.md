@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Accessibility And Styled Anchor Links vs. Styled Buttons In Angular 7.2.15](https://bennadel.github.io/JavaScript-Demos/demos/link-vs-button-accessibility-angular7/)
 * [Giving (click) Anchor Links Tab-Access Using A Directive In Angular 7.2.15](https://bennadel.github.io/JavaScript-Demos/demos/tabbable-anchor-angular7/)
 * [Pasting Images Into Your App Using File Blobs And URL.createObjectURL() In Angular 7.2.15](https://bennadel.github.io/JavaScript-Demos/demos/pasting-images-angular7/)
 * [Creating An Inline Auto-Complete Directive Using NgModel And A Control Value Accessor In Angular 7.2.15](https://bennadel.github.io/JavaScript-Demos/demos/inline-auto-complete-input-angular7/)
