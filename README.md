@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Hello World With The CLI, AoT, Lazy Loading Routes, Differential Loading, And Ivy In Angular 8.1.0-beta.2](https://bennadel.github.io/JavaScript-Demos/demos/webpack4-angular8-cli/dist/)
 * [Accessibility And Styled Anchor Links vs. Styled Buttons In Angular 7.2.15](https://bennadel.github.io/JavaScript-Demos/demos/link-vs-button-accessibility-angular7/)
 * [Giving (click) Anchor Links Tab-Access Using A Directive In Angular 7.2.15](https://bennadel.github.io/JavaScript-Demos/demos/tabbable-anchor-angular7/)
 * [Pasting Images Into Your App Using File Blobs And URL.createObjectURL() In Angular 7.2.15](https://bennadel.github.io/JavaScript-Demos/demos/pasting-images-angular7/)
