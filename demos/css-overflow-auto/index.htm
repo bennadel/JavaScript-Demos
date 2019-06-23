@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+
+		<title>
+			Use CSS Overflow "Auto" - Not Overflow "Scroll" - When Clipping Most Fixed-Size Containers
+		</title>
+	</head>
+	<body>
+
+		<h1>
+			Use CSS Overflow "Auto" - Not Overflow "Scroll" - When Clipping Most Fixed-Size Containers
+		</h1>
+
+		<h2>
+			Using <code>Overflow: Scroll</code>
+		</h2>
+
+		<div class="demo">
+			<div class="box" style="overflow: scroll ;">
+				<p class="short-content">
+					<!-- Content will go here.... -->
+				</p>
+			</div>
+			<div class="box" style="overflow: scroll ;">
+				<p class="long-content">
+					<!-- Content will go here.... -->
+				</p>
+			</div>
+		</div>
+
+		<h2>
+			Using <code>Overflow: Auto</code>
+		</h2>
+
+		<div class="demo">
+			<div class="box" style="overflow: auto ;">
+				<p class="short-content">
+					<!-- Content will go here.... -->
+				</p>
+			</div>
+			<div class="box" style="overflow: auto ;">
+				<p class="long-content">
+					<!-- Content will go here.... -->
+				</p>
+			</div>
+		</div>
+
+		<style type="text/css">
+
+			.demo {
+				display: flex ;
+			}
+
+			.box {
+				border: 2px solid #cccccc ;
+				height: 125px ;
+				margin-right: 15px ;
+				width: 250px ;
+			}
+
+			.short-content,
+			.long-content {
+				margin: 0px 0px 0px 0px ;
+				padding: 10px 10px 10px 10px ;
+			}
+
+			.short-content::before,
+			.short-content::after,
+			.long-content::before,
+			.long-content::after {
+				display: block ;
+				font-size: 18px ;
+				line-height: 25px ;
+			}
+
+			.short-content::before,
+			.short-content::after {
+				content: "This is short content." ;
+			}
+
+			.long-content::before,
+			.long-content::after {
+				content: "This is much longer content over here which will cause more scrolling than the short content, which should make the scrollbar behavior more apparent in the demo." ;
+			}
+
+		</style>
+
+	</body>
+</html>
