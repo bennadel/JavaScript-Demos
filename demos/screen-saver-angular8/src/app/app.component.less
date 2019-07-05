@@ -1,0 +1,47 @@
+
+:host {
+	display: block ;
+	font-size: 18px ;
+}
+
+.photo-grid {
+	background-color: #181818 ;
+	bottom: 0px ;
+	display: grid ;
+	grid-gap: 13px ;
+	grid-template-columns: repeat( 5, 1fr ) ;
+	grid-template-rows: repeat( 4, 1fr ) ;
+	left: 0px ;
+	padding: 13px 13px 13px 13px ;
+	position: fixed ;
+	right: 0px ;
+	top: 0px ;
+
+	&__item {
+		position: relative ;
+	}
+
+	&__image {
+		background-position: center ;
+		background-size: cover ;
+		border-radius: 3px 3px 3px 3px ;
+		bottom: 0px ;
+		left: 0px ;
+		position: absolute ;
+		right: 0px ;
+		top: 0px ;
+	}
+}
+
+.time {
+	background-color: fade( #000000, 50% ) ;
+	border-radius: 10px 10px 10px 10px ;
+	bottom: 50px ;
+	color: #ffffff ;
+	font-family: monospace, sans-serif ;
+	font-size: 50px ;
+	left: 50px ;
+	line-height: 55px ;
+	padding: 10px 25px 10px 25px ;
+	position: fixed ;
+}
