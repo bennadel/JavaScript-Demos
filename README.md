@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Using The String localeCompare() Method To Implement A Natural Sort In Angular 8.2.0-next.0](https://bennadel.github.io/JavaScript-Demos/demos/sorting-locale-compare-angular8/dist/)
 * [Wrapping Immutable Arrays In Mutable Arrays For Easier Processing In Angular 8.2.0-next.0](https://bennadel.github.io/JavaScript-Demos/demos/wrapping-arrays-for-functionality-angular8/dist/)
 * [Use CSS Overflow "Auto" - Not Overflow "Scroll" - When Clipping Most Fixed-Size Containers](https://bennadel.github.io/JavaScript-Demos/demos/css-overflow-auto/)
 * [Hello World With The CLI, AoT, Lazy Loading Routes, Differential Loading, And Ivy In Angular 8.1.0-beta.2](https://bennadel.github.io/JavaScript-Demos/demos/webpack4-angular8-cli/dist/)
