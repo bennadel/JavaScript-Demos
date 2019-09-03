@@ -1,0 +1,35 @@
+
+.card {
+	background-color: #fafafa ;
+	border-radius: 5px 5px 5px 5px ;
+	box-shadow: 0px 2px 5px rgba( 0, 0, 0, 0.3 ) ;
+	box-sizing: border-box ;
+	color: #333333 ;
+	display: block ;
+	padding: 20px 20px 20px 20px ;
+	text-align: center ;
+	text-decoration: none ;
+	width: 300px ;
+}
+
+.avatar {
+	border-radius: 120px 120px 120px 120px ;
+	display: block ;
+	margin: 0px auto 17px auto ;
+	width: 120px ;
+}
+
+.name {
+	font-weight: bold ;
+	font-size: 26px ;
+	line-height: 32px ;
+	margin-bottom: 15px ;
+	text-decoration: underline ;
+}
+
+.description {
+	color: #666666 ;
+	font-size: 16px ;
+	line-height: 25px ;
+	margin: 0px 0px 0px 0px ;
+}
