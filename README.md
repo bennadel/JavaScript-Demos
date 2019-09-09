@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Creating An Incrementing Input Directive Inspired By Chrome Dev Tools In Angular 9.0.0-next.5](https://bennadel.github.io/JavaScript-Demos/demos/incrementing-input-angular9/dist/)
 * [Anchor Tags Can Contain Block-Level Elements As Of HTML5](https://bennadel.github.io/JavaScript-Demos/demos/anchor-content-block/)
 * [Calculating Various Time-Deltas Between Two Dates In Angular 9.0.0-next.4](https://bennadel.github.io/JavaScript-Demos/demos/time-diff-angular9/dist/)
 * [Using The String localeCompare() Method To Implement A Natural Sort In Angular 8.2.0-next.0](https://bennadel.github.io/JavaScript-Demos/demos/sorting-locale-compare-angular8/dist/)
