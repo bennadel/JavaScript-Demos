@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>
+		Using CSS Overscroll-Behavior To Prevent Scrolling Of Parent Containers From Within Overflow Containers
+	</title>
+
+	<style type="text/css">
+
+		html {
+			box-sizing: border-box ;
+		}
+
+		*, *:before, *:after {
+			box-sizing: inherit ;
+		}
+
+		.layout {
+			background-color: #ffffff ;
+			border: 5px solid #cccccc ;
+			height: 500px ;
+			margin: -250px 0px 0px 0px ;
+			position: fixed ;
+			top: 50% ;
+			width: 300px ;
+		}
+
+		.layout--a {
+			right: 51% ;
+		}
+
+		.layout--b {
+			left: 51% ;
+		}
+
+		.layout__top-panel {
+			bottom: 100px ;
+			left: 0px ;
+			overflow: auto ; /* The panel becomes SCROLLABLE due to content overflow. */
+			position: absolute ;
+			right: 0px ;
+			top: 0px ;
+		}
+
+		.layout--b .layout__top-panel {
+			overscroll-behavior: contain ; /* Prevent SCROLL-CHAINING to parent elements. */
+		}
+
+		.layout__bottom-panel {
+			border-top: 1px solid #cccccc ;
+			bottom: 0px ;
+			font-weight: bold ;
+			height: 100px ;
+			left: 0px ;
+			padding: 20px 20px 20px 20px ;
+			position: absolute ;
+			right: 0px ;
+		}
+
+		.content p {
+			margin: 0px 0px 0px 0px ;
+			padding: 25px 20px 22px 20px ;
+		}
+
+		.content p:nth-child( even ) {
+			background-color: #f0f0f0 ;
+		}
+
+	</style>
+</head>
+<body>
+
+	<h1>
+		Using CSS Overscroll-Behavior To Prevent Scrolling Of Parent Containers From Within Overflow Containers
+	</h1>
+
+	<!-- BEGIN: Layout-A. -->
+	<section class="layout layout--a">
+		<div class="layout__top-panel">
+
+			<div class="content">
+				<p>Content</p><p>Content</p><p>Content</p><p>Content</p><p>Content</p>
+				<p>Content</p><p>Content</p><p>Content</p><p>Content</p><p>Content</p>
+				<p>Content</p><p>Content</p><p>Content</p><p>Content</p><p>Content</p>
+				<p>Content</p><p>Content</p><p>Content</p><p>Content</p><p>Content</p>
+			</div>
+
+		</div>
+		<div class="layout__bottom-panel">
+
+			No Behavior Modification
+
+		</div>
+	</section>
+	<!-- END: Layout-A. -->
+
+	<!-- BEGIN: Layout-B. -->
+	<section class="layout layout--b">
+		<div class="layout__top-panel">
+
+			<div class="content">
+				<p>Content</p><p>Content</p><p>Content</p><p>Content</p><p>Content</p>
+				<p>Content</p><p>Content</p><p>Content</p><p>Content</p><p>Content</p>
+				<p>Content</p><p>Content</p><p>Content</p><p>Content</p><p>Content</p>
+				<p>Content</p><p>Content</p><p>Content</p><p>Content</p><p>Content</p>
+			</div>
+
+		</div>
+		<div class="layout__bottom-panel">
+
+			Using Overscroll-Behavior
+
+		</div>
+	</section>
+	<!-- END: Layout-B. -->
+
+
+	<!-- BODY content. -->
+	<div class="content">
+		<p>Content</p><p>Content</p><p>Content</p><p>Content</p><p>Content</p>
+		<p>Content</p><p>Content</p><p>Content</p><p>Content</p><p>Content</p>
+		<p>Content</p><p>Content</p><p>Content</p><p>Content</p><p>Content</p>
+		<p>Content</p><p>Content</p><p>Content</p><p>Content</p><p>Content</p>
+		<p>Content</p><p>Content</p><p>Content</p><p>Content</p><p>Content</p>
+		<p>Content</p><p>Content</p><p>Content</p><p>Content</p><p>Content</p>
+		<p>Content</p><p>Content</p><p>Content</p><p>Content</p><p>Content</p>
+		<p>Content</p><p>Content</p><p>Content</p><p>Content</p><p>Content</p>
+	</div>
+
+</body>
+</html>
