@@ -11,7 +11,7 @@ import { Component } from "@angular/core";
 	template:
 	`
 		<h2>
-			Projects Alt Implementation
+			Projects Alternate Implementation
 		</h2>
 
 		<ul>
@@ -30,7 +30,5 @@ import { Component } from "@angular/core";
 	`
 })
 export class ProjectsAltComponent {
-
 	// ....
-
 }

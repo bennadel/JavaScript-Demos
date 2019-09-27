@@ -10,7 +10,6 @@ import { ProjectDetailComponent } from "./project-detail.component";
 import { ProjectsAltComponent } from "./projects-alt.component";
 import { ProjectsComponent } from "./projects.component";
 import { ProjectsSwitcherComponent } from "./projects-switcher.component";
-import { UserConfigService } from "./user-config.service";
 
 // ----------------------------------------------------------------------------------- //
 // ----------------------------------------------------------------------------------- //
@@ -30,9 +29,17 @@ import { UserConfigService } from "./user-config.service";
 					children: [
 						{
 							path: "projects",
+							// Normally, the "projects" path would load the existing
+							// ProjectsComponent; however, imagine that we are currently
+							// testing an alternate implementation of the design behind a
+							// feature flag. In order to keep the Routes the same across
+							// the experiment, we are going to use a "switcher" component
+							// to act as a proxy that conditionally and dynamically loads
+							// the appropriate version depending on the feature flag.
+							// --
 							// NOTE: The Projects Switcher will dynamically load either
-							// the ProjectsComponent or the ProjectsAltComponent as the
-							// list-page implementation.
+							// the ProjectsComponent or the ProjectsAltComponent as a
+							// "sibling" DOM element, just like the RouterOutlet does.
 							component: ProjectsSwitcherComponent,
 							children: [
 								{
@@ -64,6 +71,11 @@ import { UserConfigService } from "./user-config.service";
 	declarations: [
 		AppComponent,
 		ProjectDetailComponent,
+		// CAUTION: In all the demos (and the documentation) that I've seen about the
+		// ComponentFactoryResolver, they always include the dynamic components as
+		// "entryComponents"; however, that did not seem to work for me. For reasons I
+		// don't fully understand, including the dynamic components as "declarations"
+		// was sufficient to get this working.
 		ProjectsComponent,
 		ProjectsAltComponent
 	],

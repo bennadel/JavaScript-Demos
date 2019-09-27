@@ -22,18 +22,45 @@ import { UserConfigService } from "./user-config.service";
 })
 export class ProjectsSwitcherComponent {
 
+	private componentFactoryResolver: ComponentFactoryResolver;
+	private userConfigService: UserConfigService;
+	private viewContainerRef: ViewContainerRef;
+
+	// I initialize the switcher component.
+	// --
+	// NOTE: The injected ViewContainerRef is the container that THIS COMPONENT is
+	// rendered WITHIN - it is NOT the view for this component's contents.
 	constructor(
 		componentFactoryResolver: ComponentFactoryResolver,
 		userConfigService: UserConfigService,
 		viewContainerRef: ViewContainerRef
 		) {
 
-		var factory = ( userConfigService.isUsingNewHawtness )
-			? componentFactoryResolver.resolveComponentFactory( ProjectsAltComponent )
-			: componentFactoryResolver.resolveComponentFactory( ProjectsComponent )
+		this.componentFactoryResolver = componentFactoryResolver;
+		this.userConfigService = userConfigService;
+		this.viewContainerRef = viewContainerRef;
+	}
+
+	// ---
+	// PUBLIC METHODS.
+	// ---
+
+	// I get called once after the inputs have been bound for the first time.
+	public ngOnInit() : void {
+
+		// Imagine that the UserConfigService holds the feature-flag that drives the
+		// version of the Projects List that the user is going to see. In order to load
+		// the selected component dynamically, we're going to use the Component Factory
+		// Resolver and then load the selected component into the ViewContainerRef as a
+		// SIBLING element to the Switcher (this) component (just like the RouterOutlet
+		// directive does).
+		var factory = ( this.userConfigService.isUsingNewHawtness )
+			? this.componentFactoryResolver.resolveComponentFactory( ProjectsAltComponent )
+			: this.componentFactoryResolver.resolveComponentFactory( ProjectsComponent )
 		;
 
-		viewContainerRef.createComponent( factory );
+		// Insert as a SIBLING element.
+		this.viewContainerRef.createComponent( factory );
 
 	}
 
