@@ -1,0 +1,15 @@
+{
+	"user": {
+		"id": 1,
+		"email": "ben@bennadel.com"
+	},
+	"company": {
+		"id": 101,
+		"name": "Dig Deep Fitness"
+	},
+	"featureFlags": {
+		"feature-a": true,
+		"feature-b": false,
+		"feature-c": true
+	}
+}
