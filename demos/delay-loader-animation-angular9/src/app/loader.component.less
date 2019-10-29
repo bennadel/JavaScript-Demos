@@ -1,0 +1,30 @@
+
+:host {
+	animation-delay: 0ms ; // This will be overridden in the HTML template.
+	animation-duration: 250ms ;
+	animation-fill-mode: both ;
+	animation-name: loader-component-keyframes ;
+	display: flex ;
+}
+
+// The opacity property is going to be used to drive the visibility of the loader. It
+// will start out as transparent (ie, not visible); and then, the animation-delay
+// property defined in the component template (in conjunction with the keyframes) will
+// determine how long to wait before the indicator is rendered for the user.
+// --
+// NOTE: Using animation-fill-mode of "both" causes the 0% state to be applied to the
+// component when it is first rendered.
+@keyframes loader-component-keyframes {
+	0% {
+		opacity: 0.0 ;
+	}
+
+	100% {
+		opacity: 1.0 ;
+	}
+}
+
+.indicator {
+	flex: 0 0 auto ;
+	margin: auto auto auto auto ; // Center vertically and horizontally.
+}
