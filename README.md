@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Collapsing Sticky Elements And Maintaining Scroll Offsets In Angular 9.0.0-rc.2](https://bennadel.github.io/JavaScript-Demos/demos/collapse-sticky-maintain-scroll-angular9/dist/)
 * [Delaying Loading Indicators Using CSS Animations In Angular 9.0.0-next.14](https://bennadel.github.io/JavaScript-Demos/demos/delay-loader-animation-angular9/dist/)
 * [Loading And Using Remote Feature Flags In Angular 9.0.0-next.12](https://bennadel.github.io/JavaScript-Demos/demos/feature-flags-angular9/dist/)
 * [Experiment: Using A Feature Flag To Conditionally Render Routable Components In Angular 9.0.0-next.8](https://bennadel.github.io/JavaScript-Demos/demos/router-alternate-route-angular9/dist/)
