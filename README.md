@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Component Queries Metadata Appears To Be Broken When The Ivy Renderer Is Enabled In Angular 9.0.0-rc.2](https://bennadel.github.io/JavaScript-Demos/demos/component-queries-broken-with-ivy-angular9/dist/)
 * [Component View-Template Fragments Retain Bindings And Can Be Moved Around In The DOM In Angular 9.0.0-rc.2](https://bennadel.github.io/JavaScript-Demos/demos/move-template-element-to-body-angular9/dist/)
 * [Collapsing Sticky Elements And Maintaining Scroll Offsets In Angular 9.0.0-rc.2](https://bennadel.github.io/JavaScript-Demos/demos/collapse-sticky-maintain-scroll-angular9/dist/)
 * [Delaying Loading Indicators Using CSS Animations In Angular 9.0.0-next.14](https://bennadel.github.io/JavaScript-Demos/demos/delay-loader-animation-angular9/dist/)
