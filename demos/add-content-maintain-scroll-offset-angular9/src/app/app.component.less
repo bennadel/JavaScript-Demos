@@ -1,0 +1,41 @@
+
+:host {
+	display: block ;
+	font-size: 18px ;
+}
+
+.controls {
+	a {
+		color: red ;
+		cursor: pointer ;
+		text-decoration: underline ;
+		user-select: none ;
+	}
+}
+
+.viewport {
+	&.is-constrained {
+		background-color: #fafafa ;
+		border: 5px solid #cccccc ;
+		height: 300px ;
+		overflow: auto ;
+		overscroll-behavior: contain ;
+		padding: 3px 20px 3px 20px ;
+	}
+}
+
+.news-item {
+	background-color: #ffffff ;
+	border: 2px solid #cccccc ;
+	margin: 20px 0px 20px 0px ;
+	padding: 13px 10px 13px 10px ;
+
+	&__hook {
+		font-style: italic ;
+		font-weight: bold ;
+	}
+
+	&__content {
+
+	}
+}
