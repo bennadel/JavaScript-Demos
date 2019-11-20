@@ -1,0 +1,36 @@
+
+:host {
+	display: block ;
+	font-size: 18px ;
+	height: 3000px ;
+	width: 3000px ;
+}
+
+.anchor {
+	background-color: #f0f0f0 ;
+	border: 1px solid #aaaaaa ;
+	border-radius: 10px 10px 10px 10px ;
+	cursor: pointer ;
+	font-size: 14px ;
+	padding: 7px 10px 7px 10px ;
+	position: absolute ;
+	user-select: none ;
+	white-space: nowrap ;
+	z-index: 3 ;
+}
+
+.popup {
+	background-color: #f0f0f0 ;
+	border: 1px solid #aaaaaa ;
+	border-radius: 10px 10px 10px 10px ;
+	box-sizing: border-box ;
+	height: 200px ;
+	position: fixed ;
+	width: 300px ;
+	z-index: 2 ;
+
+	&.is-constrained {
+		border-color: #ff3366 ;
+		border-width: 3px 3px 3px 3px ;
+	}
+}
