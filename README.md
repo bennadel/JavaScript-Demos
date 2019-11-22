@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Having Fun With Position: Fixed And Element.getBoundingClientRect() In Angular 9.0.0-rc.2](https://bennadel.github.io/JavaScript-Demos/demos/celebrate-get-bounding-client-rect-angular9/dist/)
 * [Positioning And Constraining A Fixed-Position Element Relative To An Absolute-Positioned Element In Angular 9.0.0-rc.2](https://bennadel.github.io/JavaScript-Demos/demos/adjust-popup-at-edges-angular9/dist/)
 * [Maintaining Scroll Offsets When Adding Content Above The User's Viewport In Angular 9.0.0-rc.2](https://bennadel.github.io/JavaScript-Demos/demos/add-content-maintain-scroll-offset-angular9/dist/)
 * [Component Queries Metadata Appears To Be Broken When The Ivy Renderer Is Enabled In Angular 9.0.0-rc.2](https://bennadel.github.io/JavaScript-Demos/demos/component-queries-broken-with-ivy-angular9/dist/)

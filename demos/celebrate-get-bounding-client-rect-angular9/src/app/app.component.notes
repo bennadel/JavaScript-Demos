@@ -1,0 +1,66 @@
+
+I originally had the click-cycle start at the top of the DOM tree and work its way
+down. However, I feel like starting at the bottom and working up created a more engaing
+and intuitive user experience. This is the old code.
+
+
+// I get the next target element based on the given mouse click event.
+private getNextTarget( event: MouseEvent ) : HTMLElement | null {
+
+	// If we don't have an existing target element, let's just start at the root.
+	if ( ! this.targetElement ) {
+
+		return( document.documentElement );
+
+	}
+
+	// If we do have an existing target element, but the user clicked into a
+	// different branch of the DOM tree, let's walk up the existing branch until we
+	// find an element that contains both the existing element and the click target.
+	if ( ! this.targetElement.contains( target ) ) {
+
+		var newTarget = this.targetElement;
+
+		while ( ! newTarget.contains( target ) ) {
+
+			// NOTE: We're using the "definite assignment assertion" (!) because we
+			// know that, in the worst case scenario, our traversal will end at the
+			// documentElement. As such, we never have to worry about running out of
+			// parents that don't contain both elements.
+			newTarget = newTarget.parentElement !;
+
+		}
+
+		return( newTarget );
+
+	}
+
+	// ASSERT: If we've made it this far, it means that we have an existing target
+	// AND that the new target is contained within the existing target's DOM branch.
+
+	// If the user clicked on the existing target, indicating that we are at the
+	// bottom of the local DOM branch, then let's just remove the target selection
+	// altogether.
+	if ( this.targetElement === target ) {
+
+		return( null );
+
+	}
+
+	// ASSERT: If we've made it this far, it means that we have an existing target
+	// AND that the user has clicked a target that is lower down in the same DOM
+	// branch. As such, we want to move DOWN in the DOM branch to the next descendant
+	// Element. To do this, we'll start at the click target and keeping stepping-up
+	// in the DOM tree until the parent element is the existing target.
+	while ( target.parentElement !== this.targetElement ) {
+
+		// NOTE: We're using the "definite assignment assertion" (!) because we know
+		// that we're lower down in the DOM branch and will never get to a point
+		// where there is no parent element.
+		target = target.parentElement !;
+
+	}
+
+	return( target );
+
+}

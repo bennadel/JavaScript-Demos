@@ -1,0 +1,66 @@
+
+:host {
+	bottom: 0px ;
+	left: 0px ;
+	pointer-events: none ;
+	position: fixed ;
+	right: 0px ;
+	top: 0px ;
+	z-index: 2 ;
+}
+
+.target {
+	background-color: fade( red, 10% ) ;
+	border: 3px solid red ;
+	border-radius: 3px 3px 3px 3px ;
+	box-sizing: border-box ;
+	opacity: 0 ;
+	position: absolute ;
+	transition-duration: 100ms ;
+	transition-property: bottom left right top opacity ;
+	transition-timing-function: ease-in ; 
+}
+
+.vertical-offset,
+.horizontal-offset {
+	display: flex ;
+	opacity: 0 ;
+	position: fixed ;	
+	transition-duration: 100ms ;
+	transition-property: bottom left right top height opacity ;
+	transition-timing-function: ease-in ; 
+
+	.size {
+		background-color: red ;
+		border-radius: 50px 50px 50px 50px ;
+		color: #ffffff ;
+		flex: 0 0 auto ;
+		font-family: monospace ;
+		font-size: 12px ;
+		margin: auto auto auto auto ;
+		padding: 3px 7px 3px 7px ;
+		z-index: 2 ;
+	}
+}
+
+.vertical-offset::before {
+	background-color: red ;
+	bottom: 0px ;
+	content: "" ;
+	position: absolute ;
+	left: 50% ;
+	top: 0px ;
+	width: 1px ;
+	z-index: 1 ;
+}
+
+.horizontal-offset::before {
+	background-color: red ;
+	content: "" ;
+	height: 1px ;
+	left: 0px ;
+	position: absolute ;
+	right: 0px ;
+	top: 50% ;
+	z-index: 1 ;
+}
