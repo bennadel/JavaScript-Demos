@@ -1,0 +1,84 @@
+
+:host {
+	display: block ;
+	font-size: 18px ;
+}
+
+.controls {
+	display: flex ;
+
+	* {
+		margin-right: 10px ;
+	}
+
+	a {
+		color: red ;
+		cursor: pointer ;
+		text-decoration: underline ;
+		user-select: none ;
+	}
+}
+
+.top-left {
+	left: 10px ;
+	position: absolute ;
+	top: 10px ;
+}
+
+.top-right {
+	position: absolute ;
+	right: 10px ;
+	top: 10px ;
+}
+
+.bottom-right {
+	bottom: 10px ;
+	position: absolute ;
+	right: 10px ;
+}
+
+.bottom-left {
+	bottom: 10px ;
+	left: 10px ;
+	position: absolute ;
+}
+
+.center {
+	left: 50% ;
+	position: absolute ;
+	top: 50% ;
+	transform: translateX( -50% ) translateY( -50% ) ;
+}
+
+app-html-select-root {
+	background-color: #ffffff ;
+	border: 1px solid #e0e0e0 ;
+	border-bottom: 2px solid #cccccc ;
+	border-radius: 3px 3px 3px 3px ;
+	font-size: 20px ;
+	padding: 5px 7px 5px 7px ;
+}
+
+app-html-select-option {
+	border-bottom: 1px solid #cccccc ;
+	font-size: 20px ;
+	overflow: hidden ;
+	padding: 5px 7px 5px 5px ;
+	text-overflow: ellipsis ;
+	white-space: nowrap ;
+
+	&:last-child {
+		border-bottom-width: 0px ;
+	}
+
+	&.selected {
+		background-color: #ffdd33 ;
+		color: #000000 ;
+		font-weight: bold ;
+	}
+
+	&:not(.selected):hover {
+		background-color: #f0f0f0 ;
+		color: #000000 ;
+	}
+}

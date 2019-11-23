@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Creating A Custom Select Component With The Options-Menu In The Root Stacking Context In Angular 9.0.0-rc.3](https://bennadel.github.io/JavaScript-Demos/demos/fixed-position-dropdown-menu-angular9/dist/)
 * [Having Fun With Position: Fixed And Element.getBoundingClientRect() In Angular 9.0.0-rc.2](https://bennadel.github.io/JavaScript-Demos/demos/celebrate-get-bounding-client-rect-angular9/dist/)
 * [Positioning And Constraining A Fixed-Position Element Relative To An Absolute-Positioned Element In Angular 9.0.0-rc.2](https://bennadel.github.io/JavaScript-Demos/demos/adjust-popup-at-edges-angular9/dist/)
 * [Maintaining Scroll Offsets When Adding Content Above The User's Viewport In Angular 9.0.0-rc.2](https://bennadel.github.io/JavaScript-Demos/demos/add-content-maintain-scroll-offset-angular9/dist/)
