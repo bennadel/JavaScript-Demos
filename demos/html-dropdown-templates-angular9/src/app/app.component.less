@@ -1,0 +1,135 @@
+
+:host {
+	display: block ;
+	font-size: 18px ;
+}
+
+.top-left {
+	left: 10px ;
+	position: absolute ;
+	top: 10px ;
+}
+
+.top-right {
+	position: absolute ;
+	right: 10px ;
+	top: 10px ;
+}
+
+.bottom-right {
+	bottom: 10px ;
+	position: absolute ;
+	right: 10px ;
+}
+
+.bottom-left {
+	bottom: 10px ;
+	left: 10px ;
+	position: absolute ;
+}
+
+.center {
+	left: 50% ;
+	position: absolute ;
+	top: 50% ;
+	transform: translateX( -50% ) translateY( -50% ) ;
+}
+
+.pick {
+	align-items: center ;
+	border: 1px solid #333333 ;
+	border-radius: 5px 5px 5px 5px ;
+	background-color: #ffffff ;
+	display: flex ;
+	justify-content: center ;
+	height: 40px ;
+	width: 200px ;
+}
+
+.color-palette-preview {
+	background-color: #000000 ;
+	border-radius: 10px 10px 10px 10px ;
+	display: flex ;
+	height: 40px ;
+	list-style-type: none ;
+	margin: 0px 0px 0px 0px ;
+	padding: 2px 2px 2px 2px ;
+	width: 200px ;
+
+	&__swatch {
+		flex: 1 1 auto ;
+
+		&:first-child {
+			border-radius: 8px 0px 0px 8px ;
+		}
+
+		&:last-child {
+			border-radius: 0px 8px 8px 0px ;
+		}
+	}
+
+	&__hex {
+		display: none ;
+	}
+}
+
+.color-palette {
+	align-items: center ;
+	background-color: #ffffff ;
+	color: #333333 ;
+	display: flex ;
+	font-size: 20px ;
+	max-width: 300px ;
+	padding: 10px 10px 10px 10px ;
+
+	&.selected {
+		background-color: #333333 ;
+		color: #ffffff ;
+		font-weight: bold ;
+	}
+
+	&__swatches {
+		background-color: #333333 ;
+		border: 1px solid #333333 ;
+		border-radius: 4px 4px 4px 4px ;
+		display: flex ;
+		flex: 0 0 auto ;
+		height: 30px ;
+		list-style-type: none ;
+		margin: 0px 0px 0px 0px ;
+		padding: 0px 0px 0px 0px ;
+		width: 60px ;
+	}
+
+	&__swatch {
+		flex: 1 1 auto ;
+
+		&:first-child {
+			border-radius: 3px 0px 0px 3px ;
+		}
+
+		&:last-child {
+			border-radius: 0px 3px 3px 0px ;
+		}
+	}
+
+	&__hex {
+		display: none ;
+	}
+
+	&__name {
+		flex: 1 1 auto ;
+		overflow: hidden ;
+		padding: 0px 8px 0px 8px ;
+		text-overflow: ellipsis ;
+		white-space: nowrap ;
+	}
+
+	&.active &__swatches {
+		flex: 1 1 auto ;
+	}
+
+	&.active &__name {
+		display: none ;
+	}
+}

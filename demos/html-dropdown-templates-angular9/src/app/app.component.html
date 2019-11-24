@@ -1,0 +1,120 @@
+
+<!--
+	Our HtmlSelect component allows the developer to customize the rendering of the
+	component using TemplateRef inputs. Some templates, like the [optionTemplate], are
+	REQUIRED. But, other templates, like the [rootTemplate] and the [nullTemplate], are
+	OPTIONAL. Since we're going to be instantiating multiple dropdown components, let's
+	define our templates up top and then re-use them for each dropdown instance below.
+-->
+
+<!-- This is the template for the MENU ROOT when NO OPTION is selected. -->
+<ng-template #nullTemplateRef>
+
+	<div class="pick">
+		&mdash; Pick a Palette &mdash; 
+	</div>
+
+</ng-template>
+
+<!-- This is the template for the MENU ROOT when an option is selected. -->
+<ng-template #rootTemplateRef let-option>
+
+	<ul [title]="option.name" class="color-palette-preview">
+		<li
+			*ngFor="let swatch of option.swatches"
+			class="color-palette-preview__swatch"
+			[style.background-color]="swatch">
+
+			<span class="color-palette-preview__hex">
+				{{ option.swatches[ 0 ] }}
+			</span>
+
+		</li>
+	</ul>
+
+</ng-template>
+
+<!--
+	This is the template for the MENU OPTION - the options that show up in the actual
+	dropdown menu.
+-->
+<ng-template
+	#optionTemplateRef
+	let-option
+	let-selected="selected"
+	let-active="active">
+
+	<div
+		class="color-palette"
+		[class.active]="active"
+		[class.selected]="selected">
+
+		<ul class="color-palette__swatches">
+			<li
+				*ngFor="let swatch of option.swatches"
+				class="color-palette__swatch"
+				[style.background-color]="swatch">
+				
+				<span class="color-palette__hex">
+					{{ option.swatches[ 0 ] }}
+				</span>
+
+			</li>
+		</ul>
+		<div class="color-palette__name">
+			{{ option.name }}
+		</div>
+
+	</div>
+
+</ng-template>
+
+<!-- -------------------------------------------------------------------------------- -->
+<!-- -------------------------------------------------------------------------------- -->
+
+<!-- Now that we've defined our templates, we can re-use them in each dropdown. -->
+
+<app-html-select
+	[(value)]="selectedColorPalette"
+	[options]="colorPalettes"
+	[nullTemplate]="nullTemplateRef"
+	[rootTemplate]="rootTemplateRef"
+	[optionTemplate]="optionTemplateRef"
+	class="top-left">
+</app-html-select>
+
+<app-html-select
+	[(value)]="selectedColorPalette"
+	[options]="colorPalettes"
+	[nullTemplate]="nullTemplateRef"
+	[rootTemplate]="rootTemplateRef"
+	[optionTemplate]="optionTemplateRef"
+	class="top-right">
+</app-html-select>
+
+<app-html-select
+	[(value)]="selectedColorPalette"
+	[options]="colorPalettes"
+	[nullTemplate]="nullTemplateRef"
+	[rootTemplate]="rootTemplateRef"
+	[optionTemplate]="optionTemplateRef"
+	class="bottom-right">
+</app-html-select>
+
+<app-html-select
+	[(value)]="selectedColorPalette"
+	[options]="colorPalettes"
+	[nullTemplate]="nullTemplateRef"
+	[rootTemplate]="rootTemplateRef"
+	[optionTemplate]="optionTemplateRef"
+	class="bottom-left">
+</app-html-select>
+
+<app-html-select
+	[(value)]="selectedColorPalette"
+	[options]="colorPalettes"
+	[nullTemplate]="nullTemplateRef"
+	[rootTemplate]="rootTemplateRef"
+	[optionTemplate]="optionTemplateRef"
+	class="center">
+</app-html-select>

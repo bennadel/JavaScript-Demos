@@ -1,0 +1,67 @@
+
+<!-- If the developer does not provide a NullTemplate, we'll fall-back to this one. -->
+<ng-template #defaultNullTemplate>
+	&mdash; Select Option &mdash;
+</ng-template>
+
+<button
+	#rootRef
+	(click)="showMenu()"
+	class="root"
+	[ngSwitch]="( value === null )">
+
+	<ng-template [ngSwitchCase]="true">
+
+		<ng-template-outlet
+			[ngTemplateOutlet]="( nullTemplate || defaultNullTemplate )">
+		</ng-template-outlet>
+
+	</ng-template>
+
+	<ng-template [ngSwitchCase]="false">
+
+		<ng-template-outlet
+			[ngTemplateOutlet]="( rootTemplate || optionTemplate )"
+			[ngTemplateOutletContext]="{
+				$implicit: value,
+				value: value,
+				index: -1,
+				selected: false,
+				active: false
+			}">
+		</ng-template-outlet>
+
+	</ng-template>
+
+</button>
+
+<div
+	#menuRef
+	class="menu"
+	[style.display]="( isShowingMenu ? 'block' : 'none' )">
+
+	<ul
+		*ngIf="isShowingMenu"
+		(mouseleave)="setActiveIndex( -1 )"
+		class="options">
+		<li
+			*ngFor="let option of options ; let index = index ;"
+			(click)="handleSelect( option )"
+			(mouseenter)="setActiveIndex( index )"
+			class="option">
+
+			<ng-template-outlet
+				[ngTemplateOutlet]="optionTemplate"
+				[ngTemplateOutletContext]="{
+					$implicit: option,
+					value: option,
+					index: index,
+					selected: ( option === value ),
+					active: ( index === activeIndex )
+				}">
+			</ng-template-outlet>
+
+		</li>
+	</ul>
+
+</div>
