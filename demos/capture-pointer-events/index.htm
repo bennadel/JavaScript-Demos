@@ -1,0 +1,62 @@
+
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Capturing Pointer Events Using Bookmarklets
+	</title>
+
+	<style type="text/css">
+
+		.popup {
+			/*
+				CAUTION: Because this class turns OFF pointer-events, the user won't be
+				able to right-click and Inspect the element. This can make debugging much
+				more difficult.
+			*/
+			pointer-events: none ;
+			/* --- */
+			background-color: #f0f0f0 ;
+			border: 1px solid #cccccc ;
+			border-radius: 5px 5px 5px 5px ;
+			left: 50% ;
+			padding: 10px 15px 10px 15px ;
+			position: fixed ;
+			top: 50% ;
+			transform: translateX( -50% ) translateY( -50% ) ;
+		}
+
+	</style>
+</head>
+<body>
+
+	<h1>
+		Capturing Pointer Events Using Bookmarklets
+	</h1>
+
+	<p>
+		<!-- Copied from: https://github.com/bennadel/Bookmarklets -->
+		<a href='javascript:(function(d,b,f,u,s){f="capture-pointer-events.js";u=(b+f+"?="+Date.now());s=d.createElement("script");s.setAttribute("src",u);d.body.appendChild(s);})(document,"https://bennadel.github.io/Bookmarklets/");void(0);'>
+			<strong>Bookmarklet</strong>: Capture Pointer Events
+		</a>
+	</p>
+
+	<!-- Lots of nested element to represent a complex DOM tree structure. -->
+	<div>
+		<div>
+			<div>
+				<div>
+					<div>
+						<span class="popup">
+							Try to <strong>Inspect</strong> me!
+						</span>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+</body>
+</html>

@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Capturing Pointer Events Using Bookmarklets](https://bennadel.github.io/JavaScript-Demos/demos/capture-pointer-events/)
 * [Customizing A Select Component Using TemplateRef And NgTemplateOutlet In Angular 9.0.0-rc.3](https://bennadel.github.io/JavaScript-Demos/demos/html-dropdown-templates-angular9/dist/)
 * [Creating A Custom Select Component With The Options-Menu In The Root Stacking Context In Angular 9.0.0-rc.3](https://bennadel.github.io/JavaScript-Demos/demos/fixed-position-dropdown-menu-angular9/dist/)
 * [Having Fun With Position: Fixed And Element.getBoundingClientRect() In Angular 9.0.0-rc.2](https://bennadel.github.io/JavaScript-Demos/demos/celebrate-get-bounding-client-rect-angular9/dist/)
