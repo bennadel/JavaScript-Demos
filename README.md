@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Using $any() To Temporarily Disable Type-Checking Within A Component Template In Angular 9.0.0-rc.4](https://bennadel.github.io/JavaScript-Demos/demos/discriminated-union-template-any-angular9/dist/)
 * [Capturing Pointer Events Using Bookmarklets](https://bennadel.github.io/JavaScript-Demos/demos/capture-pointer-events/)
 * [Customizing A Select Component Using TemplateRef And NgTemplateOutlet In Angular 9.0.0-rc.3](https://bennadel.github.io/JavaScript-Demos/demos/html-dropdown-templates-angular9/dist/)
 * [Creating A Custom Select Component With The Options-Menu In The Root Stacking Context In Angular 9.0.0-rc.3](https://bennadel.github.io/JavaScript-Demos/demos/fixed-position-dropdown-menu-angular9/dist/)
