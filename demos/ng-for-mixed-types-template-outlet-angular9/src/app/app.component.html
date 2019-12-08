@@ -34,13 +34,13 @@
 
 	<li *ngFor="let project of projects">
 
-		<ng-template-outlet
+		<ng-template
 			[ngTemplateOutlet]="(
 				( ( project.type === 'prototype' ) && prototypeRef ) ||
 				( ( project.type === 'board' ) && boardRef )
 			)"
 			[ngTemplateOutletContext]="{ $implicit: project }">
-		</ng-template-outlet>
+		</ng-template>
 
 	</li>
 </ul>
