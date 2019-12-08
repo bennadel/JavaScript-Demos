@@ -1,0 +1,46 @@
+
+<h2>
+	Projects (Using NgSwitch)
+</h2>
+
+<ul>
+	<li
+		*ngFor="let project of projects"
+		[ngSwitch]="project.type">
+
+		<ng-template [ngSwitchCase]="( 'prototype' )">
+			{{ project.name }}
+		</ng-template>
+
+		<ng-template [ngSwitchCase]="( 'board' )">
+			{{ project.title }}
+		</ng-template>
+
+	</li>
+</ul>
+
+<h2>
+	Projects (Using NgTemplateOutlet)
+</h2>
+
+<ul>
+	<ng-template #prototypeRef let-prototype>
+		{{ prototype.name }}
+	</ng-template>
+
+	<ng-template #boardRef let-board>
+		{{ board.title }}
+	</ng-template>
+
+	<li *ngFor="let project of projects">
+
+		<ng-template-outlet
+			[ngTemplateOutlet]="(
+				( ( project.type === 'prototype' ) && prototypeRef ) ||
+				( ( project.type === 'board' ) && boardRef )
+			)"
+			[ngTemplateOutletContext]="{ $implicit: project }">
+		</ng-template-outlet>
+
+	</li>
+</ul>

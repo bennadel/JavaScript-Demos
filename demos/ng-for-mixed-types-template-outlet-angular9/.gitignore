@@ -1,0 +1,10 @@
+
+# Compiled files.
+/out-tsc
+/tmp
+
+# Build-time dependencies.
+/node_modules
+
+# Random system files.
+.DS_Store

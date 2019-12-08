@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Rendering A List Of Mixed Types Using NgFor And NgTemplateOutlet In Angular 9.0.0-rc.5](https://bennadel.github.io/JavaScript-Demos/demos/ng-for-mixed-types-template-outlet-angular9/dist/)
 * [Rendering A TemplateRef As A Child Of The Body Element In Angular 9.0.0-rc.5](https://bennadel.github.io/JavaScript-Demos/demos/render-template-ref-body-angular9/dist/)
 * [Using $any() To Temporarily Disable Type-Checking Within A Component Template In Angular 9.0.0-rc.4](https://bennadel.github.io/JavaScript-Demos/demos/discriminated-union-template-any-angular9/dist/)
 * [Capturing Pointer Events Using Bookmarklets](https://bennadel.github.io/JavaScript-Demos/demos/capture-pointer-events/)
