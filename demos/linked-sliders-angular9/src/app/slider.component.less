@@ -1,0 +1,43 @@
+
+:host {
+	display: block ;
+	height: 30px ;
+	padding: 5px 5px 5px 5px ;
+	user-select: none ;
+	width: 300px ;
+}
+
+.track {
+	height: 100% ;
+	position: relative ;
+
+	&:before {
+		background-color: #cccccc ;
+		content: "" ;
+		height: 2px ;
+		left: 0px ;
+		position: absolute ;
+		right: 0px ;
+		top: calc( 50% - 1px );
+	}
+}
+
+.value {
+	height: 100% ;
+	left: 0% ;
+	position: absolute ;
+	top: 0px ;
+	width: 0px ;
+}
+
+.thumb {
+	background-color: #333333 ;
+	border-radius: 5px 5px 5px 5px ;
+	bottom: 0px ;
+	cursor: pointer ;
+	height: 100% ;
+	left: -5px ;
+	position: absolute ;
+	top: 0px ;
+	width: 10px ;
+}
