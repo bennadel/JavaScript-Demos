@@ -65,26 +65,26 @@ export class SliderComponent {
 		// physical size of the slider. This way, we know where, within the bounds of the
 		// slider, the mouse is moving.
 		var trackRect = this.trackRef.nativeElement.getBoundingClientRect();
-		var minScreenX = Math.floor( trackRect.left );
-		var maxScreenX = Math.floor( trackRect.right );
-		var screenX = event.screenX;
+		var minClientX = Math.floor( trackRect.left );
+		var maxClientX = Math.floor( trackRect.right );
+		var clientX = event.clientX;
 
 		// On mouse-move, calculate and emit the next value.
 		var handleMousemove = ( event: MouseEvent ) => {
 
 			// Calculate the next horizontal position, constrained within the track.
-			var nextScreenX = Math.floor( event.screenX );
-			nextScreenX = Math.max( nextScreenX, minScreenX );
-			nextScreenX = Math.min( nextScreenX, maxScreenX );
+			var nextClientX = Math.floor( event.clientX );
+			nextClientX = Math.max( nextClientX, minClientX );
+			nextClientX = Math.min( nextClientX, maxClientX );
 
 			// Figure out how that mouse position translates into value.
-			var percentScreenX = (
-				( nextScreenX - minScreenX ) /
-				( maxScreenX - minScreenX )
+			var percentClientX = (
+				( nextClientX - minClientX ) /
+				( maxClientX - minClientX )
 			);
 			// NOTE: For the purposes of this demo, I am assuming that all values are
 			// integers. Allowing for floats would make this more challenging.
-			var nextValue = Math.round( ( this.max - this.min ) * percentScreenX );
+			var nextValue = Math.round( ( this.max - this.min ) * percentClientX );
 			nextValue = Math.max( nextValue, this.min );
 			nextValue = Math.min( nextValue, this.max );
 
