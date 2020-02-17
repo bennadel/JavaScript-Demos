@@ -1,0 +1,63 @@
+
+:host {
+	display: block ;
+	font-size: 18px ;
+}
+
+.meme {
+	border: 1px solid #dadada ;
+	margin: 0px 0px 0px 0px  ;
+	padding: 0px 0px 0px 0px ;
+	width: 700px ;
+
+	&__image {
+		display: block ;
+		height: 340px ;
+		margin: 0px 0px 0px 0px ;
+		width: 700px ;
+	}
+
+	&__caption {
+		color: #333333 ;
+		font-family: "Patrick Hand SC" ;
+		font-size: 35px ;
+		line-height: 45px ;
+		margin: 0px 0px 0px 0px  ;
+		padding: 18px 30px 22px 30px ;
+		text-align: center;
+		text-transform: uppercase ;
+	}
+
+	// Tweaking the text positioning in the screenshot. For some reason, it seems to
+	// slightly too low - we're bumping it up 2px.
+	&.html2canvas {
+		.meme__caption {
+			padding-top: 16px ;
+			padding-bottom: 24px ;
+		}
+	}
+}
+
+.copyright {
+	color: #666666 ;
+	font-size: 16px ;
+}
+
+.generate {
+	background-color: #ff3366 ;
+	border-radius: 4px 4px 4px 4px ;
+	border-width: 0px 0px 0px 0px ;
+	color: #ffffff ;
+	cursor: pointer ;
+	display: block ;
+	font-size: 22px ;
+	margin: 20px 0px 20px 0px ;
+	padding: 20px 0px 20px 0px ;
+	width: 702px ;
+
+	&:hover {
+		background-color: darken( #ff3366, 10% ) ;
+	}
+}
+
+

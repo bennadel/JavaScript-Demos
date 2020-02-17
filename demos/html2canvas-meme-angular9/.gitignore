@@ -1,0 +1,7 @@
+
+# Compiled files.
+/out-tsc
+/tmp
+
+# Build-time dependencies.
+/node_modules
