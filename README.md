@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Using CSS Counters To Apply Custom Labels To An HTML List](https://bennadel.github.io/JavaScript-Demos/demos/css-counters/)
 * [Generating Meme Images In The Browser Using html2canvas In Angular 9.0.1](https://bennadel.github.io/JavaScript-Demos/demos/html2canvas-meme-angular9/dist/)
 * [Creating Linked Slider Inputs Constrained To A Given Total In Angular 9.0.0-rc.5](https://bennadel.github.io/JavaScript-Demos/demos/linked-sliders-angular9/dist/)
 * [Rendering A List Of Mixed Types Using NgFor And NgTemplateOutlet In Angular 9.0.0-rc.5](https://bennadel.github.io/JavaScript-Demos/demos/ng-for-mixed-types-template-outlet-angular9/dist/)
