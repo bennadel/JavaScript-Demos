@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		.... Webkit Appearance
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./style.css" />
+</head>
+<body>
+
+	<h1>
+		.... Webkit Appearance
+	</h1>
+
+	<style type="text/css">
+
+		/* Remove the browser's native styling. */
+		.clear-styles {
+			appearance: none ;
+				-moz-appearance: none ;
+				-webkit-appearance: none ;
+		}
+
+		/* Custom styling on top of webkit-appearance:none */
+
+		input[ type = "button" ].clear-styles.custom {
+			background-color: gold ;
+			border: 1px solid red ;
+			border-radius: 3px 3px 3px 3px ;
+			margin: 0px 0px 0px 0px ;
+			padding: 10px 10px 10px 10px ;
+		}
+
+		button.clear-styles.custom {
+			background-color: gold ;
+			border: 1px solid red ;
+			border-radius: 3px 3px 3px 3px ;
+			margin: 0px 0px 0px 0px ;
+			padding: 10px 10px 10px 10px ;
+		}
+
+		input[ type = "checkbox" ].clear-styles.custom {
+			background-color: gold ;
+			border: 1px solid red ;
+			border-radius: 3px 3px 3px 3px ;
+			height: 15px ;
+			margin: 0px 0px 0px 0px ;
+			width: 15px ;
+		}
+		input[ type = "checkbox" ].clear-styles.custom:checked {
+			background-color: #333333 ;
+		}
+
+		input[ type = "input" ].clear-styles.custom {
+			background-color: gold ;
+			border: 1px solid red ;
+			border-radius: 3px 3px 3px 3px ;
+			margin: 0px 0px 0px 0px ;
+			padding: 10px 10px 10px 10px ;
+			width: 100px ;
+		}
+
+		input[ type = "file" ].clear-styles.custom {
+			background-color: gold ;
+			border: 1px solid red ;
+			border-radius: 3px 3px 3px 3px ;
+			margin: 0px 0px 0px 0px ;
+			padding: 10px 10px 10px 10px ;
+			width: 100px ;
+		}
+
+		textarea {
+			width: 100px ;
+		}
+		textarea.clear-styles.custom {
+			background-color: gold ;
+			border: 1px solid red ;
+			border-radius: 3px 3px 3px 3px ;
+			margin: 0px 0px 0px 0px ;
+			padding: 10px 10px 10px 10px ;
+			width: 100px ;
+		}
+
+		select {
+			width: 100px ;
+		}
+		select.clear-styles.custom {
+			background-color: gold ;
+			border: 1px solid red ;
+			border-radius: 3px 3px 3px 3px ;
+			margin: 0px 0px 0px 0px ;
+			padding: 10px 10px 10px 10px ;
+		}
+
+	</style>
+
+	<div class="comparisons">
+
+		<div>
+			<input type="button" value="Clicky" />
+		</div>
+		<div>
+			<input type="button" value="Clicky" class="clear-styles" />
+		</div>
+		<div>
+			<input type="button" value="Clicky" class="clear-styles custom" />
+		</div>
+
+		<div>
+			<button>Clicky</button>
+		</div>
+		<div>
+			<button class="clear-styles">Clicky</button>
+		</div>
+		<div>
+			<button class="clear-styles custom">Clicky</button>
+		</div>
+
+		<div>
+			<input type="checkbox" />
+		</div>
+		<div>
+			<input type="checkbox" class="clear-styles" />
+		</div>
+		<div>
+			<input type="checkbox" class="clear-styles custom" />
+		</div>
+
+		<div>
+			<input type="input" />
+		</div>
+		<div>
+			<input type="input" class="clear-styles" />
+		</div>
+		<div>
+			<input type="input" class="clear-styles custom" />
+		</div>
+
+		<div>
+			<input type="file" />
+		</div>
+		<div>
+			<input type="file" class="clear-styles" />
+		</div>
+		<div>
+			<input type="file" class="clear-styles custom" />
+		</div>
+
+		<div>
+			<textarea></textarea>
+		</div>
+		<div>
+			<textarea class="clear-styles"></textarea>
+		</div>
+		<div>
+			<textarea class="clear-styles custom"></textarea>
+		</div>
+
+		<div>
+			<select>
+				<option>Hello</option>
+				<option>An option with a really long text value.</option>
+			</select>
+		</div>
+		<div>
+			<select class="clear-styles">
+				<option>Hello</option>
+				<option>An option with a really long text value.</option>
+			</select>
+		</div>
+		<div>
+			<select class="clear-styles custom">
+				<option>Hello</option>
+				<option>An option with a really long text value.</option>
+			</select>
+		</div>
+
+	</div>
+
+</body>
+</html>
