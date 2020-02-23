@@ -4,7 +4,7 @@
 	<meta charset="utf-8" />
 
 	<title>
-		.... Webkit Appearance
+		Effortless Custom Form Input Styling With Webkit Appearance None
 	</title>
 
 	<link rel="stylesheet" type="text/css" href="./style.css" />
@@ -12,7 +12,7 @@
 <body>
 
 	<h1>
-		.... Webkit Appearance
+		Effortless Custom Form Input Styling With Webkit Appearance None
 	</h1>
 
 	<style type="text/css">
@@ -24,12 +24,14 @@
 				-webkit-appearance: none ;
 		}
 
-		/* Custom styling on top of webkit-appearance:none */
+		/* Now, let's add our custom form input styling on top of webkit-appearance: none */
 
 		input[ type = "button" ].clear-styles.custom {
 			background-color: gold ;
 			border: 1px solid red ;
 			border-radius: 3px 3px 3px 3px ;
+			display: block ;
+			font-size: inherit ;
 			margin: 0px 0px 0px 0px ;
 			padding: 10px 10px 10px 10px ;
 		}
@@ -38,6 +40,8 @@
 			background-color: gold ;
 			border: 1px solid red ;
 			border-radius: 3px 3px 3px 3px ;
+			display: block ;
+			font-size: inherit ;
 			margin: 0px 0px 0px 0px ;
 			padding: 10px 10px 10px 10px ;
 		}
@@ -46,6 +50,8 @@
 			background-color: gold ;
 			border: 1px solid red ;
 			border-radius: 3px 3px 3px 3px ;
+			display: block ;
+			font-size: inherit ;
 			height: 15px ;
 			margin: 0px 0px 0px 0px ;
 			width: 15px ;
@@ -54,10 +60,26 @@
 			background-color: #333333 ;
 		}
 
+		input[ type = "radio" ].clear-styles.custom {
+			background-color: gold ;
+			border: 1px solid red ;
+			border-radius: 15px 15px 15px 15px ;
+			display: inline-block ;
+			font-size: inherit ;
+			height: 15px ;
+			margin: 0px 0px 0px 0px ;
+			width: 15px ;
+		}
+		input[ type = "radio" ].clear-styles.custom:checked {
+			background-color: #333333 ;
+		}
+
 		input[ type = "input" ].clear-styles.custom {
 			background-color: gold ;
 			border: 1px solid red ;
 			border-radius: 3px 3px 3px 3px ;
+			display: block ;
+			font-size: inherit ;
 			margin: 0px 0px 0px 0px ;
 			padding: 10px 10px 10px 10px ;
 			width: 100px ;
@@ -67,6 +89,8 @@
 			background-color: gold ;
 			border: 1px solid red ;
 			border-radius: 3px 3px 3px 3px ;
+			display: block ;
+			font-size: inherit ;
 			margin: 0px 0px 0px 0px ;
 			padding: 10px 10px 10px 10px ;
 			width: 100px ;
@@ -79,6 +103,8 @@
 			background-color: gold ;
 			border: 1px solid red ;
 			border-radius: 3px 3px 3px 3px ;
+			display: block ;
+			font-size: inherit ;
 			margin: 0px 0px 0px 0px ;
 			padding: 10px 10px 10px 10px ;
 			width: 100px ;
@@ -89,34 +115,43 @@
 		}
 		select.clear-styles.custom {
 			background-color: gold ;
+			background-image: url( "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAh0lEQVQ4T93TMQrCUAzG8V9x8QziiYSuXdzFC7h4AcELOPQAdXYovZCHEATlgQV5GFTe1ozJlz/kS1IpjKqw3wQBVyy++JI0y1GTe7DCBbMAckeNIQKk/BanALBB+16LtnDELoMcsM/BESDlz2heDR3WePwKSLo5eoxz3z6NNcFD+vu3ij14Aqz/DxGbKB7CAAAAAElFTkSuQmCC" ) ;
+			background-position: calc( 100% - 10px ) 50% ;
+			background-repeat: no-repeat ;
 			border: 1px solid red ;
 			border-radius: 3px 3px 3px 3px ;
+			display: block ;
+			font-size: inherit ;
 			margin: 0px 0px 0px 0px ;
 			padding: 10px 10px 10px 10px ;
 		}
+		/* Used to remove down-arrow in IE11. */
+		select.clear-styles.custom::-ms-expand {
+ 			display: none ;
+ 		}
 
 	</style>
 
 	<div class="comparisons">
 
 		<div>
-			<input type="button" value="Clicky" />
+			<input type="button" value="Hello" />
 		</div>
 		<div>
-			<input type="button" value="Clicky" class="clear-styles" />
+			<input type="button" value="Hello" class="clear-styles" />
 		</div>
 		<div>
-			<input type="button" value="Clicky" class="clear-styles custom" />
+			<input type="button" value="Hello" class="clear-styles custom" />
 		</div>
 
 		<div>
-			<button>Clicky</button>
+			<button>Hello</button>
 		</div>
 		<div>
-			<button class="clear-styles">Clicky</button>
+			<button class="clear-styles">Hello</button>
 		</div>
 		<div>
-			<button class="clear-styles custom">Clicky</button>
+			<button class="clear-styles custom">Hello</button>
 		</div>
 
 		<div>
@@ -130,33 +165,46 @@
 		</div>
 
 		<div>
-			<input type="input" />
+			<input type="radio" name="radio-default" />
+			<input type="radio" name="radio-default" />
 		</div>
 		<div>
-			<input type="input" class="clear-styles" />
+			<input type="radio" name="radio-clear" class="clear-styles" />
+			<input type="radio" name="radio-clear" class="clear-styles" />
 		</div>
 		<div>
-			<input type="input" class="clear-styles custom" />
-		</div>
-
-		<div>
-			<input type="file" />
-		</div>
-		<div>
-			<input type="file" class="clear-styles" />
-		</div>
-		<div>
-			<input type="file" class="clear-styles custom" />
+			<input type="radio" name="radio-custom" class="clear-styles custom" />
+			<input type="radio" name="radio-custom" class="clear-styles custom" />
 		</div>
 
 		<div>
-			<textarea></textarea>
+			<input type="input" value="Hello" />
 		</div>
 		<div>
-			<textarea class="clear-styles"></textarea>
+			<input type="input" value="Hello" class="clear-styles" />
 		</div>
 		<div>
-			<textarea class="clear-styles custom"></textarea>
+			<input type="input" value="Hello" class="clear-styles custom" />
+		</div>
+
+		<div>
+			<input type="file" size="1" />
+		</div>
+		<div>
+			<input type="file" size="1" class="clear-styles" />
+		</div>
+		<div>
+			<input type="file" size="1" class="clear-styles custom" />
+		</div>
+
+		<div>
+			<textarea>Hello</textarea>
+		</div>
+		<div>
+			<textarea class="clear-styles">Hello</textarea>
+		</div>
+		<div>
+			<textarea class="clear-styles custom">Hello</textarea>
 		</div>
 
 		<div>
