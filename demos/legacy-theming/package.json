@@ -1,0 +1,11 @@
+{
+	"name": "legacy-theming",
+	"version": "0.0.0",
+	"license": "ISC",
+	"scripts": {
+		"less": "lessc ./legacy.less ./legacy.css"
+	},
+	"devDependencies": {
+		"less": "3.11.1"
+	}
+}

@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Retrofitting Theming Into A Legacy App Using LESS CSS And CSS Custom Properties
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./legacy.css" />
+</head>
+<body>
+
+	<h1>
+		Retrofitting Theming Into A Legacy App Using LESS CSS And CSS Custom Properties
+	</h1>
+
+	<p id="themer">
+		<a href="javascript:void( 0 );" data-theme-name="light">Light Theme</a> ,
+		<a href="javascript:void( 0 );" data-theme-name="dark">Dark Theme</a>
+	</p>
+
+	<div class="widget">
+		This is my legacy widget!
+	</div>
+	<div class="thinger">
+		This is my legacy thinger!
+	</div>
+
+	<!-- Setup the click-handler for the CSS theming. -->
+	<script type="text/javascript">
+
+		document.getElementById( "themer" ).addEventListener(
+			"click",
+			function handleClick( event ) {
+
+				var themeName = event.target.dataset.themeName;
+
+				if ( themeName ) {
+
+					document.documentElement.dataset.theme = themeName;
+
+				}
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>

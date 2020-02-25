@@ -1,0 +1,38 @@
+
+div.widget {
+	// These LESS CSS variables are going to be SCOPED TO THE CURRENT STYLE BLOCK. As
+	// such, we won't be "polluting" the global LESS CSS variables scope, we'll just be
+	// defining variables for use within this module.
+	@background-color: #e0e0e0 ;
+	@color: #000000 ;
+
+	// Note the use of parent selector "&" in the following theme setup. This defines 
+	// contextual CSS Custom Properties that are scoped to the current style block, but
+	// that are affected by the theme property on the root HTML element. As such, we
+	// won't be corrupting the global CSS Custom Properties, we'll just be overriding
+	// them in this particular style block.
+	html & {
+		--background-color: @background-color ;
+		--color: @color ;
+	}
+
+	html[ data-theme = "dark" ] & {
+		--background-color: #330000 ;
+		--color: #da0000 ;
+	}
+
+	// ------------------------------------------------------------------------------- //
+	// ------------------------------------------------------------------------------- //
+
+	// NOTE: Even though we are using a GLOBAL mixin, the evaluation of that mixin is
+	// able to read the LOCAL LESS CSS variables. That's cool :D
+	.var( background-color ; background-color ) ;
+	border-radius: 7px 7px 7px 7px ;
+	.var( color ; color );
+	margin: 20px 0px 20px 0px ;
+	padding: 10px 10px 10px 10px ;
+	transition-duration: 1s ;
+	transition-property: background-color, color ;
+	transition-timing-function: ease ;
+	width: 300px ;
+}

@@ -1,0 +1,73 @@
+html {
+  --global-background-color: #ffffff;
+  --global-color: #454545;
+}
+html[data-theme="dark"] {
+  --global-background-color: #212121;
+  --global-color: #eaeaea;
+}
+html {
+  background-color: #ffffff;
+  background-color: var(--global-background-color);
+  color: #454545;
+  color: var(--global-color);
+  transition-duration: 1s ;
+  transition-property: background-color, color;
+  transition-timing-function: ease ;
+}
+a {
+  color: inherit ;
+}
+#themer {
+  display: none ;
+}
+@supports ( --any-var: any-value ) {
+  #themer {
+    display: block ;
+  }
+}
+div.widget {
+  background-color: #e0e0e0;
+  background-color: var(--background-color);
+  border-radius: 7px 7px 7px 7px ;
+  color: #000000;
+  color: var(--color);
+  margin: 20px 0px 20px 0px ;
+  padding: 10px 10px 10px 10px ;
+  transition-duration: 1s ;
+  transition-property: background-color, color;
+  transition-timing-function: ease ;
+  width: 300px ;
+}
+html div.widget {
+  --background-color: #e0e0e0;
+  --color: #000000;
+}
+html[data-theme="dark"] div.widget {
+  --background-color: #330000;
+  --color: #da0000;
+}
+div.thinger {
+  background-color: #ddddff;
+  background-color: var(--background-color);
+  border: 1px solid #ffffff;
+  border-color: #3333ff;
+  border-color: var(--border-color);
+  border-radius: 7px 7px 7px 7px ;
+  color: #454545;
+  color: var(--global-color);
+  margin: 20px 0px 20px 0px ;
+  padding: 10px 10px 10px 10px ;
+  transition-duration: 1s ;
+  transition-property: background-color, border-color, color;
+  transition-timing-function: ease ;
+  width: 300px ;
+}
+html div.thinger {
+  --background-color: #ddddff;
+  --border-color: #3333ff;
+}
+html[data-theme="dark"] div.thinger {
+  --background-color: #333333;
+  --border-color: #666666;
+}

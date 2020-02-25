@@ -1,0 +1,32 @@
+
+div.thinger {
+	// Again, we are going to be using the LESS CSS variable to provide the default theme
+	// that also works as the fallback for IE11 and other legacy browsers.
+	@background-color: #ddddff ;
+	@border-color: #3333ff ;
+
+	html & {
+		--background-color: @background-color ;
+		--border-color: @border-color ;
+	}
+
+	html[ data-theme = "dark" ] & {
+		--background-color: #333333 ;
+		--border-color: #666666 ;
+	}
+
+	// ------------------------------------------------------------------------------- //
+	// ------------------------------------------------------------------------------- //
+
+	.var( background-color ; background-color ) ;
+	border: 1px solid #ffffff ;
+	.var( border-color ; border-color ) ;
+	border-radius: 7px 7px 7px 7px ;
+	.var( color ; global-color ); // NOTE: I can consume global variables here.
+	margin: 20px 0px 20px 0px ;
+	padding: 10px 10px 10px 10px ;
+	transition-duration: 1s ;
+	transition-property: background-color, border-color, color ;
+	transition-timing-function: ease ;
+	width: 300px ;
+}

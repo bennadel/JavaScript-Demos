@@ -1,0 +1,71 @@
+
+// This LESS CSS mixin will dual-write the given property name: once using a hard-coded
+// context value in order to support legacy browsers like IE11; and, once using the CSS
+// custom properties for dynamic runtime theming.
+// --
+// CAUTION: This mixin can consume variables from both the DECLARATION scope as well as
+// the CALLER scope. However, if both scopes contain the same variable name, the
+// DECLARATION scope appears to take precedence.
+.var( @propertyName ; @variableName ) {
+	@{propertyName}: @@variableName ;
+	@{propertyName}: var( ~"--@{variableName}" ) ;
+}
+
+// ----------------------------------------------------------------------------------- //
+// ----------------------------------------------------------------------------------- //
+
+// Setting these as LESS CSS variables allows us to provide the hard-coded fallbacks for
+// IE11 - these will be consumed both in the .var() mixin as well as in the "default
+// theme" styling (the following "html" stanza).
+// --
+// CAUTION: I am prefixing GLOBAL, UNSCOPED VARIALBES with "global-" in order to avoid
+// naming collisions with module-level variable names. Having conflicts between global
+// and local variable names causes unexpected results (I THINK due to scope precedence).
+@global-background-color: #ffffff ;
+@global-color: #454545 ;
+
+// Note that the default theme uses the LESS variables from above.
+html {
+	--global-background-color: @global-background-color ;
+	--global-color: @global-color ;
+}
+
+html[ data-theme = "dark" ] {
+	--global-background-color: #212121 ;
+	--global-color: #eaeaea ;
+}
+
+// ----------------------------------------------------------------------------------- //
+// ----------------------------------------------------------------------------------- //
+
+html {
+	.var( background-color ; global-background-color ) ;
+	.var( color ; global-color ) ;
+	transition-duration: 1s ;
+	transition-property: background-color, color ;
+	transition-timing-function: ease ;
+}
+
+a {
+	color: inherit ;
+}
+
+// Hide theme switcher by default.
+#themer {
+	display: none ;
+
+	// Show theme switcher if browser supports CSS custom properties ( aka variables ).
+	// --
+	// NOTE: Media queries are automatically "bubbled up" to become context selectors in
+	// LESS CSS. As such, I don't have to include the "&" selector at the end.
+	@supports( --any-var: any-value ) {
+		display: block ;
+	}
+}
+
+// ----------------------------------------------------------------------------------- //
+// ----------------------------------------------------------------------------------- //
+
+// Pull in the various LESS files for our UI components.
+@import "./widget.less" ;
+@import "./thinger.less" ;
