@@ -27,7 +27,7 @@
 		"less": "3.8.1",
 		"less-loader": "4.1.0",
 		"lodash": "4.17.11",
-		"npm": "6.4.1",
+		"npm": "6.13.4",
 		"raw-loader": "0.5.1",
 		"rxjs": "6.3.2",
 		"typescript": "2.9.2",
