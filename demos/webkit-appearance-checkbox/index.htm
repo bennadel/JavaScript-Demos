@@ -39,7 +39,9 @@
 					-webkit-appearance: none ;
 				border: 2px solid currentcolor ;
 				border-radius: 52px 52px 52px 52px ;
+				box-sizing: content-box ;
 				color: #999999 ;
+				height: 18px ;
 				padding: 2px 2px 2px 2px ;
 				transition-duration: 300ms ;
 				transition-property: border-color, color ; /* Safari needed border-color. */
@@ -62,13 +64,13 @@
 				content: "" ;
 				display: block ;
 				height: 18px ;
-				transform: translateX( 0% ) ;
+				transform: translateX( 0px ) ;
 				transition: transform 300ms ease ;
-				width: 45% ;
+				width: 24px ;
 			}
 
 			input.custom:checked::after {
-				transform: translateX( 121% ) ;
+				transform: translateX( 27px ) ;
 			}
 
 		}
