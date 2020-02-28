@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+	<title>
+		Using CSS Webkit-Appearance To Style Checkbox ::after Pseudo-Element
+	</title>
+</head>
+<body>
+
+	<h1>
+		Using CSS Webkit-Appearance To Style Checkbox ::after Pseudo-Element
+	</h1>
+
+	<style type="text/css">
+
+		label {
+			align-items: center ;
+			cursor: pointer ;
+			display: flex ;
+		}
+
+		label input {
+			margin: 0px 0px 0px 10px ;
+		}
+
+		/*
+			Only apply custom styles to browsers that are going to support them. This is
+			important because even old browsers will apply SOME of these CSS properties;
+			and, we don't want to create Frankenstein checkboxes.
+		*/
+		@supports ( appearance: none ) or ( -moz-appearance: none ) or ( -webkit-appearance: none ) {
+
+			input.custom {
+				appearance: none ;
+					-moz-appearance: none ;
+					-webkit-appearance: none ;
+				border: 2px solid currentcolor ;
+				border-radius: 52px 52px 52px 52px ;
+				color: #999999 ;
+				padding: 2px 2px 2px 2px ;
+				transition-duration: 300ms ;
+				transition-property: border-color, color ; /* Safari needed border-color. */
+				transition-timing-function: ease ;
+				width: 52px ;
+			}
+
+			input.custom:checked {
+				color: #ff3366 ;
+			}
+
+			/*
+				NOTE: The ::after pseudo-selector is being applied to the INPUT itself,
+				not a parent element. I had no idea this even works! I can't find any
+				documented support on this (just some StackOverflow threads).
+			*/
+			input.custom::after {
+				background-color: currentcolor ;
+				border-radius: 10px 10px 10px 10px ;
+				content: "" ;
+				display: block ;
+				height: 18px ;
+				transform: translateX( 0% ) ;
+				transition: transform 300ms ease ;
+				width: 45% ;
+			}
+
+			input.custom:checked::after {
+				transform: translateX( 121% ) ;
+			}
+
+		}
+
+	</style>
+
+	<p>
+		<label for="checkbox1">
+			Default checkbox:
+			<input id="checkbox1" type="checkbox" />
+		</label>
+	</p>
+
+	<p>
+		<label for="checkbox2">
+			Webkit-Appearance checkbox:
+			<input id="checkbox2" type="checkbox" class="custom" />
+		</label>
+	</p>
+
+</body>
+</html>

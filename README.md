@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Using CSS Webkit-Appearance To Style Checkbox ::after Pseudo-Element](https://bennadel.github.io/JavaScript-Demos/demos/webkit-appearance-checkbox/)
 * [Retrofitting Theming Into A Legacy App Using LESS CSS And CSS Custom Properties](https://bennadel.github.io/JavaScript-Demos/demos/legacy-theming/)
 * [Effortless Custom Form Input Styling With Webkit Appearance None](https://bennadel.github.io/JavaScript-Demos/demos/webkit-appearance/)
 * [Using CSS Counters To Apply Custom Labels To An HTML List](https://bennadel.github.io/JavaScript-Demos/demos/css-counters/)
