@@ -41,8 +41,6 @@ export class AppComponent {
 	// I handle the lower-case key-combination.
 	public handleLowercase( event: KeyboardEvent ) : void {
 
-		event.preventDefault();
-
 		console.group( "Key Combination Used" );
 		console.log( "K+L" );
 		console.log( "Perform lower-case command." );
@@ -53,8 +51,6 @@ export class AppComponent {
 
 	// I handle the upper-case key-combination.
 	public handleUppercase( event: KeyboardEvent ) : void {
-
-		event.preventDefault();
 
 		console.group( "Key Combination Used" );
 		console.log( "K+U" );
