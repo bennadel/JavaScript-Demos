@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Looking At How Browser Zoom Affects CSS Media Queries And Pixel-Density
+	</title>
+
+	<style type="text/css">
+
+		/*
+			In order to see how the BROWSER ZOOM affects the screen width, we're going to
+			change the background color / text color as the screen width changes.
+		*/
+		body {
+			background-color: #000000 ;
+			color: #ffffff ;
+		}
+		/*
+			As the screen dimensions get larger, the background of the screen will get
+			lighter. Then, as we ZOOM IN, and the dimensions get smaller, the background
+			of the screen should get darker.
+		*/
+		@media screen and ( min-width: 200px ) {
+			body {
+				background-color: #111111 ;
+			}
+		}
+		@media screen and ( min-width: 300px ) {
+			body {
+				background-color: #222222 ;
+			}
+		}
+		@media screen and ( min-width: 400px ) {
+			body {
+				background-color: #444444 ;
+			}
+		}
+		@media screen and ( min-width: 500px ) {
+			body {
+				background-color: #666666 ;
+			}
+		}
+		@media screen and ( min-width: 600px ) {
+			body {
+				background-color: #888888 ;
+			}
+		}
+		@media screen and ( min-width: 700px ) {
+			body {
+				background-color: #aaaaaa ;
+				color: #000000 ;
+			}
+		}
+		@media screen and ( min-width: 800px ) {
+			body {
+				background-color: #cccccc ;
+			}
+		}
+		@media screen and ( min-width: 900px ) {
+			body {
+				background-color: #dddddd ;
+			}
+		}
+		@media screen and ( min-width: 1000px ) {
+			body {
+				background-color: #ffffff ;
+			}
+		}
+
+	</style>
+</head>
+<body>
+
+	<h1>
+		Looking At How Browser Zoom Affects CSS Media Queries And Pixel-Density
+	</h1>
+
+	<script type="text/javascript">
+
+		// Listen for "resize" events.
+		window.addEventListener( "resize", handleResizeEvent );
+		// Listen for Media Query "change" events.
+		setupMediaQueryListeners();
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+		// I handle window resize events.
+		function handleResizeEvent( event ) {
+
+			console.group( "%cResize Event", "color: red" );
+			console.log( "Window width:", window.innerWidth );
+			console.log( "Pixel density:", window.devicePixelRatio );
+			// NOTE: Safari seems to report the devicePixelRatio as "1" (on my laptop)
+			// regardless of what the Zoom is doing. Chrome and Firefox, on the other
+			// hand, seem to show an increased pixel density as the Zoom increases.
+			console.groupEnd();
+
+		}
+
+		// I handle media-query change events.
+		function handleMediaQueryChangeEvent( event ) {
+
+			console.group( "%cMediaQueryList Event", "color: purple" );
+			console.log( "Condition:", event.media );
+			console.log( "Matches:", event.matches );
+			console.groupEnd();
+
+		}
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+		// I look through the document StyleSheet and setup watchers for any Media Rule
+		// in the CSS rule list.
+		function setupMediaQueryListeners() {
+
+			var rules = document.styleSheets[ 0 ].cssRules;
+			var length = rules.length;
+
+			for ( var i = 0 ; i < length ; i++ ) {
+
+				var rule = rules[ i ];
+				var conditionText = ( rule.media && rule.media[ 0 ] );
+
+				// If this isn't a CSS Media Rule, skip it.
+				if ( ! conditionText ) {
+
+					continue;
+
+				}
+
+				// Create a watcher for the given CSS Media Rule condition. The condition
+				// text will be something like, "screen and (min-width: 900px)". The
+				// resultant object allows us to listen for "change" events on that
+				// condition relative to the state of the document.
+				var mediaQueryList = window.matchMedia( conditionText );
+
+				// CAUTION: You can also use .addEventListener(change); however, that
+				// method does not appear to work for Safari. Classic Safari!
+				mediaQueryList.addListener( handleMediaQueryChangeEvent );
+
+				// In addition to listening for changes on the media query, we can also
+				// check to see if the initial state of the media query matches the
+				// current document state.
+				console.group( "Setting up media listener" );
+				console.log( "Condition:", conditionText );
+				console.log( "Initial match:", mediaQueryList.matches );
+				console.groupEnd();
+
+			}			
+
+		}
+
+	</script>
+
+</body>
+</html>
