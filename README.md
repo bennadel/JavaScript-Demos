@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Sprint Name Generator In Angular 9.1.3](https://bennadel.github.io/JavaScript-Demos/demos/sprint-name-generator-angular9/dist/)
 * [Looking At How Browser Zoom Affects CSS Media Queries And Pixel-Density](https://bennadel.github.io/JavaScript-Demos/demos/zoom-screen-size/)
 * [Experimenting With Chained Keyboard Events Using Event Plugins In Angular 9.1.0](https://bennadel.github.io/JavaScript-Demos/demos/chained-keydown-events-angular9/dist/)
 * [Using CSS Webkit-Appearance To Style Checkbox ::after Pseudo-Element](https://bennadel.github.io/JavaScript-Demos/demos/webkit-appearance-checkbox/)

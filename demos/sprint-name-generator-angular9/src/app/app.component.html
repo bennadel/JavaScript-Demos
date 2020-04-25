@@ -1,0 +1,41 @@
+
+<h1>
+	Sprint Name Generator In Angular 9.1.3
+</h1>
+
+<div class="parts">
+	<div class="part">
+
+		<ul
+			class="items"
+			[style.transform]="( 'translateY( -' + ( descriptionIndex * 85 ) + 'px )' )">
+			<li
+				*ngFor="let description of descriptions ; let i = index ;"
+				class="item"
+				[class.selected]="( i === descriptionIndex )">
+				{{ description }}
+			</li>
+		</ul>
+
+	</div>
+	<div class="part">
+
+		<ul
+			class="items"
+			[style.transform]="( 'translateY( -' + ( thingIndex * 85 ) + 'px )' )">
+			<li
+				*ngFor="let thing of things ; let i = index ;"
+				class="item"
+				[class.selected]="( i === thingIndex )">
+				{{ thing }}
+			</li>
+		</ul>
+
+	</div>
+</div>
+
+<div class="actions">
+	<button (click)="generateName()" autofocus class="action">
+		Generate Sprint Name
+	</button>
+</div>

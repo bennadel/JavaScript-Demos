@@ -1,0 +1,79 @@
+
+// This is the height of each item in the list of Descriptions and Things. The rendering
+// works by offsetting each list by some negative-multiple of this value (see HTML).
+@itemHeight: 85px ;
+
+:host {
+	box-sizing: border-box ;
+	display: flex ;
+	flex-direction: column ;
+	font-size: 18px ;
+	justify-content: space-between ;
+	min-height: 100vh ;
+	padding: 30px 30px 30px 30px ;
+}
+
+h1 {
+	flex: 0 0 auto ;
+	margin: 0px 0px 0px 0px ;
+	text-align: center ;
+}
+
+.parts {
+	display: flex ;
+}
+
+.part {
+	height: @itemHeight ;
+	margin: 10px 10px 10px 10px ;
+	overflow: hidden ;
+	width: 50% ;
+
+	&:first-child {
+		text-align: right ;
+	}
+}
+
+.items {
+	list-style-type: none ;
+	margin: 0px 0px 0px 0px ;
+	padding: 0px 0px 0px 0px ;
+	transition: transform 1000ms ease-in-out ;
+}
+
+.item {
+	font-size: 60px ;
+	font-weight: 700 ;
+	height: @itemHeight ;
+	line-height: @itemHeight ;
+	margin: 0px 0px 0px 0px ;
+	padding: 0px 0px 0px 0px ;
+
+	&:not(.selected) {
+		user-select: none ;
+			-moz-user-select: none ;
+			-webkit-user-select: none ;
+	}
+}
+
+.actions {
+	display: flex ;
+	flex: 0 0 auto ;
+	justify-content: center ;
+}
+
+.action {
+	background-color: #ff3366 ;
+	border-radius: 8px 8px 8px 8px ; 
+	border-width: 0px 0px 0px 0px ;
+	color: #ffffff ;
+	cursor: pointer ;
+	font-size: 20px ;
+	font-weight: 400 ;
+	letter-spacing: 0.5px ;
+	padding: 20px 30px 20px 30px ;
+
+	&:active {
+		background-color: darken( #ff3366, 10% ) ;
+	}
+}
