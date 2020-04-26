@@ -15,22 +15,45 @@
 
 h1 {
 	flex: 0 0 auto ;
+	font-size: 22px ;
+	line-height: 30px ;
 	margin: 0px 0px 0px 0px ;
 	text-align: center ;
+
+	@media screen and ( min-width: 700px ) {
+		font-size: 30px ;
+		line-height: 38px ;
+	}
+
+	@media screen and ( min-width: 900px ) {
+		font-size: 38px ;
+		line-height: 45px ;
+	}
 }
 
 .parts {
 	display: flex ;
+	flex-direction: column ;
+
+	@media screen and ( min-width: 1175px ) {
+		flex-direction: row ;
+	}
 }
 
 .part {
 	height: @itemHeight ;
-	margin: 10px 10px 10px 10px ;
+	margin: 0px 0px 0px 0px ;
 	overflow: hidden ;
-	width: 50% ;
+	text-align: center ;
 
-	&:first-child {
-		text-align: right ;
+	@media screen and ( min-width: 1175px ) {
+		margin: 10px 10px 10px 10px ;
+		text-align: left ;
+		width: 50% ;
+		
+		&:first-child {
+			text-align: right ;
+		}
 	}
 }
 
@@ -42,12 +65,20 @@ h1 {
 }
 
 .item {
-	font-size: 60px ;
+	font-size: 32px ;
 	font-weight: 700 ;
 	height: @itemHeight ;
 	line-height: @itemHeight ;
 	margin: 0px 0px 0px 0px ;
 	padding: 0px 0px 0px 0px ;
+
+	@media screen and ( min-width: 550px ) {
+		font-size: 50px ;
+	}
+
+	@media screen and ( min-width: 675px ) {
+		font-size: 60px ;
+	}
 
 	&:not(.selected) {
 		user-select: none ;
