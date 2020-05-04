@@ -1,0 +1,30 @@
+
+<div class="columns">
+	<div class="column-1">
+
+		<textarea
+			#wordList
+			[value]="inputWords"
+			(keydown.Meta.Enter)="generateSearch( wordList.value )"
+			class="word-list">
+		</textarea>
+
+		<button
+			(click)="generateSearch( wordList.value )"
+			class="generate">
+			Generate Search
+		</button>
+
+	</div>
+	<div *ngIf="letterGrid" class="column-2">
+
+		<table class="word-search">
+			<tr *ngFor="let row of letterGrid">
+				<td *ngFor="let letter of row">
+					{{ letter }}
+				</td>
+			</tr>
+		</table>
+
+	</div>
+</div>
