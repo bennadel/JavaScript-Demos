@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+	<title>
+		Wrapping 3rd-Party Scripts In Angular Services In Case They Get Blocked In Angular 9.1.4
+	</title>
+
+	<base href="./" />
+</head>
+<body>
+
+	<h1>
+		Wrapping 3rd-Party Scripts In Angular Services In Case They Get Blocked In Angular 9.1.4
+	</h1>
+
+	<app-root></app-root>
+
+	<!--
+		This is the 3rd-party script that we're loading in order to get [window.tracker].
+		It may or may NOT be loaded by the time our Angular app is bootstrapped.
+	-->
+	<script async src="./assets/tracker.js"></script>
+
+<script src="runtime-es2015.10ab11eeb5795700cac4.js" type="module"></script><script src="runtime-es5.10ab11eeb5795700cac4.js" nomodule defer></script><script src="polyfills-es5.3e21be3fb90e88929496.js" nomodule defer></script><script src="polyfills-es2015.34441c1a7666fa03b203.js" type="module"></script><script src="main-es2015.5b1e61cf79137ae85c42.js" type="module"></script><script src="main-es5.5b1e61cf79137ae85c42.js" nomodule defer></script></body>
+</html>
