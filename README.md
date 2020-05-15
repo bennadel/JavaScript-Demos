@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Creating Squishy Tabs With CSS Flexbox In Angular 9.1.7](https://bennadel.github.io/JavaScript-Demos/demos/flexy-tabs-angular9/dist/)
 * [Using Expando DOM Properties To Power The IntersectionObserver API In Angular 9.1.6](https://bennadel.github.io/JavaScript-Demos/demos/expando-properties-intersection-observer-angular9/dist/)
 * [Using Expando DOM Properties In Angular 9.1.6](https://bennadel.github.io/JavaScript-Demos/demos/expando-properties-angular9/dist/)
 * [Wrapping 3rd-Party Scripts In Angular Services In Case They Get Blocked In Angular 9.1.4](https://bennadel.github.io/JavaScript-Demos/demos/wrap-3rd-party-libs-angular9/dist/)

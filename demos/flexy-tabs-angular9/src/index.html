@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+	<title>
+		Creating Squishy Tabs With CSS Flexbox In Angular 9.1.7
+	</title>
+
+	<!--
+		Since I intend to grow and shrink the width of the page in order to demonstrate
+		the flexible nature of the tabs, I don't want the HEIGHT of the title tag
+		changing. As such, I'm going to clip the overflow and keep it fixed.
+	-->
+	<style type="text/css">
+		h1 {
+			overflow: hidden ;
+			text-overflow: ellipsis ;
+			white-space: nowrap ;
+		}
+	</style>
+
+	<base href="./" />
+</head>
+<body>
+
+	<h1>
+		Creating Squishy Tabs With CSS Flexbox In Angular 9.1.7
+	</h1>
+
+	<app-root></app-root>
+
+</body>
+</html>

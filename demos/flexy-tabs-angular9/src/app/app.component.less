@@ -1,0 +1,63 @@
+
+:host {
+	display: block ;
+	font-size: 18px ;
+}
+
+// ----------------------------------------------------------------------------------- //
+// ----------------------------------------------------------------------------------- //
+// These styles are related to the flexbox functionality.
+
+ul.tabs {
+	display: flex ;
+}
+
+li.tab {
+	// These are the properties which allow the tabs to SHRINK as space is needed,
+	// clipping the text and showing the overflow ellipsis.
+	flex: 0 1 auto ; // flex-grow: 0, flex-shrink: 1.
+	overflow: hidden ;
+	text-overflow: ellipsis ;
+	white-space: nowrap ;
+
+	// Then, when a tab is "locked", all we're doing it setting the flex-shrink to 0,
+	// telling the browser that this tab has to fit to the width of its content.
+	&--locked {
+		flex-shrink: 0 ;
+	}
+}
+
+// ----------------------------------------------------------------------------------- //
+// ----------------------------------------------------------------------------------- //
+// These styles are just for styling in the demo.
+
+ul.tabs {
+	border-bottom: 2px solid #cccccc ;
+	list-style-type: none ;
+	margin: 30px 0px 20px 0px ;
+	padding: 0px 0px 0px 0px ;
+}
+
+li.tab {
+	background-color: #f0f0f0 ;
+	border-radius: 4px 4px 0px 0px ;
+	color: #333333 ;
+	cursor: pointer ;
+	font-family: monospace, sans-serif ;
+	margin: 0px 4px 0px 0px ;
+	padding: 5px 15px 4px 15px ;
+
+	&--locked {
+		background-color: #aad0e2 ;
+	}
+}
+
+p.new-tab {
+	display: inline-flex ;
+
+	input,
+	button {
+		font-size: inherit ;
+		margin-right: 7px ;
+	}
+}
