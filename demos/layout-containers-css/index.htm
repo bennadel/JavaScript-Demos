@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+	<title>
+		Separating Layout HTML And CSS From Content HTML And CSS
+	</title>
+</head>
+<body>
+
+	<h1>
+		Separating Layout HTML And CSS From Content HTML And CSS
+	</h1>
+
+	<!--
+		In the following example, we have a "Layout" - THE AVATAR LIST - which contains
+		the content - THE AVATAR. You could easily have combined these two concepts into
+		a single "construct"; however, the more I deal with approaches like this, more it
+		seems to pay-off in keeping the two concepts separate (the layout and the
+		content).
+	-->
+	<style type="text/css">
+
+		/* THE LAYOUT: Avatar List. */
+		.avatar-list {
+			display: flex ;
+			list-style-type: none ;
+			margin: 0px 0px 0px 0px ;
+			padding: 0px 0px 0px 0px ;
+		}
+
+		.avatar-list__item {
+			margin: 0px 7px 0px 0px ;
+			padding: 0px 0px 0px 0px ;
+		}
+
+		.avatar-list__item:last-child {
+			margin-right: 0px ;
+		}
+
+
+		/* THE CONTENT: Avatar. */
+		.avatar {
+			align-items: center ;
+			background-color: #596376 ;
+			border-radius: 45px ;
+			color: #ffffff ;
+			display: flex ;
+			justify-content: center ;
+			font-family: monospace, sans-serif ;
+			font-size: 13px ;
+			height: 45px ;
+			letter-spacing: 2px ;
+			line-height: 13px ;
+			width: 45px ;
+		}
+
+	</style>
+
+	<ul class="avatar-list">
+		<li class="avatar-list__item">
+
+			<div title="Karyn Dwyer" class="avatar">
+				KD
+			</div>
+
+		</li>
+		<li class="avatar-list__item">
+
+			<div title="Christina Cox" class="avatar">
+				CC
+			</div>
+
+		</li>
+		<li class="avatar-list__item">
+
+			<div title="Tony Nappo" class="avatar">
+				TN
+			</div>
+
+		</li>
+		<li class="avatar-list__item">
+
+			<div title="Wendy Crewson" class="avatar">
+				WC
+			</div>
+
+		</li>
+		<li class="avatar-list__item">
+
+			<div title="Peter Outerbridge" class="avatar">
+				PO
+			</div>
+
+		</li>
+	</ul>
+
+</body>
+</html>
