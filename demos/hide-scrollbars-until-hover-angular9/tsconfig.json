@@ -1,0 +1,43 @@
+{
+	"angularCompilerOptions": {
+		"fullTemplateTypeCheck": false,
+		"strictInjectionParameters": true
+	},
+	"compileOnSave": false,
+	"compilerOptions": {
+		"baseUrl": "./",
+		"declaration": false,
+		"downlevelIteration": true,
+		"emitDecoratorMetadata": true,
+		"experimentalDecorators": true,
+		"importHelpers": true,
+		"lib": [
+			"es2018",
+			"dom"
+		],
+		"module": "esnext",
+		"moduleResolution": "node",
+		"noImplicitAny": true,
+		"outDir": "./dist/out-tsc",
+		"paths": {
+			"~/app/*": [ "src/app/*" ]
+		},
+		"pretty": true,
+		"removeComments": false,
+		"sourceMap": true,
+		"strictNullChecks": true,
+		"strictPropertyInitialization": true,
+		"target": "es2015",
+		"typeRoots": [
+			"node_modules/@types"
+		],
+		"types": []
+	},
+	"files": [
+		"src/main.ts",
+		"src/polyfills.ts"
+	],
+	"include": [
+		"src/**/*.ts"
+	]
+}
