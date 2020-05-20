@@ -1,0 +1,42 @@
+
+<div class="lists">
+	<app-scroll-on-mouseenter class="list-viewport">
+
+		<ul class="list">
+			<li *ngFor="let movie of movies" class="item">
+				{{ movie }}
+			</li>
+		</ul>
+
+	</app-scroll-on-mouseenter>
+	<app-scroll-on-mouseenter class="list-viewport">
+
+		<ul class="list">
+			<li *ngFor="let movie of movies" class="item">
+				{{ movie }}
+			</li>
+		</ul>
+
+	</app-scroll-on-mouseenter>
+
+	<!-- *********** VERSION 2 of Directive Below This. *********** -->
+
+	<app-scroll-on-mouseenter2 class="list-viewport">
+
+		<ul class="list">
+			<li *ngFor="let movie of movies" class="item">
+				{{ movie }}
+			</li>
+		</ul>
+
+	</app-scroll-on-mouseenter2>
+	<app-scroll-on-mouseenter2 class="list-viewport">
+
+		<ul class="list">
+			<li *ngFor="let movie of movies" class="item">
+				{{ movie }}
+			</li>
+		</ul>
+
+	</app-scroll-on-mouseenter2>
+</div>

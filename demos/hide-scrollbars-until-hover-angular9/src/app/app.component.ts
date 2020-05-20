@@ -8,38 +8,7 @@ import { Component } from "@angular/core";
 @Component({
 	selector: "app-root",
 	styleUrls: [ "./app.component.less" ],
-	template:
-	`
-		<div class="lists">
-			<app-scroll-on-mouseenter class="list-viewport">
-
-				<ul class="list">
-					<li *ngFor="let movie of movies" class="item">
-						{{ movie }}
-					</li>
-				</ul>
-
-			</app-scroll-on-mouseenter>
-			<app-scroll-on-mouseenter class="list-viewport">
-
-				<ul class="list">
-					<li *ngFor="let movie of movies" class="item">
-						{{ movie }}
-					</li>
-				</ul>
-
-			</app-scroll-on-mouseenter>
-			<app-scroll-on-mouseenter class="list-viewport">
-
-				<ul class="list">
-					<li *ngFor="let movie of movies" class="item">
-						{{ movie }}
-					</li>
-				</ul>
-
-			</app-scroll-on-mouseenter>
-		</div>
-	`
+	templateUrl: "./app.component.html"
 })
 export class AppComponent {
 
