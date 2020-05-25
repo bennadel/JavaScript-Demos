@@ -1,0 +1,53 @@
+
+<!--
+	CAUTION: Note that we are binding to the (valueChanges) event on the Form so that we
+	can react to any changes in any of the Controls in this Form. This event is NOT A
+	NATIVELY-EXPOSED output on the template-driven NgForm Directive. As such, we are
+	using a custom directive to expose the underlying (valueChanges) event. And, whenever
+	the (valueChanges) event fires, we're using that as the trigger to persist the form
+	view-model to the temporary storage.
+-->
+<form
+	(submit)="processNewFriend()"
+	(valueChanges)="saveToTemporaryStorage()">
+
+	<div class="entry">
+		<label>Name:</label>
+		<input type="text" name="name" [(ngModel)]="formData.name" />
+	</div>
+	<div class="entry">
+		<label>Nickname:</label>
+		<input type="text" name="nickname" [(ngModel)]="formData.nickname" />
+	</div>
+	<div class="entry">
+		<label>Description:</label>
+		<textarea name="description" [(ngModel)]="formData.description"></textarea>
+	</div>
+	<div class="actions">
+		<button type="submit">
+			Add New Friend
+		</button>
+
+		<a href="./index.html" class="refresh">
+			Refresh Page
+		</a>
+	</div>
+</form>
+
+<ng-template [ngIf]="friends.length">
+
+	<h2>
+		Friends
+	</h2>
+
+	<ul>
+		<li *ngFor="let friend of friends">
+			{{ friend.name }}
+
+			<ng-template [ngIf]="friend.nickname">
+				( aka, {{ friend.nickname }} )
+			</ng-template>
+		</li>
+	</ul>
+
+</ng-template>

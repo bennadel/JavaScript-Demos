@@ -1,0 +1,32 @@
+{
+	"name": "webpack4-angular9-cli",
+	"version": "0.0.0",
+	"scripts": {
+		"build": "ng build --prod",
+		"ng": "ng",
+		"start": "ng serve --open",
+		"start-prod": "ng serve --open --prod"
+	},
+	"private": true,
+	"dependencies": {
+		"@angular/animations": "9.1.9",
+		"@angular/common": "9.1.9",
+		"@angular/compiler": "9.1.9",
+		"@angular/core": "9.1.9",
+		"@angular/forms": "9.1.9",
+		"@angular/platform-browser": "9.1.9",
+		"@angular/platform-browser-dynamic": "9.1.9",
+		"@angular/router": "9.1.9",
+		"rxjs": "6.5.5",
+		"tslib": "1.12.0",
+		"zone.js": "0.10.3"
+	},
+	"devDependencies": {
+		"@angular-devkit/build-angular": "0.900.2",
+		"@angular/cli": "9.0.2",
+		"@angular/compiler-cli": "9.1.9",
+		"@angular/language-service": "9.1.9",
+		"@types/node": "12.11.1",
+		"typescript": "3.7.5"
+	}
+}

@@ -1,0 +1,55 @@
+
+:host {
+	display: block ;
+	font-size: 18px ;
+}
+
+.entry {
+	display: flex ;
+	margin: 10px 0px 10px 0px ;
+
+	label {
+		display: block ;
+		flex: 0 0 auto ;
+		font-weight: bold ;
+		margin-right: 10px ;
+		padding-top: 7px ;
+		text-align: right ;
+		width: 120px ;
+	}
+
+	input,
+	textarea {
+		display: block ;
+		font-family: inherit ;
+		font-size: inherit ;
+		padding: 5px 10px 5px 10px ;
+		width: 300px ;
+	}
+
+	textarea {
+		height: 75px ;
+	}
+}
+
+.actions {
+	margin-left: 130px ;
+
+	button {
+		font-family: inherit ;
+		font-size: inherit ;
+	}
+
+	.refresh {
+		color: #999999 ;
+		font-size: 16px ;
+		margin-left: 20px ;
+		text-decoration: none ;
+		text-transform: lowercase ;
+
+		&:hover {
+			color: red ;
+			text-decoration: underline ;
+		}
+	}
+}
