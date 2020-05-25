@@ -59,18 +59,6 @@ export class AppComponent {
 	// PUBLIC METHODS.
 	// ---
 
-	// I get called when the component is being unmounted.
-	// --
-	// NOTE: This life-cycle method never actually gets called in this demo; I'm just
-	// including it here to help paint the picture of how the temporary storage could be
-	// populated and then cleared during the life-time of a Component.
-	public ngOnDestroy() : void {
-
-		this.temporaryStorage.remove();
-
-	}
-
-
 	// I get called once after the input bindings have been wired-up.
 	public ngOnInit() : void {
 
