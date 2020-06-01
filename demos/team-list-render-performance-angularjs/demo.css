@@ -1,0 +1,67 @@
+
+body {
+	font-size: 16px ;
+}
+
+a[ ng-click ] {
+	color: red ;
+	cursor: pointer ;
+	text-decoration: underline ;
+	user-select: none ;
+		-moz-user-select: none ;
+		-webkit-user-select: none ;
+}
+
+bn\:bad-list {
+	display: block ;
+}
+
+bn\:bad-avatar {
+	display: block ;
+}
+
+tr.is-even {
+	background-color: #f0f0f0 ;
+}
+
+tr.is-selected {
+	background-color: #ffeca6 ;
+}
+
+.avatar {
+	background-color: #c3d2ee ;
+	border-radius: 50px 50px 50px 50px ;
+	display: flex ;
+}
+
+.avatar span,
+.avatar img {
+	border-radius: 50px 50px 50px 50px ;
+	flex: 1 1 auto ;
+}
+
+.avatar span {
+	text-align: center ;
+}
+
+div.good-avatar {
+	background-color: #c3d2ee ;
+	border-radius: 50px 50px 50px 50px ;
+	display: flex ;
+	height: 36px ;
+	width: 36px ;
+}
+
+div.good-avatar span,
+div.good-avatar img {
+	border-radius: 50px 50px 50px 50px ;
+	flex: 1 1 auto ;
+	height: 36px ;
+	width: 36px ;
+}
+
+div.good-avatar span {
+	font-size: 12px ;
+	line-height: 36px ;
+	text-align: center ;
+}

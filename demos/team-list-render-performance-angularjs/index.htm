@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en" ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Attempting To Improve Rendering Performance Of A Large List View In AngularJS 1.2.22
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css">
+</head>
+<body ng-controller="appController">
+
+	<h1>
+		Attempting To Improve Rendering Performance Of A Large List View In AngularJS 1.2.22
+	</h1>
+
+	<p>
+		<a ng-click="toggleBadList()">Toggle Bad List</a> &mdash;
+		<a ng-click="toggleGoodList()">Toggle Good List</a> &mdash;
+		<a ng-click="toggleHackyList()">Toggle Hacky List</a> &mdash;
+		<a ng-click="triggerDigest()">Trigger Digest ( {{ count }} )</a>
+	</p>
+
+	<bn:bad-list ng-if="isShowingBadList"></bn:bad-list>
+	<bn:good-list ng-if="isShowingGoodList"></bn:good-list>
+	<bn:hacky-list ng-if="isShowingHackyList"></bn:hacky-list>
+
+	<!-- ---------------------------------------------------------------------------- -->
+	<!-- ---------------------------------------------------------------------------- -->
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/jquery/jquery-2.1.0.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.2.22.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+	</script>
+	<script type="text/javascript" src="./data.factory.js"></script>
+	<script type="text/javascript" src="./bad-list.directive.js"></script>
+	<script type="text/javascript" src="./bad-list.controller.js"></script>
+	<script type="text/javascript" src="./bad-avatar.directive.js"></script>
+	<script type="text/javascript" src="./bad-bind-once.directive.js"></script>
+	<script type="text/javascript" src="./good-list.directive.js"></script>
+	<script type="text/javascript" src="./good-list.controller.js"></script>
+	<script type="text/javascript" src="./good-change.directive.js"></script>
+	<script type="text/javascript" src="./good-src.directive.js"></script>
+	<script type="text/javascript" src="./good-bind.directive.js"></script>
+	<script type="text/javascript" src="./hacky-list.directive.js"></script>
+	<script type="text/javascript" src="./hacky-list.controller.js"></script>
+	<script type="text/javascript">
+
+		app.controller( "appController", AppController );
+
+		function AppController( $scope ) {
+
+			$scope.isShowingBadList = false;
+			$scope.isShowingGoodList = false;
+			$scope.isShowingHackyList = false;
+			$scope.count = 0;
+
+			$scope.toggleBadList = function() {
+
+				$scope.isShowingBadList = ! $scope.isShowingBadList;
+
+			};
+
+			$scope.toggleGoodList = function() {
+
+				$scope.isShowingGoodList = ! $scope.isShowingGoodList;
+
+			};
+
+			$scope.toggleHackyList = function() {
+
+				$scope.isShowingHackyList = ! $scope.isShowingHackyList;
+
+			};
+
+			$scope.triggerDigest = function() {
+
+				$scope.count++;
+
+			};
+
+		}
+
+	</script>
+
+</body>
+</html>

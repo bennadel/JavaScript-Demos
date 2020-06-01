@@ -1,0 +1,119 @@
+
+<!-- The ADMIN-ONLY VIEW of the data-table. -->
+<table ng-if="isAdmin" border="1" cellspacing="0" cellpadding="5">
+<thead>
+	<tr>
+		<th></th>
+		<th>Avatar</th>
+		<th>Name</th>
+		<th>Role</th>
+		<th>Document</th>
+		<th>Last Seen</th>
+		<th>Location</th>
+		<th></th>
+	</tr>
+</thead>
+<tbody>
+	<tr
+		ng-repeat="person in people track by person.id"
+		class="{{ $even && 'is-even' }} {{ form.selected[ person.id ] && 'is-selected' }}">
+		<td>
+			<input
+				type="checkbox"
+				bn:good-change="toggleSelection( person )"
+			/>
+		</td>
+		<td>
+			<div class="good-avatar" ng-switch="( !! person.avatarUrl )">
+				<span
+					ng-switch-when="false"
+					bn:good-bind="person.initials">
+				</span>
+				<img
+					ng-switch-when="true"
+					bn:good-src="person.avatarUrl"
+					loading="lazy"
+				/>
+			</div>
+		</td>
+		<td>
+			<div bn:good-bind="person.name"></div>
+			<div bn:good-bind="person.email"></div>
+		</td>
+		<td align="center">
+			<div ng-click="" bn:good-bind="person.role"></div>
+			<!-- Not shown in demo, but DOM elements are present in page. -->
+			<ul ng-if="false" style="display: none ;">
+				<li
+					ng-repeat="role in roles"
+					ng-class="{ 'is-selected-item': ( person.role == role ) }">
+					<span>{{ $index }}</span>.
+					<span>{{ role }}</span>
+				</li>
+			</ul>
+		</td>
+		<td align="center">
+			<div bn:good-bind="person.documents"></div>
+		</td>
+		<td>
+			<div bn:good-bind="( person.lastSeen || '&mdash;' )"></div>
+		</td>
+		<td>
+			<div bn:good-bind="person.location"></div>
+		</td>
+		<td>
+			<a ng-click="void(0);">actions</a>
+		</td>
+	</tr>
+</tbody>
+</table>
+
+
+<!-- The READ-ONLY VIEW of the data-table. -->
+<table ng-if="( ! isAdmin )" border="1" cellspacing="0" cellpadding="5">
+<thead>
+	<tr>
+		<th>Avatar</th>
+		<th>Name</th>
+		<th>Role</th>
+		<th>Document</th>
+		<th>Last Seen</th>
+		<th>Location</th>
+	</tr>
+</thead>
+<tbody>
+	<tr
+		ng-repeat="person in people track by person.id"
+		class="{{ $even && 'is-even' }}">
+		<td>
+			<div class="good-avatar" ng-switch="( !! person.avatarUrl )">
+				<span
+					ng-switch-when="false"
+					bn:good-bind="person.initials">
+				</span>
+				<img
+					ng-switch-when="true"
+					bn:good-src="person.avatarUrl"
+					loading="lazy"
+				/>
+			</div>
+		</td>
+		<td>
+			<div bn:good-bind="person.name"></div>
+			<div bn:good-bind="person.email"></div>
+		</td>
+		<td align="center">
+			<div bn:good-bind="person.role"></div>
+		</td>
+		<td align="center">
+			<div bn:good-bind="person.documents"></div>
+		</td>
+		<td>
+			<div bn:good-bind="( person.lastSeen || '&mdash;' )"></div>
+		</td>
+		<td>
+			<div bn:good-bind="person.location"></div>
+		</td>
+	</tr>
+</tbody>
+</table>

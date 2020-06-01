@@ -1,0 +1,64 @@
+
+<table border="1" cellspacing="0" cellpadding="5">
+<thead>
+	<tr>
+		<th ng-if="isAdmin"></th>
+		<th>Avatar</th>
+		<th>Name</th>
+		<th>Role</th>
+		<th>Document</th>
+		<th>Last Seen</th>
+		<th>Location</th>
+		<th ng-if="isAdmin"></th>
+	</tr>
+</thead>
+<tbody>
+	<tr
+		ng-repeat="person in people track by person.id"
+		ng-class="{
+			'is-even': $even,
+			'is-selected': form.selected[ person.id ]
+		}">
+		<td ng-if="isAdmin">
+			<input
+				type="checkbox"
+				ng-model="form.selected[ person.id ]"
+			/>
+		</td>
+		<td ng-if="( person.initials || person.avatarUrl )">
+			<bn:bad-avatar
+				bn:person="person"
+				bn:width="36">
+			</bn:bad-avatar>
+		</td>
+		<td>
+			<div bn:bad-bind-once>{{ person.name }}</div>
+			<div bn:bad-bind-once>{{ person.email }}</div>
+		</td>
+		<td align="center">
+			<a ng-click="" bn:bad-bind-once>{{ person.role }}</a>
+			<!-- Not shown in demo, but DOM elements are present in page. -->
+			<ul style="display: none ;">
+				<li
+					ng-repeat="role in roles"
+					ng-class="{ 'is-selected-item': ( person.role == role ) }">
+					<span bn:bad-bind-once>{{ $index }}</span>.
+					<span bn:bad-bind-once>{{ role }}</span>
+				</li>
+			</ul>
+		</td>
+		<td align="center">
+			<div bn:bad-bind-once>{{ person.documents }}</div>
+		</td>
+		<td>
+			<div bn:bad-bind-once>{{ person.lastSeen || "&mdash;" }}</div>
+		</td>
+		<td>
+			<div bn:bad-bind-once>{{ person.location }}</div>
+		</td>
+		<td ng-if="isAdmin">
+			<a ng-click="void(0);">actions</a>
+		</td>
+	</tr>	
+</tbody>
+</table>
