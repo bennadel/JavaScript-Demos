@@ -1,0 +1,103 @@
+
+:host {
+	display: block ;
+	font-size: 18px ;
+}
+
+.dual-select {
+	display: flex ;
+	height: 400px ;
+
+	&__left,
+	&__right {
+		flex: 0 0 auto ;
+		width: 307px ;
+	}
+
+	&__controls {
+		justify-content: center ;
+		display: flex ;
+		flex: 0 0 auto ;
+		flex-direction: column ;
+		padding: 0px 10px 0px 10px ;
+	}
+
+	&__control {
+		font-size: 20px ;
+		height: 40px ;
+		margin: 10px 0px 10px 0px ;
+	}
+
+	&__items {
+		border: 1px solid #cccccc ;
+		height: 100% ;
+		list-style-type: none ;
+		margin: 0px 0px 0px 0px ;
+		overflow: auto ;
+		overscroll-behavior: contain ;
+		padding: 0px 0px 0px 0px ;
+	}
+
+	&__item {
+		border-bottom: 1px solid #cccccc ;
+		cursor: pointer ;
+		margin: 0px 0px 0px 0px ;
+		padding: 0px 0px 0px 0px ;
+		user-select: none ;
+			-moz-user-select: none ;
+			-webkit-user-select: none ;
+
+		&:last-child {
+			border-bottom-width: 0px ;
+		}
+
+		&--selected {
+			background-color: #bfd5ff ;
+		}
+
+		&--new {
+			animation-duration: 2s ;
+			animation-name: dual-select-item-new-fade-in ;
+			animation-timing-function: ease-out ;
+		}
+	}
+}
+
+@keyframes dual-select-item-new-fade-in {
+	0% {
+		background-color: #ffffff ;
+	}
+	25% {
+		background-color: #bfd5ff ;
+	}
+	100% {
+		background-color: #ffffff ;
+	}
+}
+
+.contact {
+	font-family: monospace, sans-serif ;
+	padding: 8px 10px 8px 10px ;
+
+	&__name {
+		font-size: 18px ;
+		font-weight: bold ;
+		line-height: 22px ;
+		overflow: hidden ;
+		text-overflow: ellipsis ;
+		white-space: nowrap ;
+	}
+
+	&__email {
+		font-size: 15px ;
+		line-height: 19px ;
+		overflow: hidden ;
+		text-overflow: ellipsis ;
+		white-space: nowrap ;
+	}
+}
+
+.note {
+	font-family: monospace, sans-serif ;
+	font-size: 16px ;
+}

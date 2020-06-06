@@ -1,0 +1,66 @@
+
+<div class="dual-select">
+	<div class="dual-select__left">
+
+		<ul class="dual-select__items">
+			<li
+				*ngFor="let contact of unselectedContacts"
+				(click)="togglePendingSelection( contact )"
+				(dblclick)="addToSelectedContacts( contact )"
+				class="dual-select__item"
+				[class.dual-select__item--selected]="pendingSelection[ contact.id ]">
+
+				<div class="contact">
+					<div class="contact__name">
+						{{ contact.name }}
+					</div>
+					<div class="contact__email">
+						{{ contact.email }}
+					</div>
+				</div>
+
+			</li>
+		</ul>
+
+	</div>
+	<div class="dual-select__controls">
+		<button
+			(click)="addToSelectedContacts()"
+			class="dual-select__control">
+			&#10503;
+		</button>
+		<button
+			(click)="removeFromSelectedContacts()"
+			class="dual-select__control">
+			&#10502;
+		</button>
+	</div>
+	<div class="dual-select__right">
+
+		<ul class="dual-select__items">
+			<li
+				*ngFor="let contact of selectedContacts"
+				(click)="togglePendingSelection( contact )"
+				(dblclick)="removeFromSelectedContacts( contact )"
+				class="dual-select__item dual-select__item--new"
+				[class.dual-select__item--selected]="pendingSelection[ contact.id ]">
+
+				<div class="contact">
+					<div class="contact__name">
+						{{ contact.name }}
+					</div>
+					<div class="contact__email">
+						{{ contact.email }}
+					</div>
+				</div>
+
+			</li>
+		</ul>
+
+	</div>
+</div>
+
+<p class="note">
+	You have <strong>{{ selectedContacts.length }} of {{ contacts.length }}</strong>
+	contacts selected.
+</p>

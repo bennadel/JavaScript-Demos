@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Managing Selections With A Dual-Select Control Experience In Angular 9.1.9](https://bennadel.github.io/JavaScript-Demos/demos/dual-selects-input-angular9/dist/)
 * [Attempting To Improve Rendering Performance Of A Large List View In AngularJS 1.2.22](https://bennadel.github.io/JavaScript-Demos/demos/team-list-render-performance-angularjs/)
 * [Using Abstract Classes As Dependency-Injection Tokens With "providedIn" Semantics In Angular 9.1.9](https://bennadel.github.io/JavaScript-Demos/demos/abstract-class-injection-token-provided-in-angular9/dist/)
 * [Saving Temporary Form-Data To The SessionStorage API In Angular 9.1.9](https://bennadel.github.io/JavaScript-Demos/demos/form-data-session-storage-angular9/dist/)
