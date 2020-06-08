@@ -1,0 +1,25 @@
+
+<div class="options-container">
+	<!-- Project the UNSELECTED OPTIONS content. -->
+	<ng-content select="ds-options[type='unselected']"></ng-content>
+</div>
+
+<div class="controls-container">
+	<button
+		(click)="addToSelected()"
+		title="Add To Selected"
+		class="control">
+		&#10503;
+	</button>
+	<button
+		(click)="removeFromSelected()"
+		title="Remove From Selected"
+		class="control">
+		&#10502;
+	</button>
+</div>
+
+<div class="options-container">
+	<!-- Project the SELECTED OPTIONS content. -->
+	<ng-content select="ds-options[type='selected']"></ng-content>
+</div>

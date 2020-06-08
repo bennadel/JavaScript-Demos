@@ -1,0 +1,70 @@
+
+:host {
+	display: block ;
+	font-size: 18px ;
+}
+
+.note {
+	font-family: monospace, sans-serif ;
+	font-size: 16px ;
+}
+
+// ---
+// The following are being used to customize the look-and-feel of the DS-SELECT lists.
+// ---
+
+ds-options {
+	font-family: monospace, sans-serif ;
+}
+
+ds-option.pending {
+	background-color: #edff51 ;
+}
+
+ds-option.new {
+	animation-duration: 1s ;
+	animation-name: ds-option-new-fade-in ;
+	animation-timing-function: ease-out ;
+}
+
+@keyframes ds-option-new-fade-in {
+	0% {
+		background-color: #ffffff ;
+	}
+	25% {
+		background-color: #edff51 ;
+	}
+	100% {
+		background-color: #ffffff ;
+	}
+}
+
+.favorites {
+	border: 2px solid #212121 ;
+	border-width: 0px 2px 3px 2px ;
+
+	&__header {
+		background-color: #212121 ;
+		color: #ffffff ;
+		font-size: 18px ;
+		font-weight: bold ;
+		line-height: 22px ;
+		padding: 6px 10px 6px 10px ;
+	}
+}
+
+.empty {
+	display: flex ;
+	flex-direction: column ;
+	justify-content: center ;
+	height: 100% ;
+
+	&__message {
+		color: #999999 ;
+		flex: 0 0 auto ;
+		font-size: 16px ;
+		line-height: 27px ;
+		padding: 20px 20px 20px 20px ;
+		text-align: center ;
+	}
+}

@@ -1,0 +1,73 @@
+
+<ds-select
+	(select)="addToSelectedContacts( $event )"
+	(unselect)="removeFromSelectedContacts( $event )">
+
+	<ds-options type="unselected">
+		<ds-option
+			*ngFor="let contact of unselectedContacts"
+			[value]="contact">
+
+			<app-contact [contact]="contact"></app-contact>
+
+		</ds-option>
+	</ds-options>
+
+	<ds-options type="selected">
+
+		<!--
+			If NO CONTANCTS have been selected, let's render a call-to-action. The
+			beautiful thing about multi-component content-projection is that we can be
+			super flexible with what we project into "containers". In our case, the
+			DS-OPTIONS only cares about nested DS-OPTION components - the rest of the
+			markup that we want to jam in here is "gracefully ignored" by the DS-SELECT
+			system of components.
+		-->
+		<div *ngIf="( ! selectedContacts.length )" class="empty">
+
+			<span class="empty__message">
+				Please select at least<br />
+				one Contact.
+			</span>
+
+		</div>
+
+		<!--
+			If we have any FAVORITE contacts, we can wrap those DS-OPTION components
+			in additional HTML to add styling and a call-out. Again, this type of
+			flexibility is a trade-off that we make for the added view-complexity.
+		-->
+		<div *ngIf="selectedFavoriteContacts.length" class="favorites">
+
+			<div class="favorites__header">
+				&#11089; Favorite Contacts
+			</div>
+
+			<ds-option
+				*ngFor="let contact of selectedFavoriteContacts"
+				[value]="contact"
+				class="new">
+
+				<app-contact [contact]="contact"></app-contact>
+
+			</ds-option>
+
+		</div>
+
+		<!-- Add the rest of the non-favorite, selected contacts. -->
+		<ds-option
+			*ngFor="let contact of selectedNormalContacts"
+			[value]="contact"
+			class="new">
+
+			<app-contact [contact]="contact"></app-contact>
+
+		</ds-option>
+	</ds-options>
+
+</ds-select>
+
+<p class="note">
+	You have <strong>{{ selectedContacts.length }} of {{ contacts.length }}</strong>
+	contacts selected.
+</p>
