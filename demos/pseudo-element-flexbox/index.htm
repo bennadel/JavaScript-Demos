@@ -1,0 +1,87 @@
+<!doctype html>
+<html lan="en">
+<head>
+	<meta charset="utf-8" />
+	<title>
+		Applying CSS Flexbox To Pseudo-Elements
+	</title>
+</head>
+<body>
+
+	<h1>
+		Applying CSS Flexbox To Pseudo-Elements
+	</h1>
+
+	<style type="text/css">
+
+		.person {
+			align-items: center ;
+			display: flex ;
+			font-size: 20px ;
+			margin: 10px 0px 10px 0px ;
+		}
+		.person:before {
+			/*
+				When we apply "display: flex" to the pseudo-element, the CONTENT within
+				the pseudo-element is given an IMPLICIT WRAPPER, making it the only item
+				in this local flexbox layout. This allows us to use "align-items" and
+				"justify-content" as a means to center the CONTENT within the dimensions
+				of the pseudo-element.
+			*/
+			align-items: center ;
+			content: attr( data-initials ) ;
+			display: flex ;
+			justify-content: center ;
+
+			/* Other styling ... */
+			background-color: #111111 ;
+			border-radius: 100% 100% 100% 100% ;
+			color: #ffffff ;
+			font-family: monospace ;
+			font-size: 12px ;
+			font-weight: 600 ;
+			height: 36px ;
+			letter-spacing: 1px ;
+			line-height: 12px ;
+			margin-right: 10px ;
+			text-transform: uppercase ;
+			width: 36px ;
+		}
+
+	</style>
+
+	<div data-initials="CD" class="person">
+		Connor Donovan
+	</div>
+	<div data-initials="RA" class="person">
+		Rachel Ali
+	</div>
+	<div data-initials="RM" class="person">
+		Robert Marsden
+	</div>
+	<div data-initials="AD" class="person">
+		Aaliyah Derrick
+	</div>
+	<div data-initials="AE" class="person">
+		Alena Esparza
+	</div>
+	<div data-initials="DD" class="person">
+		Dannielle Douglas
+	</div>
+	<div data-initials="FR" class="person">
+		Florrie Romero
+	</div>
+	<div data-initials="BC" class="person">
+		Bethany Chang
+	</div>
+	<div data-initials="NH" class="person">
+		Nabeel Hartley
+	</div>
+	<div data-initials="NA" class="person">
+		Neil Anthony
+	</div>
+
+	<!-- Names generated using: https://www.name-generator.org.uk/quick/ -->
+
+</body>
+</html>
