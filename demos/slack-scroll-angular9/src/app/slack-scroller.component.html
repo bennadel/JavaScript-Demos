@@ -1,0 +1,20 @@
+
+<div #viewportRef class="viewport">
+
+	<!--
+		The Viewport is going to have a scrollbar, which will change the width of the
+		content. As such, we have to wrap the content in an element that has an explicit
+		width that won't be affected by the scrollbar.
+	-->
+	<div #contentRef>
+		<ng-content></ng-content>
+	</div>
+
+</div>
+
+<!-- The scrollbar will be "stacked" over the viewport. -->
+<div #scrollbarRef class="scrollbar">
+	<div #scrollbarThumbRef class="scrollbar__thumb">
+		<!--  -->
+	</div>
+</div>
