@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>
+		Using Negative Box-Shadow Spread To Communicate Depth In CSS
+	</title>
+</head>
+<body>
+
+	<h1>
+		Using Negative Box-Shadow Spread To Communicate Depth In CSS
+	</h1>
+
+	<div class="container">
+		<div class="tile tile--a">
+			No Spread
+		</div>
+		<div class="tile tile--b">
+			-5px Spread
+		</div>
+	</div>
+
+	<style type="text/css">
+
+		.tile {
+			box-shadow: 0px 1px 0px 0px rgba( 0, 0, 0, 0.3 ) ;
+			transition-duration: 500ms ;
+			transition-property: box-shadow, transform ;
+			transition-timing-function: ease-in-out ;
+		}
+
+		.tile:hover {
+			transform: translateY( -30px ) ;
+		}
+
+		.tile--a:hover {
+			/* No spread. */
+			box-shadow: 0px 40px 20px 0px rgba( 0, 0, 0, 0.15 ) ;
+		}
+		.tile--b:hover {
+			/* -5px spread pulls edges of shadow in on all sides. */
+			box-shadow: 0px 42px 20px -5px rgba( 0, 0, 0, 0.15 ) ;
+		}
+
+		/* -- Non-demo-related styles. -- */
+
+		.container {
+			display: flex ;
+			justify-content: space-around ;
+			margin-top: 100px ;
+		}
+
+		.tile {
+			align-items: center ;
+			background-color: #fafafa ;
+			border: 1px solid #ccc ;
+			border-radius: 8px 8px 8px 8px ;
+			color: #777777 ;
+			display: flex ;
+			font-family: monospace ;
+			font-size: 18px ;
+			height: 150px ;
+			justify-content: center ;
+			width: 250px ;
+		}
+
+	</style>
+
+</body>
+</html>

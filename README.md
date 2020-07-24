@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Using Negative Box-Shadow Spread To Communicate Depth In CSS](https://bennadel.github.io/JavaScript-Demos/demos/box-shadow-spread-depth/)
 * [Looking At Different Click-To-Edit Implementations In Angular 9.1.12](https://bennadel.github.io/JavaScript-Demos/demos/click-to-edit-angular9/dist/)
 * [Copying Slack's Brilliant Virtual Scrollbar And Overflow Container In Angular 9.1.12](https://bennadel.github.io/JavaScript-Demos/demos/slack-scroll-angular9/dist/)
 * [Applying CSS Flexbox To Pseudo-Elements](https://bennadel.github.io/JavaScript-Demos/demos/pseudo-element-flexbox/)
