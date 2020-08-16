@@ -11,9 +11,9 @@ import { Directive } from "@angular/core";
 var incrementingID = 0;
 
 interface SlideshowConfig {
-	 count: number ;
-	 pause: number;
-	 transition: number;
+	count: number ;
+	pause: number;
+	transition: number;
 }
 
 @Directive({
