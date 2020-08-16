@@ -1,0 +1,26 @@
+
+<p>
+	<a (click)="( this.isShowingSlideshow = ! this.isShowingSlideshow )">
+		Toggle Slide-Show
+	</a>
+</p>
+
+<div *ngIf="isShowingSlideshow" class="slideshow">
+	<!--
+		The "simple slider" directive attaches a dynamic keyframe animation to the host
+		element (UL), translating the host over by -100% during each "transition". It
+		defers all of the styling to the calling context, handling only the animation.
+	-->
+	<ul
+		[simpleSlider]="{
+			count: 5,
+			pause: 2000,
+			transition: 450
+		}">
+		<li> Slide One </li>
+		<li> Slide Two </li>
+		<li> Slide Three </li>
+		<li> Slide Four </li>
+		<li> Slide Five </li>
+	</ul>
+</div>

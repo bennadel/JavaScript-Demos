@@ -1,0 +1,44 @@
+
+:host {
+	display: block ;
+	font-size: 18px ;
+}
+
+a {
+	color: red ;
+	cursor: pointer ;
+	text-decoration: underline ;
+}
+
+.slideshow {
+	height: 200px ;
+	margin: 20px 0px 20px 0px ;
+	overflow: hidden ;
+	width: 400px ;
+
+	ul {
+		display: flex ;
+		height: 100% ;
+		list-style-type: none ;
+		margin: 0px 0px 0px 0px ;
+		padding: 0px 0px 0px 0px ;
+		width: 100% ;
+	}
+
+	li {
+		align-items: center ;
+		border: 2px solid black ;
+		box-sizing: border-box ;
+		display: flex ;
+		flex: 0 0 auto ;
+		height: 100% ;
+		justify-content: center ;
+		margin: 0px 0px 0px 0px ;
+		padding: 0px 0px 0px 0px ;
+		width: 100% ;
+
+		&:nth-child( even ) {
+			background-color: #f0f0f0 ;
+		}
+	}
+}
