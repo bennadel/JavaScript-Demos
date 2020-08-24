@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Using Inline-Block To Provide Consistent Padding And Element Width Inside An Overflow Container In CSS](https://bennadel.github.io/JavaScript-Demos/demos/css-overflow-content-width/)
 * [Creating A Simple Slide-Show With Dynamic Keyframe Animations In Angular 10.0.9](https://bennadel.github.io/JavaScript-Demos/demos/dynamic-keyframes-angular10/dist/)
 * [Using Negative Box-Shadow Spread To Communicate Depth In CSS](https://bennadel.github.io/JavaScript-Demos/demos/box-shadow-spread-depth/)
 * [Looking At Different Click-To-Edit Implementations In Angular 9.1.12](https://bennadel.github.io/JavaScript-Demos/demos/click-to-edit-angular9/dist/)

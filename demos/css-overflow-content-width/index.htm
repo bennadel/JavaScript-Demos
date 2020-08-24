@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Using Inline-Block To Provide Consistent Padding And Element Width Inside An Overflow Container In CSS
+	</title>
+
+	<style type="text/css">
+		
+		.viewport {
+			border: 1px solid #000000 ;
+			height: 215px ;
+			overflow: auto ;
+			width: 650px ;
+		}
+
+		.wrapper {
+			padding: 25px 25px 25px 25px ;
+		}
+
+		/*
+			By switching the "wrapper" to inline-block with min-width 100%, it will allow
+			all of the content within it to automatically expand to fill the entire width
+			of the wrapper, as dictated by its widest child (as opposed to "getting
+			stuck" at 100% width of the viewport).
+		*/
+		.inline-wrapper {
+			box-sizing: border-box ;
+			display: inline-block ;
+			min-width: 100% ;
+			padding: 25px 25px 25px 25px ;
+		}
+
+		.box1,
+		.box2 {
+			border: 2px solid red ;
+			border-radius: 5px 5px 5px 5px ;
+			box-sizing: border-box ;
+			margin: 5px 0px 5px 0px ;
+			padding: 10px 10px 10px 10px ;
+		}
+		.box2 {
+			border-color: blueviolet ;
+			width: 900px ;
+		}
+
+	</style>
+</head>
+<body>
+
+	<h1>
+		Using Inline-Block To Provide Consistent Padding And Element Width Inside An Overflow Container In CSS
+	</h1>
+
+	<h2>
+		Wrapper Using Display: Block
+	</h2>
+
+	<div class="viewport">
+		<div class="wrapper">
+
+			<div class="box1"> Auto </div>
+			<div class="box2"> 900px </div>
+			<div class="box1"> Auto </div>
+
+		</div>
+	</div>
+
+	<h2>
+		Wrapper Using Display: Inline-Block
+	</h2>
+
+	<div class="viewport">
+		<div class="inline-wrapper">
+
+			<div class="box1"> Auto </div>
+			<div class="box2"> 900px </div>
+			<div class="box1"> Auto </div>
+
+		</div>
+	</div>
+
+</body>
+</html>
