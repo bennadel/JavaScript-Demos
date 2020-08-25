@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		CSS Flexbox, Overflow, Text-Overflow Ellipses, And A Separation Of Concerns
+	</title>
+
+	<style type="text/css">
+
+		.panels {
+			border: 1px dashed black ;
+			display: flex ;
+			padding: 10px 10px 10px 10px ;
+			max-width: 630px ;
+		}
+		.panels__left {
+			border: 1px solid red ;
+			flex: 1 1 auto ;
+			padding: 10px 10px 10px 10px ;
+		}
+		.panels__right {
+			border: 1px solid blueviolet ;
+			flex: 0 0 auto ;
+			margin-left: 10px ;
+			padding: 10px 10px 10px 10px ;
+		}
+
+		/*
+			Even though the long-text container is setup to truncate text and show an
+			ellipses as needed, it STILL needs a constraint - something to tell it not to
+			grow horizontally past a certain point.
+		*/
+		.long-text {
+			border: 1px solid goldenrod ;
+			overflow: hidden ;
+			padding: 5px 5px 5px 5px ;
+			text-overflow: ellipsis ;
+			white-space: nowrap ;
+		}
+
+	</style>
+</head>
+<body>
+
+	<h1>
+		CSS Flexbox, Overflow, Text-Overflow Ellipses, And A Separation Of Concerns
+	</h1>
+
+	<h2>
+		Flexbox Item Without Overflow Settings
+	</h2>
+
+	<div class="panels">
+		<div class="panels__left">
+
+			<div class="long-text">
+				Watching John with the machine, it was suddenly so clear. The Terminator
+				would never stop, it would never leave him... it would always be there.
+				And it would never hurt him, never shout at him or get drunk and hit him,
+				or say it couldn't spend time with him because it was too busy. And it
+				would die to protect him. Of all the would-be fathers who came and went
+				over the years, this thing, this machine, was the only one who measured
+				up. In an insane world, it was the sanest choice.
+			</div>
+
+		</div>
+		<div class="panels__right">
+			Terminator 2
+		</div>
+	</div>
+
+	<h2>
+		Flexbox Item With <code>overflow: hidden</code>
+	</h2>
+
+	<div class="panels">
+		<div class="panels__left" style="overflow: hidden ;">
+
+			<div class="long-text">
+				Watching John with the machine, it was suddenly so clear. The Terminator
+				would never stop, it would never leave him... it would always be there.
+				And it would never hurt him, never shout at him or get drunk and hit him,
+				or say it couldn't spend time with him because it was too busy. And it
+				would die to protect him. Of all the would-be fathers who came and went
+				over the years, this thing, this machine, was the only one who measured
+				up. In an insane world, it was the sanest choice.
+			</div>
+
+		</div>
+		<div class="panels__right">
+			Terminator 2
+		</div>
+	</div>
+
+</body>
+</html>
