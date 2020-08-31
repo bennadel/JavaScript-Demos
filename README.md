@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Animation Timing-Functions Get Applied Per-Keyframe In CSS](https://bennadel.github.io/JavaScript-Demos/demos/css-animation-timing-function/)
 * [CSS Flexbox, Overflow, Text-Overflow Ellipses, And A Separation Of Concerns](https://bennadel.github.io/JavaScript-Demos/demos/text-overflow-flexbox/)
 * [Using Inline-Block To Provide Consistent Padding And Element Width Inside An Overflow Container In CSS](https://bennadel.github.io/JavaScript-Demos/demos/css-overflow-content-width/)
 * [Creating A Simple Slide-Show With Dynamic Keyframe Animations In Angular 10.0.9](https://bennadel.github.io/JavaScript-Demos/demos/dynamic-keyframes-angular10/dist/)

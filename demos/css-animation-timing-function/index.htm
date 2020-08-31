@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Animation Timing-Functions Get Applied Per-Keyframe In CSS
+	</title>
+</head>
+<body>
+
+	<h1>
+		Animation Timing-Functions Get Applied Per-Keyframe In CSS
+	</h1>
+
+	<style type="text/css">
+
+		.track {
+			border: 1px solid red ;
+			border-radius: 100px ;
+			height: 100px ;
+			position: relative ;
+		}
+
+		.marker {
+			background-color: red ;
+			bottom: 0px ;
+			position: absolute ;
+			top: 0px ;
+			width: 1px ;
+		}
+
+		.dot {
+			background-color: #212121 ;
+			border-radius: 80px ;
+			height: 80px ;
+			left: 10px ;
+			position: absolute ;
+			top: 10px ;
+			width: 80px ;
+			z-index: 2 ;
+			/*
+				In order to demonstrate that the timing-function executes per-keyframe,
+				I'm going to use an exaggerated cubic-bezier configuration that "bounces"
+				the dot past the final "left" value of each keyframe.
+			*/
+			animation-direction: alternate ;
+			animation-duration: 10s ;
+			animation-iteration-count: infinite ;
+			animation-name: box-animation ;
+			animation-timing-function: cubic-bezier( .55, -0.64, .42, 1.63 ) ;
+		}
+
+		@keyframes box-animation {
+			from, 5% {
+				left: 10px ;
+			}
+			25%, 40% {
+				left: 30% ;
+			}
+			60%, 75% {
+				left: 70% ;
+			}
+			95%, to {
+				left: calc( 100% - 90px ) ;
+			}
+		}
+
+	</style>
+
+	<div class="track">
+		<div class="dot">
+			<br />
+		</div>
+
+		<!-- These markers help show the movement of the dot. -->
+		<div class="marker" style="left: calc( 30% + 40px ) ;"></div>
+		<div class="marker" style="left: calc( 70% + 40px ) ;"></div>
+	</div>
+
+</body>
+</html>
