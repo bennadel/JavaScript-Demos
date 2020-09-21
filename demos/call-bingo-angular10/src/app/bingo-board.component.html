@@ -1,0 +1,12 @@
+
+<ul id="bingo-board" class="card">
+	<li
+		*ngFor="let space of spaces; index as index ;"
+		(click)="toggleIndex( index )"
+		class="space"
+		[class.space--selected]="selectedIndices[ index ]">
+
+		{{ space }}
+
+	</li>
+</ul>

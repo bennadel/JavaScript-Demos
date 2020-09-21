@@ -1,0 +1,46 @@
+
+:host {
+	display: block ;
+}
+
+.card {
+	border: 1px solid #333333 ;
+	box-sizing: border-box ;
+	display: grid ;
+	grid-template-columns: repeat( 5, 1fr ) ;
+	grid-template-rows: repeat( 5, 1fr ) ;
+	list-style-type: none ;
+	margin: 0px 0px 0px 0px ;
+	padding: 0px 0px 0px 0px ;
+
+	// HACK: In order to get the bingo-board to render properly for the screenshot, we
+	// have to force the board to be the same height as the host element, which is going
+	// to be defined in the calling context.
+	:host( .html2canvas ) & {
+		height: 100% ;
+	}
+}
+
+.space {
+	align-items: center ;
+	border: 1px solid #333333 ;
+	box-sizing: border-box ;
+	cursor: pointer ;
+	display: flex ;
+	font-family: monospace ;
+	font-size: 16px ;
+	justify-content: center ;
+	line-height: 24px ;
+	margin: 0px 0px 0px 0px ;
+	padding: 20px 20px 20px 20px ;	
+	text-align: center ;
+	text-transform: uppercase ;
+	user-select: none ;
+
+	&--selected {
+		background-color: #ea0040 ;
+		color: #ffffff ;
+		text-rendering: optimizeLegibility ;
+		text-shadow: 1px 1px #880025 ;
+	}
+}

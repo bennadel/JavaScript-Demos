@@ -1,0 +1,37 @@
+
+<p>
+	To <em>delete</em> an option, just leave it blank.
+</p>
+
+<form (submit)="processForm()">
+
+	<div *ngFor="let option of options" class="option">
+
+		<!--
+			NOTE: Since we're using template-driven forms, we have to provide the [name]
+			property so that the ngModel control can register itself with the parent
+			form. In our case, this is basically a "throw away" value since we never
+			reference it explicitly; but, it is required for compilation.
+		-->
+		<input
+			type="text"
+			[name]="option.name"
+			[(ngModel)]="option.value"
+			class="input"
+		/>
+
+	</div>
+
+	<div class="actions">
+
+		<button type="submit">
+			Submit Changes
+		</button>
+
+		<a (click)="addOptions()">
+			Add more options
+		</a>
+
+	</div>
+
+</form>

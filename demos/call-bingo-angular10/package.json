@@ -1,0 +1,31 @@
+{
+	"name": "angular10-demo",
+	"version": "0.0.0",
+	"scripts": {
+		"build": "ng build --prod",
+		"ng": "ng",
+		"start": "ng serve --open",
+		"start-prod": "ng serve --open --prod"
+	},
+	"private": true,
+	"dependencies": {
+		"@angular/animations": "10.1.2",
+		"@angular/common": "10.1.2",
+		"@angular/compiler": "10.1.2",
+		"@angular/core": "10.1.2",
+		"@angular/forms": "10.1.2",
+		"@angular/platform-browser": "10.1.2",
+		"@angular/platform-browser-dynamic": "10.1.2",
+		"@angular/router": "10.1.2",
+		"html2canvas": "1.0.0-rc.7",
+		"rxjs": "6.6.3",
+		"tslib": "2.0.1",
+		"zone.js": "0.11.1"
+	},
+	"devDependencies": {
+		"@angular-devkit/build-angular": "0.1000.6",
+		"@angular/cli": "10.0.6",
+		"@angular/compiler-cli": "10.1.2",
+		"typescript": "3.9.5"
+	}
+}

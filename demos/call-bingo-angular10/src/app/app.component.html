@@ -1,0 +1,38 @@
+
+<!-- BEGIN: Play Mode. -->
+<div *ngIf="( mode === 'play' )" class="content">
+
+	<nav class="actions">
+		<a (click)="gotoMode( 'edit' )">Edit phrases</a>
+	</nav>
+
+	<app-bingo-board
+		[phrases]="phrases">
+	</app-bingo-board>
+
+	<p>
+		Experimental:
+		<a (click)="takeScreenshot()">Take screenshot of bingo board</a>
+	</p>
+
+	<p *ngIf="screenshotUrl" class="screenshot">
+		<img [src]="screenshotUrl" />
+	</p>
+
+</div>
+<!-- END: Play Mode. -->
+
+<!-- BEGIN: Edit Mode. -->
+<div *ngIf="( mode === 'edit' )" class="content">
+
+	<nav class="actions">
+		<a (click)="gotoMode( 'play' )">Back to game</a>
+	</nav>
+
+	<app-form
+		[phrases]="phrases"
+		(phrasesChange)="applyNewPhrases( $event )">
+	</app-form>
+
+</div>
+<!-- END: Edit Mode. -->
