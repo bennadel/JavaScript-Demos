@@ -26,11 +26,12 @@ export class AppComponent {
 	public filteredSearchResults!: SearchResult[];
 	public searchFilter: string;
 
-	private friends: Friend[] = friends;
+	private friends: Friend[];
 
 	// I initialize the app component.
 	constructor() {
 
+		this.friends = friends;
 		this.searchFilter = "";
 		this.setAllSearchResults();
 		this.setFilteredSearchResults();

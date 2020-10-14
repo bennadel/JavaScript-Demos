@@ -6,13 +6,23 @@ export interface Friend {
 	hobbies: string[];
 }
 
-export var friends: Friend[] = [];
+var id = 0;
 
-for ( var id = 0, i = 0 ; i <= 50 ; i++ ) {
-
-	friends.push( getRandomFriend() );
-
-}
+// NOTE: I had to do it this way because TypeScript compiling-away every other approach
+// that I tried to generate this collection. I'll have to figure out why it did that;
+// but, for now, I'm just brute-forcing it.
+export var friends: Friend[] = [
+	getRandomFriend(), getRandomFriend(), getRandomFriend(), getRandomFriend(), getRandomFriend(),
+	getRandomFriend(), getRandomFriend(), getRandomFriend(), getRandomFriend(), getRandomFriend(),
+	getRandomFriend(), getRandomFriend(), getRandomFriend(), getRandomFriend(), getRandomFriend(),
+	getRandomFriend(), getRandomFriend(), getRandomFriend(), getRandomFriend(), getRandomFriend(),
+	getRandomFriend(), getRandomFriend(), getRandomFriend(), getRandomFriend(), getRandomFriend(),
+	getRandomFriend(), getRandomFriend(), getRandomFriend(), getRandomFriend(), getRandomFriend(),
+	getRandomFriend(), getRandomFriend(), getRandomFriend(), getRandomFriend(), getRandomFriend(),
+	getRandomFriend(), getRandomFriend(), getRandomFriend(), getRandomFriend(), getRandomFriend(),
+	getRandomFriend(), getRandomFriend(), getRandomFriend(), getRandomFriend(), getRandomFriend(),
+	getRandomFriend(), getRandomFriend(), getRandomFriend(), getRandomFriend(), getRandomFriend()
+];
 
 // ----------------------------------------------------------------------------------- //
 // ----------------------------------------------------------------------------------- //
