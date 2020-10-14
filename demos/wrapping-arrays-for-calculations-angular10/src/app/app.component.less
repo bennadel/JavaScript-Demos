@@ -1,0 +1,77 @@
+
+:host {
+	display: block ;
+	font-size: 18px ;
+}
+
+.filter {
+	font-size: inherit ;
+	padding: 10px 10px 10px 10px ;
+	width: 490px ;
+}
+
+.results {
+	list-style-type: none ;
+	margin: 16px 0px 16px 0px ;
+	padding: 0px 0px 0px 0px ;
+	width: 500px ;
+
+	&__result {
+		border: 2px solid #cccccc ;
+		border-radius: 4px 4px 4px 4px ;
+		margin: 10px 0px 10px 0px ;
+		padding: 10px 13px 10px 13px ;
+
+		&--highlight {
+			border-color: #ff3366 ;
+			position: relative ;
+
+			&:after {
+				background-color: #ff3366 ;
+				border-radius: 0px 0px 0px 3px ;
+				color: #ffffff ;
+				content: "BFF" ;
+				font-family: monospace ;
+				font-size: 14px ;
+				line-height: 14px ;
+				padding: 3px 5px 5px 8px ;
+				position: absolute ;
+				right: 0px ;
+				top: 0px ;
+			}
+		}
+	}
+
+	&__name {
+		font-size: 20px ;
+		font-weight: 800 ;
+	}
+}
+
+.hobbies {
+	align-items: center ;
+	display: flex ;
+	font-size: 14px ;
+	margin-top: 5px ;
+
+	&__label {
+		font-weight: 800 ;
+	}
+
+	&__hobby {
+		background-color: #f0f0f0 ;
+		border: 1px solid #cccccc ;
+		border-radius: 7px 7px 7px 7px ;
+		color: #000000 ;
+		font-size: 14px ;
+		line-height: 14px ;
+		margin-left: 9px ;
+		padding: 4px 8px 3px 8px ;
+	}
+}
+
+.no-results {
+	color: #999999 ;
+	font-style: italic ;
+	margin: 30px 0px 30px 0px ;
+}

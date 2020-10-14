@@ -1,0 +1,49 @@
+
+<p>
+	<input
+		#searchFilterRef
+		type="search"
+		placeholder="Search friends..."
+		autofocus
+		autocomplete="off"
+		class="filter"
+		(input)="applySearchFilter( searchFilterRef.value )"
+	/>
+</p>
+
+<!--
+	When we output the list, we're outputting the FILTERED search results, not the ALL
+	search results.
+-->
+<ul class="results">
+	<li
+		*ngFor="let result of filteredSearchResults"
+		class="results__result"
+		[class.results__result--highlight]="result.friend.isBFF">
+
+		<div class="results__name">
+			{{ result.friend.name }}
+		</div>
+
+		<div *ngIf="result.friend.hobbies.length" class="hobbies">
+			<span class="hobbies__label">
+				Hobbies:
+			</span>
+			<span
+				*ngFor="let hobby of result.friend.hobbies"
+				class="hobbies__hobby">
+				{{ hobby }}
+			</span>
+		</div>
+
+	</li>
+</ul>
+
+<div
+	*ngIf="( ! filteredSearchResults.length )"
+	class="no-results">
+
+	None of your {{ allSearchResults.length }} friends match
+	your current search query.
+
+</div>

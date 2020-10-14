@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Using A Single, Pre-Compiled Keyword Search Target For Filtering In Angular 10.1.5](https://bennadel.github.io/JavaScript-Demos/demos/wrapping-arrays-for-calculations-angular10/dist/)
 * [Playing Zoom Bingo In Angular 10.1.2](https://bennadel.github.io/JavaScript-Demos/demos/call-bingo-angular10/dist/)
 * [Animation Timing-Functions Can Be Changed Per-Keyframe In CSS](https://bennadel.github.io/JavaScript-Demos/demos/css-animation-timing-function2/)
 * [Animation Timing-Functions Get Applied Per-Keyframe In CSS](https://bennadel.github.io/JavaScript-Demos/demos/css-animation-timing-function/)
