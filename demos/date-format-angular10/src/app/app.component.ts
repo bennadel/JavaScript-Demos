@@ -98,7 +98,12 @@ export class AppComponent {
 			"mm",
 			// Seconds.
 			"s",
-			"ss"
+			"ss",
+			// They can, of course, be used in combination.
+			"yyyy-dd-MM",
+			"E, MMM d",
+			// You can ESCAPE parts of the mask by wrapping them in quotes.
+			"MMM d 'somewhere around' H:mm aa"
 		];
 
 		for ( var mask of masks ) {
