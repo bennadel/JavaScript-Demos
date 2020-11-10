@@ -10,7 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
-* [Painless Date / Time Formatting With formateDate() In Angular 10.2.3](https://bennadel.github.io/JavaScript-Demos/demos/date-format-angular10/dist/)
+* [Painless Date / Time Formatting With formatDate() In Angular 10.2.3](https://bennadel.github.io/JavaScript-Demos/demos/date-format-angular10/dist/)
 * [Using A Progressive-Search Optimization When Filtering Arrays In Angular 10.1.6](https://bennadel.github.io/JavaScript-Demos/demos/progressive-search-filtering-angular10/dist/)
 * [Using A Single, Pre-Compiled Keyword Search Target For Filtering In Angular 10.1.5](https://bennadel.github.io/JavaScript-Demos/demos/wrapping-arrays-for-calculations-angular10/dist/)
 * [Playing Zoom Bingo In Angular 10.1.2](https://bennadel.github.io/JavaScript-Demos/demos/call-bingo-angular10/dist/)
