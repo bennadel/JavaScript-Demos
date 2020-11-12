@@ -1,0 +1,28 @@
+
+<div *ngFor="let demo of demos" class="demo">
+
+	<div class="demo__slider slider">
+		<div class="slider__label">
+			{{ demo.minLabel }}
+		</div>
+		<div class="slider__range">
+			<input
+				#rangeRef
+				type="range"
+				[min]="demo.min"
+				[max]="demo.max"
+				[value]="demo.value"
+				(input)="updateFromNow( demo, rangeRef.value )"
+				class="slider__input"
+			/>
+		</div>
+		<div class="slider__label">
+			{{ demo.maxLabel }}
+		</div>
+	</div>
+
+	<p class="demo__label">
+		{{ demo.fromNow }}
+	</p>
+
+</div>

@@ -1,0 +1,49 @@
+
+:host {
+	display: block ;
+	font-size: 18px ;
+}
+
+.demo {
+	border-bottom: 1px dashed #cccccc ;
+	padding: 30px 0px 30px 0px ;
+
+	&:last-child {
+		border-bottom-width: 0px ;
+	}
+
+	&__slider {
+		margin-bottom: 10px ;
+	}
+
+	&__label {
+		background-color: gold ;
+		border-radius: 4px 4px 4px 4px ;
+		display: inline-flex ;
+		font-weight: bold ;
+		margin: 0px 0px 0px 0px ;
+		padding: 7px 14px 7px 14px ;
+	}
+}
+
+.slider {
+	align-items: center ;
+	display: flex ;
+
+	&__label {
+		border: 1px solid #cccccc ;
+		border-radius: 5px 5px 5px 5px ;
+		font-family: monospace ;
+		font-weight: bold ;
+		padding: 7px 12px 7px 12px ;
+	}
+
+	&__range {
+		flex: 1 1 auto ;
+		padding: 0px 10px 0px 10px ;
+	}
+
+	&__input {
+		width: 100% ;
+	}
+}
