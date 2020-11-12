@@ -13,8 +13,8 @@ import { LOCALE_ID } from "@angular/core";
 type DateInput = Date | number | string;
 
 var MS_SECOND = 1000;
-var MS_MINUTE = ( 60 * MS_SECOND );
-var MS_HOUR = ( 60 * MS_MINUTE );
+var MS_MINUTE = ( MS_SECOND * 60 );
+var MS_HOUR = ( MS_MINUTE * 60 );
 var MS_DAY = ( MS_HOUR * 24 );
 var MS_MONTH = ( MS_DAY * 30 ); // Rough estimate.
 var MS_YEAR = ( MS_DAY * 365 ); // Rough estimate.
