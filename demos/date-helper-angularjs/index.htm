@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="en" ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Replacing All External Date Libraries With 300 Lines-Of-Code In AngularJS 1.2.22
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css">
+</head>
+<body ng-controller="appController">
+
+	<h1>
+		Replacing All External Date Libraries With 300 Lines-Of-Code In AngularJS 1.2.22
+	</h1>
+
+	<div class="result">
+		<span class="result__absolute">
+			{{ formattedDate }}
+		</span>
+		<span class="result__relative">
+			{{ relativeDate }}
+		</span>
+	</div>
+
+	<div class="slider">
+		<div class="slider__label">
+			Year
+		</div>
+		<input
+			type="range"
+			min="-100"
+			max="100"
+			ng-model="yearDelta"
+			class="slider__input"
+		/>
+		<div class="slider__value">
+			{{ yearDelta }}
+		</div>
+	</div>
+
+	<div class="slider">
+		<div class="slider__label">
+			Month
+		</div>
+		<input
+			type="range"
+			min="-100"
+			max="100"
+			ng-model="monthDelta"
+			class="slider__input"
+		/>
+		<div class="slider__value">
+			{{ monthDelta }}
+		</div>
+	</div>
+
+	<div class="slider">
+		<div class="slider__label">
+			Day
+		</div>
+		<input
+			type="range"
+			min="-100"
+			max="100"
+			ng-model="dayDelta"
+			class="slider__input"
+		/>
+		<div class="slider__value">
+			{{ dayDelta }}
+		</div>
+	</div>
+
+	<div class="slider">
+		<div class="slider__label">
+			Hour
+		</div>
+		<input
+			type="range"
+			min="-100"
+			max="100"
+			ng-model="hourDelta"
+			class="slider__input"
+		/>
+		<div class="slider__value">
+			{{ hourDelta }}
+		</div>
+	</div>
+
+	<div class="slider">
+		<div class="slider__label">
+			Minute
+		</div>
+		<input
+			type="range"
+			min="-100"
+			max="100"
+			ng-model="minuteDelta"
+			class="slider__input"
+		/>
+		<div class="slider__value">
+			{{ minuteDelta }}
+		</div>
+	</div>
+
+	<div class="slider">
+		<div class="slider__label">
+			Second
+		</div>
+		<input
+			type="range"
+			min="-100"
+			max="100"
+			ng-model="secondDelta"
+			class="slider__input"
+		/>
+		<div class="slider__value">
+			{{ secondDelta }}
+		</div>
+	</div>
+
+	<div class="slider">
+		<div class="slider__label">
+			Millis
+		</div>
+		<input
+			type="range"
+			min="-100"
+			max="100"
+			ng-model="millisecondDelta"
+			class="slider__input"
+		/>
+		<div class="slider__value">
+			{{ millisecondDelta }}
+		</div>
+	</div>
+
+	<!-- ---------------------------------------------------------------------------- -->
+	<!-- ---------------------------------------------------------------------------- -->
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/jquery/jquery-2.1.0.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.2.22.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+	</script>
+	<script type="text/javascript" src="./date-helper.js"></script>
+	<script type="text/javascript">
+
+		app.controller( "appController", AppController );
+
+		function AppController( $scope, dateHelper ) {
+
+			$scope.baseDate = new Date();
+			$scope.dayDelta = 0;
+			$scope.hourDelta = 0;
+			$scope.millisecondDelta = 0;
+			$scope.minuteDelta = 0;
+			$scope.monthDelta = 0;
+			$scope.relativeDate = "";
+			$scope.secondDelta = 0;
+			$scope.yearDelta = 0;
+
+			$scope.dateMask = "yyyy-MM-dd HH:mm:ss.sss";
+			$scope.formattedDate = "";
+			$scope.relativeDate = "";
+
+			// I get called on every digest.
+			// --
+			// NOTE: Rather than have an explicit function that has to get called every
+			// time a date-delta is adjusted, we're just going to hook into the digest
+			// since we know that a new digest will be triggered on every (input) event.
+			$scope.$watch(
+				function evaluateExpression() {
+
+					var result = $scope.baseDate;
+
+					// The .add() function returns a NEW date each time, so we have to
+					// keep saving and reusing the result of each call.
+					// --
+					// CAUTION: Notice that we are casting the String value of the
+					// ngModel to Numbers.
+					result = dateHelper.add( "year", +$scope.yearDelta, result );
+					result = dateHelper.add( "month", +$scope.monthDelta, result );
+					result = dateHelper.add( "day", +$scope.dayDelta, result );
+					result = dateHelper.add( "hour", +$scope.hourDelta, result );
+					result = dateHelper.add( "minute", +$scope.minuteDelta, result );
+					result = dateHelper.add( "second", +$scope.secondDelta, result );
+					result = dateHelper.add( "millisecond", +$scope.millisecondDelta, result );
+
+					// NOTE: We have to return the TIME - not the result - or we run into
+					// an infinite-digest problem. We need to give Angular a simple value
+					// so that the new/old values become equivalent when no change has
+					// taken place.
+					return( result.getTime() );
+
+				},
+				function handleModelChange( newValue, oldValue ) {
+
+					var result = new Date( newValue );
+
+					$scope.formattedDate = dateHelper.format( result, $scope.dateMask );
+					$scope.relativeDate = dateHelper.fromNow( result );
+
+					console.group( "Angular Digest" );
+					console.log( "Date:", $scope.formattedDate );
+					console.log( "Relative Date:", $scope.relativeDate );
+
+					// Log the diff() for the given date - how much it is LESS THAN the base date.
+					console.log(
+						"Diff:",
+						dateHelper.diff( "year", result, $scope.baseDate ),
+						dateHelper.diff( "month", result, $scope.baseDate ),
+						dateHelper.diff( "day", result, $scope.baseDate ),
+						dateHelper.diff( "hour", result, $scope.baseDate ),
+						dateHelper.diff( "minute", result, $scope.baseDate ),
+						dateHelper.diff( "second", result, $scope.baseDate ),
+						dateHelper.diff( "millisecond", result, $scope.baseDate )
+					);
+
+					// Log the days in the given month.
+					console.log(
+						"Days in month:",
+						dateHelper.daysInMonth( result.getFullYear(), result.getMonth() )
+					);
+
+					console.groupEnd();
+
+				}
+			);
+
+		}
+
+	</script>
+
+</body>
+</html>

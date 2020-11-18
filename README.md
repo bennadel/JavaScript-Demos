@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Replacing All External Date Libraries With 300 Lines-Of-Code In AngularJS 1.2.22](https://bennadel.github.io/JavaScript-Demos/demos/date-helper-angularjs/)
 * [Replacing All External Date Libraries With 300 Lines-Of-Code In Angular 11.0.0](https://bennadel.github.io/JavaScript-Demos/demos/date-helper-angular11/dist/)
 * [Adjusting Dates By Adding Date / Time Parts In Angular 11.0.0](https://bennadel.github.io/JavaScript-Demos/demos/date-add-angular11/dist/)
 * [Building A Moment-Inspired .fromNow() Date Formatting Method In Angular 10.2.3](https://bennadel.github.io/JavaScript-Demos/demos/date-format-from-now-angular10/dist/)

@@ -1,0 +1,41 @@
+
+body {
+	font-family: sans-serif ;
+	font-size: 18px ;
+}
+
+.result {
+	display: flex ;
+	justify-content: center ;
+	margin: 30px 0px 30px 0px ;
+}
+
+.result__absolute,
+.result__relative {
+	background-color: gold ;
+	border-radius: 10px 10px 10px 10px ;
+	font-size: 20px ;
+	margin: 0px 10px 0px 10px ;
+	padding: 13px 20px 13px 20px ;
+}
+
+.slider {
+	display: flex ;
+	margin: 10px 0px 10px 0px ;
+}
+
+.slider__label,
+.slider__value {
+	background-color: #f0f0f0 ;
+	border: 1px solid #cccccc ;
+	border-radius: 7px 7px 7px 7px ;
+	font-family: monospace ;
+	padding: 8px 10px 8px 10px ;
+	text-align: center ;
+	width: 100px ;
+}
+
+.slider__input {
+	flex: 1 1 auto ;
+	margin: 0px 10px 0px 10px ;
+}
