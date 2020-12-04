@@ -1,0 +1,36 @@
+
+:host {
+	display: block ;
+}
+
+.header {
+	background-color: #ffffff ;
+	padding: 17px 10px 16px 10px ;
+	position: sticky ;
+
+	// When using "position:sticky", you have to provide a TOP value (in our case since
+	// we want it to stick to the top of the overflow container) or the browser won't
+	// know when to change the rendering behavior of the element. By using a value of -1,
+	// it means that the "sticky" behavior will cause the element to SLIGHTLY OVERLAP
+	// with the top-edge of the browser's viewport. And that means, we can OBSERVE that
+	// change with the Intersection Observer API.
+	top: -1px ;
+
+	&--sticky {
+		background-color: #666666 ;
+		border-bottom: 1px solid #ffffff ;
+		box-shadow: 0px 6px 6px -3px fade( #000000, 40% ) ;
+		color: #ffffff ;
+		left: 0px ;
+		padding-left: 20px ;
+		padding-right: 20px ;
+		right: 0px ;
+		transition-duration: 500ms ;
+		transition-property: background-color, color, padding ;
+		transition-timing-function: ease ;
+	}
+
+	h3 {
+		margin: 0px 0px 0px 0px ;
+	}
+}

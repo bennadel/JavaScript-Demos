@@ -1,0 +1,26 @@
+
+<ng-template ngFor let-h [ngForOf]="[1,2,3,4,5]">
+
+	<section>
+
+		<!--
+			NOTE: Our [stickyClass] attribute is BOTH an INPUT for the CSS class to apply
+			as well as the SELECTOR that targets our Angular Directive.
+		-->
+		<header
+			class="header"
+			stickyClass="header--sticky">
+
+			<h3>
+				I am sticky header {{ h }}.
+			</h3>
+
+		</header>
+
+		<p *ngFor="let i of [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]">
+			This is some body text {{ i }}.
+		</p>
+
+	</section>
+
+</ng-template>
