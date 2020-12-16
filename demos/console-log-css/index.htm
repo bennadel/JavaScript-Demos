@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>
+		Styling console.log() Output Formatting With CSS
+	</title>
+</head>
+<body>
+
+	<h1>
+		Styling console.log() Output Formatting With CSS
+	</h1>
+
+	<script type="text/javascript">
+
+		console.log(
+			"%cAltering the text color",
+			"color: fuchsia"
+		);
+
+		console.log(
+			"%cAltering the text experience",
+			"background-color: fuchsia ; color: white ; font-weight: bold ;"
+		);
+
+		// NOTE: In this demo, inline-block isn't needed in Chrome; but, it is needed in
+		// Firefox or the block properties, like padding, don't work. Trying to use
+		// "block" will work in Chrome; but, will go full-width in Firefox.
+		console.log(
+			"%cAltering the box display",
+			"display: inline-block ; border: 3px solid red ; border-radius: 7px ; padding: 10px ;"
+		);
+
+		console.log(
+			"%c ",
+			"display: inline-block ; border: 2px solid black ; background-image: url( './rock.png' ) ; background-size: cover ; padding: 0px 300px 168px 0px ;"
+		);
+
+	</script>
+
+</body>
+</html>
