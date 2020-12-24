@@ -1,0 +1,73 @@
+
+<p>
+	<a (click)="addUser()" class="digest">
+		Add User ( trigger digest )
+	</a>
+</p>
+
+<ng-template ngFor let-user [ngForOf]="users">
+
+	<!--
+		The [bnIntersectionObserver] directive attaches this host element to an instance
+		of the IntersectionObserver and exposes itself as the "intersection" reference.
+		This reference further exposes an ".isIntersecting" property which toggles
+		between (true) and (false) as the host element intersects with the viewport.
+		We're then going to pipe that value into the native [ngSwitch] directive in order
+		to defer some of the template bindings.
+	 -->
+	<div
+		bnIntersectionObserver
+		#intersection="intersection"
+		[ngSwitch]="intersection.isIntersecting"
+		class="user">
+
+		<div class="user__header">
+			<div class="user__avatar">
+				<!-- NOTE: IMG is not loaded until intersecting. -->
+				<img
+					*ngSwitchCase="intersection.IS_INTERSECTING"
+					[src]="user.avatarUrl"
+					class="user__avatar-image"
+				/>
+			</div>
+			<div class="user__info">
+				<span class="user__name">
+					{{ user.name }}
+				</span>
+				<span class="user__email">
+					{{ user.email }}
+				</span>
+			</div>
+		</div>
+
+		<!-- NOTE: DIV is not loaded until intersecting. -->
+		<div *ngSwitchCase="intersection.IS_INTERSECTING" class="user__meta">
+			<span class="user__meta-item">
+				<strong class="user__meta-label">
+					Location:
+				</strong>
+				<span class="user__meta-value">
+					{{ user.city }} {{ user.state }}, {{ user.country }}
+				</span>
+			</span>
+			<span class="user__meta-item">
+				<strong class="user__meta-label">
+					Last Login:
+				</strong>
+				<span class="user__meta-value">
+					{{ user.lastLoginAt }}
+				</span>
+			</span>
+			<span class="user__meta-item">
+				<strong class="user__meta-label">
+					ID:
+				</strong>
+				<span class="user__meta-value">
+					{{ user.id }}
+				</span>
+			</span>
+		</div>
+
+	</div>
+
+</ng-template>

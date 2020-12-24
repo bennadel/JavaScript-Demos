@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Using IntersectionObserver And NgSwitch To Defer Template Bindings In Angular 11.0.5](https://bennadel.github.io/JavaScript-Demos/demos/ng-switch-intersection-angular11/dist/)
 * [Styling console.log() Output With A Chalk-Inspired Formatter Using JavaScript Proxies](https://bennadel.github.io/JavaScript-Demos/demos/console-log-css2/)
 * [Styling console.log() Output Formatting With CSS](https://bennadel.github.io/JavaScript-Demos/demos/console-log-css/)
 * [Using A Top Of -1px To Observe Position Sticky Intersection Changes In Angular 11.0.3](https://bennadel.github.io/JavaScript-Demos/demos/position-sticky-offset-angular11/dist/)
