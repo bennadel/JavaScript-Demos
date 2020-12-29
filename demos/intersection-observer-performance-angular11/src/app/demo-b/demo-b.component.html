@@ -1,0 +1,27 @@
+
+<h2>
+	Demo B Component
+</h2>
+
+<p>
+	Using one <code>IntersectionObserver</code> instance <strong>per List</strong>.
+</p>
+
+<!--
+	In this demo, there is an IntersectionObserver provided by the UL element. Then,
+	every LI element injects the UL-provided instance.
+-->
+<ul bnIntersectionObserverBList class="items">
+	<li
+		*ngFor="let value of items"
+		class="items__item"
+		bnIntersectionObserverB
+		#intersection="intersection"
+		[ngSwitch]="intersection.isIntersecting">
+
+		<span *ngSwitchCase="intersection.IS_INTERSECTING">
+			{{ value }}
+		</span>
+
+	</li>
+</ul>

@@ -1,0 +1,11 @@
+
+<p>
+	<strong>Show Demo</strong>:
+	<a (click)="showDemo( 'OnePerElement' )">One per Element</a> ,
+	<a (click)="showDemo( 'OnePerList' )">One per List</a>
+</p>
+
+<div [ngSwitch]="demo">
+	<demo-a *ngSwitchCase="( 'OnePerElement' )"></demo-a>
+	<demo-b *ngSwitchCase="( 'OnePerList' )"></demo-b>
+</div>
