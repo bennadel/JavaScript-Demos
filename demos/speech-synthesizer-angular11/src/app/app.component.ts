@@ -16,6 +16,7 @@ interface RecommendedVoices {
 })
 export class AppComponent {
 
+	public sayCommand: string;
 	public recommendedVoices: RecommendedVoices;
 	public rates: number[];
 	public selectedRate: number;
@@ -31,7 +32,8 @@ export class AppComponent {
 		this.selectedVoice = null;
 		this.selectedRate = 1;
 		// Dirty Dancing for the win!
-		this.text = "Me? I’m scared of everything. I’m scared of what I saw, of what I did, of who I am. And most of all, I’m scared of walking out of this room and never feeling the rest of my whole life the way I feel when I’m with you.";
+		this.text = "Me? ... I’m scared of everything. I’m scared of what I saw, of what I did, of who I am. And most of all, I’m scared of walking out of this room and never feeling the rest of my whole life ... the way I feel when I’m with you.";
+		this.sayCommand = "";
 
 		// These are "recommended" in so much as that these are the voices that I (Ben)
 		// could understand most clearly.
@@ -82,6 +84,7 @@ export class AppComponent {
 
 		this.voices = speechSynthesis.getVoices();
 		this.selectedVoice = ( this.voices[ 0 ] || null );
+		this.updateSayCommand();
 
 		// The voices aren't immediately available (or so it seems). As such, if no
 		// voices came back, let's assume they haven't loaded yet and we need to wait for
@@ -94,6 +97,7 @@ export class AppComponent {
 
 					this.voices = speechSynthesis.getVoices();
 					this.selectedVoice = ( this.voices[ 0 ] || null );
+					this.updateSayCommand();
 
 				}
 			);
@@ -126,6 +130,30 @@ export class AppComponent {
 			speechSynthesis.cancel();
 
 		}
+
+	}
+
+
+	// I update the "say" command that can be used to generate the a sound file from the
+	// current speech synthesis configuration.
+	public updateSayCommand() : void {
+
+		if ( ! this.selectedVoice || ! this.text ) {
+
+			return;
+
+		}
+
+		// With the say command, the rate is the number of words-per-minute. As such, we
+		// have to finagle the SpeechSynthesis rate into something roughly equivalent for
+		// the terminal-based invocation.
+		var sanitizedRate = Math.floor( 200 * this.selectedRate );
+		var sanitizedText = this.text
+			.replace( /[\r\n]/g, " " )
+			.replace( /(["'\\\\/])/g, "\\$1" )
+		;
+
+		this.sayCommand = `say --voice ${ this.selectedVoice.name } --rate ${ sanitizedRate } --output-file=demo.aiff "${ sanitizedText }"`;
 
 	}
 

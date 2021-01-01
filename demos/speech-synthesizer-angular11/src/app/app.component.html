@@ -8,7 +8,7 @@
 			id="voice-control"
 			name="voice"
 			[(ngModel)]="selectedVoice"
-			(change)="demoSelectedVoice()"
+			(change)="demoSelectedVoice(); updateSayCommand()"
 			class="form-field__control">
 			<option value="">- Select a voice -</option>
 			<option
@@ -37,7 +37,7 @@
 			id="rate-control"
 			name="rate"
 			[(ngModel)]="selectedRate"
-			(change)="demoSelectedVoice()"
+			(change)="demoSelectedVoice(); updateSayCommand()"
 			class="form-field__control">
 			<option
 				*ngFor="let rate of rates"
@@ -61,6 +61,7 @@
 			id="text-control"
 			name="text"
 			[(ngModel)]="text"
+			(input)="updateSayCommand()"
 			(keydown.Meta.Enter)="speak()"
 			class="form-field__control"
 		></textarea>
@@ -85,4 +86,26 @@
 		class="form-actions__button form-actions__button--secondary">
 		Stop speaking
 	</button>
+</div>
+
+
+<div *ngIf="sayCommand" class="say">
+
+	<h3 class="say__title">
+		On MacOS? Want to generate a sound file?
+	</h3>
+
+	<p class="say__description">
+		In the terminal, you can use the <code>say</code> binary to generate an audio
+		file (.aiff) using the following command:
+	</p>
+
+	<input
+		#sayRef
+		[value]="sayCommand"
+		(click)="sayRef.select()"
+		(focus)="sayRef.select()"
+		class="say__code"
+	/>
+
 </div>
