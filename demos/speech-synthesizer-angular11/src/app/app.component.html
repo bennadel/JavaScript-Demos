@@ -1,0 +1,88 @@
+
+<div class="form-field">
+	<label for="voice-control" class="form-field__label">
+		Voice:
+	</label>
+	<div class="form-field__content">
+		<select
+			id="voice-control"
+			name="voice"
+			[(ngModel)]="selectedVoice"
+			(change)="demoSelectedVoice()"
+			class="form-field__control">
+			<option value="">- Select a voice -</option>
+			<option
+				*ngFor="let voice of voices"
+				[ngValue]="voice">
+				{{ voice.name }}
+
+				<ng-template [ngIf]="recommendedVoices[ voice.name ]">
+					&larr; Recommended
+				</ng-template>
+			</option>
+		</select>
+
+		<div class="form-field__subnote">
+			( &larr; ) indicates a voice that Ben could understand clearly.
+		</div>
+	</div>
+</div>
+
+<div class="form-field">
+	<label for="rate-control" class="form-field__label">
+		Speed:
+	</label>
+	<div class="form-field__content">
+		<select
+			id="rate-control"
+			name="rate"
+			[(ngModel)]="selectedRate"
+			(change)="demoSelectedVoice()"
+			class="form-field__control">
+			<option
+				*ngFor="let rate of rates"
+				[ngValue]="rate">
+				{{ rate }}
+
+				<ng-template [ngIf]="( rate === 1 )">
+					( Normal )
+				</ng-template>
+			</option>
+		</select>
+	</div>
+</div>
+
+<div class="form-field">
+	<label for="text-control" class="form-field__label">
+		Text:
+	</label>
+	<div class="form-field__content">
+		<textarea
+			id="text-control"
+			name="text"
+			[(ngModel)]="text"
+			(keydown.Meta.Enter)="speak()"
+			class="form-field__control"
+		></textarea>
+
+		<div class="form-field__subnote">
+			You can hit <code>CMD+Enter</code> to speak text.
+		</div>
+	</div>
+</div>
+
+<div class="form-actions">
+	<button
+		type="button"
+		(click)="speak()"
+		class="form-actions__button">
+		Speak text
+	</button>
+
+	<button
+		type="button"
+		(click)="stop()"
+		class="form-actions__button form-actions__button--secondary">
+		Stop speaking
+	</button>
+</div>

@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Having Fun With The SpeechSynthesis API In Angular 11.0.5](https://bennadel.github.io/JavaScript-Demos/demos/speech-synthesizer-angular11/dist/)
 * [IntersectionObserver API Performance: Many vs. Shared In Angular 11.0.5](https://bennadel.github.io/JavaScript-Demos/demos/intersection-observer-performance-angular11/dist/)
 * [Using IntersectionObserver And NgSwitch To Defer Template Bindings In Angular 11.0.5](https://bennadel.github.io/JavaScript-Demos/demos/ng-switch-intersection-angular11/dist/)
 * [Styling console.log() Output With A Chalk-Inspired Formatter Using JavaScript Proxies](https://bennadel.github.io/JavaScript-Demos/demos/console-log-css2/)
