@@ -1,0 +1,19 @@
+
+<h1>
+	Making Snow Animations In Angular 11.0.5
+</h1>
+
+<ng-template ngFor let-config [ngForOf]="snowFlakes">
+
+	<snow-flake
+		[depth]="config.depth"
+		[speed]="config.speed"
+		[style.left.vw]="config.left"
+	></snow-flake>
+
+</ng-template>
+
+<div class="note">
+	Photo from
+	<a href="https://wallpaperaccess.com/winter-mountain" target="_blank">wallpaperaccess.com</a>
+</div>

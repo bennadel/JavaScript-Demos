@@ -1,0 +1,61 @@
+
+:host {
+	display: block ;
+	height: 101vh ;
+	pointer-events: none ;
+	position: fixed ;
+	top: -1vh ;
+}
+
+.vertical-track {
+	animation-delay: 0s ;
+	animation-duration: 5s ;
+	animation-iteration-count: infinite ;
+	animation-name: snow-flake-vertical-animation ;
+	animation-timing-function: linear ;
+	left: 0px ;
+	position: absolute ;
+	top: 0px ;
+}
+
+.horizontal-track {
+	animation-duration: 3s ;
+	animation-iteration-count: infinite ;
+	animation-name: snow-flake-horizontal-animation ;
+	animation-timing-function: ease-in-out ;
+	left: 0px ;
+	position: absolute ;
+	top: 0px ;
+}
+
+.flake {
+	background-color: #ffffff ;
+	border-radius: 20px 20px 20px 20px ;
+	display: block ;
+	height: 5px ;
+	left: 0px ;
+	position: absolute ;
+	top: 0px ;
+	width: 5px ;
+}
+
+@keyframes snow-flake-vertical-animation {
+	from {
+		top: 0% ;
+	}
+	to {
+		top: 100% ;
+	}
+}
+
+@keyframes snow-flake-horizontal-animation {
+	from {
+		left: -20px ;
+	}
+	50% {
+		left: 20px ;
+	}
+	to {
+		left: -20px ;
+	}
+}
