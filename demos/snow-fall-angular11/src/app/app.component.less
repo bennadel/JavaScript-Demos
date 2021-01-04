@@ -1,6 +1,8 @@
 
 :host {
-	background-image: url( "/assets/mountain-scene.jpg" ) ;
+	// NOTE: The URL has to be relative from the LESS file otherwise it can't be
+	// resolved by the Angular compiler.
+	background-image: url( "../assets/mountain-scene.jpg" ) ;
 	background-repeat: no-repeat ;
 	background-size: cover ;
 	bottom: 0px ;
