@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Packaging A Password-Strength Module In Angular 11.0.5](https://bennadel.github.io/JavaScript-Demos/demos/password-strength-angular11/dist/)
 * [Making Snow Animations In Angular 11.0.5](https://bennadel.github.io/JavaScript-Demos/demos/snow-fall-angular11/dist/)
 * [Having Fun With The SpeechSynthesis API In Angular 11.0.5](https://bennadel.github.io/JavaScript-Demos/demos/speech-synthesizer-angular11/dist/)
 * [IntersectionObserver API Performance: Many vs. Shared In Angular 11.0.5](https://bennadel.github.io/JavaScript-Demos/demos/intersection-observer-performance-angular11/dist/)

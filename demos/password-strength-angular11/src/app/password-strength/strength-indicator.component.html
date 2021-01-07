@@ -1,0 +1,27 @@
+
+<dl class="header">
+	<dt class="header__title">
+		Password Strength
+	</dt>
+	<dd class="header__strength" [ngSwitch]="strength">
+		<span *ngSwitchCase="1">
+			Very Weak
+		</span>
+		<span *ngSwitchCase="2">
+			Weak
+		</span>
+		<span *ngSwitchCase="3">
+			Good
+		</span>
+		<span *ngSwitchCase="4">
+			Strong
+		</span>
+		<span *ngSwitchCase="5">
+			Excellent
+		</span>
+	</dd>
+</dl>
+
+<div class="meter meter--{{ strength }}">
+	<span class="meter__strength"></span>
+</div>

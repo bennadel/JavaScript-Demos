@@ -1,0 +1,31 @@
+
+<p>
+	<!-- Allow the demo to switch between the default and override services. -->
+	<a href="?default">Use default calculator</a> ,
+	<a href="?silly">Use silly calculator</a>
+</p>
+
+<p>
+	Please enter a new password:
+</p>
+
+<p>
+	<!--
+		NOTE: The [passwordStrength] directive emits a (strength) event; however, in our
+		demo, the view-model doesn't need to know about the strength value directly. As
+		such, instead of binding to an event, we're just going to grab a template-local
+		reference to the Directive and use that to power the indicator input-binding.
+	-->
+	<input
+		type="password"
+		passwordStrength
+		#passwordRef
+		#password="passwordStrength"
+	/>
+</p>
+
+<password-strength-indicator
+	*ngIf="passwordRef.value"
+	[strength]="password.strength"
+	class="indicator">
+</password-strength-indicator>
