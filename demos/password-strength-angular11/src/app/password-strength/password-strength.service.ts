@@ -1,5 +1,6 @@
 
 // Import the core angular services.
+import { forwardRef } from "@angular/core";
 import { Injectable } from "@angular/core";
 
 // ----------------------------------------------------------------------------------- //
@@ -21,10 +22,11 @@ export enum Strength {
 // We're going to use an Abstract Class as our "injectable" so that the parent
 // application can override the strength calculations provider.
 // --
-// NOTE: In the Password Strength MODULE, we're going to provide our default
-// implementation for this dependency-injection token.
+// NOTE: The Password Strength MODULE is going to provide a default implementation for
+// this dependency-injection token using the "useClass" semantics below.
 @Injectable({
-	providedIn: "root"
+	providedIn: "root",
+	useClass: forwardRef( () => DefaultPasswordStrengthServiceImplementation )
 })
 export abstract class PasswordStrengthService {
 

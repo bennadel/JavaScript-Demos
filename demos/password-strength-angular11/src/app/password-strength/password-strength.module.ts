@@ -31,14 +31,8 @@ export { StrengthIndicatorComponent };
 		StrengthIndicatorComponent
 	],
 	providers: [
-		// Out-of-the-box, the PasswordStrengthModule is going to provide a simple,
-		// length-based strength calculator. But, this provider can be overridden by the
-		// parent application using the "PasswordStrengthService" dependency-injection
-		// token.
-		{
-			provide: PasswordStrengthService,
-			useClass: DefaultPasswordStrengthServiceImplementation
-		}
+		// NOTE: We're providing the default implementation of the PasswordStrengthService
+		// via the "useClass" semantics of the @Injectable() decorator.
 	],
 	declarations: [
 		StrengthEventDirective,
