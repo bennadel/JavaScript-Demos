@@ -1,0 +1,15 @@
+
+<div class="timeline">
+
+	<div *ngFor="let track of timeline.tracks" class="track">
+		<div
+			*ngFor="let segment of track.segments"
+			class="segment"
+			[style.left.%]="segment.offsetInPercent"
+			[style.width.%]="segment.durationInPercent">
+		</div>
+	</div>
+
+	<div class="position"></div>
+
+</div>

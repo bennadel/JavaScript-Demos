@@ -1,0 +1,109 @@
+
+:host {
+	display: block ;
+}
+
+.timeline {
+	transition: width 300ms ease-in-out ;
+}
+
+.track {
+	height: 48px ;
+	margin: 10px 0px 10px 0px ;
+	position: relative ;
+}
+
+.segment {
+	background-color: #f0f0f0 ;
+	border-radius: 46px 46px 46px 46px ;
+	border: 1px solid #dadada ;
+	height: 48px ;
+	position: absolute ;
+}
+
+.user {
+	align-items: center ;
+	border-radius: 46px 46px 46px 46px ;
+	display: inline-flex ;
+	height: 46px ;
+	left: 0px ;
+	overflow: hidden ;
+	padding: 4px 6px 4px 6px ;
+	position: sticky ;
+
+	&--active &__initials {
+		background-color: #e0005a ;
+	}
+
+	&__initials {
+		align-items: center ;
+		background-color: #121212 ;
+		border-radius: 38px 38px 38px 38px ;
+		color: #ffffff ;
+		display: flex ;
+		height: 38px ;
+		flex: 0 0 auto ;
+		font-size: 13px ;
+		font-weight: bold ;
+		justify-content: center ;
+		letter-spacing: 1.0px ;
+		line-height: 13px ;
+		margin-right: 10px ;
+		width: 38px ;
+	}
+
+	&__info {
+		overflow: hidden ;
+	}
+
+	&__name {
+		display: block ;
+		font-size: 15px ;
+		font-weight: bold ;
+		line-height: 15px ;
+		margin-bottom: 5px ;
+		overflow: hidden ;
+		text-overflow: ellipsis ;
+		white-space: nowrap ;
+	}
+
+	&__dates {
+		display: block ;
+		font-size: 12px ;
+		font-weight: lighter ;
+		line-height: 12px ;
+		overflow: hidden ;
+		text-overflow: ellipsis ;
+		white-space: nowrap ;
+	}
+}
+
+.zoom {
+	align-items: center ;
+	background-color: #ffffff ;
+	border-radius: 5px 5px 5px 5px ;
+	display: flex ;
+	padding: 10px 10px 10px 10px ;
+	position: fixed ;
+	right: 10px ;
+	top: 10px ;
+	z-index: 2 ;
+
+	&__action {
+		font-size: 14px ;
+	}
+
+	&__level {
+		font-weight: bold ;
+		text-align: center ;
+		width: 40px ;
+	}
+}
+
+.map {
+	min-height: 100px ;
+	position: fixed ;
+	right: 10px ;
+	top: 60px ;
+	width: 190px ;
+}

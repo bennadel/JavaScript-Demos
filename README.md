@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Having Fun With The Horizontal Usage Of Position: Sticky In Angular 11.0.5](https://bennadel.github.io/JavaScript-Demos/demos/horizontal-position-sticky-angular11/dist/)
 * [Packaging A Password-Strength Module In Angular 11.0.5](https://bennadel.github.io/JavaScript-Demos/demos/password-strength-angular11/dist/)
 * [Making Snow Animations In Angular 11.0.5](https://bennadel.github.io/JavaScript-Demos/demos/snow-fall-angular11/dist/)
 * [Having Fun With The SpeechSynthesis API In Angular 11.0.5](https://bennadel.github.io/JavaScript-Demos/demos/speech-synthesizer-angular11/dist/)

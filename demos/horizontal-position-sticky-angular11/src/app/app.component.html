@@ -1,0 +1,63 @@
+
+<bn-draggable-block
+	class="timeline"
+	[style.width.px]="timeline.durationInPixels">
+
+	<!-- BEGIN: Track. -->
+	<div *ngFor="let track of timeline.tracks" class="track">
+
+		<!-- BEGIN: Segment. -->
+		<div
+			*ngFor="let segment of track.segments"
+			class="segment"
+			[style.left.%]="segment.offsetInPercent"
+			[style.width.%]="segment.durationInPercent">
+
+			<!-- BEGIN: User Chip. -->
+			<div
+				class="user"
+				[class.user--active]="( ! segment.membership.endedAt )"
+				[style.max-width.px]="segment.durationInPixels">
+
+				<span class="user__initials">
+					{{ track.user.initials }}
+				</span>
+				<span class="user__info">
+					<span class="user__name">
+						{{ track.user.name }}
+					</span>
+					<span class="user__dates">
+						{{ dateLabels[ segment.membership.startedAt ] }}
+						&rarr;
+						{{ dateLabels[ segment.membership.endedAt ] }}
+					</span>
+				</span>
+
+			</div>
+			<!-- END: User Chip. -->
+
+		</div>
+		<!-- END: Segment. -->
+
+	</div>
+	<!-- END: Track. -->
+
+</bn-draggable-block>
+
+<div class="zoom">
+	<button (click)="zoomOut()" class="zoom__action">
+		Zoom out
+	</button>
+	<span class="zoom__level">
+		<!-- Adding "1" to make it more human-friendly. -->
+		{{ ( zoomLevel + 1 ) }}
+	</span>
+	<button (click)="zoomIn()" class="zoom__action">
+		Zoom in
+	</button>
+</div>
+
+<bn-timeline-map
+	[timeline]="timeline"
+	class="map">
+</bn-timeline-map>
