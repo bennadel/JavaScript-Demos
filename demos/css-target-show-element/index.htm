@@ -1,0 +1,3483 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>
+		Using CSS :target Pseudo-Class To Toggle Element Display
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./styles.css" />
+	<style type="text/css">
+		/*
+			We're going to be using the :target CSS pseudo-class to hide and show the
+			user details within our timeline. By default, all the user details will
+			be HIDDEN and the call-to-action will be SHOWN.
+
+			Then, when we change the URL fragment to :target a user detail, we'll
+			show the user detail and HIDE the call-to-action (using a general sibling
+			selector "~").
+		*/
+		.user {
+			display: none ;
+		}
+
+		.call-to-action {
+			display: block ;
+		}
+
+		.user:target {
+			display: block ;
+		}	
+
+		/* If the call-to-action follows a targeted user, hide it. */
+		.user:target ~ .call-to-action {
+			display: none ;
+		}
+	</style>
+</head>
+<body>
+
+	<div class="columns">
+		<div class="columns__left">
+
+			<!-- BEGIN: Tracks. -->
+			<a href="#1-elena-rodriguez" class="track">
+				<span
+					style="left: 0% ; width: 68.771858931082% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#3-antonio-cummings" class="track">
+				<span
+					style="left: 0% ; width: 100% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#4-merle-love" class="track">
+				<span
+					style="left: 0% ; width: 52.223519321217% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#6-benjamin-goodwin" class="track">
+				<span
+					style="left: 0% ; width: 100% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#7-roger-floyd" class="track">
+				<span
+					style="left: 0% ; width: 17.776420450106% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#9-vernon-barnes" class="track">
+				<span
+					style="left: 0% ; width: 14.553600500326% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#10-amelia-wagner" class="track">
+				<span
+					style="left: 0% ; width: 100% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#11-louise-flores" class="track">
+				<span
+					style="left: 88.304477971719% ; width: 11.695522028281% ;"
+					class="track__segment">
+				</span>
+				<span
+					style="left: 0% ; width: 40.782365649281% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#12-edna-young" class="track">
+				<span
+					style="left: 65.486630300495% ; width: 16.484499946844% ;"
+					class="track__segment">
+				</span>
+				<span
+					style="left: 0% ; width: 55.715357975136% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#13-margaret-webster" class="track">
+				<span
+					style="left: 0% ; width: 100% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#14-gerardo-palmer" class="track">
+				<span
+					style="left: 0% ; width: 40.782349777035% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#15-ken-munoz" class="track">
+				<span
+					style="left: 0% ; width: 100% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#16-nicolas-reese" class="track">
+				<span
+					style="left: 0% ; width: 100% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#5-ernesto-alexander" class="track">
+				<span
+					style="left: 0.0000128962% ; width: 99.9999871038% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#19-max-nash" class="track">
+				<span
+					style="left: 0.759508814314% ; width: 99.240491185686% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#2-frederick-bishop" class="track">
+				<span
+					style="left: 1.573501098407% ; width: 98.426498901593% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#18-guadalupe-west" class="track">
+				<span
+					style="left: 1.575360631274% ; width: 98.424639368726% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#20-thelma-stokes" class="track">
+				<span
+					style="left: 79.757521788159% ; width: 20.242478211841% ;"
+					class="track__segment">
+				</span>
+				<span
+					style="left: 1.880070065463% ; width: 53.835292373743% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#22-betty-bennett" class="track">
+				<span
+					style="left: 4.353959061135% ; width: 95.646040938865% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#25-mildred-carter" class="track">
+				<span
+					style="left: 8.131699033273% ; width: 69.072702481258% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#26-hubert-jackson" class="track">
+				<span
+					style="left: 8.134178575764% ; width: 91.865821424236% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#29-roland-ramirez" class="track">
+				<span
+					style="left: 10.274952272287% ; width: 89.725047727713% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#30-sandra-jennings" class="track">
+				<span
+					style="left: 11.72569741708% ; width: 88.27430258292% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#31-adrienne-summers" class="track">
+				<span
+					style="left: 11.726811450373% ; width: 44.820536944252% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#17-terry-wilkerson" class="track">
+				<span
+					style="left: 14.553738390467% ; width: 57.168480980842% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#27-julie-graves" class="track">
+				<span
+					style="left: 14.862142586011% ; width: 62.565069059336% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#32-jane-ford" class="track">
+				<span
+					style="left: 15.633765396378% ; width: 74.088035233296% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#21-vera-gomez" class="track">
+				<span
+					style="left: 83.700985868932% ; width: 16.299014131068% ;"
+					class="track__segment">
+				</span>
+				<span
+					style="left: 15.707630863036% ; width: 40.007717191946% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#33-joel-smith" class="track">
+				<span
+					style="left: 63.623511794182% ; width: 36.376488205818% ;"
+					class="track__segment">
+				</span>
+				<span
+					style="left: 15.707673023691% ; width: 40.942838028391% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#34-karla-gross" class="track">
+				<span
+					style="left: 15.707740976746% ; width: 24.300685010203% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#35-kristin-watkins" class="track">
+				<span
+					style="left: 72.587037068396% ; width: 16.896872812357% ;"
+					class="track__segment">
+				</span>
+				<span
+					style="left: 15.70937879417% ; width: 40.941132257911% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#36-melinda-williamson" class="track">
+				<span
+					style="left: 15.710603437181% ; width: 25.071820245001% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#37-bernadette-curtis" class="track">
+				<span
+					style="left: 15.716833293891% ; width: 40.933677758191% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#38-elsie-sims" class="track">
+				<span
+					style="left: 15.718677450519% ; width: 25.063724407324% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#39-kate-tran" class="track">
+				<span
+					style="left: 93.412854328129% ; width: 6.587145671871% ;"
+					class="track__segment">
+				</span>
+				<span
+					style="left: 75.968488712711% ; width: 13.515467792766% ;"
+					class="track__segment">
+				</span>
+				<span
+					style="left: 15.964707685795% ; width: 39.750630449033% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#40-cedric-lee" class="track">
+				<span
+					style="left: 16.571418352131% ; width: 24.210953745251% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#8-leonard-fletcher" class="track">
+				<span
+					style="left: 67.233639852379% ; width: 32.766360147621% ;"
+					class="track__segment">
+				</span>
+				<span
+					style="left: 16.79199595229% ; width: 39.858515099792% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#41-jody-holt" class="track">
+				<span
+					style="left: 78.627137104515% ; width: 11.094598052143% ;"
+					class="track__segment">
+				</span>
+				<span
+					style="left: 16.961346373219% ; width: 39.689164678863% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#42-misty-pope" class="track">
+				<span
+					style="left: 17.254107477926% ; width: 23.52824626717% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#23-ann-hunter" class="track">
+				<span
+					style="left: 17.262324837489% ; width: 72.221640596126% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#43-mamie-porter" class="track">
+				<span
+					style="left: 17.37778451784% ; width: 64.593326881207% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#44-daryl-owens" class="track">
+				<span
+					style="left: 17.379398030887% ; width: 23.402961666302% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#45-deanna-stone" class="track">
+				<span
+					style="left: 17.379457055804% ; width: 22.628958514984% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#46-johanna-russell" class="track">
+				<span
+					style="left: 17.380126170191% ; width: 39.270384881891% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#47-hector-meyer" class="track">
+				<span
+					style="left: 17.688472828842% ; width: 23.093945893263% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#48-mercedes-austin" class="track">
+				<span
+					style="left: 18.884357313279% ; width: 81.115642686721% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#49-madeline-franklin" class="track">
+				<span
+					style="left: 18.901383273583% ; width: 70.582338124244% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#50-kirk-wilkins" class="track">
+				<span
+					style="left: 19.49104516326% ; width: 34.924583163388% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#52-justin-hampton" class="track">
+				<span
+					style="left: 92.378749203091% ; width: 7.621250796909% ;"
+					class="track__segment">
+				</span>
+				<span
+					style="left: 19.527499745167% ; width: 37.123011802923% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#53-manuel-malone" class="track">
+				<span
+					style="left: 20.681235479303% ; width: 19.206684444957% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#28-ron-watson" class="track">
+				<span
+					style="left: 57.750843125201% ; width: 24.220231073268% ;"
+					class="track__segment">
+				</span>
+				<span
+					style="left: 21.022635099056% ; width: 35.627875953026% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#54-maxine-aguilar" class="track">
+				<span
+					style="left: 21.973131678188% ; width: 59.997994105082% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#55-gayle-perez" class="track">
+				<span
+					style="left: 23.213815578073% ; width: 76.786184421927% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#56-allan-collier" class="track">
+				<span
+					style="left: 24.580707645164% ; width: 15.307011395978% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#57-nicole-willis" class="track">
+				<span
+					style="left: 27.892253948296% ; width: 54.078831162342% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#58-francis-vega" class="track">
+				<span
+					style="left: 27.922046154778% ; width: 72.077953845222% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#60-cora-casey" class="track">
+				<span
+					style="left: 31.533414232225% ; width: 68.466585767775% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#62-israel-abbott" class="track">
+				<span
+					style="left: 35.401389413139% ; width: 21.249122134951% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#63-deborah-sandoval" class="track">
+				<span
+					style="left: 38.778556046935% ; width: 13.573444148768% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#64-enrique-payne" class="track">
+				<span
+					style="left: 39.407826631483% ; width: 6.945597804708% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#65-ruben-mckinney" class="track">
+				<span
+					style="left: 40.008413090749% ; width: 16.669757334706% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#66-archie-taylor" class="track">
+				<span
+					style="left: 40.781412322482% ; width: 15.869099225607% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#67-jonathon-bryan" class="track">
+				<span
+					style="left: 40.913003165247% ; width: 15.737508382843% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#68-bethany-rios" class="track">
+				<span
+					style="left: 41.509448952235% ; width: 58.490551047765% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#69-doris-adkins" class="track">
+				<span
+					style="left: 41.687000364472% ; width: 14.963511183617% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#71-courtney-huff" class="track">
+				<span
+					style="left: 42.92170836359% ; width: 57.07829163641% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#72-viola-tucker" class="track">
+				<span
+					style="left: 45.707370935112% ; width: 54.292629064888% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#59-lucia-ballard" class="track">
+				<span
+					style="left: 46.915343623201% ; width: 53.084656376799% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#73-jennifer-gonzales" class="track">
+				<span
+					style="left: 48.200229745264% ; width: 51.799770254736% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#74-alvin-hines" class="track">
+				<span
+					style="left: 48.288283512176% ; width: 51.711716487824% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#70-jon-harrington" class="track">
+				<span
+					style="left: 48.97571695162% ; width: 51.02428304838% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#75-della-mcbride" class="track">
+				<span
+					style="left: 49.351499825124% ; width: 40.132348550674% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#76-elbert-hamilton" class="track">
+				<span
+					style="left: 52.149193559413% ; width: 47.850806440587% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#77-krystal-may" class="track">
+				<span
+					style="left: 52.225774668228% ; width: 47.774225331772% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#78-charlotte-matthews" class="track">
+				<span
+					style="left: 52.272065082822% ; width: 4.378446465268% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#61-courtney-beck" class="track">
+				<span
+					style="left: 52.824106276491% ; width: 21.901392596539% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#79-aubrey-bass" class="track">
+				<span
+					style="left: 97.829815295281% ; width: 2.170184704719% ;"
+					class="track__segment">
+				</span>
+				<span
+					style="left: 80.423327803867% ; width: 9.060595469093% ;"
+					class="track__segment">
+				</span>
+				<span
+					style="left: 52.974293935944% ; width: 3.676217612145% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#80-willis-little" class="track">
+				<span
+					style="left: 53.361920977313% ; width: 46.638079022687% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#81-luz-moran" class="track">
+				<span
+					style="left: 53.443479027388% ; width: 46.556520972612% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#82-claude-berry" class="track">
+				<span
+					style="left: 54.375482951447% ; width: 27.595613567368% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#84-larry-barton" class="track">
+				<span
+					style="left: 56.124462645915% ; width: 0.553715715663% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#85-jerald-banks" class="track">
+				<span
+					style="left: 56.174549999451% ; width: 18.550953833655% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#86-jeffery-kim" class="track">
+				<span
+					style="left: 56.214709262868% ; width: 25.756406600248% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#87-angelina-cummings" class="track">
+				<span
+					style="left: 56.218679308497% ; width: 43.781320691503% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#88-bonnie-berry" class="track">
+				<span
+					style="left: 56.381042964966% ; width: 43.618957035034% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#89-traci-wallace" class="track">
+				<span
+					style="left: 56.466275936089% ; width: 0.184235612001% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#83-rickey-ferguson" class="track">
+				<span
+					style="left: 56.727616937043% ; width: 17.997870031801% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#90-nora-rios" class="track">
+				<span
+					style="left: 57.320883314675% ; width: 32.162874787721% ;"
+					class="track__segment">
+				</span>
+				<span
+					style="left: 57.289883329444% ; width: 0.030888383499% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#91-derrick-perry" class="track">
+				<span
+					style="left: 57.330438407005% ; width: 42.669561592995% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#92-harvey-vargas" class="track">
+				<span
+					style="left: 57.888435165125% ; width: 42.111564834875% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#93-frances-hudson" class="track">
+				<span
+					style="left: 58.263710126745% ; width: 41.736289873255% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#94-erik-cox" class="track">
+				<span
+					style="left: 59.082091086967% ; width: 40.917908913033% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#95-dwayne-gray" class="track">
+				<span
+					style="left: 59.720045774322% ; width: 40.279954225678% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#96-tyrone-long" class="track">
+				<span
+					style="left: 60.332551298615% ; width: 39.667448701385% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#97-omar-soto" class="track">
+				<span
+					style="left: 60.972993464586% ; width: 39.027006535414% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#98-gregg-horton" class="track">
+				<span
+					style="left: 61.349952868354% ; width: 38.650047131646% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#99-marlene-lowe" class="track">
+				<span
+					style="left: 61.835560774739% ; width: 38.164439225261% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#100-rick-brewer" class="track">
+				<span
+					style="left: 63.375260436426% ; width: 21.37891544581% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#101-clinton-fields" class="track">
+				<span
+					style="left: 63.673562939156% ; width: 36.326437060844% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#102-kurt-chapman" class="track">
+				<span
+					style="left: 63.715933900906% ; width: 8.006275550249% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#103-theodore-nguyen" class="track">
+				<span
+					style="left: 64.227825751312% ; width: 35.772174248688% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#104-jack-wood" class="track">
+				<span
+					style="left: 65.562613224024% ; width: 34.437386775976% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#105-shelley-barton" class="track">
+				<span
+					style="left: 66.341800151813% ; width: 15.629290910918% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#106-paul-beck" class="track">
+				<span
+					style="left: 66.365243459738% ; width: 23.11866096493% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#107-joann-lindsey" class="track">
+				<span
+					style="left: 67.909298069029% ; width: 32.090701930971% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#108-richard-osborne" class="track">
+				<span
+					style="left: 68.804366283714% ; width: 31.195633716286% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#109-arnold-simmons" class="track">
+				<span
+					style="left: 68.809803024111% ; width: 31.190196975889% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#110-gene-weber" class="track">
+				<span
+					style="left: 68.80981195225% ; width: 31.19018804775% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#111-colin-benson" class="track">
+				<span
+					style="left: 90.619991708837% ; width: 9.380008291163% ;"
+					class="track__segment">
+				</span>
+				<span
+					style="left: 69.065002457726% ; width: 20.418942639573% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#112-stacy-burns" class="track">
+				<span
+					style="left: 69.67768902483% ; width: 19.806240696231% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#113-alyssa-dawson" class="track">
+				<span
+					style="left: 71.116795844954% ; width: 28.883204155046% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#115-john-dean" class="track">
+				<span
+					style="left: 71.210490707436% ; width: 28.789509292564% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#116-brandi-freeman" class="track">
+				<span
+					style="left: 71.723029351882% ; width: 28.276970648118% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#117-carole-robinson" class="track">
+				<span
+					style="left: 71.760383691756% ; width: 28.239616308244% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#118-brendan-moran" class="track">
+				<span
+					style="left: 72.016203631004% ; width: 27.983796368996% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#120-frankie-bowen" class="track">
+				<span
+					style="left: 72.767170200711% ; width: 27.232829799289% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#121-diana-hall" class="track">
+				<span
+					style="left: 72.96694523794% ; width: 27.03305476206% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#122-jean-terry" class="track">
+				<span
+					style="left: 73.231479536465% ; width: 26.768520463535% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#123-vickie-bryant" class="track">
+				<span
+					style="left: 73.560644630294% ; width: 26.439355369706% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#124-sheri-duncan" class="track">
+				<span
+					style="left: 73.777673295361% ; width: 15.706187976637% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#125-denise-cook" class="track">
+				<span
+					style="left: 74.798251794417% ; width: 14.923556275373% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#126-randolph-watkins" class="track">
+				<span
+					style="left: 75.250827076016% ; width: 24.749172923984% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#127-mabel-welch" class="track">
+				<span
+					style="left: 76.009055694457% ; width: 23.990944305543% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#128-theresa-griffin" class="track">
+				<span
+					style="left: 76.948425828866% ; width: 23.051574171134% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#129-terri-henderson" class="track">
+				<span
+					style="left: 77.080683305979% ; width: 22.919316694021% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#130-gina-moody" class="track">
+				<span
+					style="left: 77.21007534661% ; width: 22.78992465339% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#131-robert-stone" class="track">
+				<span
+					style="left: 77.37126991293% ; width: 22.62873008707% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#132-verna-maxwell" class="track">
+				<span
+					style="left: 77.725062285063% ; width: 22.274937714937% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#133-brooke-jordan" class="track">
+				<span
+					style="left: 97.216559311338% ; width: 2.783440688662% ;"
+					class="track__segment">
+				</span>
+				<span
+					style="left: 77.728338911928% ; width: 11.755532776232% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#134-matthew-steele" class="track">
+				<span
+					style="left: 78.109893331028% ; width: 11.373852867184% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#135-lydia-howard" class="track">
+				<span
+					style="left: 78.887008930662% ; width: 21.112991069338% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#136-julius-conner" class="track">
+				<span
+					style="left: 79.058063634048% ; width: 20.941936365952% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#137-geraldine-wong" class="track">
+				<span
+					style="left: 79.261438695161% ; width: 10.22246076943% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#138-francis-farmer" class="track">
+				<span
+					style="left: 79.821345082926% ; width: 20.178654917074% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#139-anne-sullivan" class="track">
+				<span
+					style="left: 81.062125704313% ; width: 18.937874295687% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#140-dave-chambers" class="track">
+				<span
+					style="left: 81.242657130811% ; width: 18.757342869189% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#141-yvonne-keller" class="track">
+				<span
+					style="left: 81.282957260414% ; width: 8.43881757686% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#142-kelly-manning" class="track">
+				<span
+					style="left: 81.798008183861% ; width: 18.201991816139% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#144-luz-lynch" class="track">
+				<span
+					style="left: 82.192907194117% ; width: 17.807092805883% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#24-sherry-hopkins" class="track">
+				<span
+					style="left: 82.274954307783% ; width: 17.725045692217% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#145-saul-schmidt" class="track">
+				<span
+					style="left: 82.488384436988% ; width: 17.511615563012% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#119-chad-myers" class="track">
+				<span
+					style="left: 82.646720014927% ; width: 17.353279985073% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#146-marta-alvarez" class="track">
+				<span
+					style="left: 82.777994900786% ; width: 17.222005099214% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#143-sidney-hill" class="track">
+				<span
+					style="left: 82.915616701173% ; width: 17.084383298827% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#147-wesley-ingram" class="track">
+				<span
+					style="left: 93.667520057459% ; width: 6.332479942541% ;"
+					class="track__segment">
+				</span>
+				<span
+					style="left: 83.985043526531% ; width: 5.736708990397% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#148-elsie-bryan" class="track">
+				<span
+					style="left: 84.281190875805% ; width: 15.718809124195% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#149-estelle-collins" class="track">
+				<span
+					style="left: 84.664422296938% ; width: 15.335577703062% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#150-byron-ferguson" class="track">
+				<span
+					style="left: 84.890207977945% ; width: 15.109792022055% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#51-blanca-manning" class="track">
+				<span
+					style="left: 84.89104573495% ; width: 15.10895426505% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#151-teresa-klein" class="track">
+				<span
+					style="left: 85.17772528925% ; width: 14.82227471075% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#152-lillian-palmer" class="track">
+				<span
+					style="left: 85.310358740199% ; width: 14.689641259801% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#154-dana-warner" class="track">
+				<span
+					style="left: 86.518610680623% ; width: 13.481389319377% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#153-ryan-brady" class="track">
+				<span
+					style="left: 90.065196184411% ; width: 9.934803815589% ;"
+					class="track__segment">
+				</span>
+				<span
+					style="left: 86.978162310521% ; width: 2.505574959553% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#155-sonia-potter" class="track">
+				<span
+					style="left: 87.033130875831% ; width: 12.966869124169% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#156-tami-franklin" class="track">
+				<span
+					style="left: 87.374551327907% ; width: 12.625448672093% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#157-patricia-drake" class="track">
+				<span
+					style="left: 87.628985917648% ; width: 12.371014082352% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#158-yolanda-underwood" class="track">
+				<span
+					style="left: 87.882601598678% ; width: 12.117398401322% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#159-martin-alexander" class="track">
+				<span
+					style="left: 87.922279734625% ; width: 12.077720265375% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#160-santos-carson" class="track">
+				<span
+					style="left: 87.937565203911% ; width: 12.062434796089% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#161-adrienne-ortiz" class="track">
+				<span
+					style="left: 87.96666597566% ; width: 12.03333402434% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#162-charlene-byrd" class="track">
+				<span
+					style="left: 88.485705793028% ; width: 11.514294206972% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#163-johnnie-mann" class="track">
+				<span
+					style="left: 89.078254447519% ; width: 10.921745552481% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#164-megan-paul" class="track">
+				<span
+					style="left: 90.287768231531% ; width: 9.712231768469% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#165-marc-meyer" class="track">
+				<span
+					style="left: 91.519260612731% ; width: 8.480739387269% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#166-jacqueline-robertson" class="track">
+				<span
+					style="left: 91.943157225134% ; width: 8.056842774866% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#167-kara-gill" class="track">
+				<span
+					style="left: 93.625053862231% ; width: 6.374946137769% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#168-andre-quinn" class="track">
+				<span
+					style="left: 93.625173896094% ; width: 6.374826103906% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#169-shane-newton" class="track">
+				<span
+					style="left: 94.8347258727% ; width: 5.1652741273% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#170-glen-joseph" class="track">
+				<span
+					style="left: 96.630984029099% ; width: 3.369015970901% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#114-rene-massey" class="track">
+				<span
+					style="left: 96.676165370477% ; width: 3.323834629523% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#171-debbie-norton" class="track">
+				<span
+					style="left: 98.470071954371% ; width: 1.529928045629% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#172-darnell-young" class="track">
+				<span
+					style="left: 98.511207360941% ; width: 1.488792639059% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#173-al-wilkerson" class="track">
+				<span
+					style="left: 98.511266881865% ; width: 1.488733118135% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#174-vera-stokes" class="track">
+				<span
+					style="left: 98.512144319486% ; width: 1.487855680514% ;"
+					class="track__segment">
+				</span>
+			</a>
+
+			<a href="#175-brandy-phillips" class="track">
+				<span
+					style="left: 98.735520891095% ; width: 1.264479108905% ;"
+					class="track__segment">
+				</span>
+			</a>
+			<!-- END: Tracks. -->
+
+		</div>
+		<div class="columns__right">
+
+			<!-- BEGIN: Details. -->
+			<div class="details">
+
+				<div id="1-elena-rodriguez" class="user">
+					<h3>
+						Elena Rodriguez
+					</h3>
+
+					<ul>
+						<li>Sep 2, 2014 to Jan 23, 2019</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="3-antonio-cummings" class="user">
+					<h3>
+						Antonio Cummings
+					</h3>
+
+					<ul>
+						<li>Sep 2, 2014 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="4-merle-love" class="user">
+					<h3>
+						Merle Love
+					</h3>
+
+					<ul>
+						<li>Sep 2, 2014 to Jan 2, 2018</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="6-benjamin-goodwin" class="user">
+					<h3>
+						Benjamin Goodwin
+					</h3>
+
+					<ul>
+						<li>Sep 2, 2014 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="7-roger-floyd" class="user">
+					<h3>
+						Roger Floyd
+					</h3>
+
+					<ul>
+						<li>Sep 2, 2014 to Oct 21, 2015</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="9-vernon-barnes" class="user">
+					<h3>
+						Vernon Barnes
+					</h3>
+
+					<ul>
+						<li>Sep 2, 2014 to Aug 7, 2015</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="10-amelia-wagner" class="user">
+					<h3>
+						Amelia Wagner
+					</h3>
+
+					<ul>
+						<li>Sep 2, 2014 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="11-louise-flores" class="user">
+					<h3>
+						Louise Flores
+					</h3>
+
+					<ul>
+						<li>Apr 23, 2020 to Today</li>
+						<li>Sep 2, 2014 to Apr 10, 2017</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="12-edna-young" class="user">
+					<h3>
+						Edna Young
+					</h3>
+
+					<ul>
+						<li>Nov 8, 2018 to Nov 27, 2019</li>
+						<li>Sep 2, 2014 to Mar 25, 2018</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="13-margaret-webster" class="user">
+					<h3>
+						Margaret Webster
+					</h3>
+
+					<ul>
+						<li>Sep 2, 2014 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="14-gerardo-palmer" class="user">
+					<h3>
+						Gerardo Palmer
+					</h3>
+
+					<ul>
+						<li>Sep 2, 2014 to Apr 10, 2017</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="15-ken-munoz" class="user">
+					<h3>
+						Ken Munoz
+					</h3>
+
+					<ul>
+						<li>Sep 2, 2014 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="16-nicolas-reese" class="user">
+					<h3>
+						Nicolas Reese
+					</h3>
+
+					<ul>
+						<li>Sep 2, 2014 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="5-ernesto-alexander" class="user">
+					<h3>
+						Ernesto Alexander
+					</h3>
+
+					<ul>
+						<li>Sep 2, 2014 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="19-max-nash" class="user">
+					<h3>
+						Max Nash
+					</h3>
+
+					<ul>
+						<li>Sep 19, 2014 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="2-frederick-bishop" class="user">
+					<h3>
+						Frederick Bishop
+					</h3>
+
+					<ul>
+						<li>Oct 8, 2014 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="18-guadalupe-west" class="user">
+					<h3>
+						Guadalupe West
+					</h3>
+
+					<ul>
+						<li>Oct 8, 2014 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="20-thelma-stokes" class="user">
+					<h3>
+						Thelma Stokes
+					</h3>
+
+					<ul>
+						<li>Oct 7, 2019 to Today</li>
+						<li>Oct 15, 2014 to Mar 25, 2018</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="22-betty-bennett" class="user">
+					<h3>
+						Betty Bennett
+					</h3>
+
+					<ul>
+						<li>Dec 12, 2014 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="25-mildred-carter" class="user">
+					<h3>
+						Mildred Carter
+					</h3>
+
+					<ul>
+						<li>Mar 10, 2015 to Aug 8, 2019</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="26-hubert-jackson" class="user">
+					<h3>
+						Hubert Jackson
+					</h3>
+
+					<ul>
+						<li>Mar 10, 2015 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="29-roland-ramirez" class="user">
+					<h3>
+						Roland Ramirez
+					</h3>
+
+					<ul>
+						<li>Apr 29, 2015 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="30-sandra-jennings" class="user">
+					<h3>
+						Sandra Jennings
+					</h3>
+
+					<ul>
+						<li>Jun 2, 2015 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="31-adrienne-summers" class="user">
+					<h3>
+						Adrienne Summers
+					</h3>
+
+					<ul>
+						<li>Jun 2, 2015 to Apr 13, 2018</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="17-terry-wilkerson" class="user">
+					<h3>
+						Terry Wilkerson
+					</h3>
+
+					<ul>
+						<li>Aug 7, 2015 to Apr 2, 2019</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="27-julie-graves" class="user">
+					<h3>
+						Julie Graves
+					</h3>
+
+					<ul>
+						<li>Aug 14, 2015 to Aug 13, 2019</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="32-jane-ford" class="user">
+					<h3>
+						Jane Ford
+					</h3>
+
+					<ul>
+						<li>Sep 1, 2015 to May 26, 2020</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="21-vera-gomez" class="user">
+					<h3>
+						Vera Gomez
+					</h3>
+
+					<ul>
+						<li>Jan 7, 2020 to Today</li>
+						<li>Sep 3, 2015 to Mar 25, 2018</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="33-joel-smith" class="user">
+					<h3>
+						Joel Smith
+					</h3>
+
+					<ul>
+						<li>Sep 25, 2018 to Today</li>
+						<li>Sep 3, 2015 to Apr 15, 2018</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="34-karla-gross" class="user">
+					<h3>
+						Karla Gross
+					</h3>
+
+					<ul>
+						<li>Sep 3, 2015 to Mar 23, 2017</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="35-kristin-watkins" class="user">
+					<h3>
+						Kristin Watkins
+					</h3>
+
+					<ul>
+						<li>Apr 22, 2019 to May 21, 2020</li>
+						<li>Sep 3, 2015 to Apr 15, 2018</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="36-melinda-williamson" class="user">
+					<h3>
+						Melinda Williamson
+					</h3>
+
+					<ul>
+						<li>Sep 3, 2015 to Apr 10, 2017</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="37-bernadette-curtis" class="user">
+					<h3>
+						Bernadette Curtis
+					</h3>
+
+					<ul>
+						<li>Sep 3, 2015 to Apr 15, 2018</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="38-elsie-sims" class="user">
+					<h3>
+						Elsie Sims
+					</h3>
+
+					<ul>
+						<li>Sep 3, 2015 to Apr 10, 2017</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="39-kate-tran" class="user">
+					<h3>
+						Kate Tran
+					</h3>
+
+					<ul>
+						<li>Aug 20, 2020 to Today</li>
+						<li>Jul 10, 2019 to May 21, 2020</li>
+						<li>Sep 9, 2015 to Mar 25, 2018</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="40-cedric-lee" class="user">
+					<h3>
+						Cedric Lee
+					</h3>
+
+					<ul>
+						<li>Sep 23, 2015 to Apr 10, 2017</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="8-leonard-fletcher" class="user">
+					<h3>
+						Leonard Fletcher
+					</h3>
+
+					<ul>
+						<li>Dec 18, 2018 to Today</li>
+						<li>Sep 28, 2015 to Apr 15, 2018</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="41-jody-holt" class="user">
+					<h3>
+						Jody Holt
+					</h3>
+
+					<ul>
+						<li>Sep 10, 2019 to May 26, 2020</li>
+						<li>Oct 2, 2015 to Apr 15, 2018</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="42-misty-pope" class="user">
+					<h3>
+						Misty Pope
+					</h3>
+
+					<ul>
+						<li>Oct 9, 2015 to Apr 10, 2017</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="23-ann-hunter" class="user">
+					<h3>
+						Ann Hunter
+					</h3>
+
+					<ul>
+						<li>Oct 9, 2015 to May 21, 2020</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="43-mamie-porter" class="user">
+					<h3>
+						Mamie Porter
+					</h3>
+
+					<ul>
+						<li>Oct 12, 2015 to Nov 27, 2019</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="44-daryl-owens" class="user">
+					<h3>
+						Daryl Owens
+					</h3>
+
+					<ul>
+						<li>Oct 12, 2015 to Apr 10, 2017</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="45-deanna-stone" class="user">
+					<h3>
+						Deanna Stone
+					</h3>
+
+					<ul>
+						<li>Oct 12, 2015 to Mar 23, 2017</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="46-johanna-russell" class="user">
+					<h3>
+						Johanna Russell
+					</h3>
+
+					<ul>
+						<li>Oct 12, 2015 to Apr 15, 2018</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="47-hector-meyer" class="user">
+					<h3>
+						Hector Meyer
+					</h3>
+
+					<ul>
+						<li>Oct 19, 2015 to Apr 10, 2017</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="48-mercedes-austin" class="user">
+					<h3>
+						Mercedes Austin
+					</h3>
+
+					<ul>
+						<li>Nov 16, 2015 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="49-madeline-franklin" class="user">
+					<h3>
+						Madeline Franklin
+					</h3>
+
+					<ul>
+						<li>Nov 17, 2015 to May 21, 2020</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="50-kirk-wilkins" class="user">
+					<h3>
+						Kirk Wilkins
+					</h3>
+
+					<ul>
+						<li>Nov 30, 2015 to Feb 22, 2018</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="52-justin-hampton" class="user">
+					<h3>
+						Justin Hampton
+					</h3>
+
+					<ul>
+						<li>Jul 27, 2020 to Today</li>
+						<li>Dec 1, 2015 to Apr 15, 2018</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="53-manuel-malone" class="user">
+					<h3>
+						Manuel Malone
+					</h3>
+
+					<ul>
+						<li>Dec 28, 2015 to Mar 20, 2017</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="28-ron-watson" class="user">
+					<h3>
+						Ron Watson
+					</h3>
+
+					<ul>
+						<li>May 11, 2018 to Nov 27, 2019</li>
+						<li>Jan 5, 2016 to Apr 15, 2018</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="54-maxine-aguilar" class="user">
+					<h3>
+						Maxine Aguilar
+					</h3>
+
+					<ul>
+						<li>Jan 27, 2016 to Nov 27, 2019</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="55-gayle-perez" class="user">
+					<h3>
+						Gayle Perez
+					</h3>
+
+					<ul>
+						<li>Feb 25, 2016 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="56-allan-collier" class="user">
+					<h3>
+						Allan Collier
+					</h3>
+
+					<ul>
+						<li>Mar 28, 2016 to Mar 20, 2017</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="57-nicole-willis" class="user">
+					<h3>
+						Nicole Willis
+					</h3>
+
+					<ul>
+						<li>Jun 13, 2016 to Nov 27, 2019</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="58-francis-vega" class="user">
+					<h3>
+						Francis Vega
+					</h3>
+
+					<ul>
+						<li>Jun 14, 2016 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="60-cora-casey" class="user">
+					<h3>
+						Cora Casey
+					</h3>
+
+					<ul>
+						<li>Sep 6, 2016 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="62-israel-abbott" class="user">
+					<h3>
+						Israel Abbott
+					</h3>
+
+					<ul>
+						<li>Dec 6, 2016 to Apr 15, 2018</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="63-deborah-sandoval" class="user">
+					<h3>
+						Deborah Sandoval
+					</h3>
+
+					<ul>
+						<li>Feb 22, 2017 to Jan 5, 2018</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="64-enrique-payne" class="user">
+					<h3>
+						Enrique Payne
+					</h3>
+
+					<ul>
+						<li>Mar 9, 2017 to Aug 18, 2017</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="65-ruben-mckinney" class="user">
+					<h3>
+						Ruben Mckinney
+					</h3>
+
+					<ul>
+						<li>Mar 23, 2017 to Apr 16, 2018</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="66-archie-taylor" class="user">
+					<h3>
+						Archie Taylor
+					</h3>
+
+					<ul>
+						<li>Apr 10, 2017 to Apr 15, 2018</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="67-jonathon-bryan" class="user">
+					<h3>
+						Jonathon Bryan
+					</h3>
+
+					<ul>
+						<li>Apr 13, 2017 to Apr 15, 2018</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="68-bethany-rios" class="user">
+					<h3>
+						Bethany Rios
+					</h3>
+
+					<ul>
+						<li>Apr 27, 2017 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="69-doris-adkins" class="user">
+					<h3>
+						Doris Adkins
+					</h3>
+
+					<ul>
+						<li>May 1, 2017 to Apr 15, 2018</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="71-courtney-huff" class="user">
+					<h3>
+						Courtney Huff
+					</h3>
+
+					<ul>
+						<li>May 30, 2017 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="72-viola-tucker" class="user">
+					<h3>
+						Viola Tucker
+					</h3>
+
+					<ul>
+						<li>Aug 3, 2017 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="59-lucia-ballard" class="user">
+					<h3>
+						Lucia Ballard
+					</h3>
+
+					<ul>
+						<li>Aug 31, 2017 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="73-jennifer-gonzales" class="user">
+					<h3>
+						Jennifer Gonzales
+					</h3>
+
+					<ul>
+						<li>Sep 30, 2017 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="74-alvin-hines" class="user">
+					<h3>
+						Alvin Hines
+					</h3>
+
+					<ul>
+						<li>Oct 2, 2017 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="70-jon-harrington" class="user">
+					<h3>
+						Jon Harrington
+					</h3>
+
+					<ul>
+						<li>Oct 18, 2017 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="75-della-mcbride" class="user">
+					<h3>
+						Della Mcbride
+					</h3>
+
+					<ul>
+						<li>Oct 27, 2017 to May 21, 2020</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="76-elbert-hamilton" class="user">
+					<h3>
+						Elbert Hamilton
+					</h3>
+
+					<ul>
+						<li>Dec 31, 2017 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="77-krystal-may" class="user">
+					<h3>
+						Krystal May
+					</h3>
+
+					<ul>
+						<li>Jan 2, 2018 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="78-charlotte-matthews" class="user">
+					<h3>
+						Charlotte Matthews
+					</h3>
+
+					<ul>
+						<li>Jan 3, 2018 to Apr 15, 2018</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="61-courtney-beck" class="user">
+					<h3>
+						Courtney Beck
+					</h3>
+
+					<ul>
+						<li>Jan 16, 2018 to Jun 11, 2019</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="79-aubrey-bass" class="user">
+					<h3>
+						Aubrey Bass
+					</h3>
+
+					<ul>
+						<li>Dec 1, 2020 to Today</li>
+						<li>Oct 22, 2019 to May 21, 2020</li>
+						<li>Jan 20, 2018 to Apr 15, 2018</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="80-willis-little" class="user">
+					<h3>
+						Willis Little
+					</h3>
+
+					<ul>
+						<li>Jan 29, 2018 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="81-luz-moran" class="user">
+					<h3>
+						Luz Moran
+					</h3>
+
+					<ul>
+						<li>Jan 31, 2018 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="82-claude-berry" class="user">
+					<h3>
+						Claude Berry
+					</h3>
+
+					<ul>
+						<li>Feb 21, 2018 to Nov 27, 2019</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="84-larry-barton" class="user">
+					<h3>
+						Larry Barton
+					</h3>
+
+					<ul>
+						<li>Apr 3, 2018 to Apr 16, 2018</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="85-jerald-banks" class="user">
+					<h3>
+						Jerald Banks
+					</h3>
+
+					<ul>
+						<li>Apr 4, 2018 to Jun 11, 2019</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="86-jeffery-kim" class="user">
+					<h3>
+						Jeffery Kim
+					</h3>
+
+					<ul>
+						<li>Apr 5, 2018 to Nov 27, 2019</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="87-angelina-cummings" class="user">
+					<h3>
+						Angelina Cummings
+					</h3>
+
+					<ul>
+						<li>Apr 5, 2018 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="88-bonnie-berry" class="user">
+					<h3>
+						Bonnie Berry
+					</h3>
+
+					<ul>
+						<li>Apr 9, 2018 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="89-traci-wallace" class="user">
+					<h3>
+						Traci Wallace
+					</h3>
+
+					<ul>
+						<li>Apr 11, 2018 to Apr 15, 2018</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="83-rickey-ferguson" class="user">
+					<h3>
+						Rickey Ferguson
+					</h3>
+
+					<ul>
+						<li>Apr 17, 2018 to Jun 11, 2019</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="90-nora-rios" class="user">
+					<h3>
+						Nora Rios
+					</h3>
+
+					<ul>
+						<li>May 1, 2018 to May 21, 2020</li>
+						<li>Apr 30, 2018 to May 1, 2018</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="91-derrick-perry" class="user">
+					<h3>
+						Derrick Perry
+					</h3>
+
+					<ul>
+						<li>May 1, 2018 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="92-harvey-vargas" class="user">
+					<h3>
+						Harvey Vargas
+					</h3>
+
+					<ul>
+						<li>May 14, 2018 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="93-frances-hudson" class="user">
+					<h3>
+						Frances Hudson
+					</h3>
+
+					<ul>
+						<li>May 23, 2018 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="94-erik-cox" class="user">
+					<h3>
+						Erik Cox
+					</h3>
+
+					<ul>
+						<li>Jun 11, 2018 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="95-dwayne-gray" class="user">
+					<h3>
+						Dwayne Gray
+					</h3>
+
+					<ul>
+						<li>Jun 26, 2018 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="96-tyrone-long" class="user">
+					<h3>
+						Tyrone Long
+					</h3>
+
+					<ul>
+						<li>Jul 10, 2018 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="97-omar-soto" class="user">
+					<h3>
+						Omar Soto
+					</h3>
+
+					<ul>
+						<li>Jul 25, 2018 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="98-gregg-horton" class="user">
+					<h3>
+						Gregg Horton
+					</h3>
+
+					<ul>
+						<li>Aug 3, 2018 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="99-marlene-lowe" class="user">
+					<h3>
+						Marlene Lowe
+					</h3>
+
+					<ul>
+						<li>Aug 14, 2018 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="100-rick-brewer" class="user">
+					<h3>
+						Rick Brewer
+					</h3>
+
+					<ul>
+						<li>Sep 19, 2018 to Jan 31, 2020</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="101-clinton-fields" class="user">
+					<h3>
+						Clinton Fields
+					</h3>
+
+					<ul>
+						<li>Sep 26, 2018 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="102-kurt-chapman" class="user">
+					<h3>
+						Kurt Chapman
+					</h3>
+
+					<ul>
+						<li>Sep 27, 2018 to Apr 2, 2019</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="103-theodore-nguyen" class="user">
+					<h3>
+						Theodore Nguyen
+					</h3>
+
+					<ul>
+						<li>Oct 9, 2018 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="104-jack-wood" class="user">
+					<h3>
+						Jack Wood
+					</h3>
+
+					<ul>
+						<li>Nov 9, 2018 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="105-shelley-barton" class="user">
+					<h3>
+						Shelley Barton
+					</h3>
+
+					<ul>
+						<li>Nov 28, 2018 to Nov 27, 2019</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="106-paul-beck" class="user">
+					<h3>
+						Paul Beck
+					</h3>
+
+					<ul>
+						<li>Nov 28, 2018 to May 21, 2020</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="107-joann-lindsey" class="user">
+					<h3>
+						Joann Lindsey
+					</h3>
+
+					<ul>
+						<li>Jan 3, 2019 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="108-richard-osborne" class="user">
+					<h3>
+						Richard Osborne
+					</h3>
+
+					<ul>
+						<li>Jan 24, 2019 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="109-arnold-simmons" class="user">
+					<h3>
+						Arnold Simmons
+					</h3>
+
+					<ul>
+						<li>Jan 24, 2019 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="110-gene-weber" class="user">
+					<h3>
+						Gene Weber
+					</h3>
+
+					<ul>
+						<li>Jan 24, 2019 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="111-colin-benson" class="user">
+					<h3>
+						Colin Benson
+					</h3>
+
+					<ul>
+						<li>Jun 16, 2020 to Today</li>
+						<li>Jan 30, 2019 to May 21, 2020</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="112-stacy-burns" class="user">
+					<h3>
+						Stacy Burns
+					</h3>
+
+					<ul>
+						<li>Feb 13, 2019 to May 21, 2020</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="113-alyssa-dawson" class="user">
+					<h3>
+						Alyssa Dawson
+					</h3>
+
+					<ul>
+						<li>Mar 19, 2019 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="115-john-dean" class="user">
+					<h3>
+						John Dean
+					</h3>
+
+					<ul>
+						<li>Mar 21, 2019 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="116-brandi-freeman" class="user">
+					<h3>
+						Brandi Freeman
+					</h3>
+
+					<ul>
+						<li>Apr 2, 2019 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="117-carole-robinson" class="user">
+					<h3>
+						Carole Robinson
+					</h3>
+
+					<ul>
+						<li>Apr 3, 2019 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="118-brendan-moran" class="user">
+					<h3>
+						Brendan Moran
+					</h3>
+
+					<ul>
+						<li>Apr 9, 2019 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="120-frankie-bowen" class="user">
+					<h3>
+						Frankie Bowen
+					</h3>
+
+					<ul>
+						<li>Apr 27, 2019 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="121-diana-hall" class="user">
+					<h3>
+						Diana Hall
+					</h3>
+
+					<ul>
+						<li>May 1, 2019 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="122-jean-terry" class="user">
+					<h3>
+						Jean Terry
+					</h3>
+
+					<ul>
+						<li>May 7, 2019 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="123-vickie-bryant" class="user">
+					<h3>
+						Vickie Bryant
+					</h3>
+
+					<ul>
+						<li>May 15, 2019 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="124-sheri-duncan" class="user">
+					<h3>
+						Sheri Duncan
+					</h3>
+
+					<ul>
+						<li>May 20, 2019 to May 21, 2020</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="125-denise-cook" class="user">
+					<h3>
+						Denise Cook
+					</h3>
+
+					<ul>
+						<li>Jun 13, 2019 to May 26, 2020</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="126-randolph-watkins" class="user">
+					<h3>
+						Randolph Watkins
+					</h3>
+
+					<ul>
+						<li>Jun 23, 2019 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="127-mabel-welch" class="user">
+					<h3>
+						Mabel Welch
+					</h3>
+
+					<ul>
+						<li>Jul 11, 2019 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="128-theresa-griffin" class="user">
+					<h3>
+						Theresa Griffin
+					</h3>
+
+					<ul>
+						<li>Aug 2, 2019 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="129-terri-henderson" class="user">
+					<h3>
+						Terri Henderson
+					</h3>
+
+					<ul>
+						<li>Aug 5, 2019 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="130-gina-moody" class="user">
+					<h3>
+						Gina Moody
+					</h3>
+
+					<ul>
+						<li>Aug 8, 2019 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="131-robert-stone" class="user">
+					<h3>
+						Robert Stone
+					</h3>
+
+					<ul>
+						<li>Aug 12, 2019 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="132-verna-maxwell" class="user">
+					<h3>
+						Verna Maxwell
+					</h3>
+
+					<ul>
+						<li>Aug 20, 2019 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="133-brooke-jordan" class="user">
+					<h3>
+						Brooke Jordan
+					</h3>
+
+					<ul>
+						<li>Nov 17, 2020 to Today</li>
+						<li>Aug 20, 2019 to May 21, 2020</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="134-matthew-steele" class="user">
+					<h3>
+						Matthew Steele
+					</h3>
+
+					<ul>
+						<li>Aug 29, 2019 to May 21, 2020</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="135-lydia-howard" class="user">
+					<h3>
+						Lydia Howard
+					</h3>
+
+					<ul>
+						<li>Sep 16, 2019 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="136-julius-conner" class="user">
+					<h3>
+						Julius Conner
+					</h3>
+
+					<ul>
+						<li>Sep 20, 2019 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="137-geraldine-wong" class="user">
+					<h3>
+						Geraldine Wong
+					</h3>
+
+					<ul>
+						<li>Sep 25, 2019 to May 21, 2020</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="138-francis-farmer" class="user">
+					<h3>
+						Francis Farmer
+					</h3>
+
+					<ul>
+						<li>Oct 8, 2019 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="139-anne-sullivan" class="user">
+					<h3>
+						Anne Sullivan
+					</h3>
+
+					<ul>
+						<li>Nov 6, 2019 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="140-dave-chambers" class="user">
+					<h3>
+						Dave Chambers
+					</h3>
+
+					<ul>
+						<li>Nov 10, 2019 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="141-yvonne-keller" class="user">
+					<h3>
+						Yvonne Keller
+					</h3>
+
+					<ul>
+						<li>Nov 11, 2019 to May 26, 2020</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="142-kelly-manning" class="user">
+					<h3>
+						Kelly Manning
+					</h3>
+
+					<ul>
+						<li>Nov 23, 2019 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="144-luz-lynch" class="user">
+					<h3>
+						Luz Lynch
+					</h3>
+
+					<ul>
+						<li>Dec 2, 2019 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="24-sherry-hopkins" class="user">
+					<h3>
+						Sherry Hopkins
+					</h3>
+
+					<ul>
+						<li>Dec 4, 2019 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="145-saul-schmidt" class="user">
+					<h3>
+						Saul Schmidt
+					</h3>
+
+					<ul>
+						<li>Dec 9, 2019 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="119-chad-myers" class="user">
+					<h3>
+						Chad Myers
+					</h3>
+
+					<ul>
+						<li>Dec 13, 2019 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="146-marta-alvarez" class="user">
+					<h3>
+						Marta Alvarez
+					</h3>
+
+					<ul>
+						<li>Dec 16, 2019 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="143-sidney-hill" class="user">
+					<h3>
+						Sidney Hill
+					</h3>
+
+					<ul>
+						<li>Dec 19, 2019 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="147-wesley-ingram" class="user">
+					<h3>
+						Wesley Ingram
+					</h3>
+
+					<ul>
+						<li>Aug 26, 2020 to Today</li>
+						<li>Jan 13, 2020 to May 26, 2020</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="148-elsie-bryan" class="user">
+					<h3>
+						Elsie Bryan
+					</h3>
+
+					<ul>
+						<li>Jan 20, 2020 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="149-estelle-collins" class="user">
+					<h3>
+						Estelle Collins
+					</h3>
+
+					<ul>
+						<li>Jan 29, 2020 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="150-byron-ferguson" class="user">
+					<h3>
+						Byron Ferguson
+					</h3>
+
+					<ul>
+						<li>Feb 3, 2020 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="51-blanca-manning" class="user">
+					<h3>
+						Blanca Manning
+					</h3>
+
+					<ul>
+						<li>Feb 3, 2020 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="151-teresa-klein" class="user">
+					<h3>
+						Teresa Klein
+					</h3>
+
+					<ul>
+						<li>Feb 10, 2020 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="152-lillian-palmer" class="user">
+					<h3>
+						Lillian Palmer
+					</h3>
+
+					<ul>
+						<li>Feb 13, 2020 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="154-dana-warner" class="user">
+					<h3>
+						Dana Warner
+					</h3>
+
+					<ul>
+						<li>Mar 12, 2020 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="153-ryan-brady" class="user">
+					<h3>
+						Ryan Brady
+					</h3>
+
+					<ul>
+						<li>Jun 3, 2020 to Today</li>
+						<li>Mar 23, 2020 to May 21, 2020</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="155-sonia-potter" class="user">
+					<h3>
+						Sonia Potter
+					</h3>
+
+					<ul>
+						<li>Mar 24, 2020 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="156-tami-franklin" class="user">
+					<h3>
+						Tami Franklin
+					</h3>
+
+					<ul>
+						<li>Apr 1, 2020 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="157-patricia-drake" class="user">
+					<h3>
+						Patricia Drake
+					</h3>
+
+					<ul>
+						<li>Apr 7, 2020 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="158-yolanda-underwood" class="user">
+					<h3>
+						Yolanda Underwood
+					</h3>
+
+					<ul>
+						<li>Apr 13, 2020 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="159-martin-alexander" class="user">
+					<h3>
+						Martin Alexander
+					</h3>
+
+					<ul>
+						<li>Apr 14, 2020 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="160-santos-carson" class="user">
+					<h3>
+						Santos Carson
+					</h3>
+
+					<ul>
+						<li>Apr 15, 2020 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="161-adrienne-ortiz" class="user">
+					<h3>
+						Adrienne Ortiz
+					</h3>
+
+					<ul>
+						<li>Apr 15, 2020 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="162-charlene-byrd" class="user">
+					<h3>
+						Charlene Byrd
+					</h3>
+
+					<ul>
+						<li>Apr 27, 2020 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="163-johnnie-mann" class="user">
+					<h3>
+						Johnnie Mann
+					</h3>
+
+					<ul>
+						<li>May 11, 2020 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="164-megan-paul" class="user">
+					<h3>
+						Megan Paul
+					</h3>
+
+					<ul>
+						<li>Jun 8, 2020 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="165-marc-meyer" class="user">
+					<h3>
+						Marc Meyer
+					</h3>
+
+					<ul>
+						<li>Jul 7, 2020 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="166-jacqueline-robertson" class="user">
+					<h3>
+						Jacqueline Robertson
+					</h3>
+
+					<ul>
+						<li>Jul 17, 2020 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="167-kara-gill" class="user">
+					<h3>
+						Kara Gill
+					</h3>
+
+					<ul>
+						<li>Aug 25, 2020 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="168-andre-quinn" class="user">
+					<h3>
+						Andre Quinn
+					</h3>
+
+					<ul>
+						<li>Aug 25, 2020 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="169-shane-newton" class="user">
+					<h3>
+						Shane Newton
+					</h3>
+
+					<ul>
+						<li>Sep 22, 2020 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="170-glen-joseph" class="user">
+					<h3>
+						Glen Joseph
+					</h3>
+
+					<ul>
+						<li>Nov 3, 2020 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="114-rene-massey" class="user">
+					<h3>
+						Rene Massey
+					</h3>
+
+					<ul>
+						<li>Nov 4, 2020 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="171-debbie-norton" class="user">
+					<h3>
+						Debbie Norton
+					</h3>
+
+					<ul>
+						<li>Dec 16, 2020 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="172-darnell-young" class="user">
+					<h3>
+						Darnell Young
+					</h3>
+
+					<ul>
+						<li>Dec 17, 2020 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="173-al-wilkerson" class="user">
+					<h3>
+						Al Wilkerson
+					</h3>
+
+					<ul>
+						<li>Dec 17, 2020 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="174-vera-stokes" class="user">
+					<h3>
+						Vera Stokes
+					</h3>
+
+					<ul>
+						<li>Dec 17, 2020 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div id="175-brandy-phillips" class="user">
+					<h3>
+						Brandy Phillips
+					</h3>
+
+					<ul>
+						<li>Dec 22, 2020 to Today</li>
+					</ul>
+
+					<a href="#">Close</a>
+				</div>
+
+				<div class="call-to-action">
+					&larr; Click on tracks to view details.
+				</div>
+
+			</div>
+			<!-- END: Details. -->
+
+		</div>
+	</div>
+
+</body>
+</html>

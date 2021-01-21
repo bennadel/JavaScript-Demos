@@ -1,0 +1,66 @@
+
+html,
+body {
+	margin: 0px 0px 0px 0px ;
+	padding: 0px 0px 0px 0px ;
+}
+
+.columns {
+	display: flex ;
+	height: 100vh ;
+}
+
+.columns__left {
+	flex: 1 1 auto ;
+	overflow: auto ;
+	padding: 10px 10px 10px 10px ;
+}
+
+.columns__right {
+	flex: 0 0 auto ;
+	padding: 0px 20px 0px 20px ;
+	width: 250px ;
+}
+
+.track {
+	display: block ;
+	height: 16px ;
+	position: relative ;
+}
+
+.track:hover {
+	background-color: gold ;
+}
+
+.track__segment {
+	background-color: #333333 ;
+	border-radius: 3px 3px 3px 3px ;
+	bottom: 3px ;
+	min-width: 1px ;
+	position: absolute ;
+	top: 3px ;
+}
+
+.track:hover .track__segment {
+	background-color: black ;
+	border-radius: 30px 30px 30px 30px ;
+	bottom: 5px ;
+	top: 5px ;
+}
+
+.call-to-action {
+	padding: 20px 0px 20px 0px ;
+}
+
+.user {
+	font-family: sans-serif ;
+	font-size: 14px ;
+}
+
+.user h3 {
+	font-size: 110% ;
+}
+
+.user a {
+	color: red ;
+}

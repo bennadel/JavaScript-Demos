@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Using CSS :target Pseudo-Class To Toggle Element Display](https://bennadel.github.io/JavaScript-Demos/demos/css-target-show-element/)
 * [Having Fun With The Horizontal Usage Of Position: Sticky In Angular 11.0.5](https://bennadel.github.io/JavaScript-Demos/demos/horizontal-position-sticky-angular11/dist/)
 * [Packaging A Password-Strength Module In Angular 11.0.5](https://bennadel.github.io/JavaScript-Demos/demos/password-strength-angular11/dist/)
 * [Making Snow Animations In Angular 11.0.5](https://bennadel.github.io/JavaScript-Demos/demos/snow-fall-angular11/dist/)
