@@ -1,0 +1,391 @@
+<!doctype html>
+<html lang="en" ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Using The URL As The Source Of Truth During Search In AngularJS 1.2.22
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css">
+</head>
+<body ng-controller="appController">
+
+	<h1>
+		Using The URL As The Source Of Truth During Search In AngularJS 1.2.22
+	</h1>
+
+	<form ng-submit="searchForKeywords()">
+		<input
+			type="search"
+			ng-model="form.keywords"
+			autocomplete="off"
+		/>
+		<button type="submit">
+			Search
+		</button>
+		<button type="button" ng-click="clearSearchForKeywords()">
+			Clear
+		</button>
+	</form>
+
+	<!--
+		Note that in all of our FILTER LINKS, the mechanics of the filter use an HREF
+		attribute to update the browser's URL. This is because we want to use the URL as
+		the source-of-truth for the search, including the natural ability to right-click
+		(or META+Click) and open a filter in another tab. This will inherently enable the
+		back-button to work as well.
+	-->
+	<p>
+		<strong>Filter on status:</strong>
+		<ul class="filters">
+			<li ng-repeat="option in searchStatusLinks track by option.value">
+				<a ng-href="{{ option.href }}" ng-class="{ on: option.isActive }">
+					{{ option.label }}
+				</a>
+			</li>
+		</ul>
+	</p>
+
+	<p>
+		<strong>Filter on user:</strong>
+		<ul class="filters">
+			<li ng-repeat="option in searchUserLinks track by option.value">
+				<a ng-href="{{ option.href }}" ng-class="{ on: option.isActive }">
+					{{ option.label }}
+				</a>
+			</li>
+		</ul>
+	</p>
+
+	<blockquote>
+		... results would go here ...
+	</blockquote>
+
+	<p>
+		<strong>Pagination:</strong>
+		<ul class="filters">
+			<li ng-repeat="option in searchPageLinks track by option.value">
+				<a ng-href="{{ option.href }}" ng-class="{ on: option.isActive }">
+					{{ option.label }}
+				</a>
+			</li>
+		</ul>
+	</p>
+
+	<!-- ---------------------------------------------------------------------------- -->
+	<!-- ---------------------------------------------------------------------------- -->
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/jquery/jquery-2.1.0.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.2.22.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+	</script>
+	<script type="text/javascript">
+
+		app.controller( "appController", AppController );
+
+		function AppController( $location, $scope ) {
+
+			// These collections will be populated once the component is mounted. Each
+			// item in these collections will contain an HREF that can be used to update
+			// the URL which will, in turn, update the search results.
+			$scope.searchStatusLinks = null;
+			$scope.searchUserLinks = null;
+			$scope.searchPageLinks = null;
+
+			// NOTE: Even though we are using the URL as the source-of-truth, we still
+			// want to use ngModel for the keywords locally so that we can more easily
+			// tell when the URL and the Form diverge in value.
+			$scope.form = {
+				keywords: ""
+			};
+			$scope.filters = {
+				searchKeywords: "",
+				searchStatus: "active",
+				searchUserID: 0,
+				searchPage: 1
+			};
+
+			init();
+			
+			// Expose the public API.
+			$scope.clearSearchForKeywords = clearSearchForKeywords;
+			$scope.searchForKeywords = searchForKeywords;
+
+			// ---
+			// PUBLIC METHODS.
+			// ---
+
+			// I clear the keywords filter.
+			function clearSearchForKeywords() {
+
+				// NOTE: We're driving the source-of-truth for filtering into the URL. As
+				// such, this method doesn't actually change the state, it changes the
+				// URL. The state will subsequently change in reaction to the URL change.
+				gotoUrlForFilters({
+					searchKeywords: "",
+					searchPage: 1
+				});
+				$scope.form.keywords = "";
+
+			}
+
+
+			// I update the search filters to use what's in the search form.
+			function searchForKeywords() {
+
+				// NOTE: We're driving the source-of-truth for filtering into the URL. As
+				// such, this method doesn't actually change the state, it changes the
+				// URL. The state will subsequently change in reaction to the URL change.
+				gotoUrlForFilters({
+					searchKeywords: $scope.form.keywords,
+					searchPage: 1
+				});
+
+			}
+
+			// ---
+			// PRIVATE METHODS.
+			// ---
+
+			// I build the full (Angular) HREF for the current filtering. If overrides
+			// are provided for a set of filters, those will be merged into the resultant
+			// URL. The URL is intended to be used within template anchor-tags.
+			function buildHrefForFilters( overrides ) {
+
+				return( "#" + buildUrlForFilters( overrides ) );
+
+			}
+
+
+			// I build the full (Angular) URL for the current filtering. If overrides are
+			// provided for a set of filters, those will be merged into the resultant URL.
+			function buildUrlForFilters( overrides ) {
+
+				overrides = ( overrides || {} );
+
+				var nextSearchKeywords = ( "searchKeywords" in overrides )
+					? overrides.searchKeywords
+					: $scope.filters.searchKeywords
+				;
+				var nextSearchStatus = ( "searchStatus" in overrides )
+					? overrides.searchStatus
+					: $scope.filters.searchStatus
+				;
+				var nextSearchUserID = ( "searchUserID" in overrides )
+					? overrides.searchUserID
+					: $scope.filters.searchUserID
+				;
+				var nextSearchPage = ( "searchPage" in overrides )
+					? overrides.searchPage
+					: $scope.filters.searchPage
+				;
+
+				return(
+					$location.path() +
+					( "?searchKeywords=" + encodeURIComponent( nextSearchKeywords ) ) +
+					( "&searchStatus=" + encodeURIComponent( nextSearchStatus ) ) +
+					( "&searchUserID=" + encodeURIComponent( nextSearchUserID ) ) +
+					( "&searchPage=" + encodeURIComponent( nextSearchPage ) )
+				);
+
+			}
+
+
+			// Since the source-of-truth for filtering is the URL, we want to be able to
+			// pull the filters from the current URL; and, to be given sane defaults if
+			// no filters are present in the URL.
+			function getFiltersFromUrlWithSaneDefaults() {
+
+				var search = $location.search();
+
+				return({
+					searchKeywords: ( search.searchKeywords || "" ),
+					searchStatus: ( search.searchStatus || "active" ),
+					searchUserID: ( + search.searchUserID || 0 ),
+					searchPage: ( + search.searchPage || 1 )
+				});
+
+			}
+
+
+			// I navigate the user's browser to the URL for the current filtering. If
+			// overrides are provided for a set of filters, those will be merged into the
+			// destination URL.
+			function gotoUrlForFilters( overrides ) {
+
+				$location.url( buildUrlForFilters( overrides ) );
+
+			}
+
+
+			// I handle changes in the URL, and reload data as needed.
+			function handleLocationChangeSuccess() {
+
+				var urlFilters = getFiltersFromUrlWithSaneDefaults();
+
+				// Since we are using the URL as the source-of-truth, let's check to see
+				// if the location change cause the URL state to diverge from the view-
+				// model state. If so, we want to drive the URL state BACK INTO the view-
+				// model and then re-run the remote search.
+				if (
+					( $scope.filters.searchKeywords !== urlFilters.searchKeywords ) ||
+					( $scope.filters.searchStatus !== urlFilters.searchStatus ) ||
+					( $scope.filters.searchUserID !== urlFilters.searchUserID ) ||
+					( $scope.filters.searchPage !== urlFilters.searchPage )
+					) {
+
+					// Drive URL state into the view-model state.
+					$scope.filters.searchKeywords = urlFilters.searchKeywords;
+					$scope.filters.searchStatus = urlFilters.searchStatus;
+					$scope.filters.searchUserID = urlFilters.searchUserID;
+					$scope.filters.searchPage = urlFilters.searchPage;
+					$scope.form.keywords = $scope.filters.searchKeywords;
+
+					loadRemoteData();
+
+				}
+
+			}
+
+
+			// I get called once after the component has been mounted.
+			function init() {
+
+				$scope.$on( "$locationChangeSuccess", handleLocationChangeSuccess );
+
+				// Since the user may be loading this page from a bookmark or from a
+				// pasted URL, we have to start by pulling the view-model state out of
+				// the URL and then running the initial search based on that.
+				var urlFilters = getFiltersFromUrlWithSaneDefaults();
+
+				// Drive URL state into the view-model state.
+				$scope.filters.searchKeywords = urlFilters.searchKeywords;
+				$scope.filters.searchStatus = urlFilters.searchStatus;
+				$scope.filters.searchUserID = urlFilters.searchUserID;
+				$scope.filters.searchPage = urlFilters.searchPage;
+				$scope.form.keywords = $scope.filters.searchKeywords;
+
+				loadRemoteData();
+
+			}
+
+
+			// I load the remote search data from the server for the current filters.
+			function loadRemoteData() {
+
+				console.group( "%cLoading Remote Data...", "font-weight: bold ; background-color: royalblue ; color: white ; padding: 3px 8px ;" );
+				console.log( "Keywords:", $scope.filters.searchKeywords );
+				console.log( "Status:", $scope.filters.searchStatus );
+				console.log( "User:", $scope.filters.searchUserID );
+				console.log( "Page:", $scope.filters.searchPage );
+				console.groupEnd();
+
+				// TODO: load search results from server ....
+
+				setSearchStatusLinks();
+				setSearchUserLinks();
+				setSearchPageLinks();
+
+			}
+
+
+			// I populate the page links based on the current search results.
+			function setSearchPageLinks() {
+
+				$scope.searchPageLinks = [];
+
+				for ( var i = 1 ; i <= 10 ; i++ ) {
+
+					$scope.searchPageLinks.push({
+						label: i,
+						value: i,
+						href: buildHrefForFilters({
+							searchPage: i
+						}),
+						isActive: ( $scope.filters.searchPage === i )
+					});
+
+				}
+
+			}
+
+
+			// I populate the status links based on the current search results.
+			function setSearchStatusLinks() {
+
+				var options =  [
+					{ label: "Active", value: "active" },
+					{ label: "Archived", value: "archived" }
+				];
+
+				$scope.searchStatusLinks = options.map(
+					function operator( option ) {
+
+						return({
+							label: option.label,
+							value: option.value,
+							href: buildHrefForFilters({
+								searchStatus: option.value,
+								searchPage: 1
+							}),
+							isActive: ( $scope.filters.searchStatus === option.value )
+						});
+
+					}
+				);
+
+			}
+
+
+			// I populate the user links based on the current search results.
+			function setSearchUserLinks() {
+
+				var options =  [
+					{ label: "Ben", value: 1 },
+					{ label: "Kim", value: 2 },
+					{ label: "Arnold", value: 3 },
+					{ label: "Hannah", value: 4 },
+					{ label: "Vincent", value: 5 }
+				];
+
+				$scope.searchUserLinks = options.map(
+					function operator( option ) {
+
+						// NOTE: Unlike some of the other links, the User links act like
+						// toggles in that if you click on an active user link, it turns
+						// off. This is because these links are OPTIONAL and we need a
+						// way to turn them off. As such, if the given option matches the
+						// current filters, then we need to define the "value" of this
+						// link as the one that TURNS THE OPTION OFF.
+						var value = ( option.value === $scope.filters.searchUserID )
+							? 0 // Turn active option OFF.
+							: option.value // Turn inactive option ON.
+						;
+
+						return({
+							label: option.label,
+							value: option.value,
+							href: buildHrefForFilters({
+								searchUserID: value,
+								searchPage: 1
+							}),
+							isActive: ( $scope.filters.searchUserID === option.value )
+						});
+
+					}
+				);
+
+			}
+
+		}
+
+	</script>
+
+</body>
+</html>

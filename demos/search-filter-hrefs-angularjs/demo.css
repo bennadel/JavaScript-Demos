@@ -1,0 +1,44 @@
+
+body {
+	font-family: sans-serif ;
+	font-size: 18px ;
+}
+
+input,
+button {
+	font-size: 100% ;
+}
+
+.filters {
+	display: flex ;
+	list-style-type: none ;
+	margin: 16px 0px 16px 0px ;
+	padding: 0px 0px 0px 0px ;
+}
+
+.filters li {
+	margin: 0px 10px 0px 0px ;
+	padding: 0px 0px 0px 0px ;
+}
+
+.filters a {
+	background-color: #f0f0f0 ;
+	border: 1px solid #cccccc ;
+	border-radius: 4px 4px 4px 4px ;
+	color: #000000 ;
+	display: block ;
+	padding: 5px 10px 5px 10px ;
+	text-decoration: none ;
+}
+
+.filters a.on {
+	background-color: #ffd700 ;
+	border-color: #d0af00 ;
+}
+
+blockquote {
+	border-left: 4px solid #e0e0e0 ;
+	font-style: italic ;
+	margin: 30px 0px 30px 10px ;
+	padding: 5px 0px 5px 20px ;
+}
