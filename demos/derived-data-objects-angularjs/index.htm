@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en" ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Calculating Derived Datasets Using Objects As Indexes In AngularJS 1.2.22
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css">
+</head>
+<body ng-controller="appController">
+
+	<h1>
+		Calculating Derived Datasets Using Objects As Indexes In AngularJS 1.2.22
+	</h1>
+
+	<h2>
+		Tasks
+	</h2>
+
+	<form ng-submit="addTask()" class="form">
+		<input
+			type="text"
+			ng-model="form.task"
+			placeholder="Add new task..."
+			autofocus
+			size="50"
+			class="form__input"
+		/>
+		<button type="submit" class="form__button">
+			Add task
+		</button>
+	</form>
+
+	<ul>
+		<li
+			ng-repeat="task in sortedTasks track by task.id"
+			class="task">
+
+			<div class="task__description">
+				{{ task.description }}
+			</div>
+
+			<!--
+				In the following meta-data area, notice that we are using our derived
+				data indexes to output the human-friendly date and any indication that
+				the task is overdue.
+				--
+				NOTE: One nice thing about this approach is that, if there was a bug in
+				our code, the look-up values will just coalesce to undefined, which will
+				result in no output. ie, nothing will explode if something goes wrong.
+			-->
+			<div class="task__meta">
+				Created {{ dateTranslations[ task.createdAt ] }} &mdash;
+				Due {{ dateTranslations[ task.dueAt ] }}
+
+				<span ng-if="overdueFlags[ task.id ]" class="task__overdue">
+					Overdue
+				</span>
+			</div>
+
+		</li>
+	</ul>
+
+	<!-- ---------------------------------------------------------------------------- -->
+	<!-- ---------------------------------------------------------------------------- -->
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/jquery/jquery-2.1.0.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.2.22.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+	</script>
+	<script type="text/javascript">
+
+		app.controller( "appController", AppController );
+
+		function AppController( $filter, $location, $scope ) {
+
+			$scope.tasks = buildDemoTasks();
+			$scope.form = {
+				task: ""
+			};
+
+			// Our derived datasets.
+			$scope.sortedTasks = null;
+			$scope.dateTranslations = Object.create( null );
+			$scope.overdueFlags = Object.create( null );
+
+			// Our human-readable date-strings and overdue-flags are derived from the
+			// current tasks collection. These can be re-calculated at any time if the
+			// underlying dataset changes.
+			setSortedTasks();
+			setDateTranslations();
+			setOverdueFlags();
+
+			// Expose the public methods.
+			$scope.addTask = addTask;
+
+			// ---
+			// PUBLIC METHODS.
+			// ---
+
+			// I process the new-task form.
+			function addTask() {
+
+				if ( ! $scope.form.task ) {
+
+					return;
+
+				}
+
+				// For the sake of the demo, we'll just put in some hard-coded values.
+				var createdAt = Date.now();
+				var dueAt = ( createdAt + ( 1000 * 60 * 60 * 24 ) );
+
+				$scope.tasks.push({
+					id: createdAt,
+					description: $scope.form.task,
+					createdAt: createdAt,
+					dueAt: dueAt
+				});
+				$scope.form.task = "";
+
+				// Since we are using derived datasets for parts of our view-model,
+				// it means that we can simply re-run our calculations anytime the
+				// underlying view-model changes. This is brute-force, but dead-simple.
+				setSortedTasks();
+				setDateTranslations();
+				setOverdueFlags();
+
+			}
+
+			// ---
+			// PRIVATE METHODS.
+			// ---
+
+			// I build the array of tasks for the demo.
+			function buildDemoTasks() {
+
+				var id = 0;
+
+				// Note that in the demo data, which would be coming from a remote API,
+				// the date/time objects are returned as UTC milliseconds. We will use
+				// derived objects to make this data more consumable.
+				return([
+					{
+						id: ++id,
+						description: "Do this thing over here.",
+						createdAt: 1617249600000,
+						dueAt: 1618286400000
+					},
+					{
+						id: ++id,
+						description: "Do that thing over there.",
+						createdAt: 1618891200000,
+						dueAt: 1619323200000
+					},
+					{
+						id: ++id,
+						description: "Do another thing or else you're in trouble.",
+						createdAt: 1618977600000,
+						dueAt: 1620360000000
+					}
+				]);
+
+			}
+
+
+			// I format the given UTC milliseconds as a human-readable string.
+			function formatDate( tickcount ) {
+
+				return( $filter( "date" )( tickcount, "MMMM d, yyyy" ) );
+
+			}
+
+
+			// I populate the date-translations using the current tasks view-model.
+			function setDateTranslations() {
+
+				$scope.tasks.forEach(
+					function iterator( task ) {
+
+						$scope.dateTranslations[ task.createdAt ] = formatDate( task.createdAt );
+						$scope.dateTranslations[ task.dueAt ] = formatDate( task.dueAt );
+
+					}
+				);
+
+
+			}
+
+
+			// I populate the overdue-flags using the current tasks view-model.
+			function setOverdueFlags() {
+
+				var now = Date.now();
+
+				$scope.tasks.forEach(
+					function iterator( task ) {
+
+						$scope.overdueFlags[ task.id ] = ( task.dueAt <= now );
+
+					}
+				);
+
+			}
+
+
+			// I populate the sorted tasks using the current tasks view-model.
+			function setSortedTasks() {
+
+				// Sort by created date DESCENDING (ie, newest tasks first).
+				$scope.sortedTasks = $scope.tasks.slice().sort(
+					function comparator( a, b ) {
+
+						return( b.createdAt - a.createdAt );
+
+					}
+				);
+
+			}
+
+		}
+
+	</script>
+
+</body>
+</html>

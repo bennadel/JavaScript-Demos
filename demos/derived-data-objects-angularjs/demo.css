@@ -1,0 +1,53 @@
+
+body {
+	font-family: sans-serif ;
+	font-size: 18px ;
+}
+
+.task {
+	margin-bottom: 16px ;
+	margin-top: 16px ;
+}
+
+.task__description {
+	font-weight: 600 ;
+	margin: 0px 0px 5px 0px ;
+}
+
+.task__meta {
+	align-items: center ;
+	color: #888888 ;
+	display: flex ;
+}
+
+.task__overdue {
+	background-color: red ;
+	border-radius: 3px 3px 3px 3px ;
+	color: white ;
+	font-family: monospace ;
+	font-size: 12px ;
+	font-weight: 600 ;
+	letter-spacing: 1px ;
+	line-height: 15px ;
+	margin-left: 10px ;
+	padding: 4px 8px 4px 8px ;
+	text-transform: uppercase ;
+}
+
+.form {
+	display: flex ;
+	margin-bottom: 30px ;
+}
+
+.form__input {
+	font-size: inherit ;
+	padding: 10px 15px 10px 15px ;
+	width: 300px ;
+}
+
+.form__button {
+	font-size: inherit ;
+	margin-left: 10px ;
+	padding-left: 15px ;
+	padding-right: 15px ;
+}
