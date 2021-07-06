@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>
+		TimeMachine-Inspired Progress Indicator Using CSS Keyframes Animation
+	</title>
+</head>
+<body>
+
+	<h1>
+		TimeMachine-Inspired Progress Indicator Using CSS Keyframes Animation
+	</h1>
+
+	<div class="progress-bar">
+		<div class="progress-bar__indicator"></div>
+	</div>
+
+	<style type="text/css">
+
+		.progress-bar {
+			background-color: #e0e0e0 ;
+			border-radius: 7px 7px 7px 7px ;
+			box-shadow: inset 0px 1px 1px rgb( 0, 0, 0, 0.1 ) ;
+			height: 7px ;
+			overflow: hidden ;
+			position: relative ;
+			width:  300px ;
+		}
+
+		.progress-bar__indicator {
+			background-color: #ff00c8 ;
+			border-radius: 7px 7px 7px 7px ;
+			box-shadow: inset 0px -7px 3px -7px rgb( 100, 0, 78, 0.6 ) ;
+			height: 7px ;
+			left: 0px ;
+			position: absolute ;
+			top: 0px ;
+			width: 0px ;
+
+			animation-duration: 2500ms ;
+			animation-fill-mode: both ;
+			animation-iteration-count: infinite ;
+			animation-name: progress-bar-calculating ;
+			animation-timing-function: linear ;
+		}
+
+		/**
+		* Since our indicator is moving from left-to-right and then back from right-to-
+		* left, the half-way point (50%) of the animation is when the indicator is all
+		* the way to the right. It will be visually in the "middle" at 25% and 75%, which
+		* is half-way through both directions.
+		* 
+		* To keep the indicator a constant size until hits the edges of the parent
+		* container, the WIDTH property must be same for all keyframes except when it is
+		* change size at the start / half-way points.
+		*/
+		@keyframes progress-bar-calculating {
+			/* Left-most position. */
+			0%, 100% {
+				left: 0% ;
+				width: 5% ;
+			}
+			/* Touches the left-side (with full-width indicator). */
+			10%, 90% {
+				left: 0% ;
+				width: 40% ;
+			}
+			/* Mid-way point (with full-width indicator). */
+			25%, 75% {
+				left: 30% ;
+				width: 40% ;
+			}
+			/* Touches the right-side (with full-width indicator). */
+			40%, 60% {
+				left: 60% ;
+				width: 40% ;
+			}
+			/* Right-most position. */
+			50% {
+				left: 95% ;
+				width: 5% ;
+			}
+		}
+
+	</style>
+
+</body>
+</html>
