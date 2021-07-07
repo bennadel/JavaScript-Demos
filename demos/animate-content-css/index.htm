@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>
+		Animating The Content Property Using CSS Keyframes Animation
+	</title>
+	<link rel="stylesheet" type="text/css" href="./demo.css" />
+</head>
+<body>
+
+	<h1>
+		Animating The Content Property Using CSS Keyframes Animation
+	</h1>
+
+	<p class="loading">
+		Loading<span class="loading__ellipsis">.</span>
+	</p>
+
+	<p>
+		&uarr; Note that the ellipsis here is being animated using CSS.
+	</p>
+
+	<style type="text/css">
+
+		.loading {
+			color: #ff3366 ;
+			font-size: 30px ;
+			font-weight: bold ;
+		}
+
+		.loading__ellipsis:after {
+			animation-duration: 500ms ;
+			animation-fill-mode: both ;
+			animation-iteration-count: infinite ;
+			animation-name: loading-ellipsis ;
+			animation-timing-function: linear ;
+			/*
+				This has to be here otherwise animation won't run in Chrome. Plus, the
+				animation won't run at all in Safari (classic Safari), so this provides a
+				back-up rendering for non-modern browsers.
+			*/
+			content: "...." ;
+			display: inline-block ;
+		}
+
+		@keyframes loading-ellipsis {
+			0% {
+				content: "." ;
+			}
+			20% {
+				content: ".." ;
+			}
+			40% {
+				content: "..." ;
+			}
+			60% {
+				content: "...." ;
+			}
+			80% {
+				content: "....." ;
+			}
+		}
+
+	</style>
+
+</body>
+</html>

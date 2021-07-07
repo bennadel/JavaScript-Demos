@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Animating The Content Property Using CSS Keyframes Animation](https://bennadel.github.io/JavaScript-Demos/demos/animate-content-css/)
 * [TimeMachine-Inspired Progress Indicator Using CSS Keyframes Animation](https://bennadel.github.io/JavaScript-Demos/demos/timemachine-bar-css/)
 * [Calculating Derived Datasets Using Objects As Indexes In AngularJS 1.2.22](https://bennadel.github.io/JavaScript-Demos/demos/derived-data-objects-angularjs/)
 * [Using The URL As The Source Of Truth During Search In AngularJS 1.2.22](https://bennadel.github.io/JavaScript-Demos/demos/search-filter-hrefs-angularjs/)
