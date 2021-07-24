@@ -1,0 +1,51 @@
+
+body {
+	font-family: sans-serif ;
+	font-size: 18px ;
+	line-height: 1.4 ;
+}
+
+textarea[ id = "text" ] {
+	display: block ;
+	font-size: 26px ;
+	height: 70px ;
+	padding: 20px 20px 20px 20px ;
+	width: 630px ;
+}
+
+ul[ id = "emoji" ] {
+	display: flex ;
+	flex-wrap: wrap ;
+	list-style-type: none ;
+	margin: 20px 0px 20px 0px ;
+	padding: 0px 0px 0px 0px ;
+}
+
+ul[ id = "emoji" ] li {
+	flex: 0 0 ;
+	margin: 3px 3px 3px 3px ;
+	padding: 0px 0px 0px 0px ;
+}
+
+ul[ id = "emoji" ] a {
+	background-color: #fafafa ;
+	border: 1px solid #333333 ;
+	border-radius: 3px 3px 3px 3px ;
+	color: 121212 ;
+	cursor: pointer ;
+	display: block ;
+	padding: 3px 10px 3px 10px ;
+	user-select: none ;
+		-moz-user-select: none ;
+		-webkit-user-select: none ;
+	white-space: nowrap ;
+}
+
+ul[ id = "emoji" ] a[ data-hex *= " " ] {
+	font-weight: bold ;
+}
+
+ul[ id = "emoji" ] a:hover {
+	background-color: #eaeaea ;
+	color: #000000 ;
+}

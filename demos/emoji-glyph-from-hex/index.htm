@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>
+		Rending Emoji Glyphs Using Hexadecimal CodePoints In JavaScript
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css" />
+</head>
+<body>
+
+	<h1>
+		Rending Emoji Glyphs Using Hexadecimal CodePoints In JavaScript
+	</h1>
+
+	<textarea id="text"></textarea>
+
+	<ul id="emoji">
+		<li><a data-hex="1F600">grinning face</a></li>
+		<li><a data-hex="1F603">grinning face with big eyes</a></li>
+		<li><a data-hex="1F604">grinning face with smiling eyes</a></li>
+		<li><a data-hex="1F601">beaming face with smiling eyes</a></li>
+		<li><a data-hex="1F606">grinning squinting face</a></li>
+		<li><a data-hex="1F605">grinning face with sweat</a></li>
+		<li><a data-hex="1F923">rolling on the floor laughing</a></li>
+		<li><a data-hex="1F602">face with tears of joy</a></li>
+		<li><a data-hex="1F642">slightly smiling face</a></li>
+		<li><a data-hex="1F643">upside-down face</a></li>
+		<li><a data-hex="1F609">winking face</a></li>
+		<li><a data-hex="1F60A">smiling face with smiling eyes</a></li>
+		<li><a data-hex="1F607">smiling face with halo</a></li>
+		<li><a data-hex="263A FE0F">smiling face</a></li>
+		<li><a data-hex="1F62E 200D 1F4A8">face exhaling</a></li>
+		<li><a data-hex="1F635 200D 1F4AB">face with spiral eyes</a></li>
+		<li><a data-hex="1F615">confused face</a></li>
+		<li><a data-hex="1F61F">worried face</a></li>
+		<li><a data-hex="1F641">slightly frowning face</a></li>
+		<li><a data-hex="2639 FE0F">frowning face</a></li>
+		<li><a data-hex="1F62E">face with open mouth</a></li>
+		<li><a data-hex="1F62F">hushed face</a></li>
+		<li><a data-hex="1F632">astonished face</a></li>
+		<li><a data-hex="1F633">flushed face</a></li>
+		<li><a data-hex="1F97A">pleading face</a></li>
+		<li><a data-hex="1F626">frowning face with open mouth</a></li>
+		<li><a data-hex="1F627">anguished face</a></li>
+		<li><a data-hex="1F628">fearful face</a></li>
+		<li><a data-hex="1F630">anxious face with sweat</a></li>
+		<li><a data-hex="1F625">sad but relieved face</a></li>
+		<li><a data-hex="1F622">crying face</a></li>
+		<li><a data-hex="1F62D">loudly crying face</a></li>
+		<li><a data-hex="1F631">face screaming in fear</a></li>
+		<li><a data-hex="1F616">confounded face</a></li>
+		<li><a data-hex="1F623">persevering face</a></li>
+		<li><a data-hex="1F61E">disappointed face</a></li>
+		<li><a data-hex="1F613">downcast face with sweat</a></li>
+		<li><a data-hex="1F629">weary face</a></li>
+		<li><a data-hex="1F62B">tired face</a></li>
+		<li><a data-hex="1F971">yawning face</a></li>
+	</ul>
+
+	<script type="text/javascript" src="../../vendor/jquery/3.6.0/jquery-3.6.0.min.js"></script>
+	<script type="text/javascript">
+
+		var textarea = $( "#text" );
+
+		// Delegate all click events on our special anchor tags.
+		var emoji = $( "#emoji" )
+			.on( "click", "a[ data-hex ]", handleClick )
+		;
+
+		// I handle the click on the emoji labels. Each click will place the
+		// corresponding emoji character at the end of the textarea input.
+		function handleClick( event ) {
+
+			// Each emoji link contains a data attribute with hexadecimal code-points. In
+			// order to generate our emoji strings, we need to map those hexadecimal
+			// values onto decimal values.
+			var hexPoints = $( event.target )
+				.data( "hex" )
+				.split( " " )
+			;
+			var codePoints = hexPoints.map(
+				function operator( hex ) {
+
+					return( parseInt( hex, 16 ) );
+
+				}
+			);
+
+			// Now that we have our code-points, we can generate the emoji glyph using
+			// the .fromCodePoint() function.
+			// --
+			// CAUTION: IE11 does not have .fromCodePoint() method.
+			var emojiGlyph = String.fromCodePoint.apply( null, codePoints );
+
+			textarea.val( textarea.val() + emojiGlyph + " " );
+
+			console.group( "Emoji Operation" );
+			console.log( "Hex Points:", hexPoints )
+			console.log( "Code Points:", codePoints );
+			console.log( "Emoji Glyph:", emojiGlyph );
+			console.groupEnd();
+
+		}
+
+	</script>
+
+</body>
+</html>
