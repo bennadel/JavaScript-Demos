@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Inserting Text At The Last Known Selection / Caret Location In JavaScript](https://bennadel.github.io/JavaScript-Demos/demos/insert-text-selection/)
 * [Rending Emoji Glyphs Using Hexadecimal CodePoints In JavaScript](https://bennadel.github.io/JavaScript-Demos/demos/emoji-glyph-from-hex/)
 * [Animating The Content Property Using CSS Keyframes Animation](https://bennadel.github.io/JavaScript-Demos/demos/animate-content-css/)
 * [TimeMachine-Inspired Progress Indicator Using CSS Keyframes Animation](https://bennadel.github.io/JavaScript-Demos/demos/timemachine-bar-css/)
