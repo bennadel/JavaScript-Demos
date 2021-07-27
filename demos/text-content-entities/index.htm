@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>
+		Exploring The Interplay Between HTML Entities And TextContent In JavaScript
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css" />
+</head>
+<body>
+
+	<h1>
+		Exploring The Interplay Between HTML Entities And TextContent In JavaScript
+	</h1>
+
+	<p id="encoded">
+		<!-- Common HTML entities. -->
+		&lt; &gt; &quot; &rarr;
+		<!-- Slightly smiling face emoji. -->
+		&#x1f642;
+		<!-- Frowning face. -->
+		&#x2639;&#xfe0f;
+	</p>
+
+	<input id="input" type="text" size="40" />
+
+	<script type="text/javascript" src="../../vendor/jquery/3.6.0/jquery-3.6.0.min.js"></script>
+	<script type="text/javascript">
+
+		var encoded = $( "#encoded" );
+		var input = $( "#input" );
+
+		// Our encoded element contains text that we created using HTML entities; that
+		// is, web-safe encodings that represent other values. When we then extract that
+		// generated content, we get the RENDERED VALUE, not the ENCODED VALUE!
+		var encodedValue = encoded
+			.text()
+			.replace( /\s+/g, " " ); // Cleaning up the white-space.
+		;
+
+		// Echo the textContent in the Input and the Console.
+		input.val( encodedValue );
+		console.log( ( "%c" + encodedValue ), "font-family: monospace ;" );
+
+		// And, just as a test, let's make sure the jQuery .text() method is actually
+		// matching the raw .textProperty content.
+		console.log( encoded.text() === encoded.prop( "textContent" ) );
+
+	</script>
+
+</body>
+</html>

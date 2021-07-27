@@ -1,15 +1,16 @@
 
 # JavaScript Demos 
 
-by [Ben Nadel][1] (on [Google+][2])
+by [Ben Nadel][bennadel]
 
 This is a collection of online JavaScript demos based on my blog posts on my
-blog, [BenNadel.com][1]. Basically, all the code is already on my blog; but, 
+blog, [BenNadel.com][bennadel]. Basically, all the code is already on my blog; but, 
 I wanted a way to easily create interactive demos that my readers could play 
 with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Exploring The Interplay Between HTML Entities And TextContent In JavaScript](https://bennadel.github.io/JavaScript-Demos/demos/text-content-entities/)
 * [Inserting Text At The Last Known Selection / Caret Location In JavaScript](https://bennadel.github.io/JavaScript-Demos/demos/insert-text-selection/)
 * [Rending Emoji Glyphs Using Hexadecimal CodePoints In JavaScript](https://bennadel.github.io/JavaScript-Demos/demos/emoji-glyph-from-hex/)
 * [Animating The Content Property Using CSS Keyframes Animation](https://bennadel.github.io/JavaScript-Demos/demos/animate-content-css/)
@@ -628,6 +629,5 @@ with.
 
 Want more JavaScript goodness? Check out the [JavaScript blog entries][javascript-blog] on my website.
 
-[1]: http://www.bennadel.com
-[2]: https://plus.google.com/108976367067760160494?rel=author
+[bennadel]: http://www.bennadel.com
 [javascript-blog]: http://www.bennadel.com/blog/tags/6-javascript-dhtml-blog-entries.htm

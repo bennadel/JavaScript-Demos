@@ -1,0 +1,14 @@
+
+body {
+	font-family: sans-serif ;
+	font-size: 18px ;
+}
+
+#encoded,
+#input {
+	font-family: monospace ;
+}
+
+input {
+	font-size: 100% ;
+}
