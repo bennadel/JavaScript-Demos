@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>
+		Capturing Keyboard Event Modifiers Across Operating Systems In JavaScript
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css" />
+</head>
+<body>
+
+	<h1>
+		Capturing Keyboard Event Modifiers Across Operating Systems In JavaScript
+	</h1>
+
+	<p>
+		<strong>OS Modifier:</strong>
+		<code class="osModifier">
+			<!-- To be populated via JavaScript. -->
+		</code>
+	</p>
+
+	<dl class="event">
+		<div class="key">
+			<dt>Key</dt>
+			<dd><!-- To be populated via JavaScript. --></dd>
+		</div>
+		<div class="modifier">
+			<dt>Modified</dt>
+			<dd><!-- To be populated via JavaScript. --></dd>
+		</div>
+	</dl>
+
+	<script type="text/javascript">
+
+		// The "modifier" key is different across the various operating systems (OS).
+		// Let's calculate both the human-readable key (for UI hints) and the event
+		// property that we're going to use when checking for a modified key-operation.
+		var osModifier = buildOsModifier();
+
+		// Gather our DOM nodes to populate.
+		var osModifierNode = document.querySelector( ".osModifier" );
+		var keyNode = document.querySelector( ".event .key dd" );
+		var modifierNode = document.querySelector( ".event .modifier dd" );
+
+		// Render which modifier key the current OS is using.
+		osModifierNode.textContent = osModifier.long;
+
+		window.addEventListener( "keydown", handleKeydown );
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+		// I handle the keydown event on the Window.
+		function handleKeydown( event ) {
+
+			// If this is the REFRESH PAGE event, allow the default behavior to happen -
+			// I need this to work so that building this demo isn't a total pain.
+			if ( isPageRefreshEvent( event ) ) {
+
+				return;
+
+			}
+
+			// Since we want to capture and render key combinations that have system
+			// modifiers, we need to prevent the default behavior (otherwise the demo
+			// will do some funky stuff).
+			event.preventDefault();
+
+			// Render the key properties to the page.
+			keyNode.textContent = event.key;
+			// Check the OS-specific property for modification. On the MacOS, this will
+			// be the "meta" key; and elsewhere, it will be the "control" key.
+			modifierNode.textContent = event[ osModifier.modifier ]
+				? "Yes"
+				: "No"
+			;
+
+		}
+
+
+		// I build the modifier object that will best fit the current operating system.
+		function buildOsModifier() {
+
+			if ( isMacish() ) {
+
+				return({
+					os: "Mac(ish)",
+					long: "Command",    // For human-facing views.
+					short: "Cmd",       // For human-facing views.
+					modifier: "metaKey" // For event property inspection.
+				});
+
+			} else {
+
+				return({
+					os: "Non-Mac(ish)",
+					long: "Control",    // For human-facing views.
+					short: "Ctrl",      // For human-facing views.
+					modifier: "ctrlKey" // For event property inspection.
+				});
+
+			}
+
+		}
+
+
+		// I determine if the current OS is Mac related (MacOS, iOS, etc).
+		// --
+		// CAUTION: The "navigator.platform" property - and other properties within the
+		// navigator object - are deprecated. As such, we should take care to make sure
+		// that OS-detection is isolated within a function or service that can be re-used
+		// across our application. This way, when / if it breaks, we only need to update
+		// the operating-system detection logic within a single point-of-failure.
+		function isMacish() {
+
+			// Pattern borrowed from TinyKeys library.
+			// --
+			// https://github.com/jamiebuilds/tinykeys/blob/e0d23b4f248af59ffbbe52411505c3d681c73045/src/tinykeys.ts#L50-L54
+			var macOsPattern = /Mac|iPod|iPhone|iPad/;
+
+			return( macOsPattern.test( window.navigator.platform ) );
+
+		}
+
+
+		// I determine if the given event is for a page-refresh operation.
+		function isPageRefreshEvent( event ) {
+
+			return( ( event.key === "r" ) && event[ osModifier.modifier ] );
+
+		}
+
+	</script>
+
+</body>
+</html>

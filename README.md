@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Capturing Keyboard Event Modifiers Across Operating Systems In JavaScript](https://bennadel.github.io/JavaScript-Demos/demos/keydown-os-modifier/)
 * [Exploring The Interplay Between HTML Entities And TextContent In JavaScript](https://bennadel.github.io/JavaScript-Demos/demos/text-content-entities/)
 * [Inserting Text At The Last Known Selection / Caret Location In JavaScript](https://bennadel.github.io/JavaScript-Demos/demos/insert-text-selection/)
 * [Rending Emoji Glyphs Using Hexadecimal CodePoints In JavaScript](https://bennadel.github.io/JavaScript-Demos/demos/emoji-glyph-from-hex/)

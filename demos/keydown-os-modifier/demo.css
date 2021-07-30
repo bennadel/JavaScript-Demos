@@ -1,0 +1,39 @@
+
+body {
+	font-family: sans-serif ;
+	font-size: 18px ;
+}
+
+.event {
+	display: flex ;
+	justify-content: center ;
+	margin: 60px 0px 30px 0px ;
+	padding: 0px 0px 0px 0px ;
+}
+
+.event div {
+	border: 1px solid #cccccc ;
+	border-radius: 4px 4px 4px 4px ;
+	display: flex ;
+	flex-direction: column ;
+	margin: 0px 15px 0px 15px ;
+	text-align: center ;
+	overflow: hidden ;
+	width: 140px ;
+}
+
+.event dt {
+	background-color: #eaeaea ;
+	font-weight: bold ;
+	margin: 0px 0px 0px 0px ;
+	padding: 10px 0px 10px 0px ;
+}
+
+.event dd {
+	background-color: #fafafa ;
+	flex: 1 1 auto ;
+	font-size: 30px ;
+	margin: 0px 0px 0px 0px ;
+	padding: 50px 0px 50px 0px ;
+	white-space: nowrap ;
+}
