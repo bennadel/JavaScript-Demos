@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>
+		Applying Multiple Animation Keyframes To A Loading Indicator In CSS
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css" />
+</head>
+<body>
+
+	<h1>
+		Applying Multiple Animation Keyframes To A Loading Indicator In CSS
+	</h1>
+
+	<p>
+		<button class="action action--show">
+			Show loading spinner
+		</button>
+		<button class="action action--hide">
+			Hide loading spinner
+		</button>
+	</p>
+
+	<div class="ingress">
+		<!-- Spinner will be injected here. -->
+	</div>
+
+	<template class="template">
+		<div class="spinner">
+			Loading....
+		</div>
+	</template>
+
+	<style type="text/css">
+		/*
+			The first animation is here to provide a DELAYED RENDERING of the injected
+			DOM element. This allows us to inject the spinner right away, but only show
+			it the user if the content takes longer than "Xms" to load.
+		*/
+		@keyframes spinner-fade {
+			from {
+				opacity: 0.0 ; /* In DOM, but visually hidden. */
+			}
+			to {
+				opacity: 1.0 ; /* In DOM, and visible. */
+			}
+		}
+		/* The second animation is here to provide the ongoing pulsing of the spinner. */
+		@keyframes spinner-pulse {
+			0%, 100% {
+				transform: translateX( 0px ) ;
+			}
+			50% {
+				transform: translateX( 10px ) ;
+			}
+		}
+
+		.spinner {
+			/*
+				For our animation, we're going to attach TWO DIFFERENT animation
+				keyframes using sets of comma-delimited settings. The first setting in
+				each property will be applied to our FADE animation; the second setting
+				in each property will be applied to our PULSE animation. We're using two
+				animations because we want the first one (the fade in) to only run once
+				and we want the second one (the pulse) to run infinitely.
+			*/
+			animation-name:
+				spinner-fade,
+				spinner-pulse
+			;
+			animation-iteration-count:
+				1, /* The FADE animation should only run once and FILL forward. */
+				infinite /* The PULSE animation should repeat forever. */
+			;
+			/*
+				For the purposes of the demo, we're going to use a LARGE DELAY so that
+				the overall effect is easier to see. This 2000ms represents the time that
+				the spinner is in the DOM, but still hidden from the user.
+			*/
+			animation-delay: 2000ms ;   /* Same setting for both animations. */
+			animation-duration: 500ms ; /* Same setting for both animations. */
+			animation-fill-mode: both ; /* Same setting for both animations. */
+		}
+	</style>
+
+	<script type="text/javascript" src="../../vendor/jquery/3.6.0/jquery-3.6.0.min.js"></script>
+	<script type="text/javascript">
+
+		var showButton = $( ".action--show" );
+		var hideButton = $( ".action--hide" );
+		var ingress = $( ".ingress" );
+		var template = $( ".template" );
+
+		showButton.click(
+			function injectSpinner() {
+
+				ingress.append( template.prop( "content" ).firstElementChild.cloneNode( true ) );
+
+			}
+		);
+		hideButton.click(
+			function removeSpinner() {
+
+				ingress.empty();
+
+			}
+		);
+
+	</script>
+
+</body>
+</html>

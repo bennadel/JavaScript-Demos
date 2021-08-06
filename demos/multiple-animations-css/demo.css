@@ -1,0 +1,16 @@
+
+body {
+	font-family: sans-serif ;
+	font-size: 18px ;
+}
+
+input,
+button,
+textarea {
+	font-family: inherit ;
+	font-size: 100% ;
+}
+
+.spinner {
+	width: 100px ;
+}
