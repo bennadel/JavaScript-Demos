@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>
+		Trapping Focus Within An Element Using Tab-Key Navigation In JavaScript
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css" />
+</head>
+<body>
+
+	<h1>
+		Trapping Focus Within An Element Using Tab-Key Navigation In JavaScript
+	</h1>
+
+	<p>
+		<a href="#">I can be focused</a> ,
+		<a href="#">I can be focused</a> ,
+		<a href="#">I can be focused</a> ,
+		<a href="#">I can be focused</a>
+	</p>
+
+	<!-- Once focus lands inside this container, we're going to trap it there. -->
+	<p class="capture">
+		<input type="text" />
+		<a tabindex="-1">I am <strong>NOT</strong> tabbable</a>
+		<a href="#">I can be focused</a>
+		<a href="#">I can be focused</a>
+		<button>Hey buddy</button>
+		<a href="#">I can be focused</a>
+		<input type="checkbox" />
+		<a href="#">I can be focused</a>
+		<a tabindex="-1">I am <strong>NOT</strong> tabbable</a>
+		<button>Hey buddy</button>
+	</p>
+
+	<p>
+		<a href="#">I can be focused</a> ,
+		<a href="#">I can be focused</a> ,
+		<a href="#">I can be focused</a> ,
+		<a href="#">I can be focused</a>
+	</p>
+
+	<script type="text/javascript" src="../../vendor/jquery/3.6.0/jquery-3.6.0.min.js"></script>
+	<script type="text/javascript">
+
+		var capture = $( ".capture" )
+			// For the sake of the demo, when the page loads we're going to draw focus to
+			// the capture container. By using a tabindex of -1, the capture container
+			// won't be focusable via keyboard navigation; but, we can programmatically
+			// focus the element.
+			.attr( "tabindex", "-1" )
+			.focus()
+			// Inpsect any keydown events that come from within the capture container.
+			.keydown(
+				function handleKeydown( event ) {
+
+					if ( event.key.toLowerCase() !== "tab" ) {
+
+						return;
+
+					}
+
+					// At this point, we know that we're capturing a TAB-related keyboard
+					// event ON or IN the Capture container. As such, we need to look at
+					// the current state of the DOM (which may be changing dynamically
+					// depending on the application logic) to see if we need to override
+					// the keyboard navigation. What we're looking for here is any
+					// element that is capable of NATURALLY receiving focus (via Tab).
+					// --
+					// NOTE: jQuery's .add() function results in a collection that is
+					// ordered by the DOM ORDER. As such, we can use .first() and .last()
+					// on the resultant collection with confidence.
+					var tabbable = $()
+						// All form elements can receive focus.
+						.add( capture.find( "button, input, select, textarea" ) )
+						// Any element that has an HREF can receive focus.
+						.add( capture.find( "[href]" ) )
+						// Any element that has a non-(-1) tabindex can receive focus.
+						.add( capture.find( "[tabindex]:not([tabindex='-1'])" ) )
+					;
+					var target = $( event.target );
+
+					// Reverse tabbing (Key: Shift+Tab).
+					if ( event.shiftKey ) {
+
+						if ( target.is( capture ) || target.is( tabbable.first() ) ) {
+
+							// Force focus to last element in container.
+							event.preventDefault();
+							tabbable.last().focus();
+
+						}
+
+					// Forward tabbing (Key: Tab).
+					} else {
+
+						if ( target.is( tabbable.last() ) ) {
+
+							// Force focus to first element in container.
+							event.preventDefault();
+							tabbable.first().focus();
+
+						}
+
+					}
+
+				}
+			)
+		;
+
+	</script>
+
+</body>
+</html>

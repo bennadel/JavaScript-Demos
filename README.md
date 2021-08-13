@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Trapping Focus Within An Element Using Tab-Key Navigation In JavaScript](https://bennadel.github.io/JavaScript-Demos/demos/focus-capture/)
 * [Applying Multiple Animation Keyframes To A Loading Indicator In CSS](https://bennadel.github.io/JavaScript-Demos/demos/multiple-animations-css/)
 * [Capturing Keyboard Event Modifiers Across Operating Systems In JavaScript](https://bennadel.github.io/JavaScript-Demos/demos/keydown-os-modifier/)
 * [Exploring The Interplay Between HTML Entities And TextContent In JavaScript](https://bennadel.github.io/JavaScript-Demos/demos/text-content-entities/)
