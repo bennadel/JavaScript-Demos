@@ -1,0 +1,48 @@
+
+body {
+	font-family: sans-serif ;
+	font-size: 18px ;
+}
+
+button {
+	font-size: 100% ;
+}
+
+button:focus {
+	outline: 3px solid #ff3366 ;
+}
+
+.modal {
+	align-items: center ;
+	background-color: rgba( 0, 0, 0, 0.8 ) ;
+	bottom: 0px ;
+	display: none ;
+	justify-content: center ;
+	left: 0px ;
+	overscroll-behavior:  contain ;
+	position: fixed ;
+	right: 0px ;
+	top: 0px ;
+}
+
+.modal--open {
+	display: flex ;
+}
+
+.modal__panel {
+	background-color: #ffffff ;
+	border-radius: 5px 5px 5px 5px ;
+	padding: 30px 30px 30px 30px ;
+}
+
+.modal__panel:focus,
+.modal__panel:focus-within {
+	outline: 4px dotted #ffffff ;
+}
+
+.modal__panel > *:first-child {
+	margin-top: 0px ;
+}
+.modal__panel > *:last-child {
+	margin-bottom: 0px ;
+}
