@@ -1,0 +1,47 @@
+
+:host {
+	display: block ;
+}
+
+input,
+button {
+	font-size: 100% ;
+}
+
+form {
+	display: flex ;
+
+	input[ type = "text" ] {
+		margin-right: 10px ;
+		padding: 10px 10px 10px 10px ;
+		width: 450px ;
+	}
+
+	button {
+		padding: 0px 10px 0px 10px ;
+	}
+}
+
+ul {
+	list-style-type: none ;
+	margin: 16px 0px 16px 0px ;
+	padding: 0px 0px 0px 0px ;
+	width: 500px ;
+}
+
+li {
+	align-items: flex-start ;
+	border-bottom: 1px solid #e0e0e0 ;
+	display: flex ;
+	margin: 0px 0px 10px 0px ;
+	padding: 5px 5px 5px 5px ;
+
+	&:hover {
+		background-color: #f0f0f0 ;
+	}
+
+	p {
+		flex: 1 1 auto ;
+		margin: 0px 10px 0px 0px ;
+	}
+}

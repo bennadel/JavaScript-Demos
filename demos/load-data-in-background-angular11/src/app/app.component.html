@@ -1,0 +1,46 @@
+
+<!-- BEGIN: Loading State. -->
+<p *ngIf="isLoading">
+	Loading messages....
+</p>
+<!-- END: Loading State. -->
+
+
+<!-- BEGIN: Ready State. -->
+<div *ngIf="( ! isLoading )">
+
+	<form (submit)="addNewMessage()">
+		<input
+			type="text"
+			name="newMessage"
+			[(ngModel)]="form.newMessage"
+			size="30"
+			autofocus
+			autocomplete="off"
+		/>
+		<button type="submit" [disabled]="form.isProcessing">
+			Add message
+		</button>
+	</form>
+
+	<ng-template [ngIf]="messages.length">
+
+		<h2>
+			Messages
+		</h2>
+
+		<ul>
+			<li *ngFor="let message of messages; trackBy: trackByID;">
+				<p>
+					{{ message.text }}
+				</p>
+				<button (click)="deleteMessage( message )">
+					Delete
+				</button>
+			</li>
+		</ul>
+
+	</ng-template>
+
+</div>
+<!-- END: Ready State. -->
