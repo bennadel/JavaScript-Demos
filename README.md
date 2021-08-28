@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Tracking User Interactions And Analytics With Small Abstractions In AngularJS](https://bennadel.github.io/JavaScript-Demos/demos/tracking-user-interactions-angularjs/)
 * [Brute-Force Refreshing View-Data In The Background In Angular 11.0.5](https://bennadel.github.io/JavaScript-Demos/demos/load-data-in-background-angular11/dist/)
 * [Restoring ActiveElement Focus After A User-Interaction In JavaScript](https://bennadel.github.io/JavaScript-Demos/demos/restoring-active-element/)
 * [Trapping Focus Within An Element Using Tab-Key Navigation In JavaScript](https://bennadel.github.io/JavaScript-Demos/demos/focus-capture/)

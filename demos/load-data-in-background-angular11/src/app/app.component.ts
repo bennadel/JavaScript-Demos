@@ -187,12 +187,12 @@ export class AppComponent {
 
 			}
 
-			this.messages = response;
 			this.isLoading = false;
+			this.messages = response;
 
 		} catch ( error ) {
 
-			console.warn( "Could load load message" );
+			console.warn( "Could not load messages." );
 			console.error( error );
 
 		}

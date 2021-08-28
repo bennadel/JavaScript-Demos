@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en" ng-app="Demo">
+<head>
+	<meta charset="utf-8" />
+
+	<title>
+		Tracking User Interactions And Analytics With Small Abstractions In AngularJS
+	</title>
+
+	<link rel="stylesheet" type="text/css" href="./demo.css">
+</head>
+<body ng-controller="appController">
+
+	<h1>
+		Tracking User Interactions And Analytics With Small Abstractions In AngularJS
+	</h1>
+
+	<ul class="items">
+		<li ng-repeat="friend in friends track by friend.id" class="items__item">
+
+			<a
+				ng-href="#/friend/{{ friend.id }}"
+				ng-click="trackUserInteraction( 'View friend' )">
+				{{ friend.name }}
+			</a>
+			&mdash;
+			<button ng-click="editFriend( friend )">
+				Edit
+			</button>
+			<button ng-click="deleteFriend( friend )">
+				Delete
+			</button>
+
+		</li>
+	</ul>
+
+	<!-- ---------------------------------------------------------------------------- -->
+	<!-- ---------------------------------------------------------------------------- -->
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/jquery/3.6.0/jquery-3.6.0.min.js"></script>
+	<script type="text/javascript" src="../../vendor/angularjs/angular-1.2.22.min.js"></script>
+	<script type="text/javascript">
+
+		// Create an application module for our demo.
+		var app = angular.module( "Demo", [] );
+
+	</script>
+	<script type="text/javascript">
+
+		app.controller( "appController", AppController );
+
+		function AppController( $scope, analytics ) {
+
+			$scope.friends = [];
+
+			init();
+
+			// Expose the public methods.
+			$scope.deleteFriend = deleteFriend;
+			$scope.editFriend = editFriend;
+			$scope.trackUserInteraction = trackUserInteraction;
+
+			// ---
+			// PUBLIC METHODS.
+			// ---
+
+			// I take the user to the delete confirmation form for the given friend.
+			function deleteFriend( friend ) {
+
+				trackUserInteraction( "Delete friend" );
+
+				// TODO: Delete friend (outside the scope of demo).
+				// ....
+				// ....
+
+			}
+
+
+			// I take the user to the edit form for the given friend.
+			function editFriend( friend ) {
+
+				trackUserInteraction( "Edit friend" );
+
+				// TODO: Edit friend (outside the scope of demo).
+				// ....
+				// ....
+
+			}
+
+
+			// I track the given user interaction / action.
+			function trackUserInteraction( interaction ) {
+
+				// Instead of spreading this complexity throughout the component, I like
+				// to create one (or two) methods in the component that hide this
+				// complexity. Then, I just call these methods from within the component
+				// controller and from within component view.
+				analytics.track(
+					"ben@bennadel.com",
+					"DemoView.Action",
+					{
+						Action: interaction,
+						Role: "Admin"
+					}
+				);
+
+			}
+
+			// ---
+			// PRIVATE METHODS.
+			// ---
+
+			// I get called once before the component is mounted.
+			function init() {
+
+				trackUserInteraction( "Open" );
+
+				$scope.friends = [
+					{ id: 1, name: "Kim" },
+					{ id: 2, name: "Joe" },
+					{ id: 3, name: "Sam" },
+					{ id: 4, name: "Ryan" },
+					{ id: 5, name: "Kit" }
+				];
+
+			}
+
+		}
+
+	</script>
+	<script type="text/javascript">
+
+		app.service( "analytics", AnalyticsFactory );
+
+		function AnalyticsFactory() {
+
+			// Expose the public methods.
+			return({
+				track: track
+			});
+
+			// ---
+			// PUBLIC METHODS.
+			// ---
+
+			// I record the given analytics event.
+			function track( userID, eventType, eventProperties ) {
+
+				console.group( "%cAnalytics Events", "font-weight: bolder ; color: dodgerblue ; text-decoration: underline ;" );
+				console.log( "User:", userID );
+				console.log( "Event:", eventType );
+				console.log( "Properties:", eventProperties );
+				console.groupEnd();
+
+			}
+
+		}
+
+	</script>
+
+</body>
+</html>
