@@ -1,0 +1,93 @@
+
+html {
+	box-sizing: border-box ;
+}
+
+html *,
+html *:before,
+html *:after {
+	box-sizing: inherit ;
+}
+
+body {
+	font-family: sans-serif ;
+	font-size: 18px ;
+}
+
+.states {
+	align-items: stretch ;
+	background-color: #ffffff ;
+	bottom: 0px ;
+	display: flex ;
+	justify-content: stretch ;
+	left: 0px ;
+	padding: 30px 30px 30px 30px ;
+	position: fixed ;
+	right: 0px ;
+	top: 0px ;
+}
+
+.states__state {
+	align-items: center ;
+	background-color: #f0f0f0 ;
+	border-radius: 10px 10px 10px 10px ;
+	display: none ;
+	justify-content: center ;
+	padding: 30px 30px 30px 30px ;
+	width: 100% ;
+}
+
+.states__state--active {
+	display: flex ;
+}
+
+.states__content {
+	text-align: center ;
+	width: 580px ;
+}
+
+.title {
+	margin: 0px 0px 30px 0px ;
+}
+
+.buttons {
+	display: flex ;
+	justify-content: center ;
+	margin: 30px 0px 20px 0px ;
+}
+
+.button {
+	background-color: #ffffff ;
+	border: 1px solid #121212 ;
+	border-radius: 40px 40px 40px 40px ;
+	cursor: pointer ;
+	font-size: 100% ;
+	padding: 10px 20px 10px 20px ;
+}
+
+.button:hover {
+	background-color: #121212 ;
+	color: #ffffff ;
+}
+
+.meter {
+	border: 2px solid steelblue ;
+	border-radius: 50% 50% 50% 50% ;
+	box-shadow: 0px 0px 7px 3px #ffffff ;
+	display: flex ;
+	flex-direction: column ;
+	height: 200px ;
+	justify-content: flex-end ;
+	margin: 0px auto 0px auto ;
+	overflow: hidden ;
+	width: 200px ;
+}
+
+.meter__bar {
+	background-color: lightsteelblue ;
+	height: 0% ;
+	transition-duration: 0s ; /* To be set in the JavaScript. */
+	transition-property: height ;
+	transition-timing-function: ease-in-out ;
+}
+

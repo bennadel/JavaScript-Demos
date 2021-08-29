@@ -1,0 +1,354 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>
+		Code Kata: Water Breathing Exercise In JavaScript
+	</title>
+	<link rel="stylesheet" type="text/css" href="./demo.css">
+</head>
+<body>
+
+	<div class="states">
+		<div class="states__state states__state--ready">
+			<div class="states__content">
+
+				<h1 class="title">
+					Water Breathing Exercise
+				</h1>
+
+				<p class="description">
+					Water breathing consists of a 4-second inhale followed by a 4-second
+					exhale, repeated for 10-cycles.
+				</p>
+
+				<div class="buttons">
+					<button class="button button--start">
+						Start breathing &rarr; Inhale first
+					</button>
+				</div>
+
+			</div>
+		</div>
+		<div class="states__state states__state--running">
+			<div class="states__content">
+
+				<h1 class="title">
+					Water Breathing Exercise
+				</h1>
+
+				<p class="description">
+					<!-- To be populated programmatically. -->
+				</p>
+
+				<div class="meter">
+					<div class="meter__bar"></div>
+				</div>
+
+				<div class="buttons">
+					<button class="button button--stop">
+						Stop breathing
+					</button>
+				</div>
+
+			</div>
+		</div>
+		<div class="states__state states__state--done">
+			<div class="states__content">
+
+				<h1 class="title">
+					Be At Peace With JavaScript
+				</h1>
+
+				<p class="description">
+					There's nothing you can't do with a For-loop and a few If-statements.
+				</p>
+
+				<div class="buttons">
+					<button class="button button--restart">
+						Go again
+					</button>
+				</div>
+
+			</div>
+		</div>
+	</div>
+
+	<!-- ---------------------------------------------------------------------------- -->
+	<!-- ---------------------------------------------------------------------------- -->
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/jquery/3.6.0/jquery-3.6.0.min.js"></script>
+	<script type="text/javascript">
+
+		var activeState = null;
+		// Each one of the ".states__state" containers (above) is controlled by a State
+		// class (below). Each state has a setup phase (the constructor) and a teardown
+		// phase (an explicit method call). To keep things simple, each State knows which
+		// State it needs to transition too (as opposed to emitting events).
+		gotoState( ReadyState );
+
+		// I move from the current active state to the given state constructor.
+		function gotoState( State ) {
+
+			if ( activeState ) {
+
+				activeState.teardown();
+				activeState = null;
+			}
+
+			activeState = new State();
+
+		}
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+		function ReadyState() {
+
+			var rootNode = $( ".states__state--ready" )
+				.addClass( "states__state--active" )
+				.on( "click", ".button--start", handleStartClick )
+			;
+
+			return({
+				teardown: teardown
+			});
+
+			// ---
+			// PUBLIC METHODS.
+			// ---
+
+			// I teardown event-bindings and settings.
+			function teardown() {
+
+				rootNode
+					.off()
+					.removeClass( "states__state--active" )
+				;
+
+			}
+
+			// ---
+			// PRIVATE METHODS.
+			// ---
+
+			// I handle clicks on the start button.
+			function handleStartClick( event ) {
+
+				gotoState( RunningState );
+
+			}
+
+		}
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+		function RunningState() {
+
+			var rootNode = $( ".states__state--running" )
+				.addClass( "states__state--active" )
+				.on( "click", ".button--stop", handleStopClick )
+			;
+			var descriptionNode = rootNode
+				.find( ".description" )
+				.text( "" )
+			;
+			var meterBarNode = rootNode.find( ".meter__bar" );
+
+			// Configuration for the breathing cycles.
+			var targetInCount = 4;
+			var targetOutCount = 4;
+			var targetCycleCount = 10;
+			var currentCount = 1;
+			var currentCycle = 1;
+			var currentDirection = "in";
+
+			renderCount();
+			// CAUTION: Resetting the meter causes forced reflow in order to set the
+			// height of the meter without incurring a transition period in the CSS.
+			resetMeter();
+			setupMeterForIn();
+
+			// The running phase is essentially time-based. As such, we need to setup an
+			// in interval that will move the state and view-model forward.
+			var intervalToken = setInterval( handleTick, 1000 );
+
+			return({
+				teardown: teardown
+			});
+
+			// ---
+			// PUBLIC METHODS.
+			// ---
+
+			// I teardown event-bindings and settings.
+			function teardown() {
+
+				clearInterval( intervalToken );
+
+				rootNode
+					.off()
+					.removeClass( "states__state--active" )
+				;
+
+			}
+
+			// ---
+			// PRIVATE METHODS.
+			// ---
+
+			// I handle clicks on the stop button.
+			function handleStopClick( event ) {
+
+				gotoState( DoneState );
+
+			}
+
+
+			// I handle increments in the tick count (time marching forward).
+			function handleTick() {
+
+				// User is currently inhaling.
+				if ( currentDirection === "in" ) {
+
+					// If we've reached the end of our inhale, start the exhale.
+					if ( ++currentCount > targetInCount ) {
+
+						currentDirection = "out";
+						currentCount = targetOutCount;
+						setupMeterForOut();
+
+					}
+
+				// User is currently exhaling.
+				} else {
+
+					// If we've reached the end of our exhale, start the inhale.
+					if ( --currentCount < 1 ) {
+
+						// The exhale concludes a cycle. If we've reached the number of
+						// cycles targeted by this exercise, move to the Done state.
+						if ( ++currentCycle > targetCycleCount ) {
+
+							gotoState( DoneState );
+							return;
+
+						}
+
+						currentDirection = "in";
+						currentCount = 1;
+						setupMeterForIn();
+
+					}
+
+				}
+
+				renderCount();
+
+			}
+
+
+			// I render the current cycle and count.
+			function renderCount() {
+
+				if ( currentDirection === "in" ) {
+
+					descriptionNode.text( "Cycle: " + currentCycle + " — In: " + currentCount );
+
+				} else {
+
+					descriptionNode.text( "Cycle: " + currentCycle + " — Out: " + currentCount );
+
+				}
+
+			}
+
+
+			// Since we're never ripping the DOM nodes out of the DOM, any height that is
+			// applied to the meter will persist across the different states. As such,
+			// when we start the Running state, we have to make sure that we reset the
+			// height of the progress bar WITHOUT A TRANSITION DURATION before we start
+			// animating the meter for the breathing.
+			function resetMeter() {
+
+				meterBarNode
+					.css( "transition-duration", "0s" )
+					.css( "height", "0%" )
+					// Force a repaint of the meter to make sure that we reset the height
+					// of the progress bar to 0% before we start the transitions.
+					.height();
+				;
+
+			}
+
+
+			// I setup the meter to show the inhale animation.
+			function setupMeterForIn() {
+
+				meterBarNode
+					.css( "transition-duration", ( targetInCount + "s" ) )
+					.css( "height", "100%" )
+				;
+
+			}
+
+
+			// I setup the meter to show the exhale animation.
+			function setupMeterForOut() {
+
+				meterBarNode
+					.css( "transition-duration", ( targetOutCount + "s" ) )
+					.css( "height", "0%" )
+				;
+
+			}
+
+		}
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+		function DoneState() {
+
+			var rootNode = $( ".states__state--done" )
+				.addClass( "states__state--active" )
+				.on( "click", ".button--restart", handleRestartClick )
+			;
+
+			return({
+				teardown: teardown
+			});
+
+			// ---
+			// PUBLIC METHODS.
+			// ---
+
+			// I teardown event-bindings and settings.
+			function teardown() {
+
+				rootNode
+					.off()
+					.removeClass( "states__state--active" )
+				;
+
+			}
+
+			// ---
+			// PRIVATE METHODS.
+			// ---
+
+			// I handle clicks on the restart button.
+			function handleRestartClick( event ) {
+
+				gotoState( RunningState );
+
+			}
+
+		}
+
+	</script>
+
+</body>
+</html>
