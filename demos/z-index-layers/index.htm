@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>
+		Organizing My Application Layers Using Z-Index Stacking Contexts In CSS
+	</title>
+	<style type="text/css">
+		.stacking-context {
+			/*
+				In order to create a stacking context, we have to have to use a non-
+				static layout for the trapping element.
+			*/
+			position: relative ;
+		}
+
+		.widget {
+			background-color: #f0f0f0 ;
+			border-radius: 4px 4px 4px 4px ;
+			box-shadow: 0px 0px 7px 3px rgba( 0, 0, 0, 0.3 ) ;
+			height: 80px ;
+			padding: 20px 20px 20px 20px ;
+			position: fixed ;
+			width: 200px ;
+		}
+	</style>
+</head>
+<body>
+
+	<!--
+		Each stacking context below TRAPS all of its descendant elements in the same
+		layer. It doesn't matter what z-index a descendant element uses at this point -
+		it will never be able to escape the z-index defined at the stacking context.
+	-->
+
+	<!-- Main stacking context for all body-level elements. -->
+	<div class="stacking-context stacking-context--body" style="z-index: 1 ;">
+
+		<h1>
+			Organizing My Application Layers Into Stacking Contexts In CSS
+		</h1>
+
+		<p>
+			It turns out, layering an application over the long-term is challenging,
+			especially when you start introducing 3rd-party widgets that add their own
+			DOM elements (like Chat widgets and On-boarding widgets).
+		</p>
+
+	</div>
+
+	<!--
+		Stacking context for a "flyout widget". I would likely create a new stacking
+		context for each unique "widget" that needs to be layered above the body.
+	-->
+	<div class="stacking-context stacking-context--flyout" style="z-index: 2 ;">
+		<!--
+			CAUTION: The z-index on this element (99999999999) won't interfere with the
+			z-index of an element contained within a different stacking context.
+		-->
+		<span class="widget" style="top: 80px ; left: 80px ; z-index: 99999999999 ;">
+			This is my fly-out widget.
+		</span>
+	</div>
+
+	<!-- Stacking context for all modal windows. -->
+	<div class="stacking-context stacking-context--modal" style="z-index: 3 ;">
+		<!--
+			CAUTION: The z-index on this element (55555555555) won't interfere with the
+			z-index of an element contained within a different stacking context.
+		-->
+		<span class="widget" style="top: 140px ; left: 140px ; z-index: 55555555555 ;">
+			This is my modal widget.
+		</span>
+	</div>
+
+	<!-- Stacking context for all alerts. -->
+	<div class="stacking-context stacking-context--alert" style="z-index: 4 ;">
+		<!--
+			CAUTION: The z-index on this element (22222222222) won't interfere with the
+			z-index of an element contained within a different stacking context.
+		-->
+		<span class="widget" style="top: 200px ; left: 200px ; z-index: 22222222222 ;">
+			This is my alert widget.
+		</span>
+	</div>
+
+</body>
+</html>
