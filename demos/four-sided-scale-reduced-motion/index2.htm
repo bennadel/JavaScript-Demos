@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>
+		Applying Multiple Animation @keyframes To Support Prefers-Reduced-Motion In CSS
+	</title>
+	<link rel="stylesheet" type="text/css" href="./demo.css">
+	<style type="text/css">
+
+		.modal {
+			/* Four-sided positioning, plays nicely with scale() transformations. */
+			bottom: 0px ;
+			left: 0px ;
+			position: fixed ;
+			right: 0px ;
+			top: 0px ;
+
+			/* Animating the modal element into view. */
+			animation-duration: 1s ; /* NOTE: Absurdly SLOW for demo purposes. */
+			animation-fill-mode: both ;
+			animation-iteration-count: 1 ;
+			animation-name: modal-enter ;
+			animation-timing-function: ease-out ;
+		}
+
+		/* By default, we'll use the REDUCED MOTION version of the animation. */
+		@keyframes modal-enter {
+			from {
+				opacity: 0 ;
+			}
+			to {
+				opacity: 1 ;
+			}
+		}
+
+		/*
+			Then, if the user has NO PREFERENCE for motion, we can OVERRIDE the
+			animation definition to include both the motion and non-motion properties.
+		*/
+		@media ( prefers-reduced-motion: no-preference ) {
+			@keyframes modal-enter {
+				from {
+					opacity: 0 ;
+					transform: scale( 0.7 ) ;
+				}
+				to {
+					opacity: 1 ;
+					transform: scale( 1.0 ) ;
+				}
+			}
+		}
+
+	</style>
+</head>
+<body>
+
+	<h1>
+		Applying Multiple Animation @keyframes To Support Prefers-Reduced-Motion In CSS
+	</h1>
+
+	<p>
+		<a class="toggle">Open modal</a>
+	</p>
+
+	<!--
+		This modal window will use FIXED positioning and have a four-sided (top, right,
+		bottom, left) arrangement. It will also fade into view using CSS transitions.
+	-->
+	<template>
+		<div class="modal">
+			<a class="toggle">Close modal</a>
+		</div>
+	</template>
+
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/jquery/3.6.0/jquery-3.6.0.min.js"></script>
+	<script type="text/javascript">
+
+		var modal = null;
+		var template = $( "template" );
+
+		// We'll use event-delegation so that we can capture the click event in the
+		// modal, which isn't even rendered yet.
+		$( document ).on( "click", ".toggle", toggleModal );
+
+		// I show / hide the modal window by adding it to or removing it from the DOM
+		// (Document Object Model) tree, respectively.
+		function toggleModal() {
+
+			if ( modal ) {
+
+				modal.remove();
+				modal = null;
+
+			} else {
+
+				modal = $( template.prop( "content" ).firstElementChild.cloneNode( true ) )
+					.appendTo( document.body )
+				;
+
+			}
+
+		}
+
+	</script>
+
+</body>
+</html>
