@@ -1,0 +1,14 @@
+
+body {
+	font-family: sans-serif ;
+	font-size: 18px ;
+}
+
+li {
+	border-radius: 5px 5px 5px 5px ;
+	padding: 5px 5px 5px 5px ;
+}
+
+li.active {
+	background-color: gold ;
+}

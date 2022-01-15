@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>
+		Umbrella JS - A Light-Weight Replacement For jQuery
+	</title>
+	<link rel="stylesheet" type="text/css" href="./demo.css">
+</head>
+<body>
+
+	<h1>
+		Umbrella JS - A Light-Weight Replacement For jQuery
+	</h1>
+
+	<h2>
+		Friends
+	</h2>
+
+	<ul class="friends">
+		<li>Kimmie Karate</li>
+		<li>Timmy Tornado</li>
+		<li>Pammy Prankster</li>
+	</ul>
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/umbrella/3.2.2/umbrella-3.2.2.min.js"></script>
+	<script type="text/javascript">
+
+		// While Umbrella JS doesn't have all the same convenience methods that jQuery
+		// has, it is structured in the same way, wherein the Umbrella prototype can be
+		// to register instance methods on the Umbrella wrapper. Let's create a few
+		// event-based plugins.
+		u.prototype.mouseenter = partiallyApply( u.prototype.on, "mouseenter" );
+		u.prototype.mouseleave = partiallyApply( u.prototype.on, "mouseleave" );
+		// The Umbrella JS philosophy is that CSS shouldn't be touched inline; instead,
+		// it should be updated by adding and removing CSS classes. Which is a nice
+		// thought in most cases. However, sometimes, you need to perform dynamic,
+		// runtime calculations that can't be predefined in static CSS classes. As such,
+		// let's create a plugin that easily changes the underlying style properties.
+		u.prototype.css = function( styleProps ) {
+
+			return this.each(
+				function iterator( node ) {
+
+					Object.assign( node.style, styleProps );
+
+				}
+			);
+
+		};
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+		// NOTE: There's no real rhyme or reason to what I'm doing here, I'm just using
+		// the UmbrellaJS API to make some stuff happen.
+		u( "ul.friends" )
+			.append( "<li>Billy Bonanza</li>" )
+			.find( "li" )
+			.css({
+				color: "fuchsia",
+			})
+			.mouseenter(
+				function handleMouseenter( event ) {
+
+					u( this ).addClass( "active" );
+
+				}
+			)
+			.mouseleave(
+				function handleMouseleave( event ) {
+
+					u( this ).removeClass( "active" );
+
+				}
+			)
+			.each(
+				function iterator( node ) {
+
+					var wrapped = u( node );
+					wrapped.attr( "title", `My groovy friend: ${ wrapped.text() }` );
+
+				}
+			)
+		;
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+		/**
+		* I return a function in which the given arguments are automatically prepended to
+		* the invocation arguments of the given function reference. The runtime THIS
+		* reference is propagated through the internal invocation.
+		*/
+		function partiallyApply( functionRef, ...appliedArguments ) {
+
+			function proxyFunction( ...restArguments ) {
+
+				return( functionRef.apply( this, [ ...appliedArguments, ...restArguments ] ) );
+
+			}
+
+			return( proxyFunction );
+
+		}
+
+	</script>
+
+</body>
+</html>
