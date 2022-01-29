@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>
+		Dynamically Creating Script Tags With Umbrella JS
+	</title>
+</head>
+<body>
+
+	<h1>
+		Dynamically Creating Script Tags With Umbrella JS
+	</h1>
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/umbrella/3.3.0/umbrella-3.3.0.min.js"></script>
+	<!--
+		CAUTION: I'm including a custom jQuery-compatibility file that adds some methods
+		to the Umbrella JS prototype in order to bring its API closer to the jQuery API.
+	-->
+	<script type="text/javascript" src="../../vendor/umbrella/jquery-compat.js"></script>
+	<script type="text/javascript">
+
+		// In the first attempt, we're creating a Script tag by passing-in an HTML
+		// snippet to the Umbrella JS constructor.
+		u( "<script>" )
+			.attr( "type", "text/javascript" )
+			.text( "console.log( 'Hello from HTML snippet!' )" )
+			.appendTo( document.body )
+		;
+
+		// In the second attempt, we're explicitly creating a native Script element and
+		// then passing that node into the Umbrella JS constructor.
+		u( document.createElement( "script" ) )
+			.attr( "type", "text/javascript" )
+			.text( "console.log( 'Hello from native element!' )" )
+			.appendTo( document.body )
+		;
+
+	</script>
+
+</body>
+</html>
