@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Using AbortController To Debounce setTimeout() Calls](https://bennadel.github.io/JavaScript-Demos/demos/abort-timer/)
 * [Dynamically Creating Script Tags With Umbrella JS](https://bennadel.github.io/JavaScript-Demos/demos/umbrella-js-script-element/)
 * [Umbrella JS - A Light-Weight Replacement For jQuery](https://bennadel.github.io/JavaScript-Demos/demos/umbrella-js/)
 * [Applying Multiple Animation @keyframes To Support Prefers-Reduced-Motion In CSS](https://bennadel.github.io/JavaScript-Demos/demos/four-sided-scale-reduced-motion/)

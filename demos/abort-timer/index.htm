@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>
+		Using AbortController To Debounce setTimeout() Calls
+	</title>
+</head>
+<body>
+
+	<h1>
+		Using AbortController To Debounce setTimeout() Calls
+	</h1>
+
+	<button>
+		Click Me
+	</button>
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/umbrella/3.3.0/umbrella-3.3.0.min.js"></script>
+	<script type="text/javascript" src="../../vendor/umbrella/jquery-compat.js"></script>
+	<script type="text/javascript" charset="utf-8">
+
+		// HISTORICALLY, if we wanted to DEBOUNCE A TIMER, we would store a reference to
+		// the timeoutID (the return value of the timer/interval functions). In this
+		// case, we're going to use the same exactly technique; only, instead of storing
+		// a timeoutID, we're storing a reference to an AbortController.
+		var abortController = null;
+
+		u( "button" ).click(
+			function handleClick() {
+
+				// HISTORICALLY, when debouncing clicks on the button, we would call the
+				// clearTimeout() function right before setting up the timer. In this
+				// case, since we're using the AbortController as the underlying control
+				// mechanism, we're going to call .abort() instead.
+				abortController?.abort();
+				abortController = new AbortController();
+
+				setAbortableTimeout(
+					function logTimeout() {
+
+						console.log( "Timer executed at %s \u{1F4AA}!", Date.now() );
+
+					},
+					1000,
+					abortController.signal
+				);
+
+			}
+		);
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+		/**
+		* I create a timer that can be canceled using the optional AbortSignal.
+		*/
+		function setAbortableTimeout( callback, delayInMilliseconds, signal ) {
+
+			// When the calling context triggers an abort, we need to listen to for it so
+			// that we can turn around and clear the internal timer.
+			// --
+			// NOTE: We're creating a proxy callback to remove this event-listener once
+			// the timer executes. This way, our event-handler never gets invoked if
+			// there's nothing for it to actually do. Also note that the "abort" event
+			// will only ever get emitted once, regardless of how many times the calling
+			// context tries to invoke .abort() on its AbortController.
+			signal?.addEventListener( "abort", handleAbort );
+
+			// Setup our internal timer that we can clear-on-abort.
+			var internalTimer = setTimeout( internalCallback, delayInMilliseconds );
+
+			// -- Internal methods. -- //
+
+			function internalCallback() {
+
+				signal?.removeEventListener( "abort", handleAbort );
+				callback();
+
+			}
+
+			function handleAbort() {
+
+				console.warn( "Canceling timer (%s) via signal abort.", internalTimer );
+				clearTimeout( internalTimer );
+
+			}
+
+		}
+
+	</script>
+
+</body>
+</html>
