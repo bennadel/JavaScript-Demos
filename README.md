@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Using Unicode And Special Characters Within The content Property In CSS](https://bennadel.github.io/JavaScript-Demos/demos/css-unicode-content/)
 * [Using AbortController To Debounce setTimeout() Calls](https://bennadel.github.io/JavaScript-Demos/demos/abort-timer/)
 * [Dynamically Creating Script Tags With Umbrella JS](https://bennadel.github.io/JavaScript-Demos/demos/umbrella-js-script-element/)
 * [Umbrella JS - A Light-Weight Replacement For jQuery](https://bennadel.github.io/JavaScript-Demos/demos/umbrella-js/)

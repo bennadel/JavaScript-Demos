@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>
+		Using Unicode And Special Characters Within The content Property In CSS
+	</title>
+	<style type="text/css">
+
+		li:nth-child( 1 )::before {
+			content: "Emoji: \1f600"  ;
+		}
+		li:nth-child( 2 )::before {
+			content: "Emoji: \1f618"  ;
+		}
+		li:nth-child( 3 )::before {
+			content: "Emoji: \1f628"  ;
+		}
+		li:nth-child( 4 )::before {
+			/**
+			* In this case, the Copyright symbol is followed by a numeric year. In order
+			* to prevent the year from being parsed as part of the Unicode escape
+			* sequence, we have to include a single space. This space is NOT RENDERED as
+			* part the content. If we did want to render a physical space, we'd have to
+			* include two spaces (one as part of the escape sequence and one to render).
+			* Or, we could break the "content" attribute up into two quoted values.
+			*/
+			content: "Ben Nadel \a9 2022"  ;
+			/* Using two quoted values without a space. */
+			x-content: "Ben Nadel \a9" "2022"  ;
+			/* Using two quoted values with an additional, rendered space. */
+			x-content: "Ben Nadel \a9" " 2022"  ;
+		}
+		li:nth-child( 5 )::before {
+			/* To render back-slash, we have to escape it. */
+			content: "Escaped \\2022 back-slash" ;
+		}
+
+	</style>
+</head>
+<body>
+
+	<h1>
+		Using Unicode And Special Characters Within The content Property In CSS
+	</h1>
+
+	<ul>
+		<li><!-- Content to be inserted via CSS. --></li>
+		<li><!-- Content to be inserted via CSS. --></li>
+		<li><!-- Content to be inserted via CSS. --></li>
+		<li><!-- Content to be inserted via CSS. --></li>
+		<li><!-- Content to be inserted via CSS. --></li>
+	</ul>
+
+	<!--
+		For funzies, I wanted to try and output the Unicode characters in JavaScript /
+		console.log() as well. Just cause I know I'll forget this in the future.
+	-->
+	<script type="text/javascript">
+
+		console.group( "Echoing the Computed CSS content Property" );
+
+		for ( var node of document.querySelectorAll( "li" ) ) {
+
+			console.log( getComputedStyle( node, ":before" ).content );
+
+		}
+
+		console.groupEnd();
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+		// See all about Unicode in JavaScript here:
+		// https://dmitripavlutin.com/what-every-javascript-developer-should-know-about-unicode/#3-unicode-in-javascript
+		console.group( "Logging Unicode to the Console" );
+		console.log( "Emoji: \u{1f600}" );
+		console.log( "Emoji: \u{1f618}" );
+		console.log( "Emoji: \u{1f628}" );
+		console.log( "Ben Nadel \u{a9}2022" );
+		console.log( "Escaped \\2022 back-slash" );
+		console.groupEnd();
+
+	</script>
+
+</body>
+</html>
