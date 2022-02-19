@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>
+		throw() Anything In JavaScript
+	</title>
+</head>
+<body>
+
+	<h1>
+		throw() Anything In JavaScript
+	</h1>
+
+	<script type="text/javascript">
+
+		// Let's create a collection of different types of JavaScript objects to see what
+		// happens when we throw() them around.
+		var values = [
+			null,
+			undefined,
+			true,
+			false,
+			1234,
+			new Date(),
+			"String Object",
+			[ "Array Object" ],
+			{ type: "Object Object" },
+			new Map().set( "foo", "bar" ),
+			new Set().add( "foo" ),
+			Promise.resolve( "Promise Object" ),
+			Promise.reject( "Rejection Object" ),
+			new Error( "Error Object" )
+		];
+
+		console.group( "Trying to throw() various objects in JavaScript." );
+
+		for ( var value of values ) {
+
+			try {
+
+				throw( value );
+
+			} catch ( error ) {
+
+				console.warn( "%cCatch:", "font-weight: bold", error );
+
+			}
+
+		}
+
+		console.groupEnd();
+
+	</script>
+
+</body>
+</html>
