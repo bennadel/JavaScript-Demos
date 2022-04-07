@@ -1,0 +1,22 @@
+
+p {
+	align-items: center ;
+	bottom: 0px ;
+	display: flex ;
+	justify-content: center ;
+	left: 0px ;
+	margin: 0px ;
+	position: fixed ;
+	right: 0px ;
+	top: 0px ;
+}
+
+button {
+	background-color: #007cff ;
+	border: none ;
+	border-radius: 5px 5px 5px 5px ;
+	color: #ffffff ;
+	cursor: pointer ;
+	font-size: 20px ;
+	padding: 15px 20px 15px 20px ;
+}

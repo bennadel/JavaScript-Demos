@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>
+		Code Kata: Throbbing Buttons Using box-shadow Animation In CSS
+	</title>
+</head>
+<body>
+
+	<h1>
+		Code Kata: Throbbing Buttons Using box-shadow Animation In CSS
+	</h1>
+
+	<p>
+		<button> Make it Rain </button>
+	</p>
+
+	<link rel="stylesheet" type="text/css" href="./styles.css" />
+	<style type="text/css">
+
+		/**
+		* We're going to use multiple box-shadows to make the button throb. we can only
+		* have one "box-shadow" property on a class; but, each "box-shadow" property can
+		* contain multiple shadows, each of which can be animated independently(ish).
+		*/
+		button {
+			animation-duration: 1750ms ;
+			animation-fill-mode: both ;
+			animation-iteration-count: infinite ;
+			animation-name: button-shadow-throb ;
+			animation-timing-function: linear ;
+		}
+
+		/**
+		* The box-shadow property takes a comma-delimited list of shadows. To make the
+		* button "throb", each shadow is going to define a "ring" around the button that
+		* grows outward using the "spread-radius" (4th short-hand value). Our three
+		* shadows define three rings that have a staggered outward animation.
+		*/
+		@keyframes button-shadow-throb {
+			0% {
+				box-shadow:
+					0px 0px 0px 0px #007cff80, /* Ring three - hidden. */
+					0px 0px 0px 0px #007cff80, /* Ring two - hidden. */
+					0px 0px 0px 0px #007cff80  /* Ring one - hidden. */
+				;
+			}
+			15% {
+				box-shadow:
+					0px 0px 0px 0px #007cff80,
+					0px 0px 0px 0px #007cff80,
+					0px 0px 0px 5px #007cff80  /* Ring one - enter. */
+				;
+			}
+			30% {
+				box-shadow:
+					0px 0px 0px 0px #007cff80,
+					0px 0px 0px 5px #007cff80, /* Ring two - enter. */
+					0px 0px 0px 10px #007cff40
+				;
+			}
+			45% {
+				box-shadow:
+					0px 0px 0px 5px #007cff80, /* Ring three - enter. */
+					0px 0px 0px 10px #007cff40,
+					0px 0px 0px 15px #007cff20
+				;
+			}
+			/**
+			* Once each ring reaches its outer spread-radius, it's going to fade out using
+			* the alpha-channel on the RGB(A) hex color definition. Notice that the alpha-
+			* channels go from "80" to "00" over the next couple of keyframes.
+			*/
+			60% {
+				box-shadow:
+					0px 0px 0px 10px #007cff40,
+					0px 0px 0px 15px #007cff20,
+					0px 0px 15px 15px #007cff00
+				;
+			}
+			75% {
+				box-shadow:
+					0px 0px 0px 15px #007cff20,
+					0px 0px 15px 15px #007cff00,
+					0px 0px 15px 15px #007cff00
+				;
+			}
+			90% {
+				box-shadow:
+					0px 0px 15px 15px #007cff00,
+					0px 0px 15px 15px #007cff00,
+					0px 0px 15px 15px #007cff00
+				;
+			}
+			100% {
+				box-shadow:
+					0px 0px 15px 15px #007cff00,
+					0px 0px 15px 15px #007cff00,
+					0px 0px 15px 15px #007cff00
+				;
+			}
+		}
+
+	</style>
+
+</body>
+</html>
