@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>
+		Generating PDF Signatures With Google Fonts And html2Canvas
+	</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com" />
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+	<link rel="stylesheet" type="text/css" href="./linked/index.css" />
+</head>
+<body>
+
+	<header class="header">
+		<h1 class="header__title">
+			Generating PDF Signatures With Google Fonts And html2Canvas
+		</h1>
+
+		<form method="get" class="header__form">
+			<input
+				type="text"
+				name="name"
+				value="Your Name Here"
+				autocomplete="off"
+			/>
+			<select name="slant">
+				<option value="30deg">Most Back</option>
+				<option value="20deg">More Back</option>
+				<option value="10deg">Back</option>
+				<option value="0deg" selected>No slant</option>
+				<option value="-10deg">Forward</option>
+				<option value="-20deg">More Forward</option>
+				<option value="-30deg">Most Forward</option>
+			</select>
+			<select name="spacing">
+				<option value="-2px">Most Condensed</option>
+				<option value="-1px">More Condensed</option>
+				<option value="-0.5px">Condensed</option>
+				<option value="0px" selected>No spacing</option>
+				<option value="0.5px">Expanded</option>
+				<option value="1px">More Expanded</option>
+				<option value="2px">Most Expanded</option>
+			</select>
+		</form>
+	</header>
+
+	<main class="main">
+		<!-- To be populated dynamically with fonts, yay! -->
+	</main>
+
+	<!-- Each row of our signature options will be stamped-out using this template. -->
+	<template>
+		<div class="version">
+			<div class="version__main">
+				<div class="version__signature">
+					<!-- To be populated dynamically. -->
+				</div>
+			</div>
+			<div class="version__aside">
+				<button class="version__download">
+					Download
+				</button>
+			</div>
+		</div>
+	</template>
+
+	<footer class="footer">
+		<p>
+			Created by <a href="https://www.bennadel.com/blog/4262-generating-pdf-signatures-with-google-fonts-and-html2canvas-in-javascript.htm" target="_blank">Ben Nadel</a>.
+			This site is powered by
+			<a href="https://fonts.google.com/?category=Handwriting" target="_blank">Google Fonts</a> and
+			<a href="https://html2canvas.hertzen.com/" target="_blank">html2canvas</a>.
+		</p>
+	</footer>
+
+	<!-- Load vendor scripts. -->
+	<script type="text/javascript" src="../../vendor/umbrella/3.3.0/umbrella-3.3.0.min.js"></script>
+	<script type="text/javascript" src="../../vendor/html2canvas/1.4.1/html2canvas-1.4.1.min.js"></script>
+	<!-- Load application scripts. -->
+	<script type="text/javascript" src="./linked/index-umbrella.js"></script>
+	<script type="text/javascript" src="./linked/index-fonts.js"></script>
+	<script type="text/javascript" src="./linked/index.js"></script>
+
+</body>
+</html>
