@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>
+		Caveat When Using Umbrella JS With Template Elements
+	</title>
+</head>
+<body>
+
+	<h1>
+		Caveat When Using Umbrella JS With Template Elements
+	</h1>
+
+	<template>
+		<p>	<!-- Populated dynamically. --> </p>
+	</template>
+
+	<!-- Load scripts. -->
+	<script type="text/javascript" src="../../vendor/umbrella/3.3.0/umbrella-3.3.0.min.js"></script>
+	<script type="text/javascript" src="../../vendor/umbrella/jquery-compat.js"></script>
+	<script type="text/javascript">
+
+		// The template element exposes a read-only property, "content", which is a
+		// FRAGMENT that contains a non-rendered sub-tree of the Document Object Model
+		// (DOM). In general, Fragments allow us to build-up sub-trees without causing
+		// reflows of the rendered document.
+		var fragment = u( "template" ).prop( "content" )
+		// While we don't strictly need to clone the fragment in this demo (since we're
+		// only using one copy), this is generally how templates are consumed. Let's
+		// create a deep-clone of the template and wrap it in an Umbrella instance.
+		var clone = u( fragment.cloneNode( true ) );
+
+		// Now, let's try to change the text on the child paragraph both BEFORE and AFTER
+		// appending the fragment to the body.
+		// --
+		// CAUTION: This will not work!!
+		clone.find( "p" ).text( "Before appending to body." );
+		clone.appendTo( document.body );
+		clone.find( "p" ).text( "After appending to body." );
+
+	</script>
+
+</body>
+</html>

@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Caveat When Using Umbrella JS With Template Elements](https://bennadel.github.io/JavaScript-Demos/demos/umbrella-template-append/)
 * [Generating PDF Signatures With Google Fonts And html2Canvas](https://bennadel.github.io/JavaScript-Demos/demos/generating-pdf-signatures/)
 * [Code Kata: Throbbing Buttons Using box-shadow Animation In CSS](https://bennadel.github.io/JavaScript-Demos/demos/box-shadow-animation/)
 * [throw() Anything In JavaScript](https://bennadel.github.io/JavaScript-Demos/demos/throw-anything/)
