@@ -1,0 +1,19 @@
+
+body {
+	font-family: verdana, arial, sans-serif ;
+}
+
+.sample {
+	font-size: 16px ;
+	line-height: 25px ;
+}
+
+.box {
+	background-color: rgba( 255, 248, 0, 0.2 ) ;
+	border-radius: 2px 2px 2px 2px ;
+	box-sizing: border-box ;
+	outline: 1px dashed #ff0000 ;
+	outline-offset: 1px ;
+	pointer-events: none ;
+	position: fixed ;
+}
