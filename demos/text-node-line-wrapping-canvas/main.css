@@ -1,0 +1,35 @@
+
+body {
+	font-family: verdana, arial, sans-serif ;
+}
+
+.panels {
+	display: flex ;
+}
+.panels__panel {
+	border: 1px dotted #cccccc ;
+	padding: 10px 10px 10px 10px ;
+	width:  300px ;
+}
+.panels__panel:first-child {
+	margin-right: 25px ;
+}
+.panels__panel > *:first-child {
+	margin-top: 0px ;
+}
+.panels__panel > *:last-child {
+	margin-bottom: 0px ;
+}
+
+h2 {
+	color: #a21fdb ;
+	margin-bottom: 20px ;
+}
+
+.sample {
+	font-family: "Courier New" ;
+	font-size: 21px ;
+	font-weight: 700 ;
+	line-height: 32px ;
+	margin: 0px 0px 20px 0px ;
+}
