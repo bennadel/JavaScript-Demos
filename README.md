@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Rendering Text To Canvas With Adjusted X,Y Offsets For Better Cross-Browser Consistency](https://bennadel.github.io/JavaScript-Demos/demos/canvas-baseline/)
 * [Rendering Wrapped Text To A Canvas In JavaScript](https://bennadel.github.io/JavaScript-Demos/demos/text-node-line-wrapping-canvas/)
 * [Detecting Rendered Line Breaks In A Text Node In JavaScript](https://bennadel.github.io/JavaScript-Demos/demos/text-node-line-wrapping/)
 * [Caveat When Using Umbrella JS With Template Elements](https://bennadel.github.io/JavaScript-Demos/demos/umbrella-template-append/)

@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>
+		Rendering Text To Canvas With Adjusted X,Y Offsets For Better Cross-Browser Consistency
+	</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com" />
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap" />
+	<style type="text/css">
+		body {
+			font-family: "Roboto", sans-serif ;
+		}
+		canvas {
+			box-shadow: 0px 0px 0px 2px #000000 ;
+		}
+	</style>
+</head>
+<body>
+
+	<h1>
+		Rendering Text To Canvas With Adjusted X,Y Offsets For Better Cross-Browser Consistency
+	</h1>
+
+	<canvas id="demo" width="400" height="400"></canvas>
+
+	<script type="text/javascript">
+
+		var canvas = document.querySelector( "#demo" );
+		var canvasWidth = 400;
+		var canvasHeight = 400;
+		var context = canvas.getContext( "2d" );
+
+		// We have to given the FONT time to load so that we can use it on the canvas.
+		window.addEventListener(
+			"load",
+			() => {
+
+				drawGridLines();
+				drawText( "Frankly, my dear, I don't give a damn." );
+
+			}
+		);
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+		/**
+		* I draw the sample text to canvas at various sizes.
+		*/
+		function drawText( textValue ) {
+
+			var pairings = [
+				{ fontSize: 10, y: 50 },
+				{ fontSize: 20, y: 100 },
+				{ fontSize: 30, y: 150 },
+				{ fontSize: 40, y: 200 },
+				{ fontSize: 50, y: 250 },
+				{ fontSize: 60, y: 300 },
+				{ fontSize: 70, y: 350 }
+			];
+
+			context.fillStyle = "#000000";
+			context.textBaseline = "top";
+
+			for ( var pairing of pairings ) {
+
+				var font = context.font = `500 ${ pairing.fontSize }px Roboto`;
+				var offsets = getTextOffsets( font );
+				// NOTE: As we're rendering the text, we're adjusting the X,Y coordinates
+				// based on the offsets we just calculated. This will give us a more
+				// consistent cross-browser rendering of the text.
+				context.fillText(
+					textValue,
+					( 50 + offsets.x ),
+					( pairing.y + offsets.y )
+				);
+
+				console.group( "Text Offsets" );
+				console.log( "Font:", font );
+				console.log( "X:", offsets.x );
+				console.log( "Y:", offsets.y );
+				console.groupEnd();
+
+			}
+
+		}
+
+
+		/**
+		* I get the X,Y offsets that should be applied to the given font in order to get a
+		* better cross-browser rendering of text.
+		*/
+		function getTextOffsets( font ) {
+
+			// We're going to create a small, non-rendered canvas onto which we will draw
+			// the letter "F", which has a hard top-left point. Seeing how far this point
+			// is from 0,0 will give us the offset that is being used by this browser for
+			// this font at this font-size.
+			var tempCanvasWidth = 30;
+			var tempCanvasHeight = 50;
+			var tempCanvas = document.createElement( "canvas" );
+			tempCanvas.setAttribute( "width", tempCanvasWidth );
+			tempCanvas.setAttribute( "height", tempCanvasHeight );
+
+			var tempContext = tempCanvas.getContext( "2d" );
+			tempContext.fillStyle = "#ffffff";
+			tempContext.textBaseline = "top";
+			tempContext.font = font;
+			tempContext.fillText( "F", 0, 0 );
+
+			var imageData = tempContext.getImageData( 0, 0, tempCanvasWidth, tempCanvasHeight );
+			var pixelData = imageData.data;
+			// The pixel data for the canvas is stored as a linear series of R,G,B,A
+			// readings. Which means, each pixel consumes 4 indices in the data array;
+			// hence the concept of a "pixel width".
+			var pixelWidth = 4;
+			// When the text is rendered to the canvas, it is anti-aliased, which means
+			// that it has soft, partially-transparent edges. As we're scanning for
+			// pixels within the pixel data, we want to skip over "mostly transparent"
+			// pixels so that we can find a nice, dark pixel that better represents the
+			// visual edge of the text glyph.
+			var alphaCutoff = 127;
+
+			// CAUTION: This is NOT A GENERAL PURPOSE approach. This is working based on
+			// several assumptions: that the font is using a SANS-SERIF face and that the
+			// test letter, "F", has no unexpected rising or falling in either the
+			// vertical or the horizontal axis. What this means is that as we scan the
+			// liner pixel data, the first "strong" pixel (ie, a pixel that crosses the
+			// non-transparent threshold) that we find should represent BOTH the X AND Y
+			// delta between the origin point and where the browser is rendering the text
+			// characters.
+			for ( var i = 0 ; i < pixelData.length ; i += pixelWidth ) {
+
+				// Check the A threshold (of R,G,B,A), which is the last reading in the
+				// pixel tuple.
+				if ( pixelData[ i + pixelWidth - 1 ] > alphaCutoff ) {
+
+					// Since the pixel data is one linear series of readings, we have to
+					// convert the linear offset into a set of X,Y offsets.
+					var x = ( ( i / pixelWidth ) % tempCanvasWidth );
+					var y = Math.floor( i / pixelWidth / tempCanvasWidth );
+
+					return({
+						x: -x,
+						y: -y
+					});
+
+				}
+
+			}
+
+			// If we found no pixel data (maybe the font was SO LARGE that it actually
+			// didn't render on our small, temporary canvas), just default to zero.
+			return({
+				x: 0,
+				y: 0
+			});
+
+		}
+
+
+		/**
+		* I draw the horizontal and vertical grid lines on the canvas so that we can more
+		* easily see where the text is aligned on different browsers.
+		*/
+		function drawGridLines() {
+
+			var step = 10;
+			var jump = 50;
+
+			context.lineWidth = 1;
+			context.strokeStyle = "#cccccc";
+
+			// Draw GREY horizontal grid lines.
+			for ( var i = step ; i < canvasHeight ; i += step ) {
+
+				context.beginPath();
+				context.moveTo( 0, ( i - 0.5 ) );
+				context.lineTo( canvasWidth, ( i - 0.5 ) );
+				context.stroke();
+
+			}
+			// Draw GREY vertical grid lines.
+			for ( var i = step ; i < canvasWidth ; i += step ) {
+
+				context.beginPath();
+				context.moveTo( ( i - 0.5 ), 0 );
+				context.lineTo( ( i - 0.5 ), canvasHeight );
+				context.stroke();
+
+			}
+
+			context.strokeStyle = "#ff3333";
+
+			// Draw RED horizontal grid lines.
+			for ( var i = jump ; i < canvasHeight ; i += jump ) {
+
+				context.beginPath();
+				context.moveTo( 0, ( i - 0.5 ) );
+				context.lineTo( canvasWidth, ( i - 0.5 ) );
+				context.stroke();
+
+			}
+			// Draw RED vertical grid lines.
+			for ( var i = jump ; i < canvasWidth ; i += jump ) {
+
+				context.beginPath();
+				context.moveTo( ( i - 0.5 ), 0 );
+				context.lineTo( ( i - 0.5 ), canvasHeight );
+				context.stroke();
+
+			}
+
+		}
+
+	</script>
+
+</body>
+</html>
