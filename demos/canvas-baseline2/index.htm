@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>
+		Canvas "alphabetic" textBaseline Is Consistent Across Browsers
+	</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com" />
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap" />
+	<style type="text/css">
+		body {
+			font-family: "Roboto", sans-serif ;
+		}
+		canvas {
+			box-shadow: 0px 0px 0px 2px #000000 ;
+		}
+	</style>
+</head>
+<body>
+
+	<h1>
+		Canvas "alphabetic" textBaseline Is Consistent Across Browsers
+	</h1>
+
+	<canvas id="demo" width="400" height="400"></canvas>
+
+	<script type="text/javascript">
+
+		var canvas = document.querySelector( "#demo" );
+		var canvasWidth = 400;
+		var canvasHeight = 400;
+		var context = canvas.getContext( "2d" );
+
+		// We have to give the FONT time to load so that we can use it on the canvas.
+		window.addEventListener(
+			"load",
+			() => {
+
+				drawGridLines();
+				drawText( "Nobody puts baby in a corner!" );
+
+			}
+		);
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+		/**
+		* I draw the sample text to canvas at various sizes.
+		*/
+		function drawText( textValue ) {
+
+			var pairings = [
+				{ fontSize: 10, y: 50 },
+				{ fontSize: 20, y: 100 },
+				{ fontSize: 30, y: 150 },
+				{ fontSize: 40, y: 200 },
+				{ fontSize: 50, y: 250 },
+				{ fontSize: 60, y: 300 },
+				{ fontSize: 70, y: 350 }
+			];
+
+			context.fillStyle = "#000000";
+			context.textBaseline = "alphabetic";
+
+			for ( var pairing of pairings ) {
+
+				context.font = `500 ${ pairing.fontSize }px Roboto`;
+				context.fillText( textValue, 50, pairing.y );
+
+			}
+
+		}
+
+
+		/**
+		* I draw the horizontal and vertical grid lines on the canvas so that we can more
+		* easily see where the text is aligned on different browsers.
+		*/
+		function drawGridLines() {
+
+			var step = 10;
+			var jump = 50;
+
+			context.lineWidth = 1;
+			context.strokeStyle = "#cccccc";
+
+			// Draw GREY horizontal grid lines.
+			for ( var i = step ; i < canvasHeight ; i += step ) {
+
+				context.beginPath();
+				context.moveTo( 0, ( i - 0.5 ) );
+				context.lineTo( canvasWidth, ( i - 0.5 ) );
+				context.stroke();
+
+			}
+			// Draw GREY vertical grid lines.
+			for ( var i = step ; i < canvasWidth ; i += step ) {
+
+				context.beginPath();
+				context.moveTo( ( i - 0.5 ), 0 );
+				context.lineTo( ( i - 0.5 ), canvasHeight );
+				context.stroke();
+
+			}
+
+			context.strokeStyle = "#ff3333";
+
+			// Draw RED horizontal grid lines.
+			for ( var i = jump ; i < canvasHeight ; i += jump ) {
+
+				context.beginPath();
+				context.moveTo( 0, ( i - 0.5 ) );
+				context.lineTo( canvasWidth, ( i - 0.5 ) );
+				context.stroke();
+
+			}
+			// Draw RED vertical grid lines.
+			for ( var i = jump ; i < canvasWidth ; i += jump ) {
+
+				context.beginPath();
+				context.moveTo( ( i - 0.5 ), 0 );
+				context.lineTo( ( i - 0.5 ), canvasHeight );
+				context.stroke();
+
+			}
+
+		}
+
+	</script>
+
+</body>
+</html>
