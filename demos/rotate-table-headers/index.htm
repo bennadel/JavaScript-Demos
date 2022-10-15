@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>
+		Rotating Table Headers With CSS Transform
+	</title>
+	<style type="text/css">
+
+		body {
+			font-family: verdana, arial, sans-serif ;
+		}
+
+		table {
+			border-collapse: collapse ;
+		}
+		tbody th {
+			padding: 4px 15px 4px 0px ;
+			text-align: right ;
+		}
+		tbody td {
+			border: 1px solid #cccccc ;
+			padding: 8px 15px 8px 15px ;
+			text-align: center ;
+		}
+
+		.rotated-th {
+			/**
+			* Since the rotated text is taken out of the DOM flow (position: absolute), we
+			* need to artificially consume vertical space so that the rotated headers
+			* don't overlap with the content above the table.
+			*/
+			height: 110px ;
+			position: relative ;
+		}
+		/**
+		* When an element is transform rotated, it still takes up the amount of space that
+		* it would have if not rotated. As such, I'm making the label "position: absolute"
+		* so that it doesn't take up any space ("absolute" takes it out of the DOM flow).
+		* Instead, I'm deferring the space allocation to the parent DIV.
+		*/
+		.rotated-th__label {
+			bottom: 5px ;
+			left: 50% ;
+			position: absolute ;
+			transform: rotate( -45deg ) ;
+			transform-origin: center left ;
+			white-space: nowrap ;
+		}
+
+	</style>
+</head>
+<body>
+
+	<h1>
+		Rotating Table Headers With CSS Transform
+	</h1>
+
+	<table>
+	<thead>
+		<tr>
+			<th>
+				<!-- Plan type. -->
+			</th>
+			<th>
+				<div class="rotated-th">
+					<span class="rotated-th__label">
+						Feature One
+					</span>
+				</div>
+			</th>
+			<th>
+				<div class="rotated-th">
+					<span class="rotated-th__label">
+						Feature Two
+					</span>
+				</div>
+			</th>
+			<th>
+				<div class="rotated-th">
+					<span class="rotated-th__label">
+						Feature Three
+					</span>
+				</div>
+			</th>
+			<th>
+				<div class="rotated-th">
+					<span class="rotated-th__label">
+						Feature Four
+					</span>
+				</div>
+			</th>
+			<th>
+				<div class="rotated-th">
+					<span class="rotated-th__label">
+						Feature Five
+					</span>
+				</div>
+			</th>
+			<th>
+				<div class="rotated-th">
+					<span class="rotated-th__label">
+						Feature Six
+					</span>
+				</div>
+			</th>
+			<th>
+				<div class="rotated-th">
+					<span class="rotated-th__label">
+						Feature Seven
+					</span>
+				</div>
+			</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<th scope="row"> Free Plan </th>
+			<td> &#9989; </td>
+			<td> </td>
+			<td> </td>
+			<td> </td>
+			<td> </td>
+			<td> </td>
+			<td> </td>
+		</tr>
+		<tr>
+			<th scope="row"> Starter Plan </th>
+			<td> &#9989; </td>
+			<td> &#9989; </td>
+			<td> </td>
+			<td> </td>
+			<td> </td>
+			<td> </td>
+			<td> </td>
+		</tr>
+		<tr>
+			<th scope="row"> Professional Plan </th>
+			<td> &#9989; </td>
+			<td> &#9989; </td>
+			<td> &#9989; </td>
+			<td> </td>
+			<td> </td>
+			<td> </td>
+			<td> </td>
+		</tr>
+		<tr>
+			<th scope="row"> Comprehensive Plan </th>
+			<td> &#9989; </td>
+			<td> &#9989; </td>
+			<td> &#9989; </td>
+			<td> &#9989; </td>
+			<td> </td>
+			<td> </td>
+			<td> </td>
+		</tr>
+		<tr>
+			<th scope="row"> Ultra Comprehensive Plan </th>
+			<td> &#9989; </td>
+			<td> &#9989; </td>
+			<td> &#9989; </td>
+			<td> &#9989; </td>
+			<td> &#9989; </td>
+			<td> &#9989; </td>
+			<td> &#9989; </td>
+		</tr>
+	</tbody>
+	</table>
+
+</body>
+</html>
