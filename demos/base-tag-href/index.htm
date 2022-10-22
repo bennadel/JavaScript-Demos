@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>
+		Base Tag HREF Doesn't Affect Document Root-Relative URLs
+	</title>
+</head>
+<body>
+
+	<h1>
+		Base Tag HREF Doesn't Affect Document Root-Relative URLs
+	</h1>
+
+	<!--
+		Our "loader.js" script is stored within the "/assets/" folder. Let's see if we can
+		load this file using different forms of SRC URLs in conjunction with a BASE tag
+		HREF that places the current page context inside the assets folder. We're going to
+		try using both a RELATIVE and a DOCUMENT ROOT-RELATIVE path.
+	-->
+	<base href="./assets/" />
+	<script src="./loader.js?v=relative"></script>
+	<script src="/loader.js?v=root-relative"></script>
+
+</body>
+</html>
