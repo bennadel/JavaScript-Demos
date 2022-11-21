@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [You Can Render Anything In Angular 15](https://bennadel.github.io/JavaScript-Demos/demos/render-anything-angular15/dist)
 * [Angular 15 - Hello World](https://bennadel.github.io/JavaScript-Demos/demos/ng-15-hello-world/dist)
 * [Angular 14 - Hello World](https://bennadel.github.io/JavaScript-Demos/demos/ng-14-hello-world/dist)
 * [Base Tag HREF Doesn't Affect Document Root-Relative URLs](https://bennadel.github.io/JavaScript-Demos/demos/base-tag-href/)
