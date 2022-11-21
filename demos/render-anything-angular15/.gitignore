@@ -1,0 +1,11 @@
+
+# Compiled output
+/.angular
+/out-tsc
+
+# Node
+/node_modules
+
+# System files
+.DS_Store
+Thumbs.db

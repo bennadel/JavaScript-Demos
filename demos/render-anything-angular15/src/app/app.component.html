@@ -1,0 +1,16 @@
+
+<h1>
+	You Can Render Anything In Angular 15
+</h1>
+
+<p class="entry">
+	<strong>Name:</strong> <input [(ngModel)]="name" />
+</p>
+
+<!--
+	This Component is just a light-weight wrapper that acts an interface between the
+	Angular application and whatever random thing you are rendering under the hood.
+	Essentially, this component is just the "calling context" that you would need in any
+	kind of application that renders the "thing" in question.
+-->
+<app-messenger [name]="name"></app-messenger>
