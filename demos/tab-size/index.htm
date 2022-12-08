@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>
+		Dynamic Tab-Size Demo In JavaScript
+	</title>
+
+	<style type="text/css">
+		body {
+			font-family: monospace ;
+			font-size: 20px ;
+			line-height: 1.4 ;
+		}
+
+		.label {
+			background-color: #ca0eb6 ;
+			border-radius: 0px 0px 0px 5px ;
+			color: #ffffff ;
+			padding: 10px 20px 10px 20px ;
+			position: fixed ;
+			right: 0px ;
+			text-shadow: 1px 1px #4e1948 ;
+			top: 0px ;
+			z-index: 2 ;
+		}
+
+		pre code.language-html {
+			tab-size: var( --tab-size ) ; /* Initial value defined in JavaScript. */
+		}
+	</style>
+	<link href="./prism.css" rel="stylesheet" />
+</head>
+<body>
+
+	<h1>
+		Dynamic Tab-Size Demo In JavaScript
+	</h1>
+
+	<p>
+		An appropriate amount of white space is just as critical to successful design as
+		anything else. Often times, we err on the side of <em>too little</em> white space,
+		which is a problem. To quote <strong>Adam Wathan</strong> and
+		<strong>Steve Schoger</strong> in their book, Refactoring UI:
+	</p>
+
+	<figure>
+		<blockquote>
+			<h3>
+				White space should be removed, not added
+			</h3>
+
+			<p>
+				When designing for the web, white space is almost always <em>added</em> to a
+				design&mdash;if something looks little too cramped, you add a bit of margin or
+				padding until things look better.
+			</p>
+
+			<p>
+				The problem with this approach is that elements are only given the minimum
+				amount of breathing room necessary to not look <em>actively bad</em>. To make
+				something actually look <em>great</em>, you usually need more white space.
+			</p>
+
+			<p>
+				A better approach is to start by giving something <em>way too much</em> space,
+				then remove it until it you're happy with the result.
+			</p>
+
+			<p>
+				You might think you'd end up with too much white space this way, but in
+				practice, what might seem like "a little too much" when focused on an
+				individual element ends up being closer to "just enough" in the context of a
+				complete UI.
+			</p>
+		</blockquote>
+		<figcaption>
+			Excerpt from <cite><a href="https://www.refactoringui.com/">Refactoring UI</a></cite>
+			by Adam Wathan and Steve Schoger (Layout And Spacing, Pages 67-69).
+		</figcaption>
+	</figure>
+
+	<p>
+		To help drive this point home in the context of <strong>code</strong>, this UI is
+		initialized with <em>way too much</em> white space in the form of indentation. You
+		can then dynamically adjust the <code>--tab-size</code> property of this page by
+		using your <strong>Arrow keys</strong>. This way, you can compare a 2-space indent
+		to a 4-space indent, and get a better sense of <em>just how wrong</em> you are
+		about your current choices! <code>:troll</code>
+	</p>
+
+	<ul>
+		<li>
+			<code>ArrowUp</code> &mdash; Increase tab width by 1-space.
+		</li>
+		<li>
+			<code>ArrowDown</code> &mdash; Decrease tab width by 1-space.
+		</li>
+	</ul>
+
+	<div class="label">
+		Tab Size:
+		<span class="label__value"><!-- Populated dynamically. --></span>
+	</div>
+
+	<!-- This PRE/CODE block will be dynamically populated on window-load. -->
+	<pre class="language-html"><code class="language-html"></code></pre>
+	<!-- This PRE/CODE block will be dynamically populated on window-load. -->
+
+	<script type="text/javascript" src="./prism.js" data-manual></script>
+	<script type="text/javascript">
+
+		window.addEventListener( "load", handleLoad );
+		window.addEventListener( "keydown", handleKeydown );
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+		/**
+		* I handle the loading of the content. We deferred the automatic application of
+		* the Prism library, so that we could populate our <code> tag first. As such,
+		* we'll have to manually apply the runtime syntax highlighting.
+		*/
+		function handleLoad() {
+
+			var code = document.querySelector( "code.language-html" );
+			// We're taking the original source / DOM of this whole HTML page and using it
+			// to populate the code block.
+			code.textContent = document.documentElement.outerHTML;
+
+			// Start with WAY TOO MUCH WHITE SPACE. This way, as the user starts to remove
+			// white space, they can do so until the UI "actively looks good".
+			setTabSize( 10 );
+
+			// Highlight all the things!
+			Prism.highlightAll();
+
+		}
+
+
+		/**
+		* I handle keydown events on the document. If the event is ArrowUp or ArrowDown,
+		* the event's default behavior will be prevented and the event will be used to
+		* dynamically change the rendered indentation of the page.
+		*/
+		function handleKeydown( event ) {
+
+			switch ( event.key ) {
+				case "ArrowUp":
+				case "ArrowRight":
+
+					event.preventDefault();
+					setTabSize( getTabSize() + 1 );
+
+				break;
+				case "ArrowDown":
+				case "ArrowLeft":
+
+					event.preventDefault();
+					setTabSize( Math.max( ( getTabSize() - 1 ), 0 ) );
+
+				break;
+			}
+
+		}
+
+
+		/**
+		* I return the current --tab-size property applied to the root element.
+		*/
+		function getTabSize() {
+
+			// CAUTION: Normally, if the CSS custom property was being applied via CSS, we
+			// wouldn't be able to read it directly from the document element - we'd have
+			// to, instead, get the COMPUTED styles first. However, since we're
+			// programmatically setting it on document-load, we then read the SET value
+			// directly from the styles of the document element.
+			var tabSizeProperty = document.documentElement
+				.style
+				.getPropertyValue( "--tab-size" )
+			;
+
+			return( +tabSizeProperty );
+
+		}
+
+
+		/**
+		* I set the --tab-size property to the given value. This will cascade down into
+		* the <code> block and change runtime tab indentation.
+		*/
+		function setTabSize( value ) {
+
+			// Adjust the runtime styles.
+			document.documentElement.style.setProperty( "--tab-size", value );
+
+			// Adjust the user-facing label.
+			document.querySelector( ".label__value" ).textContent = value;
+
+		}
+
+	</script>
+
+</body>
+</html>
