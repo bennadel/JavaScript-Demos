@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<link rel="stylesheet" type="text/css" href="./demo.css" />
+	<style type="text/css">
+
+		/**
+		* Creating a STACKING CONTEXT around the body.
+		*/
+		body {
+			position: relative ;
+			z-index: 0 ;
+		}
+
+		/**
+		* Creating a CONTROL object for layering. Using a z-index of "999999", which is
+		* HIGHER than the other two elements (below). However, the stacking context on the
+		* BODY element changes how things are visually stacked.
+		*/
+		.box {
+			position: fixed ;
+			z-index: 999999 ; /* <--------- HIGH z-index value. */
+		}
+
+		.static {
+			border: 2px solid blue ;
+			position: fixed ;
+			z-index: 2 ; /* <--------- LOWER (than BOX) z-index value. */
+		}
+
+		.dynamic {
+			border: 2px solid hotpink ;
+			position: fixed ;
+			z-index: 2 ; /* <--------- LOWER (than BOX) z-index value. */
+		}
+
+	</style>
+</head>
+
+<!-- !!!! AFTER HEAD ELEMENT. !!!! -->
+<!-- !!!! AFTER HEAD ELEMENT. !!!! -->
+
+<div class="static">
+	I am <strong>STATICALLY defined</strong> to be after the Head element.
+</div>
+
+<div class="dynamic">
+	I am <strong>DYNAMICALLY defined</strong> to be after the Head element.
+
+	<script type="text/javascript">
+		document.head.after( document.querySelector( ".dynamic" ) );
+		// Remove the Script tag from the DOM (for funzies!).
+		document.currentScript.remove();
+	</script>
+</div>
+
+<!-- !!!! BEFORE BODY ELEMENT. !!!! -->
+<!-- !!!! BEFORE BODY ELEMENT. !!!! -->
+
+<body>
+
+	<h1>
+		Inserting Elements After The HEAD Tag In JavaScript
+	</h1>
+
+	<div class="box">
+		<br />
+	</div>
+
+</body>
+</html>
