@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Using Public Class Fields To Bind Event Handlers In JavaScript](https://bennadel.github.io/JavaScript-Demos/demos/public-class-arrow-functions)
 * [Using A Transient CSS Stylesheet To Remove Scrolling On Body While Modal Is Open](https://bennadel.github.io/JavaScript-Demos/demos/unload-stylesheet-modal-scrolling)
 * [Removing A CSS Stylesheet Removes Its Affect On The Document](https://bennadel.github.io/JavaScript-Demos/demos/unload-stylesheet)
 * [CSS overscroll-behavior Only Affects Scroll Containers](https://bennadel.github.io/JavaScript-Demos/demos/chrome-scroll-overscroll-behavior2)

@@ -1,0 +1,12 @@
+
+body {
+	font-family: verdana, arial, sans-serif ;
+	font-size: 18px ;
+}
+
+button {
+	font-family: inherit ;
+	font-size: 20px ;
+	line-height: inherit ;
+	padding: 15px 20px 15px 20px ;
+}

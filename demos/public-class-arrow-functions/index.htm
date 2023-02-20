@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>
+		Using Public Class Fields To Bind Event Handlers In JavaScript
+	</title>
+	<link rel="stylesheet" type="text/css" href="./main.css" />
+</head>
+<body>
+
+	<h1>
+		Using Public Class Fields To Bind Event Handlers In JavaScript
+	</h1>
+
+	<button id="buttonTarget">
+		Click me &rarr;
+		( <span id="spanTarget"><!-- Counter value reconciles here. --></span> )
+	</button>
+
+	<script type="text/javascript">
+
+		// Since CLASS definitions don't get hoisted in JavaScript, I'm queuing the class
+		// instantiation in a micro-task so that it will run after the JavaScript compiler
+		// knows about our class specification.
+		queueMicrotask(() => {
+
+			new CounterController( buttonTarget, spanTarget );
+
+		});
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+		class CounterController {
+
+			/**
+			* I initialize the counter and attach it to the given targets.
+			*/
+			constructor( hostTarget, valueTarget ) {
+
+				this.hostTarget = hostTarget;
+				this.valueTarget = valueTarget;
+				this.value = 0;
+
+				// NOTE: The Function reference that we're passing-in here has been pre-
+				// bound to the THIS context (thanks to the Fat-Arrow syntax down below)
+				// during class instantiation, but BEFORE the constructor has run.
+				this.hostTarget.addEventListener( "click", this.handleClick );
+				this.valueTarget.textContent = this.value;
+
+			}
+
+			// ---
+			// PRIVATE METHODS.
+			// ---
+
+			// NOTE: We using the FAT-ARROW syntax here to define a PUBLIC FIELD that
+			// happens to reference a Function. As such, this is creating a per-instance
+			// version of the Function rather than one defined on the class Prototype.
+			// When this Fat-Arrow function is invoked, it's bound to the THIS reference
+			// associated with the class instance under construction.
+			handleClick = ( event ) => {
+
+				this.value++;
+				this.valueTarget.textContent = this.value;
+
+			};
+
+		}
+
+	</script>
+
+</body>
+</html>
