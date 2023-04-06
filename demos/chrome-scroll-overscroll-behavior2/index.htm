@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<link rel="stylesheet" type="text/css" href="./main.css" />
+	<style type="text/css">
+
+		.modal {
+			display: flex ;
+			flex-direction: column ;
+		}
+
+		.modal__header {
+			flex: 0 0 auto ;
+			overscroll-behavior: contain ; /* !! NOT !! on a SCROLL CONTAINER. */
+		}
+
+		.modal__body {
+			flex: 1 1 auto ;
+			overflow: auto ;
+			overscroll-behavior: contain ; /* Is on a SCROLL CONTAINER. */
+		}
+
+	</style>
+</head>
+<body>
+
+	<h1>
+		CSS overscroll-behavior Only Affects Scroll Containers
+	</h1>
+
+	<!-- BEGIN: Modal (w/ Scrolling Body Panel). -->
+	<section class="modal">
+		<div class="modal__header">
+			This is a modal
+		</div>
+		<div class="modal__body">
+			<p>Content</p><p>Content</p><p>Content</p><p>Content</p><p>Content</p>
+			<p>Content</p><p>Content</p><p>Content</p><p>Content</p><p>Content</p>
+			<p>Content</p><p>Content</p><p>Content</p><p>Content</p><p>Content</p>
+			<p>Content</p><p>Content</p><p>Content</p><p>Content</p><p>Content</p>
+		</div>
+	</section>
+	<!-- END: Modal. -->
+
+	<!-- Body content, lots of it, scrolling main page. -->
+	<p>Content</p><p>Content</p><p>Content</p><p>Content</p><p>Content</p><p>Content</p>
+	<p>Content</p><p>Content</p><p>Content</p><p>Content</p><p>Content</p><p>Content</p>
+	<p>Content</p><p>Content</p><p>Content</p><p>Content</p><p>Content</p><p>Content</p>
+	<p>Content</p><p>Content</p><p>Content</p><p>Content</p><p>Content</p><p>Content</p>
+
+</body>
+</html>

@@ -1,0 +1,33 @@
+
+body {
+	font-family: verdana, arial, sans-serif ;
+	font-size: 18px ;
+}
+
+.modal {
+	background-color: #ffffff ;
+	border: 5px solid #333333 ;
+	height: 75vh ;
+	left: 50% ;
+	position: fixed ;
+	top: 50% ;
+	transform: translate3d( -50%, -50%, 0px ) ;
+	width: 300px ;
+}
+
+.modal__header {
+	background-color: #333333 ;
+	color: #fafafa ;
+	padding: 25px 20px 25px 20px ;
+}
+
+.modal__body {}
+
+p {
+	margin: 0px 0px 0px 0px ;
+	padding: 25px 20px 22px 20px ;
+}
+
+p:nth-child( even ) {
+	background-color: #f0f0f0 ;
+}
