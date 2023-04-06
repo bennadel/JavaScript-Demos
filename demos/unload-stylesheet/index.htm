@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<link rel="stylesheet" type="text/css" href="./main.css" />
+</head>
+<body>
+
+	<h1>
+		Removing A CSS Stylesheet Removes Its Affect On The Document
+	</h1>
+
+	<button class="add">
+		Add Stylesheet
+	</button>
+	<button class="remove">
+		Remove Stylesheet
+	</button>
+
+	<script type="text/javascript">
+
+		// Wire up button event-handlers.
+		document
+			.querySelector( ".add" )
+			.addEventListener( "click", addStylesheet )
+		;
+		document
+			.querySelector( ".remove" )
+			.addEventListener( "click", removeStylesheet )
+		;
+
+		// Try removing the current script tag from the document. It WON'T have any affect
+		// at all on the functionality of the document. Scripts don't "unload" the way a
+		// Stylesheet can be removed / disabled.
+		document.currentScript.remove();
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+		// I add a new stylesheet to the document head.
+		function addStylesheet() {
+
+			var node = document.createElement( "style" );
+			node.setAttribute( "type", "text/css" );
+			node.textContent = "body { color: red ; }";
+			document.head.appendChild( node );
+
+		}
+
+
+		// I remove the FIRST stylesheet from the document head (in DOM order).
+		function removeStylesheet() {
+
+			document.head.querySelector( "style" )
+				?.remove()
+			;
+
+		}
+
+	</script>
+
+</body>
+</html>
