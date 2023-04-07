@@ -1,0 +1,48 @@
+
+body {
+	font-family: verdana, arial, sans-serif ;
+	font-size: 18px ;
+}
+
+button {
+	color: inherit ;
+	font-family: inherit ;
+	font-size: 20px ;
+}
+
+.open-modal {
+	bottom: 20px ;
+	left: 20px ;
+	position: fixed ; 
+	z-index: 2 ;
+}
+
+.modal-layout {
+	display: none ;
+}
+
+.modal-layout--open {
+	align-items: center ;
+	background-color: rgba( 0, 0, 0, 0.4 ) ;
+	bottom: 0px ;
+	display: flex ;
+	justify-content: center ;
+	left: 0px ;
+	position: fixed ;
+	right: 0px ;
+	top: 0px ;
+	z-index: 3 ;
+}
+
+.modal {
+	background-color: #ffffff ;
+	border: 3px solid #333333 ;
+	padding: 25px 25px 25px 25px ;
+}
+
+.modal > *:first-child {
+	margin-top: 0px ;
+}
+.modal > *:last-child {
+	margin-bottom: 0px ;
+}

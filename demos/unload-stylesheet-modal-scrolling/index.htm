@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<link rel="stylesheet" type="text/css" href="./main.css" />
+</head>
+<body>
+
+	<h1>
+		Using A Transient CSS Stylesheet To Remove Scrolling On Body While Modal Is Open
+	</h1>
+
+	<button class="open-modal">
+		Open Modal
+	</button>
+
+	<div class="modal-layout">
+		<div class="modal">
+			<h2>
+				Modal, Yay!
+			</h2>
+			<button class="close-modal">
+				Close Modal
+			</button>
+		</div>
+	</div>
+
+	<script type="text/javascript">
+
+		// Wire up button event-handlers.
+		document
+			.querySelector( ".open-modal" )
+			.addEventListener( "click", openModal )
+		;
+		document
+			.querySelector( ".close-modal" )
+			.addEventListener( "click", closeModal )
+		;
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+		/**
+		* I open the modal window and DISABLE SCROLLING on the body.
+		*/
+		function openModal() {
+
+			document.querySelector( ".modal-layout" )
+				.classList
+				.add( "modal-layout--open" )
+			;
+
+			// When the modal window is open, we want to TURN OFF scrolling on the body
+			// so that we don't get scroll chaining and / or double scrollbars on the side
+			// of the window. By prepending this style tag to the head, its "important"
+			// flags should take precedence over other styles.
+			var node = document.createElement( "style" );
+			node.setAttribute( "type", "text/css" );
+			node.textContent = "html, body { height: auto ! important ; overflow: hidden ! important ; }";
+			document.head.prepend( node );
+
+		}
+
+
+		/**
+		* I close the modal window and RE-ENALBE SCROLLING on the body.
+		*/
+		function closeModal() {
+
+			document.querySelector( ".modal-layout" )
+				.classList
+				.remove( "modal-layout--open" )
+			;
+
+			// Now that the modal is closed, we want to re-enable scrolling on the body.
+			// Since it had been disabled by the transient stylesheet, all we have to do
+			// is remove said stylesheet.
+			document.head.querySelector( "style" )
+				?.remove()
+			;
+
+		}
+
+	</script>
+
+	<!-- To make sure the body is scrolling. -->
+	<p>1. Lots of copy</p><p>Lots of copy</p><p>Lots of copy</p><p>Lots of copy</p>
+	<p>2. Lots of copy</p><p>Lots of copy</p><p>Lots of copy</p><p>Lots of copy</p>
+	<p>3. Lots of copy</p><p>Lots of copy</p><p>Lots of copy</p><p>Lots of copy</p>
+	<p>4. Lots of copy</p><p>Lots of copy</p><p>Lots of copy</p><p>Lots of copy</p>
+	<p>5. Lots of copy</p><p>Lots of copy</p><p>Lots of copy</p><p>Lots of copy</p>
+	<p>6. Lots of copy</p><p>Lots of copy</p><p>Lots of copy</p><p>Lots of copy</p>
+	<p>7. Lots of copy</p><p>Lots of copy</p><p>Lots of copy</p><p>Lots of copy</p>
+
+</body>
+</html>
