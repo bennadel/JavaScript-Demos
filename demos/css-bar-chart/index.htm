@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>
+		Using CSS Flexbox To Create A Simple Bar Chart
+	</title>
+	<style type="text/css">
+
+		/* The chart is a row-oriented flexbox container. */
+		.chart {
+			border: 3px solid #666666 ;
+			display: flex ;
+			font-family: monospace ;
+			gap: 10px ;
+			margin: 0px 0px 0px 0px ;
+			padding: 10px 13px 8px 13px ;
+		}
+		/*
+			Each reading in the chart is a column-oriented flexbox container. The items in
+			this flexbox container are REVERSED so that the label renders at the bottom,
+			visually, but is still the first element, semantically.
+		*/
+		.chart__reading {
+			display: flex ;
+			flex: 1 1 auto ;
+			flex-direction: column-reverse ;
+			gap: 5px ;
+			height: 250px ;
+			margin: 0px 0px 0px 0px ;
+		}
+		.chart__label {
+			flex: 0 0 auto ;
+			margin: 0px 0px 0px 0px ;
+			text-align: center ;
+		}
+		.chart__value {
+			flex: 0 0 auto ;
+			margin: 0px 0px 0px 0px ;
+			text-align: center ;
+		}
+		.chart__bar {
+			background-color: #2196f3 ;
+			border-radius: 3px 3px 3px 3px ;
+			display: block ;
+			margin-top: 8px ;
+		}
+
+	</style>
+</head>
+<body>
+
+	<h1>
+		Using CSS Flexbox To Create A Simple Bar Chart
+	</h1>
+
+	<dl class="chart">
+		<div class="chart__reading">
+			<dt class="chart__label">
+				2022-01
+			</dt>
+			<dd class="chart__value">
+				7
+				<span class="chart__bar" style="height: 7px ;"></span>
+			</dd>
+		</div>
+		<div class="chart__reading">
+			<dt class="chart__label">
+				2022-02
+			</dt>
+			<dd class="chart__value">
+				61
+				<span class="chart__bar" style="height: 61px ;"></span>
+			</dd>
+		</div>
+		<div class="chart__reading">
+			<dt class="chart__label">
+				2022-03
+			</dt>
+			<dd class="chart__value">
+				46
+				<span class="chart__bar" style="height: 46px ;"></span>
+			</dd>
+		</div>
+		<div class="chart__reading">
+			<dt class="chart__label">
+				2022-04
+			</dt>
+			<dd class="chart__value">
+				133
+				<span class="chart__bar" style="height: 133px ;"></span>
+			</dd>
+		</div>
+		<div class="chart__reading">
+			<dt class="chart__label">
+				2022-05
+			</dt>
+			<dd class="chart__value">
+				92
+				<span class="chart__bar" style="height: 92px ;"></span>
+			</dd>
+		</div>
+		<div class="chart__reading">
+			<dt class="chart__label">
+				2022-06
+			</dt>
+			<dd class="chart__value">
+				79
+				<span class="chart__bar" style="height: 79px ;"></span>
+			</dd>
+		</div>
+		<div class="chart__reading">
+			<dt class="chart__label">
+				2022-07
+			</dt>
+			<dd class="chart__value">
+				173
+				<span class="chart__bar" style="height: 173px ;"></span>
+			</dd>
+		</div>
+		<div class="chart__reading">
+			<dt class="chart__label">
+				2022-08
+			</dt>
+			<dd class="chart__value">
+				62
+				<span class="chart__bar" style="height: 62px ;"></span>
+			</dd>
+		</div>
+		<div class="chart__reading">
+			<dt class="chart__label">
+				2022-09
+			</dt>
+			<dd class="chart__value">
+				64
+				<span class="chart__bar" style="height: 64px ;"></span>
+			</dd>
+		</div>
+		<div class="chart__reading">
+			<dt class="chart__label">
+				2022-10
+			</dt>
+			<dd class="chart__value">
+				52
+				<span class="chart__bar" style="height: 52px ;"></span>
+			</dd>
+		</div>
+		<div class="chart__reading">
+			<dt class="chart__label">
+				2022-11
+			</dt>
+			<dd class="chart__value">
+				155
+				<span class="chart__bar" style="height: 155px ;"></span>
+			</dd>
+		</div>
+		<div class="chart__reading">
+			<dt class="chart__label">
+				2022-12
+			</dt>
+			<dd class="chart__value">
+				143
+				<span class="chart__bar" style="height: 143px ;"></span>
+			</dd>
+		</div>
+	</dl>
+
+</body>
+</html>
