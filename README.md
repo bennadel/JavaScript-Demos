@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Firefox CSS Bug: Four-Sided Positioning With Buttons](https://bennadel.github.io/JavaScript-Demos/demos/four-sided-button)
 * [Using CSS Flexbox To Create A Simple Bar Chart](https://bennadel.github.io/JavaScript-Demos/demos/css-bar-chart)
 * [Using Public Class Fields To Bind Event Handlers In JavaScript](https://bennadel.github.io/JavaScript-Demos/demos/public-class-arrow-functions)
 * [Using A Transient CSS Stylesheet To Remove Scrolling On Body While Modal Is Open](https://bennadel.github.io/JavaScript-Demos/demos/unload-stylesheet-modal-scrolling)

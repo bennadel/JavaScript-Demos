@@ -1,0 +1,23 @@
+
+body {
+	font-family: sans-serif ;
+	font-size: 18px ;
+	line-height: 1.4 ;
+}
+
+button {
+	font-size: inherit ;
+	font-family: inherit ;
+	line-height: inherit ;
+}
+
+.box__button {
+	cursor: pointer ;
+	line-height: 1.6 ;
+}
+.box__button:hover {
+	background-color: #fc68b226 ;
+}
+.box__button:active {
+	background-color: #fc68b255 ;
+}

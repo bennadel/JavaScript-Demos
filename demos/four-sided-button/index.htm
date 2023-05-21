@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>
+		Firefox CSS Bug: Four-Sided Positioning With Buttons
+	</title>
+	<link rel="stylesheet" type="text/css" href="./main.css" />
+	<style type="text/css">
+		.box {
+			background-color: #f0f0f0 ;
+			border: 3px solid #cccccc ;
+			/* Give the container some dimensions. */
+			position: relative ;
+			height: 200px ;
+			width: 300px ;
+		}
+		.box__button {
+			background-color: transparent ;
+			border: 4px solid hotpink ;
+			/*
+				We want the button to be absolutely positioned (to its positioned
+				container). This should take up all the visual space by using four-sided
+				positioning (pulling each side to the edge of the container).
+			*/
+			position: absolute ;
+			bottom: 5px ;
+			left: 5px ;
+			right: 5px ;
+			top: 5px ;
+		}
+	</style>
+</head>
+<body>
+
+	<h1>
+		Firefox CSS Bug: Four-Sided Positioning With Buttons
+	</h1>
+
+	<div class="box">
+		<button class="box__button" onclick="console.log( 'Clicked!' )">
+			Take Up<br />
+			All The Space
+		</button>
+	</div>
+
+</body>
+</html>
