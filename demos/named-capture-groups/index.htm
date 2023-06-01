@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>
+		Using RegEx Named Capture Groups In JavaScript
+	</title>
+</head>
+<body>
+
+	<h1>
+		Using RegEx Named Capture Groups In JavaScript
+	</h1>
+
+	<script type="text/javascript">
+
+		var inputs = [
+			// Standard email address format.
+			"ben@bennadel.com",
+			// Email address with "hash" (plus-style addressing) that contains arbitrary
+			// information to be included in the email.
+			"ben+patterns@bennadel.com"
+		];
+
+		// Since JavaScript RegExp patterns do not support the "Verbose" (?x) flag, I'm
+		// going to build the RegEx pattern in parts and then join them together as a
+		// string. In the following pattern, I'm using the (?<name>) syntax to create
+		// names for the captured groups. This will make them easier to reference in the
+		// in matching.
+		var parts = [
+			// Match the start of the input.
+			"^",
+			// Our first named capturing group is everything before the "@" and "+" signs.
+			// This is the "user" associated with the email domain.
+			"(?<user>[^+@]+)",
+			// The email "hash" (plus-style addressing) is an optional match. But, if it
+			// is present, it will start with the "+" and then include everything up to
+			// the "@" delimiter.
+			"(?:\\+",
+				"(?<hash>[^@]+)",
+			")?",
+			// Literal match for our email delimiter.
+			"@",
+			// Our last named capturing group is the domain, which includes everything
+			// after the "@" literal.
+			"(?<domain>.+)",
+			// Match the end of the input.
+			"$"
+		];
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+		var pattern = new RegExp( parts.join( "" ) );
+
+		for ( var input of inputs ) {
+
+			// Since our pattern matches against the start/end of the input, we only have
+			// to call exec() once per input.
+			var result = pattern.exec( input );
+
+			console.group( `RegExp Match (${ input })` );
+			// The named groups are captured in a "groups" property.
+			console.log( ...highlight( "User:" ), result.groups.user );
+			console.log( ...highlight( "Hash:" ), result.groups.hash );
+			console.log( ...highlight( "Domain:" ), result.groups.domain );
+
+			// The traditional capture group index-based references are still available.
+			console.log( "- - -" );
+			console.log( "$0:", result[ 0 ] );
+			console.log( "$1:", result[ 1 ] );
+			console.log( "$2:", result[ 2 ] );
+			console.log( "$3:", result[ 3 ] );
+			console.groupEnd();
+
+		}
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+		// Utility method to apply CSS highlighting to the given value.
+		function highlight( value ) {
+
+			return([
+				( "%c" + value ),
+				"background-color: yellow ; font-weight: bold ; padding: 2px 3px 2px 7px ;"
+			]);
+
+		}
+
+	</script>
+
+</body>
+</html>
