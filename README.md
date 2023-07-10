@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Swapping Keyboard InputMode Dynamically on iOS](https://bennadel.github.io/JavaScript-Demos/demos/dynamic-inputmode-ios)
 * [Using RegEx Named Capture Groups In JavaScript](https://bennadel.github.io/JavaScript-Demos/demos/named-capture-groups)
 * [Firefox CSS Bug: Four-Sided Positioning With Buttons](https://bennadel.github.io/JavaScript-Demos/demos/four-sided-button)
 * [Using CSS Flexbox To Create A Simple Bar Chart](https://bennadel.github.io/JavaScript-Demos/demos/css-bar-chart)

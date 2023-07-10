@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>
+		Swapping Keyboard InputMode Dynamically on iOS
+	</title>
+	<style type="text/css">
+
+		html {
+			box-sizing: border-box ;
+		}
+		html *,
+		html *:before,
+		html *:after {
+			box-sizing: inherit ;
+		}
+
+		.numberish {
+			border-radius: 1px ;
+			display: flex ;
+			font-size: 18px ;
+			position: relative ;
+			width: 100% ;
+		}
+		.numberish__input {
+			border: 1px solid #cccccc ;
+			border-radius: 3px 0px 0px 3px ;
+			flex: 1 1 auto ;
+			font-size: inherit ;
+			font-weight: inherit ;
+			margin: 0px 0px 0px 0px ;
+			padding: 10px 10px 10px 13px ;
+		}
+		.numberish__switch {
+			border: 1px solid #cccccc ;
+			border-radius: 0px 3px 3px 0px ;
+			border-left-width: 0px ;
+			color: #333333 ;
+			flex: 0 0 auto ;
+			font-size: 20px ;
+			letter-spacing: 1px ;
+			margin: 0px 0px 0px 0px ;
+			padding: 0px 15px 0px 15px ;
+		}
+		.numberish__temp {
+			left: 0px ;
+			opacity: 0 ;
+			pointer-events: none ; /* No clicking allowed! */
+			position: absolute ;
+			top: 0px ;
+		}
+
+		/* Set button text based on state of control. */
+		.numberish--numeric .numberish__switch:before {
+			content: "Aa" ;
+			display: block ;
+		}
+		.numberish--alpha .numberish__switch:before {
+			content: "123" ;
+			display: block ;
+		}
+
+		/*
+			Prevent individual elements from being outlined - keep outline around the
+			entire control when either sub-element is focused.
+		*/
+		.numberish:focus-within {
+			outline: 2px solid blue ;
+			outline-offset: 2px ;
+		}
+		.numberish__input:focus,
+		.numberish__switch:focus {
+			outline: none ;
+		}
+
+	</style>
+</head>
+<body>
+
+	<h1>
+		Swapping Keyboard InputMode Dynamically on iOS
+	</h1>
+
+	<div class="numberish">
+		<input
+			type="text"
+			class="numberish__input"
+		/>
+		<button
+			aria-hidden="true"
+			type="button"
+			tabindex="-1"
+			class="numberish__switch">
+			<!-- Text is set via CSS content. -->
+		</button>
+		<!--
+			In order to trigger the keyboard change on iOS, we have to focus ANOTHER input
+			briefly before then returning the focus to the intended input with the updated
+			inputmode. This temp input will not be visible or tabbable by the user, but
+			will be focused programmatically when the user wants to switch keyboards.
+		-->
+		<input
+			aria-hidden="true"
+			type="text"
+			tabindex="-1"
+			class="numberish__temp"
+		/>
+	</div>
+
+	<script type="text/javascript">
+
+		// Centralize the input-mode settings.
+		var numericInputmode = "decimal";
+		var numericPattern = "[0-9.]*";
+		var alphaInputmode = "text";
+		var alphaPattern = ".*";
+
+		// Cache DOM element references.
+		var numberish = document.querySelector( ".numberish" );
+		var input = numberish.querySelector( ".numberish__input" );
+		var button = numberish.querySelector( ".numberish__switch" );
+		var temp = numberish.querySelector( ".numberish__temp" );
+
+		// Initialize the input setup (default to numeric keyboard).
+		numberish.classList.add( "numberish--numeric" );
+		input.inputMode = numericInputmode;
+		input.pattern = numericPattern;
+		button.addEventListener( "click", toggleInputType );
+
+		/**
+		* I switch the control from one type of keyboard to the other.
+		*/
+		function toggleInputType() {
+
+			// Switching to alpha keyboard.
+			if ( numberish.classList.contains( "numberish--numeric" ) ) {
+
+				numberish.classList.remove( "numberish--numeric" );
+				numberish.classList.add( "numberish--alpha" );
+				input.inputMode = temp.inputMode = alphaInputmode;
+				input.pattern = temp.pattern = alphaPattern;
+
+			// Switching to numeric keyboard.
+			} else {
+
+				numberish.classList.remove( "numberish--alpha" );
+				numberish.classList.add( "numberish--numeric" );
+				input.inputMode = temp.inputMode = numericInputmode;
+				input.pattern = temp.pattern = numericPattern;
+
+			}
+
+			// When the input is focused, the keyboard won't update (based on the
+			// inputmode). As such, we have to briefly focus the temp input and then
+			// re-focus the main input.
+			// --
+			// Concept From StackOverflow: https://stackoverflow.com/a/55425845
+			temp.focus();
+
+			window.requestAnimationFrame(
+				() => {
+
+					input.focus();
+					// Move caret to end of input value.
+					input.setSelectionRange( input.value.length, input.value.length );
+
+				}
+			);
+
+		}
+
+	</script>
+
+</body>
+</html>
