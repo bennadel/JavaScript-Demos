@@ -1,0 +1,28 @@
+
+html {
+	box-sizing: border-box ;
+}
+html *,
+html *:before,
+html *:after {
+	box-sizing: inherit ;
+}
+
+body {
+	font-family: sans-serif ;
+	font-size: 18px ;
+	line-height: 1.4 ;
+}
+
+input {
+	border: 1px solid #333333 ;
+	border-radius: 3px 3px 3px 3px ;
+	display: block ;
+	font-size: 20px ;
+	margin: 0px 0px 0px 0px ;
+	padding: 10px 10px 10px 12px ;
+}
+
+.set {
+	margin-bottom: 10px ;
+}

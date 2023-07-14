@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>
+		Styling An Element When An Input's Placeholder Is Being Shown In CSS
+	</title>
+	<link rel="stylesheet" type="text/css" href="./main.css" />
+	<style type="text/css">
+
+		.set {
+			align-items: center ;
+			display: flex ;
+			gap: 8px ;
+		}
+		.set__panel {
+			position: relative ;
+			width: 200px ;
+		}
+		.set__input {
+			width: 100% ;
+		}
+		/*
+			In order to help make the weight / reps entry easier for the user, we're going
+			to overlay the previous workout's weights / reps on top of the current work-
+			out's inputs. The initial rendering will be small, grey, and out-of-the-way so
+			as to be helpful but NOT distracting or intrusive.
+		*/
+		.set__overlay {
+			color: #999999 ;
+			font-size: 15px ;
+			line-height: 1 ;
+			pointer-events: none ;
+			position: absolute ;
+			right: 7px ;
+			top: 6px ;
+			transition: all 300ms ease-out ; /* Some razzle-dazzle for the demo. */
+		}
+		/*
+			BUT, we can then PROGRESSIVELY ENHANCE THE UI to be a bit bigger and bolder
+			when the current workout's inputs have their placeholders being shown.
+		*/
+		.set__input:not(:focus):placeholder-shown + .set__overlay {
+			color: #333333 ;
+			font-size: 23px ;
+			font-weight: bolder ;
+			right: 12px ;
+			top: 11px ;
+		}
+
+	</style>
+</head>
+<body>
+
+	<h1>
+		Styling An Element When An Input's Placeholder Is Being Shown In CSS
+	</h1>
+
+	<h2>
+		Enter Your Weights + Reps
+	</h2>
+	
+	<div class="set">
+		<!-- Weight entry. -->
+		<div class="set__panel">
+			<input
+				type="text"
+				placeholder="Weight..."
+				class="set__input"
+			/>
+			<!-- Previous entry for weight (to be shown overlaid on input). -->
+			<span class="set__overlay weight">
+				135
+			</span>
+		</div>
+		x
+		<!-- Reps entry. -->
+		<div class="set__panel">
+			<input
+				type="text"
+				placeholder="Reps..."
+				class="set__input"
+			/>
+			<!-- Previous entry for reps (to be shown overlaid on input). -->
+			<span class="set__overlay reps">
+				12
+			</span>
+		</div>
+	</div>
+
+	<!-- ---------------------------------------------------------------------------- -->
+	<!-- ---------------------------------------------------------------------------- -->
+
+	<!--
+		In order to pain a better picture of the effect, I'm just going to CLONE the
+		above DIV several times in order to make the demo more interactive.
+	-->
+	<script type="text/javascript">
+
+		// Previous workout efforts.
+		var efforts = [
+			{ weight: 140, reps: 10 },
+			{ weight: 145, reps: 8 },
+			{ weight: 150, reps: 6 }
+		];
+		var node = document.querySelector( ".set" );
+
+		for ( var effort of efforts ) {
+
+			var clone = node.cloneNode( true );
+			clone.querySelector( ".set__overlay.weight" ).textContent = effort.weight;
+			clone.querySelector( ".set__overlay.reps" ).textContent = effort.reps;
+
+			document.body.append( clone );
+
+		}
+
+	</script>
+
+</body>
+</html>
