@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>
+		Sanity Check: Using Overflow Scrolling On CSS Flexbox Panels
+	</title>
+	<link rel="stylesheet" type="text/css" href="./main.css" />
+	<style type="text/css">
+
+		.panels {
+			bottom: 0px ;
+			display: flex ;
+			left: 0px ;
+			position: fixed ;
+			right: 0px ;
+			top: 0px ;
+			z-index: 1 ;
+		}
+		.panels__main {
+			flex: 1 1 auto ;
+		}
+		.panels__aside {
+			border-left: 4px solid #cccccc ;
+			flex: 0 0 auto ;
+			width: 400px ;
+		}
+
+		/*
+			Sanity check that flex "panels" will scroll properly when they have
+			overflow:auto applied to them. And, won't just grow in strange ways when they
+			have too much content.
+		*/
+		.panels__main,
+		.panels__aside {
+			overflow: auto ;
+			overscroll-behavior: contain ;
+			/*
+				Not all browsers apply padding consistently when horizontal scrolling is
+				present. But, I don't really care about that for this post.
+			*/
+			padding: 20px 20px 20px 20px ;
+		}
+
+		.large-marge {
+			background-color: red ;
+			height: 10px ;
+			margin: 16px 0px 16px 0px ;
+			width: 3000px ;
+		}
+
+	</style>
+</head>
+<body>
+
+	<div class="panels">
+		<main class="panels__main">
+
+			<h1>
+				Sanity Check: Using Overflow Scrolling On CSS Flexbox Panels
+			</h1>
+
+			<!-- To force vertical scrolling. -->
+			<template  class="lots-o-content">
+				<p> This will be duplicated lots-o-times! </p>
+			</template>
+
+			<!-- To force horizontal scrolling. -->
+			<div class="large-marge"></div>
+
+		</main>
+		<aside class="panels__aside">
+
+			<h2>
+				Sidebar
+			</h2>
+
+			<!-- To force vertical scrolling. -->
+			<template  class="lots-o-content">
+				<p> This will be duplicated lots-o-times! </p>
+			</template>
+
+			<!-- To force horizontal scrolling. -->
+			<div class="large-marge"></div>
+
+		</aside>
+	</div>
+
+	<!-- ---------------------------------------------------------------------------- -->
+	<!-- ---------------------------------------------------------------------------- -->
+
+	<!-- Fleshing out the vertical scrolling content. -->
+	<script type="text/javascript">
+
+		for ( var template of document.querySelectorAll( ".lots-o-content" ) ) {
+
+			for ( var i = 1 ; i <= 40 ; i++ ) {
+
+				template.after( template.content.cloneNode( true ) );
+
+			}
+
+		}
+
+	</script>
+
+</body>
+</html>
