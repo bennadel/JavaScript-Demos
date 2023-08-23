@@ -1,0 +1,22 @@
+
+html {
+	box-sizing: border-box ;
+}
+html *,
+html *:before,
+html *:after {
+	box-sizing: inherit ;
+}
+
+body {
+	font-family: sans-serif ;
+	font-size: 18px ;
+	line-height: 1.4 ;
+}
+
+.large-marge {
+	background-color: red ;
+	height: 10px ;
+	margin: 16px 0px 16px 0px ;
+	width: 3000px ;
+}

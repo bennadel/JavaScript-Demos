@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>
+		Using Position: Sticky With Multi-Sided Anchoring In CSS
+	</title>
+	<link rel="stylesheet" type="text/css" href="./main.css" />
+	<style type="text/css">
+
+		.sticky {
+			background-color: #ffeeee ;
+			border: 3px solid #ff3366 ;
+			padding: 20px 20px 20px 20px ;
+			width: 300px ;
+
+			/* Using MULTI-sided sticky anchoring! */
+			position: sticky ;
+			bottom: 5px ;
+			left: 5px ;
+			top: 5px ;
+		}
+
+	</style>
+</head>
+<body>
+
+	<h1>
+		Using Position: Sticky With Multi-Sided Anchoring In CSS
+	</h1>
+
+	<template  class="lots-o-content">
+		<p> This will be duplicated with much vigor. </p>
+	</template>
+
+	<p class="sticky">
+		This is a sticky situation!
+	</p>
+
+	<template  class="lots-o-content">
+		<p> This will be duplicated with much vigor. </p>
+	</template>
+
+	<!-- To force horizontal scrolling. -->
+	<div class="large-marge"></div>
+
+	<!-- ---------------------------------------------------------------------------- -->
+	<!-- ---------------------------------------------------------------------------- -->
+
+	<!-- Fleshing out the vertical scrolling content. -->
+	<script type="text/javascript">
+
+		for ( var template of document.querySelectorAll( ".lots-o-content" ) ) {
+
+			for ( var i = 1 ; i <= 40 ; i++ ) {
+
+				template.after( template.content.cloneNode( true ) );
+
+			}
+
+		}
+
+	</script>
+
+</body>
+</html>
