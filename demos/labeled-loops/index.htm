@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>
+		Using Labeled Loops In JavaScript
+	</title>
+	<link rel="stylesheet" type="text/css" href="./main.css" />
+</head>
+<body>
+
+	<h1>
+		Using Labeled Loops In JavaScript
+	</h1>
+
+	<script type="text/javascript">
+
+		// Fuzzy matches.
+		console.log( isFuzzyMatch( "horse", "s" ) );
+		console.log( isFuzzyMatch( "horse", "hs" ) );
+		console.log( isFuzzyMatch( "horse", "horse" ) );
+
+		// No matches.
+		console.log( isFuzzyMatch( "horse", "horses" ) );
+		console.log( isFuzzyMatch( "horse", "test" ) );
+		console.log( isFuzzyMatch( "horse", "" ) );
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+		/**
+		* I determine if the given target text is a fuzzy-match for the given search text.
+		*/
+		function isFuzzyMatch( targetValue, searchValue ) {
+
+			var searchChars = [ ...searchValue ];
+			var targetChars = [ ...targetValue ];
+			var matchFound = false;
+			var s, t;
+
+			searchLoop:
+			while ( s = searchChars.shift() ) {
+
+				targetLoop:
+				while ( t = targetChars.shift() ) {
+
+					// We found a matching CHARACTER in the target string.
+					if ( s == t ) {
+
+						if ( ! searchChars.length ) {
+
+							matchFound = true;
+							// If we've run out of search-characters to consume, it means
+							// that the entirety of the search keyword was located (in
+							// parts) within the target text. In other words, we HAVE a
+							// fuzzy-match. Yay! At this point, there is nothing left to
+							// search and we can break out of BOTH the INNER and OUTER
+							// loops.
+							break searchLoop;
+
+						}
+
+						// If we have more search characters to consume, move onto the
+						// NEXT ITERATION of the OUTER loop and the next search character.
+						continue searchLoop;
+
+					}
+
+				}
+
+				// If we've fully consumed the target characters, there's no sense in
+				// continuing to consume the search characters - we will not find a match.
+				break;
+
+			}
+
+			return( matchFound );
+
+		}
+
+	</script>
+
+</body>
+</html>

@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Using Labeled Loops In JavaScript](https://bennadel.github.io/JavaScript-Demos/demos/labeled-loops)
 * [Using Position: Sticky With Multi-Sided Anchoring In CSS](https://bennadel.github.io/JavaScript-Demos/demos/multi-sticky)
 * [Sanity Check: Using Overflow Scrolling On CSS Flexbox Panels](https://bennadel.github.io/JavaScript-Demos/demos/flexbox-scrollbars)
 * [Styling An Element When An Input's Placeholder Is Being Shown In CSS](https://bennadel.github.io/JavaScript-Demos/demos/placeholder-shown)

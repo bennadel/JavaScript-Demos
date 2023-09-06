@@ -1,0 +1,15 @@
+
+html {
+	box-sizing: border-box ;
+}
+html *,
+html *:before,
+html *:after {
+	box-sizing: inherit ;
+}
+
+body {
+	font-family: sans-serif ;
+	font-size: 18px ;
+	line-height: 1.4 ;
+}
