@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>
+		Replacing RxJS With A State Machine In JavaScript
+	</title>
+	<link rel="stylesheet" type="text/css" href="./main.css" />
+</head>
+<body>
+
+	<h1>
+		Replacing RxJS With A State Machine In JavaScript
+	</h1>
+
+	<p>
+		If you mouse-down and then start dragging (vertically), you get console logging.
+	</p>
+
+	<script type="text/javascript">
+
+		default_setup();
+
+		// ---
+		// DEFAULT STATE: At this point, the user is just viewing the page, but has not
+		// yet interacted with it. Once they mousedown, we'll move into the pending state.
+		// ---
+
+		function default_setup() {
+
+			console.info( "Default: Setup" );
+			document.addEventListener( "mousedown", default_handleMousedown );
+
+		}
+
+		function default_teardown() {
+
+			console.info( "Default: Teardown" );
+			document.removeEventListener( "mousedown", default_handleMousedown );
+
+		}
+
+		function default_handleMousedown( event ) {
+
+			event.preventDefault();
+
+			default_teardown();
+			pending_setup( event.clientY );
+
+		}
+
+		// ---
+		// PENDING STATE: The user has moused-down on the page, but we don't yet know if
+		// they intend to drag or just click. If they do start to drag (and pass a minimum
+		// threshold), we'll move into the dragging state.
+		// ---
+
+		function pending_setup( clientY ) {
+
+			console.info( "Pending: Setup" );
+			document.addEventListener( "mouseup", pending_handleMouseup );
+			document.addEventListener( "mousemove", pending_handleMousemove );
+
+			pending_setup.initialClientY = clientY;
+
+		}
+
+		function pending_teardown() {
+
+			console.info( "Pending: Teardown" );
+			document.removeEventListener( "mouseup", pending_handleMouseup );
+			document.removeEventListener( "mousemove", pending_handleMousemove );
+
+		}
+
+		function pending_handleMouseup( event ) {
+
+			pending_teardown();
+			default_setup();
+
+		}
+
+		function pending_handleMousemove( event ) {
+
+			// Only move onto next state if dragging threshold is passed.
+			// --
+			// CAUTION: This concept was not present in the RxJS version; but, I think it
+			// should have been. And, in the state-based approach (for me) it is easier to
+			// reason about this update using states vs. streams.
+			if ( Math.abs( pending_setup.initialClientY - event.clientY ) > 10 ) {
+
+				pending_teardown();
+				dragging_setup( pending_setup.initialClientY );
+
+			}
+
+		}
+
+		// ---
+		// DRAGGING STATE.
+		// ---
+
+		function dragging_setup( clientY ) {
+
+			console.info( "Dragging: Setup" );
+			document.addEventListener( "mousemove", dragging_handleMousemove );
+			document.addEventListener( "mouseup", dragging_handleMouseup );
+
+			dragging_setup.initialClientY = clientY;
+			dragging_setup.currentClientY = null;
+			dragging_setup.timer = setInterval( dragging_handleInterval, 60 );
+
+		}
+
+		function dragging_teardown() {
+
+			console.info( "Dragging: Teardown" );
+			document.removeEventListener( "mousemove", dragging_handleMousemove );
+			document.removeEventListener( "mouseup", dragging_handleMouseup );
+			clearInterval( dragging_setup.timer );
+
+		}
+
+		function dragging_handleMousemove( event ) {
+
+			dragging_setup.currentClientY = event.clientY;
+
+		}
+
+		function dragging_handleMouseup( event ) {
+
+			dragging_teardown();
+			default_setup();
+
+		}
+
+		function dragging_handleInterval() {
+
+			console.log(
+				"Drag delta from origin:",
+				( dragging_setup.currentClientY - dragging_setup.initialClientY )
+			);
+
+		}
+
+	</script>
+
+</body>
+</html>
