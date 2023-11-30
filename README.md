@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Creating A Marquee Effect With CSS Animations](https://bennadel.github.io/JavaScript-Demos/demos/marquee-animations)
 * [Replacing RxJS With A State Machine In JavaScript](https://bennadel.github.io/JavaScript-Demos/demos/rxjs-to-state-machine)
 * [Using Labeled Loops In JavaScript](https://bennadel.github.io/JavaScript-Demos/demos/labeled-loops)
 * [Using Position: Sticky With Multi-Sided Anchoring In CSS](https://bennadel.github.io/JavaScript-Demos/demos/multi-sticky)

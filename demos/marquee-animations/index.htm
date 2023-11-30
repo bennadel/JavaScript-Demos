@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>
+		Creating A Marquee Effect With CSS Animations
+	</title>
+	<link rel="stylesheet" type="text/css" href="./main.css" />
+	<style type="text/css">
+
+		.marquee {
+			border: 2px solid red ;
+			display: flex ;
+			overflow: hidden ;
+			white-space: nowrap ;
+			width: 300px ;
+		}
+		.marquee__item {
+			animation-duration: 4s ;
+			animation-iteration-count: infinite ;
+			animation-name: marquee-content ;
+			animation-timing-function: linear ;
+			padding: 5px 15px 5px 15px ;
+		}
+		.marquee:hover .marquee__item {
+			animation-play-state: paused ;
+		}
+
+		/**
+		* BOTH of the marquee items are going to be translating left at the same time.
+		* And, once each of them has translated to -100%, they will both snap back into
+		* place, making it seem as if they are continuously scrolling.
+		*/
+		@keyframes marquee-content {
+			from {
+				transform: translateX( 0% );
+			}
+			to {
+				transform: translateX( -100% );
+			}
+		}
+
+	</style>
+</head>
+<body>
+
+	<h1>
+		Creating A Marquee Effect With CSS Animations
+	</h1>
+
+	<div class="marquee">
+		<div class="marquee__item">
+			There is quite a good deal of content over here.
+		</div>
+		<!--
+			Duplication of the content in order to create a seamless wrapping simulation.
+			As the element ABOVE heads off screen-left, the element BELOW will enter
+			screen-right.
+		-->
+		<div class="marquee__item">
+			There is quite a good deal of content over here.
+		</div>
+	</div>
+
+</body>
+</html>
