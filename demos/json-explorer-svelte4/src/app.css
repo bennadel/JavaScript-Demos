@@ -1,0 +1,21 @@
+
+html {
+	box-sizing: border-box ;
+}
+
+html *,
+html *:before,
+html *:after {
+	box-sizing: inherit ;
+}
+
+html {
+	font-family: monospace, sans-serif ;
+	font-size: 100% ;
+	line-height: 1.4 ;
+}
+
+body {
+	background-color: #ffffff ;
+	color: #111111 ;
+}

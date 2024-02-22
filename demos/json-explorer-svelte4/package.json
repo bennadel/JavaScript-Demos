@@ -1,0 +1,16 @@
+{
+	"name": "json-explorer",
+	"private": true,
+	"version": "0.0.0",
+	"type": "module",
+	"scripts": {
+		"dev": "vite",
+		"build": "vite build",
+		"preview": "vite preview"
+	},
+	"devDependencies": {
+		"@sveltejs/vite-plugin-svelte": "3.0.2",
+		"svelte": "4.2.10",
+		"vite": "5.1.0"
+	}
+}

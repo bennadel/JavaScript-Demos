@@ -1,0 +1,9 @@
+{
+    "app":{
+        "cfengine":"lucee"
+    },
+    "name":"javascript-demos",
+    "jvm":{
+        "args":"-Dlucee.preserve.case=true"
+    }
+}
