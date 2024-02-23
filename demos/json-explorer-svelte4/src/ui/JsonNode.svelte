@@ -33,18 +33,9 @@
 
 			value = JSON.parse( value );
 
-			console.group( "String Parsing" );
-			console.log( "The value was successfully parsed as JSON." );
-			console.log( value );
-			console.groupEnd();
-
 		} catch ( error ) {
 
-			console.group( "String Parsing" );
-			console.warn( "The value could not be parsed as JSON." );
 			console.error( error );
-			console.log( value );
-			console.groupEnd();
 
 		}
 
@@ -68,8 +59,6 @@
 		// Toggling a subvalue (index or key).
 		} else {
 
-			// We have to create a new object in order to get a reactive update.
-			collapsedEntries = Object.assign( Object.create( null ), collapsedEntries );
 			collapsedEntries[ subIndex ] = ! collapsedEntries[ subIndex ];
 
 		}
@@ -219,7 +208,9 @@
 			String
 		</button>
 		{#if ! isCollapsed }
-			<a on:dblclick="{ parseStringValue }" class="value is-string">
+			<a
+				on:dblclick="{ parseStringValue }"
+				class="value is-string">
 				{ value }
 			</a>
 		{/if}
