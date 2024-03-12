@@ -1,0 +1,143 @@
+
+html {
+	box-sizing: border-box ;
+}
+html *,
+html *:before,
+html *:after {
+	box-sizing: inherit ;
+}
+
+body {
+	font-family: monospace ;
+}
+
+.json-form {
+	display: flex ;
+}
+.json-form textarea {
+	flex: 1 1 auto ;
+	height: 100px ;
+	padding: 10px ;
+}
+.json-form button {
+	flex: 0 0 auto ;
+	margin-left: 10px ;
+	padding: 20px ;
+}
+
+.json-node {
+	display: inline-grid ;
+	grid-gap: 2px ;
+}
+
+.json-node .header {
+	border: 1px solid #cccccc ;
+	border-radius: 3px 3px 3px 3px ;
+	background-color: #cccccc ;
+	cursor: pointer ;
+	font-family: inherit ;
+	font-size: inherit ;
+	font-weight: bold ;
+	grid-column: 1 / span 2 ;
+	line-height: inherit ;
+	padding: 6px 6px 6px 6px ;
+	text-align: left ;
+}
+.json-node .header__type {
+	display: block ;
+}
+.json-node .header__count {
+	display: block ;
+	margin-top: 4px ;
+}
+
+.json-node .label {
+	align-items: flex-start ;
+	background-color: #cccccc ;
+	border: 1px solid #cccccc ;
+	border-radius: 3px 3px 3px 3px ;
+	cursor: pointer ;
+	display: flex ;
+	font-family: inherit ;
+	font-size: inherit ;
+	grid-column: 1 / span 1 ;
+	line-height: inherit ;
+	padding: 6px 6px 6px 6px ;
+	text-align: left ;
+}
+
+.json-node .value {
+	background-color: #f0f0f0 ;
+	border: 1px solid #cccccc ;
+	border-radius: 3px 3px 3px 3px ;
+	grid-column: 2 / span 1 ;
+	padding: 6px 6px 6px 6px ;
+}
+
+.json-node .label.is-null {
+	background-color: #d5d5d5 ;
+	border-color: #999999 ;
+	color: #000000 ;
+}
+.json-node .value.is-null {
+	background-color: #fafafa ;
+	border-color: #999999 ;
+	color: #000000 ;
+}
+
+.json-node .label.is-boolean,
+.json-node .label.is-string,
+.json-node .label.is-number {
+	background-color: #ffc900 ;
+	border-color: #cca000 ;
+	color: #000000 ;
+}
+.json-node .value.is-boolean,
+.json-node .value.is-string,
+.json-node .value.is-number {
+	background-color: #fff4cc ;
+	border-color: #cca000 ;
+	color: #000000 ;
+}
+
+.json-node .header.is-array,
+.json-node .label.is-array {
+	background-color: #2782dd ;
+	border-color: #040f1a ;
+	color: #ffffff ;
+}
+.json-node .value.is-array {
+	background-color: #edf5fc ;
+	border-color: #040f1a ;
+}
+
+.json-node .header.is-object,
+.json-node .label.is-object {
+	background-color: #e81236 ;
+	border-color: #130104 ;
+	color: #ffffff ;
+}
+.json-node .value.is-object {
+	background-color: #fde3e7 ;
+	border-color: #130104 ;
+}
+
+.json-node .header.is-collapsed,
+.json-node .label.is-collapsed {
+	background-color: #333333 ;
+	border-color: #000000 ;
+	color: #f0f0f0 ;
+	font-style: italic ;
+}
+
+.json-node .header:hover,
+.json-node .label:hover {
+	border-color: #ffffff ;
+	outline: 1px solid #ffffff ;
+	outline-offset: -3px ;
+}
+
+template-root {
+	display: contents ;
+}

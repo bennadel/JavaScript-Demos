@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [JSON Explorer In Alpine.js 3.13.5](https://bennadel.github.io/JavaScript-Demos/demos/json-explorer-alpine3)
 * [JSON Explorer In Svelte 4.2.10](https://bennadel.github.io/JavaScript-Demos/demos/json-explorer-svelte4/dist)
 * [Creating A Marquee Effect With CSS Animations](https://bennadel.github.io/JavaScript-Demos/demos/marquee-animations)
 * [Replacing RxJS With A State Machine In JavaScript](https://bennadel.github.io/JavaScript-Demos/demos/rxjs-to-state-machine)

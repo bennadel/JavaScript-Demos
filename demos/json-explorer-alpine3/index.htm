@@ -1,0 +1,450 @@
+<!doctype html>
+<html lang="en">
+<link rel="stylesheet" type="text/css" href="./main.css" />
+<body>
+
+	<h1>
+		Recursive JSON Explorer In Alpine.js 3.13.5
+	</h1>
+
+	<div x-data="AppController">
+
+		<template x-if="parsingError">
+			<p x-text="parsingError"></p>
+		</template>
+
+		<form @submit.prevent="exploreJson()" class="json-form">
+			<textarea
+				x-model="form.jsonPayload"
+				x-meta-enter="exploreJson()"
+			></textarea>
+			<button type="submit">
+				Explore JSON
+			</button>
+		</form>
+
+
+		<!-- START: JSON Tree. -->
+		<template x-if="( parsingResult !== undefined )">
+
+			<section>
+				<h2>
+					Parsed Data Structure
+				</h2>
+
+				<!--
+					This will kick-off the recursive rendering of the parsed data
+					structure. Each value in the structure will be rendered by a
+					materialized instance of this template.
+				-->
+				<template
+					x-template-outlet="$refs.nodeTemplate"
+					x-data="{ value: parsingResult }">
+				</template>
+
+				<p>
+					<strong>Pro Tip</strong>: If a String value contains JSON, you can try
+					to parse it by using <strong>double-clicking</strong> on the value.
+				</p>
+			</section>
+
+		</template>
+		<!-- END: JSON Tree. -->
+
+
+		<!-- START: JSON Node (Recursive rendering ahead). -->
+		<template x-ref="nodeTemplate">
+
+			<!--
+				CAUTION: This x-data binding expects a "value" to be defined by the
+				recursive template-outlet rendering.
+			-->
+			<div x-data="JsonNodeController" class="json-node">
+
+				<!--
+					Note that in (almost) all of the templates, I am using a made-up
+					element "<template-root>". This is a byproduct of the fact that every
+					template in Alpine.js can only have a single root element. This root
+					element does nothing (in my case) other than have "display:contents"
+					such that the "display:grid" can skip over this root element while
+					still adhering to Alpine's structural requirements.
+				-->
+
+				<template x-if="( valueType === NULL )">
+					<template-root>
+
+						<button
+							@click="toggle()"
+							class="label is-null"
+							x-cx:is-collapsed="isCollapsed">
+							Null
+						</button>
+						<div
+							x-show="( ! isCollapsed )"
+							class="value is-null">
+							null
+						</div>
+
+					</template-root>
+				</template>
+				<!-- END: Null value. -->
+
+				<template x-if="( valueType === STRING )">
+					<template-root>
+
+						<button
+							@click="toggle()"
+							class="label is-string"
+							x-cx:is-collapsed="isCollapsed">
+							String
+						</button>
+						<a
+							x-show="( ! isCollapsed )"
+							@dblclick="parseStringValue( $event )"
+							class="value is-string"
+							x-text="value">
+						</a>
+
+					</template-root>
+				</template>
+				<!-- END: String value. -->
+
+				<template x-if="( valueType === BOOLEAN )">
+					<template-root>
+
+						<button
+							@click="toggle()"
+							class="label is-boolean"
+							x-cx:is-collapsed="isCollapsed">
+							Boolean
+						</button>
+						<div
+							x-show="( ! isCollapsed )"
+							class="value is-boolean"
+							x-text="value">
+						</div>
+
+					</template-root>
+				</template>
+				<!-- END: Boolean value. -->
+
+				<template x-if="( valueType === NUMBER )">
+					<template-root>
+
+						<button
+							@click="toggle()"
+							class="label is-number"
+							x-cx:is-collapsed="isCollapsed">
+							Number
+						</button>
+						<div
+							x-show="( ! isCollapsed )"
+							class="value is-number"
+							x-text="value">
+						</div>
+
+					</template-root>
+				</template>
+				<!-- END: Number value. -->
+
+				<template x-if="( valueType === ARRAY )">
+					<template-root>
+
+						<button
+							@click="toggle()"
+							class="header is-array"
+							x-cx:is-collapsed="isCollapsed">
+							<span class="header__type">
+								Array
+							</span>
+							<span class="header__count">
+								Entries: <span x-text="value.length"></span>
+							</span>
+						</button>
+
+						<template x-if="( ! isCollapsed )">
+							<template x-for="( subValue, subKey ) in value">
+								<template-root>
+
+									<button
+										@click="toggle( subKey )"
+										class="label is-array"
+										x-cx:is-collapsed="collapsedEntries[ subKey ]"
+										x-text="subKey">
+									</button>
+									<template x-if="( ! collapsedEntries[ subKey ] )">
+										<div class="value is-array">
+
+											<!--
+												RECURSIVE RENDERING: Note that I'm mapping
+												the (subValue -> value) when rendering the
+												array element.
+											-->
+											<template
+												x-template-outlet="$refs.nodeTemplate"
+												x-data="{ value: subValue }">
+											</template>
+
+										</div>
+									</template>
+
+								</template-root>
+							</template>
+						</template>
+
+					</template-root>
+				</template>
+				<!-- END: Array value. -->
+
+				<template x-if="( valueType === OBJECT )">
+					<template-root>
+
+						<button
+							@click="toggle()"
+							class="header is-object"
+							x-cx:is-collapsed="isCollapsed">
+							<span class="header__type">
+								Object
+							</span>
+							<span class="header__count">
+								Entries: <span x-text="Object.keys( value ).length"></span>
+							</span>
+						</button>
+
+						<template x-if="( ! isCollapsed )">
+							<template x-for="( subValue, subKey ) in value">
+								<template-root>
+
+									<button
+										@click="toggle( subKey )"
+										class="label is-object"
+										x-cx:is-collapsed="collapsedEntries[ subKey ]"
+										x-text="subKey">
+									</button>
+									<template x-if="( ! collapsedEntries[ subKey ] )">
+										<div class="value is-object">
+
+											<!--
+												RECURSIVE RENDERING: Note that I'm mapping
+												the (subValue -> value) when rendering the
+												array element.
+											-->
+											<template
+												x-template-outlet="$refs.nodeTemplate"
+												x-data="{ value: subValue }">
+											</template>
+									
+										</div>
+									</template>
+
+								</template-root>
+							</template>
+						</template>
+
+					</template-root>
+				</template>
+				<!-- END: Object value. -->
+
+			</div>
+
+		</template>
+		<!-- END: JSON Node. -->
+
+	</div>
+
+	<!-- Include my custom directives. -->
+	<script type="text/javascript" src="./util.js" defer></script>
+	<script type="text/javascript" src="./alpine.class-names.js" defer></script>
+	<script type="text/javascript" src="./alpine.meta-enter.js" defer></script>
+	<script type="text/javascript" src="./alpine.template-outlet.js" defer></script>
+	<script type="text/javascript" src="../../vendor/alpine/3.13.5/alpine.3.13.5.js" defer></script>
+	<script type="text/javascript">
+
+		document.addEventListener(
+			"alpine:init",
+			function setupAlpineBindings() {
+
+				Alpine.data( "AppController", AppController );
+				Alpine.data( "JsonNodeController", JsonNodeController );
+
+			}
+		);
+
+		/**
+		* I control the app component.
+		*/
+		function AppController() { 
+
+			return {
+				parsingError: null,
+				parsingResult: undefined,
+				form: {
+					jsonPayload: ""
+				},
+				exploreJson: exploreJson,
+				init: init
+			};
+
+			// ---
+			// PUBLIC METHODS.
+			// ---
+
+			/**
+			* I parse the form input into a data structure.
+			*/
+			function exploreJson() {
+
+				this.parsingError = null;
+				this.parsingResult = undefined;
+
+				if ( ! this.form.jsonPayload.trim() ) {
+
+					return;
+
+				}
+
+				// CAUTION: Since the recursive template rendering maps sub-values onto
+				// values, we can't just re-render the root - it won't propagate properly.
+				// Instead, we have to set the result to null (above), give the DOM a tick
+				// to be destroyed, and then re-render the root in order to initiate a
+				// fresh start.
+				Alpine.nextTick(
+					() => {
+
+						try {
+
+							this.parsingResult = JSON.parse( this.form.jsonPayload.trim() );
+							// Pretty-print the payload back into the input for easier editing.
+							this.form.jsonPayload = JSON.stringify( this.parsingResult, null, 4 );
+							// Persist the original value into the URL for sharing. I'm
+							// re-stringifying it in order to always remove the extra
+							// whitespace that the pretty-printing just added to the input
+							// (will matter the next time the Input is submitted).
+							hashStore.set( JSON.stringify( this.parsingResult ) );
+
+						} catch ( error ) {
+
+							this.parsingError = error.message;
+
+						}
+
+					}
+				);
+
+			}
+
+			/**
+			* I initialize the app component.
+			*/
+			function init() {
+
+				if ( this.form.jsonPayload = hashStore.get() ) {
+
+					this.exploreJson();
+
+				} else {
+
+					// Setup a default value for funzies.
+					this.form.jsonPayload = JSON.stringify({
+						id: 4,
+						name: "Kim Dory",
+						activities: [
+							"movies",
+							"tv",
+							{ which: "dinner", preference: "Good Stuff Diner" }
+						],
+						relationship: {
+							style: "platonic",
+							isBFF: true,
+							// Embed a JSON payload in order to demonstrate parsing.
+							metadata: JSON.stringify({
+								created: "2024-01-01 00:00:00",
+								offset: "+04"
+							})
+						},
+						referringFriend: null
+					});
+
+				}
+
+			}
+
+		}
+
+		/**
+		* I control the JOSN Node component (which is recursively rendered).
+		*/
+		function JsonNodeController() {
+
+			return {
+				isCollapsed: false,
+				collapsedEntries: Object.create( null ),
+				valueType: getType( this.$data.value ),
+				parseStringValue: parseStringValue,
+				toggle: toggle
+			};
+
+			// ---
+			// PUBLIC METHODS.
+			// ---
+
+			/**
+			* I attempt to replace the current value with JSON.parse() of the current
+			* value. This is helpful for when a string payload contains an embedded JSON
+			* representation.
+			*/
+			function parseStringValue( event ) {
+
+				event.preventDefault();
+
+				try {
+
+					// CAUTION: This will override the value locally to the node. But,
+					// this value will be blown-away if the current node is collapsed and
+					// then expanded.
+					this.value = JSON.parse( this.value );
+					this.valueType = getType( this.value );
+
+					console.group( "String Parsing" );
+					console.log( `The value was successfully parsed as JSON (${ this.valueType }).` );
+					console.log( this.value );
+					console.groupEnd();
+
+				} catch ( error ) {
+
+					console.group( "String Parsing" );
+					console.warn( "The value could not be parsed as JSON." );
+					console.error( error );
+					console.log( this.value );
+					console.groupEnd();
+
+				}
+
+			}
+
+
+			/**
+			* I toggle the rendering of the current value or the given sub-value.
+			*/
+			function toggle( subkey ) {
+
+				// Collapsing the root value.
+				if ( subkey === undefined ) {
+
+					this.isCollapsed = ! this.isCollapsed;
+
+				// Collapsing the sub-value.
+				} else {
+
+					this.collapsedEntries[ subkey ] = ! this.collapsedEntries[ subkey ];
+
+				}
+
+			}
+
+		}
+
+	</script>
+
+</body>
+</html>
