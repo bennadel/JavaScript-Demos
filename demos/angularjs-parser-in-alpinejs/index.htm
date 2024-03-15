@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<!-- Make sure we're not allowing any unsafe-eval work. -->
+	<meta
+		http-equiv="Content-Security-Policy"
+		content="
+			script-src 'nonce-abc123' 'strict-dynamic';
+			object-src 'none';
+			base-uri 'none';
+		"
+	/>
+	<link rel="stylesheet" type="text/css" href="./main.css" />
+</head>
+<body x-data="app">
+
+	<h1>
+		Using The Angular.js Parser To Comply With CSP In Alpine.js 3.13.5
+	</h1>
+
+	<template x-for="counter in counters">
+		<p>
+			<button @click="incrementCounter( counter )">
+				<span x-text="counter.name"></span>:
+				<span x-text="counter.value"></span>
+			</button>
+
+			<template x-if="( counter.value > 0 )">
+				<button @click="counter.value = 0; logReset( $event, counter )">
+					Reset
+				</button>
+			</template>
+		</p>
+	</template>
+
+	<p>
+		<button @click="console.log( 'He he, that tickled!' )">
+			Log to Console
+		</button>
+	</p>
+
+	<!-- The Angular.js parser (the parts I ripped-out at least). -->
+	<script type="text/javascript" nonce="abc123" src="./angular-parser-lite.js" defer></script>
+	<!-- My custom evaluator that uses the Angular.js parser under the hood. -->
+	<script type="text/javascript" nonce="abc123" src="./alpine.csp-experiment.js" defer></script>
+	<!-- The CSP version of the Alpine build. -->
+	<script type="text/javascript" nonce="abc123" src="../../vendor/alpine/3.13.5/alpine-csp.3.13.5.min.js" defer></script>
+	<script type="text/javascript" nonce="abc123">
+
+		// Confirm that eval() execution is blocked by the Content Security Policy (CSP).
+		try {
+
+			eval( "1+1" );
+			console.warn( "Uh-oh, eval() was able to execute!" );
+
+		} catch ( error ) {
+
+			console.info( "The eval() function threw an error (this is good)." );
+
+		}
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+		document.addEventListener(
+			"alpine:init",
+			function setupAlpineBindings() {
+
+				Alpine.data( "app", AppController );
+
+			}
+		);
+
+		/**
+		* I control the app component.
+		*/
+		function AppController() {
+
+			return {
+				counters: [
+					{
+						name: "One",
+						value: 0
+					},
+					{
+						name: "Two",
+						value: 5
+					},
+					{
+						name: "Three",
+						value: 10
+					}
+				],
+				incrementCounter: function( counter ) {
+
+					counter.value++;
+
+				},
+				logReset: function( event, counter ) {
+
+					console.group( "Reset Counter" );
+					console.log( counter );
+					console.log( event );
+					console.groupEnd();
+
+				}
+			};
+
+		}
+
+	</script>
+
+</body>
+</html>
