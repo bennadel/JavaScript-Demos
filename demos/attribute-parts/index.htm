@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<body>
+
+	<h1>
+		Reading Element Attributes In JavaScript
+	</h1>
+
+	<p
+		id="target"
+		x-DIRECTIVE="A"
+		x-DIRECTIVE="B"
+		X-DIRECTIVE:VALUE1
+		x-directive:value2="expression2"
+		x-directive:value3.modifierA.modifierB="expression3"
+		x-directive:value4.MODIFIERA.modifierB="expression4"
+		:class="{ active: true }"
+		@click="console.log( 'Hello' )" 
+		[class.active]="true"
+		[style.width.px]="100"
+		(click.prevent)="submit()">
+	</p>
+
+	<script type="text/javascript">
+
+		// The ".attributes" property is a live collection of the attributes on the given
+		// node. It is "array-like"; and can be iterated using for-of. Each attribute
+		// exposes a "name" and "value" property.
+		for ( var attribute of window.target.attributes ) {
+
+			console.group( "Attribute Pair" );
+			logPair( "Name:", attribute.name );
+			logPair( "Value:", attribute.value );
+			console.groupEnd();
+
+		}
+
+		/**
+		* I pretty-print the key-value pair to the console.
+		*/
+		function logPair( key, value ) {
+
+			console.log(
+				"%c%s%c %s",
+				"color: #999", // Key styles.
+				key,
+				"", // Value styles (reset).
+				value
+			);
+
+		}
+
+	</script>
+
+</body>
+</html>
