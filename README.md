@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [CSS Enter Animations Follow The 80/20 Rule](https://bennadel.github.io/JavaScript-Demos/demos/enter-animations-80-20)
 * [Reading Element Attributes In JavaScript](https://bennadel.github.io/JavaScript-Demos/demos/attribute-parts)
 * [Using The AngularJS Parser To Comply With CSP In Alpine.js 3.13.5](https://bennadel.github.io/JavaScript-Demos/demos/angularjs-parser-in-alpinejs)
 * [JSON Explorer In Alpine.js 3.13.5](https://bennadel.github.io/JavaScript-Demos/demos/json-explorer-alpine3)

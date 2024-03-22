@@ -1,0 +1,73 @@
+body,
+button {
+	font-family: monospace ;
+}
+
+/* ----------------------------------------------------------------------------------- */
+/* ----------------------------------------------------------------------------------- */
+
+.show {
+	/* Button slides-up from bottom of screen. */
+	animation-duration: 300ms ;
+	animation-fill-mode: both ;
+	animation-iteration-count: 1 ;
+	animation-name: enter-show-button ;
+	animation-timing-function: ease-out ;
+
+	position: fixed ;
+	right: 20px ;
+	bottom: 20px ;
+}
+
+@keyframes enter-show-button {
+	from {
+		transform: translate3d( 0px, 100px, 0px ) ;
+	}
+	to {
+		transform: translate3d( 0px, 0px, 0px ) ;
+	}
+}
+
+aside {
+	background-color: #fafafa ;
+	box-shadow: -1px 0px 0px #cccccc ;
+	bottom: 0px ;
+	padding: 15px 30px ;
+	position: fixed ;
+	right: 0px ;
+	top: 0px ;
+	width: 300px ;
+	z-index: 2 ;
+}
+
+/* ----------------------------------------------------------------------------------- */
+/* ----------------------------------------------------------------------------------- */
+
+.modal {
+	/* Modal window fades and scales into view. */
+	animation-duration: 300ms ;
+	animation-fill-mode: both ;
+	animation-iteration-count: 1 ;
+	animation-name: enter-modal-window ;
+	animation-timing-function: ease-out ;
+
+	background-color: #fafafa ;
+	bottom: 0px ;
+	left: 0px ;
+	padding: 15px 30px ;
+	position: fixed ;
+	right: 0px ;
+	top: 0px ;
+	z-index: 2 ;
+}
+
+@keyframes enter-modal-window {
+	from {
+		opacity: 0.5 ;
+		transform: scale( 0.9 ) ;
+	}
+	to {
+		opacity: 1.0 ;
+		transform: scale( 1 ) ;
+	}
+}

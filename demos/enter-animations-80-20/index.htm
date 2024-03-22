@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<script type="text/javascript" src="../../vendor/alpine/3.13.5/alpine.3.13.5.js" defer></script>
+	<link rel="stylesheet" type="text/css" href="./main.css" />
+</head>
+<body x-data="{
+		isShowingAside: false,
+		isShowingModal: false
+	}">
+
+	<h1>
+		CSS Enter Animations Follow The 80/20 Rule
+	</h1>
+
+	<!-- ASIDE Example: ------------------------------------------------------------- -->
+	<!-- Button will slide-up from bottom of screen. -->
+
+	<template x-if="( ! isShowingAside )">
+
+		<button @click="( isShowingAside = true )" class="show">
+			Show Aside
+		</button>
+
+	</template>
+	<template x-if="isShowingAside">
+
+		<aside>
+			<h2>
+				This is the aside!
+			</h2>
+			<button @click="( isShowingAside = false )">
+				Hide
+			</button>
+		</aside>
+
+	</template>
+
+	<!-- MODAL Example: ------------------------------------------------------------- -->
+	<!-- Modal will fade / scale into view. -->
+
+	<p>
+		<button @click="( isShowingModal = true )">
+			Show Modal
+		</button>
+	</p>
+
+	<template x-if="isShowingModal">
+
+		<div class="modal">
+			<h2>
+				This is the modal!
+			</h2>
+			<button @click="( isShowingModal = false )">
+				Hide
+			</button>
+		</div>
+
+	</template>
+
+</body>
+</html>
