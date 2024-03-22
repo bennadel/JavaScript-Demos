@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<link rel="stylesheet" type="text/css" href="./main.css" />
+</head>
+<body>
+
+	<h1>
+		HTML Templates Can Be Mutated Just Like Any Other DOM
+	</h1>
+
+	<div x-data="{ isShowing: false }">
+
+		<button @click="( isShowing = ! isShowing )">
+			Toggle Template
+		</button>
+
+		<template x-if="isShowing" class="counter-template">
+			<p>
+				Counter: <strong class="counter">0</strong>
+			</p>
+		</template>
+
+	</div>
+
+	<script type="text/javascript" src="../../vendor/alpine/3.13.5/alpine.3.13.5.js" defer></script>
+	<script type="text/javascript">
+
+		var counter = 0;
+
+		// Update the contents of the template every second.
+		setInterval(
+			() => {
+
+				var target = document.querySelector( ".counter-template" )
+					// The template contents represent a detached document fragment that
+					// provides its own DOM that can be inspected using querySelector().
+					.content
+					.querySelector( ".counter" )
+				;
+
+				target.innerText = ++counter;
+
+			},
+			1000
+		);
+
+	</script>
+
+</body>
+</html>
