@@ -1,0 +1,82 @@
+html {
+	font-size: 140% ;
+}
+
+body,
+button {
+	font-family: monospace ;
+	font-size: inherit ;
+	line-height: inherit ;
+}
+
+.calendar {
+	background-color: #ffffff ;
+	border: 1px solid #333333 ;
+	border-collapse: collapse ;
+	margin: 20px 0 ;
+}
+.calendar th {
+	border: 1px solid #333333 ;
+	padding: 10px 15px ;
+}
+.calendar td {
+	border: 1px solid #333333 ;
+	padding: 0 ;
+}
+.calendar tbody td button {
+	border: none ;
+	background-color: #bdebff ;
+	cursor: pointer ;
+	display: block ;
+	padding: 10px 15px ;
+	width: 100% ;
+}
+.calendar tbody td button.other {
+	background-color: #f8fdff ;
+}
+.calendar tbody td button.today {
+	background-color: #0095d1 ;
+	color: #ffffff ;
+	font-weight: bold ;
+}
+.calendar tbody td button.selected,
+.calendar tbody td button:hover {
+	outline: 3px solid #009fff ;
+	outline-offset: -3px ;
+}
+
+.calendar .tools {
+	align-items: center ;
+	display: flex ;
+	justify-content: center ;
+	gap: 20px ;
+}
+.calendar .tools button {
+	background-color: transparent ;
+	border: 1px solid #0095d1 ;
+	border-radius: 3px ;
+	color: #0095d1 ;
+	cursor: pointer ;
+	padding: 5px 9px ;
+}
+.calendar .tools button:first-of-type {
+	margin-right: auto ;
+}
+.calendar .tools button:last-of-type {
+	margin-left: auto ;
+}
+
+.jumper {
+	align-items: center ;
+	display: flex ;
+	gap: 10px ;
+}
+.jumper button {
+	background-color: transparent ;
+	border: 1px solid #0095d1 ;
+	border-radius: 3px ;
+	color: #0095d1 ;
+	cursor: pointer ;
+	padding: 2px 5px ;
+	margin: 0 ;
+}

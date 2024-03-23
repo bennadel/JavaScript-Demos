@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Calendar Component In Alpine.js](https://bennadel.github.io/JavaScript-Demos/demos/calendar-alpinejs)
 * [HTML Templates Can Be Mutated Just Like Any Other DOM](https://bennadel.github.io/JavaScript-Demos/demos/mutate-template)
 * [CSS Enter Animations Follow The 80/20 Rule](https://bennadel.github.io/JavaScript-Demos/demos/enter-animations-80-20)
 * [Reading Element Attributes In JavaScript](https://bennadel.github.io/JavaScript-Demos/demos/attribute-parts)

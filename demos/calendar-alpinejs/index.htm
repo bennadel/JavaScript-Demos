@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<title>
+		Code Kata: Alpine.js Calendar Component
+	</title>
+	<link rel="stylesheet" type="text/css" href="./main.css" />
+</head>
+<body x-data="app">
+
+	<h1>
+		Code Kata: Alpine.js Calendar Component
+	</h1>
+
+	<template x-if="( ! selectedEntry )">
+		<p>
+			Please selected your date.
+		</p>
+	</template>
+	<template x-if="selectedEntry">
+		<p>
+			You selected
+			<strong>
+				<span x-text="selectedEntry.monthName"></span>
+				<span x-text="selectedEntry.date"></span>,
+				<span x-text="selectedEntry.year"></span>
+			</strong>
+			<template x-if="selectedEntry.isToday">
+				<span>( that's today! )</span>
+			</template>
+			<button @click="selectEntry( null )">
+				Clear
+			</button>
+		</p>
+	</template>
+
+	<!-- BEGIN: Calendar Component. -->
+	<table x-data="calendar" class="calendar">
+	<thead>
+		<tr>
+			<th colspan="7">
+
+				<div class="tools">
+					<button @click="gotoPrevMonth()">
+						&larr; Prev
+					</button>
+
+					<span x-text="monthName"></span>
+					<span x-text="year"></span>
+
+					<button @click="gotoNextMonth()">
+						Next &rarr;
+					</button>
+				</div>
+
+			</th>
+		</tr>
+		<tr>
+			<template x-for="header in grid.headersAbbreviated" :key="header">
+				<th
+					scope="col"
+					x-text="header">
+				</th>
+			</template>
+		</tr>
+	</thead>
+	<tbody>
+		<template x-for="( week, i ) in grid.weeks" :key="i">
+			<tr>
+				<template x-for="entry in week" :key="entry.id">
+					<td>
+						<button
+							@click="selectEntry( entry )"
+							:class="{
+								current: entry.isCurrentMonth,
+								other: entry.isOtherMonth,
+								today: entry.isToday,
+								weekday: entry.isWeekday,
+								weekend: entry.isWeekend,
+								selected: ( selectedEntry?.id === entry.id )
+							}"
+							x-text="entry.date">
+						</button>
+					</td>
+				</template>
+			</tr>
+		</template>
+	</tbody>
+	</table>
+	<!-- END: Calendar Component. -->
+
+	<p class="jumper">
+		<strong>Jump to:</strong>
+		<button @click.prevent="resetCalendar">Now</button>
+		<button @click.prevent="jumpToYear( 2023 )">2023</button>
+		<button @click.prevent="jumpToYear( 2024 )">2024</button>
+		<button @click.prevent="jumpToYear( 2025 )">2025</button>
+		<button @click.prevent="jumpToYear( 2026 )">2026</button>
+		<button @click.prevent="jumpToYear( 2027 )">2027</button>
+	</p>
+
+	<script type="text/javascript" src="./alpine.calendar.js" defer></script>
+	<script type="text/javascript" src="../../vendor/alpine/3.13.5/alpine.3.13.5.min.js" defer></script>
+
+	<script type="text/javascript">
+
+		document.addEventListener(
+			"alpine:init",
+			function setupAlpineBindings() {
+
+				Alpine.data( "app", AppController );
+
+			}
+		);
+
+		/**
+		* I control the app component.
+		*/
+		function AppController() {
+
+			return {
+				// Properties.
+				selectedEntry: null,
+				// Methods.
+				jumpToYear: jumpToYear,
+				resetCalendar: resetCalendar,
+				selectEntry: selectEntry
+			};
+
+			// ---
+			// PUBLIC METHODS.
+			// ---
+
+			/**
+			* I jump the calendar to January 1st of the given year.
+			*/
+			function jumpToYear( year ) {
+
+				getCalendarController().gotoYear( year );
+
+			}
+
+			/**
+			* I reset the calendar state (bring user back to current month).
+			*/
+			function resetCalendar() {
+
+				getCalendarController().gotoNow();
+
+			}
+
+			/**
+			* I select the given entry (or clear the selection if null is provided).
+			*/
+			function selectEntry( entry ) {
+
+				// Special case: toggling off currently selected entry.
+				if ( entry && this.selectedEntry && ( this.selectedEntry.id === entry.id ) ) {
+
+					this.selectedEntry = null;
+					return;
+
+				}
+
+				this.selectedEntry = entry;
+
+			}
+
+			// ---
+			// PRIVATE METHODS.
+			// ---
+
+			/**
+			* I get the merged proxy data for the calendar element (which is, depending on
+			* how hard you squint), the same as the "controller".
+			*/
+			function getCalendarController() {
+
+				// Grab the controller instance data stack from the given element. This
+				// gives us access to the calendar's public methods.
+				return Alpine.$data( document.querySelector( ".calendar" ) );
+
+			}
+
+		}
+
+	</script>
+
+</body>
+</html>
