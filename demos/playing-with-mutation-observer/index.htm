@@ -1,0 +1,113 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>
+		Playing With MutationObserver In JavaScript
+	</title>
+	<link rel="stylesheet" type="text/css" href="./main.css" />
+</head>
+<body>
+
+	<h1>
+		Playing With MutationObserver In JavaScript
+	</h1>
+
+	<p>
+		<button onclick="( window.playground.innerHTML = window.domTemplate.innerHTML )">
+			Setup
+		</button>
+		<button onclick="( window.playground.innerHTML = '' )">
+			Teardown
+		</button>
+	</p>
+
+	<section id="playground">
+		<!-- Nodes to be added / removed here. -->
+	</section>
+
+	<!-- Template to be cloned into above playground. -->
+	<template id="domTemplate">
+		<!-- Counter ONE instance. -->
+		<p x-controller="controllers.HelloWorld" x-scope="ctrl">
+			<button x-ref="ctrl.button">
+				Count:
+				<span x-ref="ctrl.counter">0</span>
+			</button>
+		</p>
+		<!-- Counter TWO instance (note: SAME controller). -->
+		<p x-controller="controllers.HelloWorld" x-scope="ctrl">
+			<button x-ref="ctrl.button">
+				Count:
+				<span x-ref="ctrl.counter">100</span>
+			</button>
+		</p>
+	</template>
+
+	<script type="text/javascript" src="./watcher.js" defer></script>
+	<script type="text/javascript">
+
+		var controllers = {
+			HelloWorld: HelloWorld
+		};
+		var instanceID = 0;
+
+		function HelloWorld( element ) {
+
+			var element = element;
+			var refs = Object.create( null );
+			var id = ++instanceID;
+
+			// Return the public API for this controller.
+			return {
+				$onDestroy: $onDestroy,
+				$onInit: $onInit,
+				refs: refs
+			};
+
+			// ---
+			// PUBLIC METHODS.
+			// ---
+
+			/**
+			* I get called when the controller is being unbound from the document.
+			*/
+			function $onDestroy() {
+
+				console.log( `Destroying instance ${ id }.` );
+				refs.button.removeEventListener( "click", handleButtonClick );
+
+			}
+
+			/**
+			* I get called when the controller is being bound to the document. At this
+			* point, any visible refs have been injected.
+			*/
+			function $onInit() {
+
+				console.log( `Initializing instance ${ id }.` );
+				refs.button.addEventListener( "click", handleButtonClick );
+
+			}
+
+			// ---
+			// PRIVATE METHODS.
+			// ---
+
+			/**
+			* I increment the value of the button counter.
+			*/
+			function handleButtonClick( event ) {
+
+				console.log( `Clicking instance ${ id }.` );
+				refs.counter.innerText = ( Number( refs.counter.innerText ) + 1 );
+
+			}
+
+		}
+
+	</script>
+
+</body>
+</html>
