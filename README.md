@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Using <code>:where()</code> To Reduce CSS Specificity Issues](https://bennadel.github.io/JavaScript-Demos/demos/where-specificity)
 * [Playing With MutationObserver In JavaScript](https://bennadel.github.io/JavaScript-Demos/demos/playing-with-mutation-observer)
 * [Calendar Component In Alpine.js](https://bennadel.github.io/JavaScript-Demos/demos/calendar-alpinejs)
 * [HTML Templates Can Be Mutated Just Like Any Other DOM](https://bennadel.github.io/JavaScript-Demos/demos/mutate-template)

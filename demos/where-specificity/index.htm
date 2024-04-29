@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>
+		Using :where() To Reduce CSS Specificity Issues
+	</title>
+</head>
+<body>
+
+	<h1>
+		Using <code>:where()</code> To Reduce CSS Specificity Issues
+	</h1>
+
+	<form>
+		<label for="search">
+			Search Site:
+		</label>
+		<input id="search" type="search" />
+	</form>
+
+	<!-- Imagine this is some design system that I pulled into my app. -->
+	<style type="text/css">
+
+		:where( body ) {
+			font-family: monospace ;
+		}
+		:where( form label ) {
+			display: block ;
+			font-size: 20px ;
+			font-weight: bold ;
+			margin-bottom: 7px ;
+		}
+		:where( form input[ type = "search" ] ) {
+			border: 2px solid #333333 ;
+			color: #333333 ;
+			font-size: 20px ;
+			padding: 0.5em 0.7em ;
+			width: 300px ;
+		}
+
+	</style>
+	<!--
+		Imagine this is me trying to override some UI components in a given view. Notice
+		that my CSS selectors can be super simple. This is because the :where() pseudo-
+		class function (in the design system above) always results in a specificity of
+		`0`. In other words, it can always be overridden!
+	-->
+	<style type="text/css">
+
+		label {
+			margin-bottom: 10px ;
+		}
+		input {
+			border-color: fuchsia ;
+			color: fuchsia ;
+			font-weight: bold ;
+		}
+
+	</style>
+
+</body>
+</html>
