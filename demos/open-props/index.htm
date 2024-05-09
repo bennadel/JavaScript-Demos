@@ -1,0 +1,452 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>
+		CSS Open Props Playground
+	</title>
+	<link rel="stylesheet" type="text/css" href="./main.css" />
+</head>
+<body x-data="playground">
+
+	<div class="panels">
+		<div class="panels__left">
+
+			<h1>
+				CSS Open Props Playground
+			</h1>
+
+			<fieldset>
+				<legend>
+					Thing to Love
+				</legend>
+				<div class="group">
+					<input type="text" x-model="thing" size="30" />
+				</div>
+			</fieldset>
+
+			<fieldset>
+				<legend>
+					Gradients
+				</legend>
+				<div class="group">
+					<strong>
+						Variations
+					</strong>
+					<template x-for="variation in gradient.variations">
+						<label :style="{ background: `var( --gradient-${ variation } )` }">
+							<input
+								type="radio"
+								x-model="styles.background"
+								:value="`var( --gradient-${ variation } )`"
+							/>
+							<span x-text="variation"></span>
+						</label>
+					</template>
+				</div>
+			</fieldset>
+
+			<fieldset>
+				<legend>
+					Colors
+				</legend>
+				<template x-for="( hue, hIndex ) in color.hues">
+					<div class="group">
+						<strong
+							class="group__label"
+							x-text="hue">
+						</strong>
+						<template x-for="( variation, vIndex ) in color.variations">
+							<label :style="{ background: `var( --${ hue }-${ variation } )` }">
+								<input
+									type="radio"
+									x-model="styles.color"
+									:value="`var( --${ hue }-${ variation } )`"
+									:data-h-index="hIndex"
+									:data-v-index="vIndex"
+									@keydown.up="gotoPrevHue( $event )"
+									@keydown.down="gotoNextHue( $event )"
+								/>
+								<span x-text="variation"></span>
+							</label>
+						</template>
+					</div>
+				</template>
+			</fieldset>
+
+			<fieldset>
+				<legend>
+					Font Size
+				</legend>
+				<div class="group">
+					<strong>
+						Variations
+					</strong>
+					<template x-for="variation in fontSize.variations">
+						<label :style="{ 'font-size': `var( --font-size-${ variation } )` }">
+							<input
+								type="radio"
+								x-model="styles.fontSize"
+								:value="`var( --font-size-${ variation } )`"
+							/>
+							<span x-text="variation"></span>
+						</label>
+					</template>
+				</div>
+			</fieldset>
+
+			<fieldset>
+				<legend>
+					Font Weight
+				</legend>
+				<div class="group">
+					<strong>
+						Variations
+					</strong>
+					<template x-for="variation in fontWeight.variations">
+						<label :style="{ 'font-weight': `var( --font-weight-${ variation } )` }">
+							<input
+								type="radio"
+								x-model="styles.fontWeight"
+								:value="`var( --font-weight-${ variation } )`"
+							/>
+							<span x-text="variation"></span>
+						</label>
+					</template>
+				</div>
+			</fieldset>
+
+			<fieldset>
+				<legend>
+					Letter Spacing
+				</legend>
+				<div class="group">
+					<strong>
+						Variations
+					</strong>
+					<template x-for="variation in letterSpacing.variations">
+						<label>
+							<input
+								type="radio"
+								x-model="styles.letterSpacing"
+								:value="`var( --font-letterspacing-${ variation } )`"
+							/>
+							<span x-text="variation"></span>
+						</label>
+					</template>
+				</div>
+			</fieldset>
+
+			<fieldset>
+				<legend>
+					Line Height
+				</legend>
+				<div class="group">
+					<strong>
+						Variations
+					</strong>
+					<template x-for="variation in lineHeight.variations">
+						<label :style="{ 'line-height': `var( --font-lineheight-${ variation } )` }">
+							<input
+								type="radio"
+								x-model="styles.lineHeight"
+								:value="`var( --font-lineheight-${ variation } )`"
+							/>
+							<span x-text="variation"></span>
+						</label>
+					</template>
+				</div>
+			</fieldset>
+
+			<fieldset>
+				<legend>
+					Font Family
+				</legend>
+				<div class="group">
+					<strong>
+						Variations
+					</strong>
+					<template x-for="variation in fontFamily.variations">
+						<label :style="{ 'font-family': `var( --font-${ variation } )` }">
+							<input
+								type="radio"
+								x-model="styles.fontFamily"
+								:value="`var( --font-${ variation } )`"
+							/>
+							<span x-text="variation"></span>
+						</label>
+					</template>
+				</div>
+			</fieldset>
+
+			<fieldset>
+				<legend>
+					Font Style
+				</legend>
+				<div class="group">
+					<strong>
+						Variations
+					</strong>
+					<template x-for="variation in fontStyle.variations">
+						<label :style="{ 'font-style': variation }">
+							<input
+								type="radio"
+								x-model="styles.fontStyle"
+								:value="variation"
+							/>
+							<span x-text="variation"></span>
+						</label>
+					</template>
+				</div>
+			</fieldset>
+
+			<fieldset>
+				<legend>
+					Padding
+				</legend>
+				<div class="group">
+					<strong>
+						Block
+					</strong>
+					<template x-for="variation in size.variations">
+						<label>
+							<input
+								type="radio"
+								x-model="styles.paddingBlock"
+								:value="`var( --size-${ variation } )`"
+							/>
+							<span x-text="variation"></span>
+						</label>
+					</template>
+				</div>
+				<div class="group">
+					<strong>
+						Inline
+					</strong>
+					<template x-for="variation in size.variations">
+						<label>
+							<input
+								type="radio"
+								x-model="styles.paddingInline"
+								:value="`var( --size-${ variation } )`"
+							/>
+							<span x-text="variation"></span>
+						</label>
+					</template>
+				</div>
+			</fieldset>
+
+			<fieldset>
+				<legend>
+					Border Size
+				</legend>
+				<div class="group">
+					<strong>
+						Variations
+					</strong>
+					<template x-for="variation in borderWidth.variations">
+						<label :style="{ 'border-width': `var( --border-size-${ variation } )` }">
+							<input
+								type="radio"
+								x-model="styles.borderWidth"
+								:value="`var( --border-size-${ variation } )`"
+							/>
+							<span x-text="variation"></span>
+						</label>
+					</template>
+				</div>
+			</fieldset>
+		</div>
+		<div class="panels__right">
+
+			<div class="sticker" :style="styles">
+				<span class="sticker__line">
+					I'm crying because I love
+				</span>
+				<span class="sticker__line">
+					<span class="thing" x-text="thing">ColdFusion</span> so much
+				</span>
+			</div>
+
+		</div>
+	</div>
+
+	<script type="text/javascript" src="../../vendor/alpine/3.13.5/alpine.3.13.5.min.js" defer></script>
+	<script type="text/javascript">
+
+		function playground() {
+
+			return {
+				init() {
+
+					// Whenever the style data changes, persist it to the URL.
+					this.$watch( "[ thing, styles ]", handleStyleChange );
+
+					// On page load, apply URL-based styles to the current rendering.
+					applyUrl( this );
+
+				},
+				gotoPrevHue: gotoPrevHue,
+				gotoNextHue: gotoNextHue,
+				thing: "ColdFusion",
+				color: {
+					hues: [
+						"gray", "stone", "red", "pink", "purple", "violet", "indigo",
+						"blue", "cyan", "teal", "green", "lime", "yellow", "orange",
+						"choco", "brown", "sand", "camo", "jungle"
+					],
+					variations: [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 ]
+				},
+				gradient: {
+					variations: [
+						1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+						11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
+						21, 22, 23, 24, 25, 26, 27, 28, 29, 30
+					]
+				},
+				fontSize: {
+					variations: [ "00", 0, 1, 2, 3, 4, 5, 6, 7, 8 ]
+				},
+				fontWeight: {
+					variations: [ 1, 2, 3, 4, 5, 6, 7, 8, 9 ]
+				},
+				lineHeight: {
+					variations: [ "00", 0, 1, 2, 3, 4, 5 ]
+				},
+				fontFamily: {
+					variations: [ "sans", "serif", "mono" ]
+				},
+				fontStyle: {
+					variations: [ "normal", "italic" ]
+				},
+				letterSpacing: {
+					// NOTE: There is no in-built "none", it is a custom variation that I
+					// have defined in my style-sheet (for the demo).
+					variations: [ 0, "none", 1, 2, 3, 4, 5, 6, 7 ]
+				},
+				size: {
+					variations: [
+						0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+						11, 12, 13, 14, 15
+					]
+				},
+				borderWidth: {
+					// NOTE: There is no in-built "none", it is a custom variation that I
+					// have defined in my style-sheet (for the demo).
+					variations: [ "none", 1, 2, 3, 4, 5 ]
+				},
+				styles: {
+					color: "var( --yellow-3 )",
+					background: "var( --gradient-11 )",
+					fontSize: "var( --font-size-7 )",
+					fontWeight: "var( --font-weight-8 )",
+					lineHeight: "var( --font-lineheight-1 )",
+					fontFamily: "var( --font-sans )",
+					fontStyle: "normal",
+					letterSpacing: "var( --font-letterspacing-none )",
+					paddingBlock: "var( --size-4 )",
+					paddingInline: "var( --size-8 )",
+					borderWidth: "var( --border-size-4 )"
+				}
+			};
+
+			/**
+			* I react to style selection changes and persist the state to the URL.
+			*/
+			function handleStyleChange( [ thing, styles ] ) {
+
+				var stickerState = JSON.stringify({
+					thing: thing,
+					styles: styles
+				});
+				var encodedState = btoa( stickerState );
+
+				window.location.hash = encodedState;
+
+			}
+
+			/**
+			* I pull the styles out of the URL and apply them to the current rendering.
+			*/
+			function applyUrl( scope ) {
+
+				if ( ! window.location.hash ) {
+
+					return;
+
+				}
+
+				try {
+
+					var encodedState = window.location.hash.slice( 1 );
+					var decodedState = atob( encodedState );
+					var stickerState = JSON.parse( decodedState );
+
+					scope.thing = stickerState.thing;
+					Object.assign( scope.styles, stickerState.styles );
+
+				} catch ( error ) {
+
+					console.warn( error );
+
+				}
+
+			}
+
+			/**
+			* I move the color selection to the previous hue with the same variation.
+			*/
+			function gotoPrevHue( event ) {
+
+				var target = event.currentTarget;
+				var hIndex = +target.dataset.hIndex;
+				var vIndex = +target.dataset.vIndex;
+
+				if ( hIndex === 0 ) {
+
+					return;
+
+				}
+
+				// Override the default keydown behavior.
+				event.preventDefault();
+
+				var desiredHue = document.querySelector( `input[ data-h-index = "${ hIndex - 1 }" ][ data-v-index = "${ vIndex }" ]` );
+
+				desiredHue.focus();
+				this.styles.color = desiredHue.value;
+
+			}
+
+			/**
+			* I move the color selection to the next hue with the same variation.
+			*/
+			function gotoNextHue( event ) {
+
+				var target = event.currentTarget;
+				var hIndex = +target.dataset.hIndex;
+				var vIndex = +target.dataset.vIndex;
+
+				if ( hIndex === ( this.color.hues.length - 1 ) ) {
+
+					return;
+
+				}
+
+				// Override the default keydown behavior.
+				event.preventDefault();
+
+				var desiredHue = document.querySelector( `input[ data-h-index = "${ hIndex + 1 }" ][ data-v-index = "${ vIndex }" ]` );
+
+				desiredHue.focus();
+				this.styles.color = desiredHue.value;
+
+			}
+
+		}
+
+	</script>
+
+</body>
+</html>

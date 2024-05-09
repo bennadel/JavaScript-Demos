@@ -1,0 +1,71 @@
+@import "../../vendor/open-props/1.7.4/open-props.min.css" ;
+@import "../../vendor/open-props/1.7.4/normalize.min.css" ;
+
+body {
+	background-color: var( --gray-8 ) ;
+	color: var( --gray-0 ) ;
+
+	/* Custom variations to help with the demo. */
+	--border-size-none: 0px ;
+	--font-letterspacing-none: 0px ;
+}
+
+.panels {
+	display: flex ;
+	inset: 0 ;
+	position: fixed ;
+}
+.panels__left,
+.panels__right {
+	flex: 1 1 50% ;
+	overflow: auto ;
+	overscroll-behavior: contain ;
+	padding: var( --size-4 ) ;
+}
+.panels__left {}
+.panels__right {
+	align-items: center ;
+	display: flex ;
+	justify-content: center ;
+}
+
+fieldset {
+	margin-block: var( --size-4 ) ;
+	padding: var( --size-4 ) ;
+}
+fieldset input[ type = "text" ] {
+	color: var( --gray-12 ) ;
+}
+fieldset .group {
+	align-items: center ;
+	display: flex ;
+	flex-wrap: wrap ;
+	gap: var( --size-2 ) var( --size-2 ) ;
+}
+fieldset .group:not(:last-child) {
+	margin-block-end: var( --size-2 ) ;
+}
+fieldset strong {
+	margin-right: var( --size-2 ) ;
+}
+fieldset label {
+	align-items: center ;
+	border: var( --border-size-1 ) dashed var( --gray-6 ) ;
+	border-radius: var( --radius-2 ) ;
+	display: flex ;
+	padding: var( --size-1 ) var( --size-2 ) ;
+}
+fieldset label input {
+	margin-right: var( --size-2 ) ;
+}
+fieldset label:has(input:checked) {
+	border-style: solid ;
+	border-color: #ffffff ;
+}
+
+.sticker {
+	border-color: #ffffff ;
+}
+.sticker__line {
+	display: block ;
+}
