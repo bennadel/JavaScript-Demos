@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>
+		Nesting The pointer-events Property In CSS
+	</title>
+	<link rel="stylesheet" type="text/css" href="./main.css" />
+	<style type="text/css">
+
+		.semi-modal {
+			display: flex ;
+			inset: 0px ;
+			overflow: auto ;
+			overscroll-behavior: contain ;
+			position: fixed ;
+			z-index: 2 ;
+			/* The modal will NOT intercept mouse events. */
+			pointer-events: none ;
+		}
+		.semi-modal .content {
+			margin: auto ;
+			/* HOWEVER, the content of the modal WILL intercept mouse events. */
+			pointer-events: auto ;
+		}
+
+	</style>
+	<script type="text/javascript" src="../../vendor/alpine/3.13.5/alpine.3.13.5.min.js" defer></script>
+</head>
+<body x-data>
+
+	<h1>
+		Nesting The pointer-events Property In CSS
+	</h1>
+
+	<!--
+		This "modal" window is going to be overlaid on the page. However, the "backdrop"
+		of the modal window WILL NOT intercept clicks (and other mouse events) to the main
+		page content due to the pointer-events:none setting.
+	-->
+	<section class="semi-modal">
+		<!--
+			The content of the overlaid window WILL be clickable. Its pointer-events:auto
+			setting will override the parent settings; but, only for this local DOM branch.
+		-->
+		<div class="content">
+			<p> <button>Click Me</button> </p>
+			<p> This is kind of a modal,<br /> but not quite. </p>
+		</div>
+	</section>
+
+	<!-- Filler content for the page so that we have plenty of scrolling text. -->
+	<template x-for="i in 30">
+		<p>
+			<button>Click Me</button> Lorem ipsum dolor sit amet, consectetur adipiscing
+			elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+			Natoque penatibus et magnis dis parturient montes nascetur ridiculus.
+			Neque laoreet suspendisse interdum consectetur libero id faucibus nisl.
+		</p>
+	</template>
+
+</body>
+</html>

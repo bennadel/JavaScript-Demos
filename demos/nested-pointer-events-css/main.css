@@ -1,0 +1,25 @@
+body {
+	font-family: monospace ;
+	font-size: 18px ;
+}
+
+button {
+	font-family: inherit ;
+	font-size: inherit ;
+}
+button:active {
+	border-radius: 3px ;
+	outline: 4px solid fuchsia ;
+	outline-offset: 3px ;
+}
+
+
+.semi-modal {}
+.semi-modal .content {
+	background-color: #301a27 ;
+	border-radius: 5px ;
+	box-shadow: 0px 0px 0px 5px #ff00006e ;
+	color: #f0f0f0 ;
+	padding: 100px 50px ;
+	text-align: center ;
+}

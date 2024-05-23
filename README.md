@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Nesting The pointer-events Property In CSS](https://bennadel.github.io/JavaScript-Demos/demos/nested-pointer-events-css)
 * [CSS Open Props Playground](https://bennadel.github.io/JavaScript-Demos/demos/open-props)
 * [Using <code>:where()</code> To Reduce CSS Specificity Issues](https://bennadel.github.io/JavaScript-Demos/demos/where-specificity)
 * [Playing With MutationObserver In JavaScript](https://bennadel.github.io/JavaScript-Demos/demos/playing-with-mutation-observer)
