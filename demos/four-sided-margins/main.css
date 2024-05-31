@@ -1,0 +1,53 @@
+
+html {
+	box-sizing: border-box ;
+}
+html *,
+html *:before,
+html *:after {
+	box-sizing: inherit ;
+}
+
+body {
+	font-family: monospace ;
+	font-size: 18px ;
+	line-height: 1.4 ;
+}
+
+.container {
+	border: 4px solid #cccccc ;
+	border-radius: 5px ;
+	margin-bottom: 20px ;
+	position: relative ;
+}
+
+.box {
+	background-color: fuchsia ;
+	border-radius: 5px ;
+}
+
+.tools {
+	display: flex ;
+	gap: 10px ;
+	margin-bottom: 20px ;
+	width: 650px ;
+}
+.tools select {
+	flex: 1 1 auto ;
+}
+
+.tools button,
+.tools select {
+	font-family: inherit ;
+	font-size: 20px ;
+	padding: 5px 10px ;
+}
+
+.debugger {
+	font-family: inherit ;
+	font-size: 20px ;
+	height: 220px ;
+	line-height: 1.4 ;
+	padding: 5px 10px ;
+	width: 650px ;
+}
