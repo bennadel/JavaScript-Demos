@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Using Both Tab And Arrow Keys For Keyboard Navigation](https://bennadel.github.io/JavaScript-Demos/demos/tab-group)
 * [Using Margins With Four-Sided Positioning In CSS](https://bennadel.github.io/JavaScript-Demos/demos/four-sided-margins)
 * [Nesting The pointer-events Property In CSS](https://bennadel.github.io/JavaScript-Demos/demos/nested-pointer-events-css)
 * [CSS Open Props Playground](https://bennadel.github.io/JavaScript-Demos/demos/open-props)

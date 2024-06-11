@@ -1,0 +1,30 @@
+
+html {
+	box-sizing: border-box ;
+}
+html *,
+html *:before,
+html *:after {
+	box-sizing: inherit ;
+}
+
+body {
+	font-family: monospace ;
+	font-size: 18px ;
+	line-height: 1.4 ;
+}
+
+button {
+	background-color: #f0f0f0 ;
+	border: 1px solid #cccccc ;
+	border-radius: 4px ;
+	cursor: pointer ;
+	font-family: inherit ;
+	font-size: inherit ;
+	padding: 8px 14px ;
+}
+
+button:focus {
+	outline: 3px solid blue ;
+	outline-offset: 3px ;
+}

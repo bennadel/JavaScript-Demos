@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>
+		Using Both Tab And Arrow Keys For Keyboard Navigation
+	</title>
+	<link rel="stylesheet" type="text/css" href="./main.css" />
+</head>
+<body>
+
+	<h1>
+		Using Both Tab And Arrow Keys For Keyboard Navigation
+	</h1>
+
+	<p>
+		<code>Tab</code> key moves focus from row-to-row.
+		<code>Arrow</code> keys move focus from button-to-button.
+	</p>
+
+	<!-- --------------------------------------------------------------------------- -->
+	<!-- --------------------------------------------------------------------------- -->
+
+	<p
+		x-data="tabGroup"
+		@keydown.arrow-left="moveToPrevButton( $event )"
+		@keydown.arrow-right="moveToNextButton( $event )"
+		@click="moveTabIndexToButton( $event )">
+		<!--
+			The first button has a tabIndex of "0" so that it can be focused via the Tab
+			key. All other keys in this group can be focused via the Arrow keys.
+		-->
+		<button tabindex="0">  Button A </button>
+		<button tabindex="-1"> Button B </button>
+		<button tabindex="-1"> Button C </button>
+		<button tabindex="-1"> Button D </button>
+		<button tabindex="-1"> Button E </button>
+	</p>
+
+	<p
+		x-data="tabGroup"
+		@keydown.arrow-left="moveToPrevButton( $event )"
+		@keydown.arrow-right="moveToNextButton( $event )"
+		@click="moveTabIndexToButton( $event )">
+		<!--
+			The first button has a tabIndex of "0" so that it can be focused via the Tab
+			key. All other keys in this group can be focused via the Arrow keys.
+		-->
+		<button tabindex="0">  Button A </button>
+		<button tabindex="-1"> Button B </button>
+		<button tabindex="-1"> Button C </button>
+		<button tabindex="-1"> Button D </button>
+		<button tabindex="-1"> Button E </button>
+	</p>
+
+	<!-- --------------------------------------------------------------------------- -->
+	<!-- --------------------------------------------------------------------------- -->
+
+	<!--
+		For the DEMO, I'm catching the last focus on the page and using it to move the
+		focus back to the FIRST tabbable button. This way, I can tab-forward through the
+		two rows of buttons without having to tab-backwards.
+	-->
+	<button
+		x-data
+		@focus="document.querySelector( 'button[tabindex=\'0\']' ).focus();"
+		style="position: fixed ; left: -300px ; top: -300px ;">
+		Back to First Button
+	</button>
+
+	<script type="text/javascript" src="./main.js" defer></script>
+	<script type="text/javascript" src="../../vendor/alpine/3.13.5/alpine.3.13.5.min.js" defer></script>
+
+</body>
+</html>
