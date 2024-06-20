@@ -1,0 +1,160 @@
+
+html {
+	box-sizing: border-box ;
+}
+html *,
+html *:before,
+html *:after {
+	box-sizing: inherit ;
+}
+
+html,
+body {
+	margin: 0 ;
+	padding: 0 ;
+	min-height: 100vh ;
+}
+
+body {
+	display: flex ;
+	flex-direction: column ;
+	font-family: monospace ;
+	font-size: 18px ;
+	line-height: 1.4 ;
+}
+
+button,
+input {
+	font-family: inherit ;
+	font-size: inherit ;
+}
+
+button {
+	background-color: #ffffff ;
+	border: 1px solid #666666 ;
+	border-radius: 3px ;
+	padding: 7px 13px ;
+	cursor: pointer ;
+}
+
+.masthead {
+	align-items: center ;
+	background: #ffffff ;
+	border-bottom: 1px solid #222222 ;
+	display: flex ;
+	flex: 0 0 auto ;
+	gap: 20px ;
+	padding: 10px 20px ;
+}
+.masthead__title {
+	margin: 0 auto 0 0 ;
+	white-space: nowrap ;
+}
+.masthead__add {
+	padding: 10px 20px ;
+}
+.masthead__download {
+	background-color: #333333 ;
+	border: 1px solid #000000 ;
+	border-radius: 3px ;
+	color: #ffffff ;
+	cursor: pointer ;
+	padding: 7px 13px ;
+	text-decoration: none ;
+}
+
+.panels {
+	display: flex ;
+	flex: 1 1 auto ;
+}
+.panels__item {
+	flex: 1 1 auto ;
+	position: relative ;
+}
+
+.panel {
+	align-items: center ;
+	justify-content: flex-end ;
+	display: flex ;
+	flex-direction: column ;
+	inset: 0 ;
+	padding: 20px ;
+	position: absolute ;
+}
+.panel--active {
+	box-shadow: inset 0px 0px 0px 7px #ffffff ;
+	outline: 4px solid #000000 ;
+	outline-offset: -4px ;
+}
+
+.panel-name {
+	background-color: #fafafa ;
+	border-radius: 5px ;
+	margin: 0 ;
+	padding: 6px 12px 5px ;
+	text-align: center ;
+}
+.panel-name__hex {
+	color: #212121 ;
+	display: block ;
+	font-size: 26px ;
+}
+.panel-name__hsl {
+	color: #999999 ;
+	display: block ;
+	font-size: 13px ;
+}
+
+.panel-settings {
+	margin: 10px 0px 10px 0px ;
+	width: 100% ;
+}
+.panel-settings__range {
+	display: block ;
+	margin: 15px 0px ;
+	width: 100% ;
+}
+
+.panel-tools {
+	display: flex ;
+	gap: 15px ;
+	justify-content: center ;
+	width: 100% ;
+}
+.panel-tools__button {
+	border: none ;
+	border-radius: 30px ;
+	cursor: pointer ;
+	padding: 10px ;
+}
+.panel-tools__button--locked {
+	background-color: #121212 ;
+	color: #fafafa ;
+}
+.panel-tools__button svg {
+	display: block ;
+	height: 20px ;
+	width: 20px ;
+}
+
+/*
+	For when the panels are narrow and the tools no longer fit.
+
+	Note: I had tried to do this with a CSS container query; however, it seems that the
+	container queries do not play nicely with flexbox since the flexbox items are sized
+	based on their contents and "containers" need to be sized based on their context (not
+	their contents - at least, from what I am understanding).
+*/
+
+.panel--narrow .panel-tools {
+	align-items: center ;
+	display: none ;
+	flex-direction: column ;
+	left: 0px ;
+	position: absolute ;
+	right: 0px ;
+	top: 20px ;
+}
+.panel--narrow:hover .panel-tools {
+	display: flex ;
+}

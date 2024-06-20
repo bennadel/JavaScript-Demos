@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>
+		Color Palette Utility In Alpine.js
+	</title>
+	<link rel="stylesheet" type="text/css" href="./main.css" />
+</head>
+<body
+	x-data="App"
+	@hashchange.window="handleGlobalHashchange( $event )"
+	@keydown.window="handleGlobalKeydown( $event )"
+	@dragover.document="handleGlobalDropEvents( $event )"
+	@drop.document="handleGlobalDropEvents( $event )"
+	@paste.document="handlePaste( $event )"
+	@resize.window.debounce.250ms="handleResize( $event )">
+
+	<header class="masthead">
+		<h1 class="masthead__title">
+			Color Palette Utility In Alpine.js
+		</h1>
+
+		<button @click="addSwatch()" class="masthead__add">
+			Add Color
+		</button>
+
+		<a
+			@click="downloadPaletteAsPNG( $event.currentTarget )"
+			download="palette.png"
+			class="masthead__download">
+			PNG
+		</a>
+		<a
+			@click="downloadPaletteAsSVG( $event.currentTarget )"
+			download="palette.svg"
+			class="masthead__download">
+			SVG
+		</a>
+	</header>
+
+	<main class="panels">
+		<template x-for="( swatch, i ) in palette" :key="swatch.id">
+
+			<div class="panels__item">
+
+				<!-- Begin: Panel. -->
+				<div
+					tabindex="0"
+					@focusin="handleFocusin( i )"
+					class="panel"
+					:class="{
+						'panel--active': ( activeSwatchIndex === i ),
+						'panel--narrow': isNarrowPanels
+					}"
+					:style="{ backgroundColor: swatch.hex }">
+
+					<h2 class="panel-name">
+						<span class="panel-name__hex"
+							x-text="swatch.hex">
+						</span>
+						<span class="panel-name__hsl">
+							<span x-text="swatch.hue"></span> &middot;
+							<span x-text="swatch.saturation"></span> &middot;
+							<span x-text="swatch.lightness"></span>
+						</span>
+					</h2>
+
+					<div class="panel-settings">
+						<input
+							type="range"
+							x-model.number="swatch.hue"
+							@keydown="handleRangeKeydown( $event )"
+							@input="handleRangeInput( $event, swatch )"
+							min="0"
+							max="360"
+							step="1"
+							class="panel-settings__range hue"
+						/>
+						<input
+							type="range"
+							x-model.number="swatch.saturation"
+							@keydown="handleRangeKeydown( $event )"
+							@input="handleRangeInput( $event, swatch )"
+							min="0"
+							max="100"
+							step="0.1"
+							class="panel-settings__range saturation"
+						/>
+						<input
+							type="range"
+							x-model.number="swatch.lightness"
+							@keydown="handleRangeKeydown( $event )"
+							@input="handleRangeInput( $event, swatch )"
+							min="0"
+							max="100"
+							step="0.1"
+							class="panel-settings__range lightness"
+						/>
+					</div>
+
+					<div class="panel-tools">
+						<button @click="moveSwatchLeft( i )" class="panel-tools__button">
+							<svg>
+								<title>Arrow Left</title>
+								<use xlink:href="#arrow-left"></use>
+							</svg>
+						</button>
+						<button
+							@click="toggleLock( i )"
+							class="panel-tools__button"
+							:class="{
+								'panel-tools__button--locked': swatch.isLocked
+							}">
+							<template x-if="swatch.isLocked">
+								<svg>
+									<title>Locked</title>
+									<use xlink:href="#lock-locked"></use>
+								</svg>
+							</template>
+							<template x-if="( ! swatch.isLocked )">
+								<svg>
+									<title>Unlocked</title>
+									<use xlink:href="#lock-unlocked"></use>
+								</svg>
+							</template>
+						</button>
+						<button @click="removeSwatch( i )" class="panel-tools__button">
+							<svg>
+								<title>Remove</title>
+								<use xlink:href="#trash"></use>
+							</svg>
+						</button>
+						<button @click="moveSwatchRight( i )" class="panel-tools__button">
+							<svg>
+								<title>Arrow Right</title>
+								<use xlink:href="#arrow-right"></use>
+							</svg>
+						</button>
+					</div>
+
+				</div>
+				<!-- End: Panel. -->
+
+			</div>
+
+		</template>
+	</main>
+
+	<!-- Begin: SVG sprite sheet (https://streamlinehq.com). -->
+	<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="display: none ;">
+		<symbol id="lock-locked" viewBox="0 0 24 24">
+			<path d="M19.5 9.5h-0.75V6.75a6.75 6.75 0 0 0 -13.5 0V9.5H4.5a2 2 0 0 0 -2 2V22a2 2 0 0 0 2 2h15a2 2 0 0 0 2 -2V11.5a2 2 0 0 0 -2 -2Zm-7.5 9a2 2 0 1 1 2 -2 2 2 0 0 1 -2 2ZM16.25 9a0.5 0.5 0 0 1 -0.5 0.5h-7.5a0.5 0.5 0 0 1 -0.5 -0.5V6.75a4.25 4.25 0 0 1 8.5 0Z" fill="currentColor" stroke-width="1"></path>
+		</symbol>
+		<symbol id="lock-unlocked" viewBox="0 0 24 24">
+			<path d="M19.5 9.5h-0.75V6.75A6.75 6.75 0 0 0 5.53 4.81a1.25 1.25 0 0 0 2.4 0.72 4.25 4.25 0 0 1 8.32 1.22V9a0.5 0.5 0 0 1 -0.5 0.5H4.5a2 2 0 0 0 -2 2V22a2 2 0 0 0 2 2h15a2 2 0 0 0 2 -2V11.5a2 2 0 0 0 -2 -2Zm-7.5 9a2 2 0 1 1 2 -2 2 2 0 0 1 -2 2Z" fill="currentColor" stroke-width="1"></path>
+		</symbol>
+		<symbol id="arrow-left" viewBox="0 0 24 24">
+			<path d="M22.5 10.5H7a0.25 0.25 0 0 1 -0.25 -0.25v-3a1 1 0 0 0 -1.71 -0.71L0.29 11.29a1 1 0 0 0 0 1.42l4.78 4.77a1 1 0 0 0 0.71 0.3 1 1 0 0 0 1 -1v-3A0.25 0.25 0 0 1 7 13.5h15.5a1.5 1.5 0 0 0 0 -3Z" fill="currentColor" stroke-width="1"></path>
+		</symbol>
+		<symbol id="arrow-right" viewBox="0 0 24 24">
+			<path d="m23.71 11.29 -4.78 -4.78a1 1 0 0 0 -1.09 -0.21 1 1 0 0 0 -0.62 0.92v3a0.25 0.25 0 0 1 -0.25 0.25H1.5a1.5 1.5 0 0 0 0 3H17a0.25 0.25 0 0 1 0.25 0.25v3a1 1 0 0 0 1 1 1 1 0 0 0 0.71 -0.3l4.78 -4.77A1.05 1.05 0 0 0 24 12a1 1 0 0 0 -0.29 -0.71Z" fill="currentColor" stroke-width="1"></path>
+		</symbol>
+		<symbol id="trash" viewBox="0 0 24 24">
+			<path d="M19.5 7.5h-15A0.5 0.5 0 0 0 4 8v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2V8a0.5 0.5 0 0 0 -0.5 -0.5Zm-9.25 13a0.75 0.75 0 0 1 -1.5 0v-9a0.75 0.75 0 0 1 1.5 0Zm5 0a0.75 0.75 0 0 1 -1.5 0v-9a0.75 0.75 0 0 1 1.5 0Z" fill="currentColor" stroke-width="1"></path>
+			<path d="M22 4h-4.75a0.25 0.25 0 0 1 -0.25 -0.25V2.5A2.5 2.5 0 0 0 14.5 0h-5A2.5 2.5 0 0 0 7 2.5v1.25a0.25 0.25 0 0 1 -0.25 0.25H2a1 1 0 0 0 0 2h20a1 1 0 0 0 0 -2ZM9 3.75V2.5a0.5 0.5 0 0 1 0.5 -0.5h5a0.5 0.5 0 0 1 0.5 0.5v1.25a0.25 0.25 0 0 1 -0.25 0.25h-5.5A0.25 0.25 0 0 1 9 3.75Z" fill="currentColor" stroke-width="1"></path>
+		</symbol>
+	</svg>
+	<!-- End: SVG sprite sheet. -->
+
+	<script type="text/javascript" src="./main.js" defer></script>
+	<script type="text/javascript" src="../../vendor/alpine/3.13.5/alpine.3.13.5.min.js" defer></script>
+
+</body>
+</html>
