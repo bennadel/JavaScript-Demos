@@ -197,7 +197,7 @@ function App() {
 
 		// Override the anchor properties to force the download.
 		anchor.href = canvas.toDataURL( "image/png" );
-		anchor.download = this._generateDownloadFilename( "png" )
+		anchor.download = this._generateDownloadFilename( "png" );
 
 	}
 
@@ -280,7 +280,7 @@ function App() {
 
 		// Override the anchor properties to force the download.
 		anchor.href = `data:image/svg+xml;base64,${ btoa( svgMarkup ) }`;
-		anchor.download = this._generateDownloadFilename( "svg" )
+		anchor.download = this._generateDownloadFilename( "svg" );
 
 	}
 
@@ -380,7 +380,7 @@ function App() {
 
 		if ( urlState && ( urlState !== currentState ) ) {
 
-			this.palette = [];
+			this.palette.length = 0;
 			this.activeSwatchIndex = 0;
 			this._loadState();
 			this._focusHueAsync();
