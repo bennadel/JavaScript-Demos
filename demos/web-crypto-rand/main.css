@@ -1,0 +1,31 @@
+
+body {
+	font-family: monospace ;
+	font-size: 18px ;
+	line-height: 1.4 ;
+}
+
+.side-by-side {
+	display: flex ;
+	gap: 30px ;
+}
+
+.side-by-side section {
+	display: flex ;
+	flex-direction: column ;
+	flex: 0 0 min-content ;
+	gap: 20px ;
+}
+
+.side-by-side section > * {
+	flex: 0 1 auto ;
+	margin: 0 ;
+}
+
+.side-by-side canvas {
+	border: 2px solid deeppink ;
+}
+
+.side-by-side p:nth-of-type(1) {
+	line-height: 1.7 ;
+}

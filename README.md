@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Exploring Randomness In JavaScript](https://bennadel.github.io/JavaScript-Demos/demos/web-crypto-rand)
 * [Color Palette Utility In Alpine.js](https://bennadel.github.io/JavaScript-Demos/demos/color-palette)
 * [Using Both Tab And Arrow Keys For Keyboard Navigation](https://bennadel.github.io/JavaScript-Demos/demos/tab-group)
 * [Using Margins With Four-Sided Positioning In CSS](https://bennadel.github.io/JavaScript-Demos/demos/four-sided-margins)
