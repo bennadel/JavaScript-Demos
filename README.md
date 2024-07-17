@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Highlighting Dynamic Parts Of A Pretty-Printed JSON Value](https://bennadel.github.io/JavaScript-Demos/demos/highlighting-json)
 * [Exploring Randomness In JavaScript](https://bennadel.github.io/JavaScript-Demos/demos/web-crypto-rand)
 * [Color Palette Utility In Alpine.js](https://bennadel.github.io/JavaScript-Demos/demos/color-palette)
 * [Using Both Tab And Arrow Keys For Keyboard Navigation](https://bennadel.github.io/JavaScript-Demos/demos/tab-group)

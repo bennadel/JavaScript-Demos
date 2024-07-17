@@ -1,0 +1,47 @@
+
+html {
+	box-sizing: border-box ;
+}
+html *,
+html *:before,
+html *:after {
+	box-sizing: inherit ;
+}
+
+body {
+	font-family: monospace ;
+	font-size: 18px ;
+	line-height: 1.4 ;
+}
+
+form {
+	display: flex ;
+	gap: 7px ;
+	margin: 0 0 10px 0 ;
+}
+form input,
+form button {
+	font-family: inherit ;
+	font-size: inherit ;
+}
+form input {
+	padding: 8px ;
+}
+form button {
+	padding: 8px 12px ;
+}
+
+pre {
+	background-color: #f0f0f0 ;
+	border: 1px solid #cccccc ;
+	border-radius: 4px ;
+	margin: 0 ;
+	padding: 20px ;
+}
+
+.highlight {
+	background-color: yellow ;
+	display: inline-block ;
+	font-weight: bold ;
+	padding-inline: 7px ;
+}

@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>
+		Highlighting Dynamic Parts Of A Pretty-Printed JSON Value
+	</title>
+	<link rel="stylesheet" type="text/css" href="./main.css" />
+</head>
+<body>
+
+	<h1>
+		Highlighting Dynamic Parts Of A Pretty-Printed JSON Value
+	</h1>
+
+	<div x-data="Demo">
+		<form>
+			<input
+				type="text"
+				x-model="form.firstName"
+				@input="updatePolicy()"
+				placeholder="First name..."
+			/>
+			<input
+				type="text"
+				x-model="form.lastName"
+				@input="updatePolicy()"
+				placeholder="Last name..."
+			/>
+			<button type="button" @click="copyPolicy()">
+				Copy
+			</button>
+		</form>
+
+		<!--
+			The JSON for the policy will be accessible in two ways. First, the user can
+			use the COPY button above; and second, the user will need to be able to copy-
+			paste the text right out of the page. As such, white-space is relevant.
+			--
+			Note: Since PRE tags make strict use of white-space, I'm mangling my HTML tags
+			such that the line-breaks are part of the tag element and not part of the
+			interstitial tag space. This provides better readability without introducing
+			additional line-breaks in the output.
+		-->
+		<pre
+			><code
+				><template x-for="segment in policyParts"
+					><span
+						x-text="segment.value"
+						:class="{
+							highlight: segment.highlight
+						}"
+					></span
+				></template
+			></code
+		></pre>
+	</div>
+
+	<script type="text/javascript" src="../../vendor/alpine/3.13.5/alpine.3.13.5.min.js" defer></script>
+	<script type="text/javascript">
+
+		function Demo() {
+
+			return {
+				form: {
+					firstName: "",
+					lastName: ""
+				},
+				policyParts: [],
+				policyJson: "",
+
+				// Public methods.
+				init: $init,
+				copyPolicy: copyPolicy,
+				updatePolicy: updatePolicy,
+
+				// Private methods.
+				_buildPolicy: buildPolicy
+			}
+
+			// ---
+			// PUBLIC METHODS.
+			// ---
+
+			/**
+			* I initialize the component.
+			*/
+			function $init() {
+
+				this.updatePolicy();
+
+			}
+
+			/**
+			* I copy the current policy to the user's clipboard (not really).
+			*/
+			function copyPolicy() {
+
+				console.group( "Mock copy to Clipboard" );
+				console.log( this.policyJson );
+				console.groupEnd();
+
+			}
+
+			/**
+			* I update the policy using the current form view-model.
+			*/
+			function updatePolicy() {
+
+				// First, we're going build a data-structure that contains placeholder
+				// values with a known pattern.
+				var policy = this._buildPolicy( ":::firstName:::", ":::lastName:::" );
+				var fallbacks = {
+					firstName: "YOUR_FIRST_NAME",
+					lastName: "YOUR_LAST_NAME",
+				};
+
+				// Second, we're going to STRINGIFY the data structure and SPLIT the JSON
+				// payload on the known pattern. And, by including part of the pattern in
+				// a capturing group, the .split() method will return each "delimiter" as
+				// an element interleaved with the rest of the natural segments. These
+				// segments will then be mapped onto an array of parts to be rendered in
+				// the PRE/CODE UI.
+				this.policyParts = JSON
+					.stringify( policy, null, 4 )
+					.split( /:::(\w+):::/g )
+					.map(
+						( segment, i ) => {
+
+							// Since we're capturing part of the delimiter, we know that
+							// the placeholder token is always in the ODD index. These
+							// segments will be highlighted in the output.
+							if ( i % 2 ) {
+
+								return {
+									value: ( this.form[ segment ] || fallbacks[ segment ] ),
+									highlight: true
+								};
+
+							}
+
+							return {
+								value: segment
+							};
+
+						}
+					)
+				;
+
+				// Once we have all our JSON parts, we can create the full JSON structure
+				// but combining all the values.
+				// --
+				// Note: I could have just called JSON.stringify(buildPolicy()) again. But
+				// this approach makes sure that all of the white-space is the same and
+				// none of the logic is duplicated.
+				this.policyJson = this.policyParts
+					.map( part => part.value )
+					.join( "" )
+				;
+
+			}
+
+			// ---
+			// PRIVATE METHODS.
+			// ---
+
+			/**
+			* I build the policy data structure using the given values.
+			*/
+			function buildPolicy( firstName, lastName ) {
+
+				return {
+					plan: "WOOT.7.17",
+					version: 3,
+					holder: {
+						firstName: firstName,
+						lastName: lastName
+					},
+					expires: "2025-01-01"
+				};
+
+			}
+
+		}
+
+	</script>
+
+</body>
+</html>
