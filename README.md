@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Creating A Tri-State Switch In Alpine.js](https://bennadel.github.io/JavaScript-Demos/demos/tri-state-toggle)
 * [Highlighting Dynamic Parts Of A Pretty-Printed JSON Value](https://bennadel.github.io/JavaScript-Demos/demos/highlighting-json)
 * [Exploring Randomness In JavaScript](https://bennadel.github.io/JavaScript-Demos/demos/web-crypto-rand)
 * [Color Palette Utility In Alpine.js](https://bennadel.github.io/JavaScript-Demos/demos/color-palette)

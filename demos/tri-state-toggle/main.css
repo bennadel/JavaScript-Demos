@@ -1,0 +1,76 @@
+
+html {
+	box-sizing: border-box ;
+}
+html *,
+html *:before,
+html *:after {
+	box-sizing: inherit ;
+}
+
+body {
+	font-family: monospace ;
+	font-size: 18px ;
+	line-height: 1.4 ;
+}
+
+button {
+	font-family: inherit ;
+	font-size: inherit ;
+	line-height: inherit ;
+}
+
+button.active {
+	outline: 2px solid deeppink ;
+	outline-offset: 2px ;
+}
+
+.tri-switch {
+	color: deeppink ;
+	user-select: none ;
+}
+.tri-switch__track {
+	background-color: #f0f0f0 ;
+	border: 1px solid #767676 ;
+	border-radius: 24px ;
+	height: 24px ;
+	position: relative ;
+	width: 44px ;
+}
+.tri-switch__thumb {
+	background-color: #ffffff ;
+	border: 1px solid #cccccc ;
+	border-radius: 24px ;
+	height: 16px ;
+	left: 0 ;
+	position: absolute ;
+	top: 3px ;
+	width: 16px ;
+}
+
+.tri-switch__track::before {
+	background-color: currentColor ;
+	border-radius: 24px ;
+	content: "" ;
+	inset: 0 ;
+	position: absolute ;
+}
+.tri-switch.off .tri-switch__track::before {
+	opacity: 0.0 ;
+}
+.tri-switch.partial .tri-switch__track::before {
+	opacity: 0.5 ;
+}
+.tri-switch.on .tri-switch__track::before {
+	opacity: 1.0 ;
+}
+
+.tri-switch.off .tri-switch__thumb {
+	transform: translate3d( 3px, 0, 0 ) ;
+}
+.tri-switch.partial .tri-switch__thumb {
+	transform: translate3d( 13px, 0, 0 ) ;
+}
+.tri-switch.on .tri-switch__thumb {
+	transform: translate3d( 21px, 0, 0 ) ;
+}

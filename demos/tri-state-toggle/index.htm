@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>
+		Creating A Tri-State Switch In Alpine.js
+	</title>
+	<link rel="stylesheet" type="text/css" href="./main.css" />
+</head>
+<body>
+
+	<h1>
+		Creating A Tri-State Switch In Alpine.js
+	</h1>
+
+	<div x-data="Demo">
+		<p>
+			<button
+				@click="setMode( 'None' )"
+				:class="{ active: ( selected === 'None' ) }">
+				None
+			</button>
+			<button
+				@click="setMode( 'Some' )"
+				:class="{ active: ( selected === 'Some' ) }">
+				Some
+			</button>
+			<button
+				@click="setMode( 'All' )"
+				:class="{ active: ( selected === 'All' ) }">
+				All
+			</button>
+		</p>
+
+		<!--
+			The x-effect directive works by re-evaluating the overall expression every
+			time one of the embedded dependencies changes. As such, any time either the
+			"options" or the "selected" parent state is updated, the tri-switch
+			component's reconcile() method will be invoked and the updated state will be
+			passed-in, allowing the internal tri-switch state to be mapped from the parent
+			scope state (ie, one-way data binding).
+		-->
+		<div
+			x-data="TriSwitch()"
+			x-effect="reconcile({
+				states: options,
+				state: selected
+			})"
+			@click="cycleMode()"
+			class="tri-switch"
+			:class="{
+				on: ( phase === 'on' ),
+				off: ( phase === 'off' ),
+				partial: ( phase === 'partial' )
+			}">
+			<div class="tri-switch__track">
+				<div class="tri-switch__thumb"></div>
+			</div>
+		</div>
+
+	</div>
+
+	<script type="text/javascript" src="../../vendor/alpine/3.13.5/alpine.3.13.5.min.js" defer></script>
+	<script type="text/javascript">
+
+		function Demo() {
+
+			return {
+				options: [ "None", "Some", "All" ],
+				selected: "Some",
+
+				// Public methods.
+				cycleMode,
+				setMode,
+			};
+
+			// ---
+			// PUBLIC METHODS.
+			// ---
+
+			/**
+			* I cycle to the next selectable mode.
+			*/
+			function cycleMode() {
+
+				var selectedIndex = this.options.indexOf( this.selected );
+
+				// If the NEXT index is undefined, circle back to the front of the modes.
+				if ( this.options[ ++selectedIndex ] === undefined ) {
+
+					selectedIndex = 0;
+
+				}
+
+				this.selected = this.options[ selectedIndex ];
+
+			}
+
+			/**
+			* I set the selected mode.
+			*/
+			function setMode( newMode ) {
+
+				this.selected = newMode;
+
+			}
+
+		}
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+		function TriSwitch() {
+
+			return {
+				phases: [ "off", "partial", "on" ],
+				phase: "off",
+
+				// Public methods.
+				reconcile,
+			};
+
+			// ---
+			// PUBLIC METHODS.
+			// ---
+
+			/**
+			* I reconcile the parent scope state with the local input bindings.
+			*/
+			function reconcile( inputs ) {
+
+				this.phase = (
+					this.phases[ inputs.states.indexOf( inputs.state ) ] ||
+					this.phases[ 0 ]
+				);
+
+			}
+
+		}
+
+	</script>
+
+</body>
+</html>
