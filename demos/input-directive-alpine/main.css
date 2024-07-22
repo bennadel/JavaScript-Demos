@@ -1,0 +1,27 @@
+
+html {
+	box-sizing: border-box ;
+}
+html *,
+html *:before,
+html *:after {
+	box-sizing: inherit ;
+}
+
+body {
+	font-family: monospace ;
+	font-size: 18px ;
+	line-height: 1.4 ;
+}
+
+button {
+	font-family: inherit ;
+	font-size: inherit ;
+	line-height: inherit ;
+}
+
+ul {
+	border: 2px dashed red ;
+	line-height: 1.6 ;
+	padding: 10px 10px 10px 30px ;
+}

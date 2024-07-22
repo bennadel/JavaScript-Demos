@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>
+		An "x-input" Property Binding Directive In Alpine.js
+	</title>
+	<link rel="stylesheet" type="text/css" href="./main.css" />
+</head>
+<body>
+
+	<h1>
+		An "x-input" Property Binding Directive In Alpine.js
+	</h1>
+
+	<div x-data="OuterComponent">
+
+		<button @click="increment()">
+			Increment: <span x-text="counter"></span>
+		</button>
+
+		<!--
+			Note that I'm using the "x-input" directive to map / translate outer component
+			scope values onto inner scope values. This way, the logic within the inner
+			component isn't coupled to the NAMES or ARCHITECTURE of the outer component
+			scope references.
+			--
+			innerA => counter * 2
+			innerB => counter * 3
+		-->
+		<ul
+			x-data="InnerComponent"
+			x-input:inner-a.camel="( counter * 2 )"
+			x-input:inner-b.camel="( counter * 3 )">
+			<li>
+				<strong>Inner A:</strong>
+				<span x-text="innerA"></span>
+			</li>
+			<li>
+				<strong>Inner B:</strong>
+				<span x-text="innerB"></span>
+			</li>
+			<li>
+				<strong>Total:</strong>
+				<span x-text="total"></span>
+			</li>
+		</ul>
+
+	</div>
+
+	<script type="text/javascript" src="../../vendor/alpine/3.13.5/alpine.3.13.5.min.js" defer></script>
+	<script type="text/javascript">
+
+		/**
+		* I control the outer component.
+		*/
+		function OuterComponent() {
+
+			return {
+				counter: 10,
+
+				/**
+				* I increment the counter. The "x-input" directive(s) will then map the
+				* outer value onto several inner properties of the inner component.
+				*/
+				increment() {
+
+					this.counter++;
+
+				}
+			};
+
+		}
+
+		/**
+		* I control the inner component.
+		*/
+		function InnerComponent() {
+
+			// The "x-input" directives have ALREADY been bound on the "this" scope by the
+			// time the "x-data" directive is executed. As such, we could make use of
+			// "this.innerA" and "this.innerB" values within the component constructor if
+			// we wanted to. But, I'm deferring to the init() life-cycle hook.
+			return {
+				total: 0, // ( this.innerA + this.innerB ) ... would have worked as well.
+
+				/**
+				* I get called once to initialize the component.
+				*/
+				init() {
+
+					this.setTotal();
+
+				},
+
+				/**
+				* I get called when any of the "x-input" bindings change.
+				*/
+				inputChanges( newInputs, oldInputs ) {
+
+					this.setTotal();
+
+					// Logging changes to see that this is actually working.
+					console.group( "Inputs Changed" );
+					console.log( `InnerA: ${ oldInputs.innerA } to ${ newInputs.innerA }.` )
+					console.log( `InnerB: ${ oldInputs.innerB } to ${ newInputs.innerB }.` )
+					console.groupEnd();
+
+				},
+
+				/**
+				* I set the total based on the current "x-input" bindings.
+				*/
+				setTotal() {
+
+					this.total = ( this.innerA + this.innerB );
+
+				}
+			};
+
+		}
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+		document.addEventListener(
+			"alpine:init",
+			() => {
+
+				// NOTE: We need the "x-input" directive to run BEFORE the "x-data"
+				// directive so that the input bindings are available on the dataStack
+				// at the time the "x-data" component has been evaluated (which is
+				// inherently before the component's init() method executes).
+				Alpine.directive( "input", InputDirective )
+					.before( "data" )
+				;
+
+			}
+		);
+
+		function InputDirective( element, metadata, framework ) {
+
+			// Note: Even though the "x-input" directive is executing with a higher
+			// priority than the "x-data" directive, the .closestRoot() method works by
+			// walking up the DOM and looking for the "x-data" attribute. Therefore, even
+			// though the "x-data" directive hasn't been initialized on this element yet,
+			// as long as the "x-data" attribute is present, this closest-root check will
+			// still be valid.
+			if ( element !== Alpine.closestRoot( element ) ) {
+
+				throw( new Error( "The [x-input] directive can only be used on an element that has an [x-data] directive." ) );
+
+			}
+
+			var inputScope = getInputScope();
+			var inputName = metadata.value;
+			var inputExpression = metadata.expression;
+			var inputEvaluator = framework.evaluateLater( inputExpression );
+
+			// Allow inputs like "x-input:my-name" to mapped locally as "myName".
+			if ( metadata.modifiers.includes( "camel" ) ) {
+
+				inputName = toCamelCase( inputName );
+
+			}
+
+			// Every time the outer value (expression) changes, we need to persist that
+			// value to the input scope. This will always be executed BEFORE the
+			// "inputChanges()" hook is called below.
+			Alpine.effect(
+				() => {
+
+					inputEvaluator(
+						( inputValue ) => {
+
+							inputScope[ inputName ] = inputValue;
+
+						}
+					);
+
+				}
+			);
+
+			/**
+			* I get the input scope bound to the current element (or wire it up if it
+			* hasn't yet been created).
+			*/
+			function getInputScope() {
+
+				var domProperty = "_x_inputScope";
+				var inputScope = element[ domProperty ];
+
+				// Return the existing scope if possible.
+				if ( inputScope ) {
+
+					return inputScope;
+
+				}
+
+				// If no input scope exists, we need to add it to the dataStack for this
+				// element. Since the "x-input" directive is being evaluated BEFORE the
+				// "x-data" directive, it will live one level up from the "x-data" scope
+				// (but within the same element).
+				Alpine.addScopeToNode(
+					element,
+					inputScope = element[ domProperty ] = Alpine.reactive( Object.create( null ) )
+				);
+
+				var previousScope = Object.create( null );
+				var fullScopeProxy = null;
+
+				// We want to watch for all changes to the input scope so that we can
+				// invoke the "changes" method as needed.
+				var effectReference = framework.effect(
+					() => {
+
+						// This effect runs for the first time when the first "x-input"
+						// directive is evaluated. However, at this time, the subsequent
+						// "x-data" directive hasn't run yet (let alone any of the other
+						// "x-input" directives that might be declared on this element).
+						// As such, we have to wait for the length of the scope to change
+						// before we initialize the full scope proxy. If we do this too
+						// early, the "x-data" scope hasn't been "unshifted" onto the head
+						// of data stack yet (and won't be included in the merged proxy).
+						if ( ! Object.entries( inputScope ).length ) {
+
+							return;
+
+						}
+
+						// If the length of the input scope has changed, it means that the
+						// subsequent "x-input" directives have all been evaluated for the
+						// first time; which also means that the "x-data" directive has
+						// also been evaluated and added to the data stack. As such, we
+						// can now define our full scope merge, which will included the
+						// "x-data" entry.
+						if ( ! fullScopeProxy ) {
+
+							fullScopeProxy = Alpine.mergeProxies( Alpine.closestDataStack( element ) );
+							Object.assign( previousScope, inputScope );
+							// We're going to assume that any initial consumption of the
+							// bound inputs will happen within the init() method of the
+							// associated component. As such, we'll just short-circuit the
+							// second run of this effect (which is the first run with all
+							// of the initialized input values).
+							return;
+
+						}
+
+						fullScopeProxy?.inputChanges( inputScope, previousScope );
+						Object.assign( previousScope, inputScope );
+
+					}
+				);
+
+				// Note: I'm not entirely sure how much stuff needs to be cleaned up in
+				// this world of merged proxies and reactive scopes. As such, I may very
+				// well be doing more here I have to.
+				framework.cleanup(
+					() => {
+
+						// Remove reactivity.
+						Alpine.release( effectReference );
+						// Remove DOM expando property.
+						delete element[ domProperty ];
+						// Free-up other memory references ???? Probably unnecessary.
+						delete fullScopeProxy;
+						delete inputScope;
+						delete previousScope;
+
+					}
+				);
+
+				return inputScope;
+
+			}
+
+			/**
+			* I convert the given dashed value to a camel-case value.
+			*/
+			function toCamelCase( value ) {
+
+				return value.toLowerCase().replace(
+					/-(\w)/g,
+					( $0, $1 ) => {
+
+						return $1.toUpperCase();
+
+					}
+				);
+
+			}
+
+		}
+
+	</script>
+
+</body>
+</html>
