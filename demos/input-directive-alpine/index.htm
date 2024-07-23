@@ -168,7 +168,7 @@
 			// Every time the outer value (expression) changes, we need to persist that
 			// value to the input scope. This will always be executed BEFORE the
 			// "inputChanges()" hook is called below.
-			Alpine.effect(
+			framework.effect(
 				() => {
 
 					inputEvaluator(
@@ -212,7 +212,7 @@
 
 				// We want to watch for all changes to the input scope so that we can
 				// invoke the "changes" method as needed.
-				var effectReference = framework.effect(
+				framework.effect(
 					() => {
 
 						// This effect runs for the first time when the first "x-input"
@@ -260,8 +260,6 @@
 				framework.cleanup(
 					() => {
 
-						// Remove reactivity.
-						Alpine.release( effectReference );
 						// Remove DOM expando property.
 						delete element[ domProperty ];
 						// Free-up other memory references ???? Probably unnecessary.
