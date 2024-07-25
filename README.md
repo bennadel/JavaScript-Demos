@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Angular 18 Hello World](https://bennadel.github.io/JavaScript-Demos/demos/ng-18-hello-world/dist)
 * [An "x-input" Property Binding Directive In Alpine.js](https://bennadel.github.io/JavaScript-Demos/demos/input-directive-alpine)
 * [Creating A Tri-State Switch In Alpine.js](https://bennadel.github.io/JavaScript-Demos/demos/tri-state-toggle)
 * [Highlighting Dynamic Parts Of A Pretty-Printed JSON Value](https://bennadel.github.io/JavaScript-Demos/demos/highlighting-json)

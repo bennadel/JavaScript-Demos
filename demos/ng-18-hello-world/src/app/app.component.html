@@ -1,0 +1,42 @@
+
+<h1>
+	Angular 18 Hello World
+</h1>
+
+<p>
+	Just laying down the foundation for future Angular 18 experiments.
+</p>
+
+<nav>
+	<a
+		routerLink="/"
+		routerLinkActive="active"
+		[routerLinkActiveOptions]="{ exact: true }"
+		ariaCurrentWhenActive="page">
+		Home
+	</a>
+	<a
+		[routerLink]="[ '/page-a', 101, { matrixParam: 'matrixValue' } ]"
+		routerLinkActive="active"
+		ariaCurrentWhenActive="page">
+		Page A
+	</a>
+	<a
+		[routerLink]="[ '/page-b', 201 ]"
+		[queryParams]="{ queryParam: 'queryValue' }"
+		routerLinkActive="active"
+		ariaCurrentWhenActive="page">
+		Page B
+	</a>
+</nav>
+
+<router-outlet #outletRef="outlet" />
+
+<!-- Trying out the new template control flow. Hawt! -->
+@if ( ! outletRef.isActivated ) {
+
+	<p>
+		Welcome to the site. Use the navigation links above.
+	</p>
+
+}
