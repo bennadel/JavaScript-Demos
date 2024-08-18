@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Creating A Transient View Helper In Angular 18](https://bennadel.github.io/JavaScript-Demos/demos/view-helper-angular18/dist)
 * [Angular 18 Hello World](https://bennadel.github.io/JavaScript-Demos/demos/ng-18-hello-world/dist)
 * [An "x-input" Property Binding Directive In Alpine.js](https://bennadel.github.io/JavaScript-Demos/demos/input-directive-alpine)
 * [Creating A Tri-State Switch In Alpine.js](https://bennadel.github.io/JavaScript-Demos/demos/tri-state-toggle)
@@ -192,7 +193,7 @@ with.
 * [Creating Shortcuts By Mapping Multiple Routes On To The Same View-Component In Angular 7.2.5](https://bennadel.github.io/JavaScript-Demos/demos/url-shortcuts2-view-angular7/)
 * [Using A Wild Card Shortcuts Route To Hide The Internal Routing Implementation In Angular 7.2.5](https://bennadel.github.io/JavaScript-Demos/demos/url-shortcuts-view-angular7/)
 * [Projecting Content Into The Root Application Component Using Slots In Vue.js 2.6.6](https://bennadel.github.io/JavaScript-Demos/demos/projecting-root-content-vue2/)
-* [Using A Wild Card Route (**) To Traverse Arbitrarily Nested Data In Angular 7.2.4](https://bennadel.github.io/JavaScript-Demos/demos/router-folder-like-structure-angular7/)
+* [Using A Wild Card Route (\*\*) To Traverse Arbitrarily Nested Data In Angular 7.2.4](https://bennadel.github.io/JavaScript-Demos/demos/router-folder-like-structure-angular7/)
 * [Trying To Implement 9-Slice Scaling With SVG Components In Angular 7.2.4](https://bennadel.github.io/JavaScript-Demos/demos/svg-9-slice-scaling-angular7/)
 * [Hacking Scoped CSS Modules Into A Brownfield AngularJS 1.2.22 Application](https://bennadel.github.io/JavaScript-Demos/demos/css-modules-angularjs/)
 * [Renderless Components In Angular 7.2.0](https://bennadel.github.io/JavaScript-Demos/demos/renderless-components-angular7/)

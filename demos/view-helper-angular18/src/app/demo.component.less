@@ -1,0 +1,63 @@
+
+:host {
+	display: block ;
+}
+
+form {
+	background-color: #ffffff ;
+	display: flex ;
+	gap: 7px ;
+	padding: 10px 0px 10px 0px ;
+	position: sticky ;
+	top: 51px ;
+	z-index: 2 ;
+
+	input {
+		flex: 0 0 auto ;
+		width: 200px ;
+	}
+
+	input,
+	button {
+		font-family: inherit ;
+		font-size: inherit ;
+		line-height: inher ;
+		padding: 7px 12px ;
+	}
+}
+
+ul {}
+
+li {
+	border: 1px solid #cccccc ;
+	margin-bottom: 10px ;
+	padding: 10px ;
+
+	&.selected {
+		border: 3px solid #0000ff ;
+	}
+}
+
+.toast {
+	animation-duration: 500ms ;
+	animation-iteration-count: 1 ;
+	animation-name: success-slide-up ;
+	animation-timing-function: ease-out ;
+	background-color: #f4ffed ;
+	border-radius: 3px ;
+	border: 1px solid #4bb300 ;
+	bottom: 10px ;
+	left: 10px ;
+	margin: 0 ;
+	padding: 12px 15px ;
+	position: fixed ;
+}
+
+@keyframes success-slide-up {
+	from {
+		opacity: 0.0 ;
+	}
+	to {
+		opacity: 1.0 ;
+	}
+}

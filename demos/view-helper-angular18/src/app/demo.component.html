@@ -1,0 +1,31 @@
+
+<h2>
+	Items
+</h2>
+
+<form (submit)="addItem()">
+	<input type="text" [(ngModel)]="form.newItem" name="newItem" />
+	<button type="submit">
+		Add Item
+	</button>
+</form>
+
+<ul>
+	@for ( item of items ; track item.id ) {
+
+		<li
+			id="item-{{ item.id }}"
+			[class.selected]="( latestItemID === item.id )">
+			{{ item.name }}
+		</li>
+
+	}
+</ul>
+
+@if ( toast ) {
+
+	<p class="toast">
+		{{ toast }}
+	</p>
+
+}
