@@ -1,0 +1,27 @@
+
+<h1>
+	Signals And Array Mutability In Angular 18
+</h1>
+
+<p>
+	False: {{ falseCount() }} ,
+	True: {{ trueCount() }}
+</p>
+
+<p class="toggles">
+	@for ( entry of entries() ; track $index ) {
+
+		<button
+			(click)="toggle( $index )"
+			[class.truthy]="entry.value">
+			{{ entry.value }}
+		</button>
+
+	}
+</p>
+
+<p>
+	<button (click)="shallowCopy()">
+		Create Shallow Copy
+	</button>
+</p>
