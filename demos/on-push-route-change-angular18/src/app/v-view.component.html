@@ -1,0 +1,24 @@
+
+<h2>
+	View {{ segment }}
+</h2>
+
+<p>
+	{{ note }}
+</p>
+
+<ul>
+	@for ( i of [ 1, 2, 3, 4, 5 ] ; track $index ) {
+
+		<li>
+			<a [routerLink]="[ { pageID: i } ]">Page {{ i }}</a>
+
+			@if ( pageID === i ) {
+
+				&larr; <strong>Current</strong>
+
+			}
+		</li>
+
+	}
+</ul>
