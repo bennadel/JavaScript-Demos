@@ -1,0 +1,135 @@
+
+<h1>
+	CSV To CTE Transformer In Angular 18
+</h1>
+
+<p>
+	This takes a CSV (comma-separated values) payload and transforms it into a custom CTE
+	(common table expression) that can be used in MySQL 8.
+</p>
+
+<p class="flex-row">
+	<button
+		(click)="applySampleTemplate( sampleTemplate1 )"
+		class="sample">
+		Try with sample data
+	</button>
+	<button
+		(click)="applySampleTemplate( sampleTemplate2 )"
+		class="sample">
+		Try less data
+	</button>
+</p>
+
+<form>
+
+	<h2>
+		Step 1: Paste CSV Text
+	</h2>
+
+	<p class="csv">
+		<textarea
+			name="csvInput"
+			[(ngModel)]="csvInput"
+			(ngModelChange)="processInput()"
+			class="csv__input"
+		></textarea>
+
+		<label class="csv__header flex-row">
+			<input
+				type="checkbox"
+				name="ignoreFirstRow"
+				[(ngModel)]="ignoreFirstRow"
+				(ngModelChange)="processInput()"
+			/>
+			Ignore first row (column headers).
+		</label>
+	</p>
+
+	<h2>
+		Step 2: Configure Field-to-Column Mappings
+	</h2>
+
+	@for ( fieldSetting of fieldSettings ; track $index ) {
+
+		<p class="field">
+			<span class="flex-row">
+				<input
+					type="text"
+					name="fieldName{{ $index }}"
+					[(ngModel)]="fieldSetting.columnName"
+					(ngModelChange)="renderCte()"
+					class="field__name"
+				/>
+				<label class="flex-row">
+					<input
+						type="checkbox"
+						name="includeField{{ $index }}"
+						[(ngModel)]="fieldSetting.includeInCte"
+						(ngModelChange)="renderCte()"
+					/>
+					include in SQL.
+				</label>
+			</span>
+			<span class="field__example">
+				Example: {{ fieldSetting.exampleValue }}
+			</span>
+		</p>
+
+	}
+
+	<h2>
+		Step 3: Copy SQL Statement For Fun And Profit
+	</h2>
+
+	<p class="cte">
+		<textarea
+			name="cteOutput"
+			[(ngModel)]="cteOutput"
+			class="cte__output"
+		></textarea>
+	</p>
+
+</form>
+
+
+<!-- Sample CSV data that be loaded into the demo. -->
+<template #sampleTemplate1>
+ID,EMAIL,ROLE,COMPANYID,SUBDOMAIN,FORTUNE100,FORTUNE500,BETATESTER,INFLUENCER
+1,emily.thomas&#64;techgenius.example.com,admin,12301,techgenius,Yes,No,Yes,No
+2,david.mitchell&#64;techgenius.example.com,analyst,12301,techgenius,Yes,No,No,No
+3,dylan.lee&#64;techgenius.example.com,engineer,12301,techgenius,Yes,No,No,No
+4,riley.smith&#64;techgenius.example.com,admin,12301,techgenius,Yes,No,No,No
+5,joseph.jackson&#64;techgenius.example.com,engineer,12301,techgenius,Yes,No,No,No
+6,david.jones&#64;techgenius.example.com,manager,12301,techgenius,Yes,No,No,No
+7,ellie.mitchell&#64;techgenius.example.com,engineer,12301,techgenius,Yes,No,No,No
+8,ethan.scott&#64;techgenius.example.com,analyst,12301,techgenius,Yes,No,No,No
+9,luna.rodriguez&#64;techgenius.example.com,admin,12301,techgenius,Yes,No,Yes,No
+10,nova.gonzalez&#64;techgenius.example.com,engineer,12301,techgenius,Yes,No,No,No
+11,michael.williams&#64;starcorp.example.com,admin,12302,starcorp,Yes,No,No,No
+12,lincoln.white&#64;starcorp.example.com,engineer,12302,starcorp,Yes,No,No,No
+13,benjamin.davis&#64;starcorp.example.com,analyst,12302,starcorp,Yes,No,No,No
+14,grayson.miller&#64;starcorp.example.com,support,12302,starcorp,Yes,No,No,No
+15,carter.roberts&#64;starcorp.example.com,analyst,12302,starcorp,Yes,No,No,No
+16,bella.king&#64;starcorp.example.com,admin,12302,starcorp,Yes,No,No,No
+</template>
+<!-- Sample CSV data that be loaded into the demo. -->
+<template #sampleTemplate2>
+ID,EMAIL
+1,emily.thomas&#64;techgenius.example.com
+2,david.mitchell&#64;techgenius.example.com
+3,dylan.lee&#64;techgenius.example.com
+4,riley.smith&#64;techgenius.example.com
+5,joseph.jackson&#64;techgenius.example.com
+6,david.jones&#64;techgenius.example.com
+7,ellie.mitchell&#64;techgenius.example.com
+8,ethan.scott&#64;techgenius.example.com
+9,luna.rodriguez&#64;techgenius.example.com
+10,nova.gonzalez&#64;techgenius.example.com
+11,michael.williams&#64;starcorp.example.com
+12,lincoln.white&#64;starcorp.example.com
+13,benjamin.davis&#64;starcorp.example.com
+14,grayson.miller&#64;starcorp.example.com
+15,carter.roberts&#64;starcorp.example.com
+16,bella.king&#64;starcorp.example.com
+</template>
