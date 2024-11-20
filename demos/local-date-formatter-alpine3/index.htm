@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<title>
+		Formatting Dates In The Local Timezone With Alpine.js
+	</title>
+	<link rel="stylesheet" type="text/css" href="./main.css" />
+</head>
+<body>
+
+	<h1>
+		Formatting Dates In The Local Timezone With Alpine.js
+	</h1>
+
+	<!--
+		In the following examples, let's assume that the already-rendered date string was
+		rendered on the server using the UTC timezone.
+	-->
+	<p>
+		<time
+			x-data="LocalDateFormat"
+			data-mask="mmmm d, yyyy 'at' HH:mmtt"
+			datetime="2024-11-17T16:38:48Z">
+			Nov 17, 2024 <!-- Formatted in UTC. -->
+		</time>
+	</p>
+	<p>
+		<time
+			x-data="LocalDateFormat"
+			data-mask="mmmm d, yyyy 'at' HH:mmtt"
+			datetime="2024-11-20T14:40:42.832Z">
+			Nov 20, 2024 <!-- Formatted in UTC. -->
+		</time>
+	</p>
+
+	<script type="text/javascript" src="../../vendor/alpine/3.13.5/alpine.3.13.5.min.js" defer></script>
+	<script type="text/javascript">
+
+		/**
+		* This Alpine.js component replaces the text-content of the host element with a
+		* date-string formatted in the user's local timezone. It does this by parsing the
+		* datetime attribute into a local Date object and then re-masking it.
+		* 
+		* Note: This is not an Internationalization technique - it doesn't use the Intl
+		* module, though I'm sure it could be updated to do so. This is more of a higher-
+		* level exploration client-side date-formatting.
+		*/
+		function LocalDateFormat() {
+
+			// In a <time> element, the "datetime" attribute is intended to represent a
+			// period in time. For the sake of this demo, I'm going to assume that the
+			// attribute contains a full UTC date/time value.
+			var date = new Date( this.$el.getAttribute( "datetime" ) );
+			var mask = this.$el.dataset.mask;
+
+			// In order to translate the server-side date formatting into a client-side
+			// context in the user's local timezone, this Alpine.js component expects a
+			// date mask to be provided as a data-attribute. The text content of the host
+			// will be replaced with the interpolation of the date parts and the mask.
+			this.$el.textContent = mask.replace(
+				/'([^']*)'|y+|m+|d+|H+|h+|n+|s+|T+|t+/g,
+				( $0, $1 ) => {
+
+					// Return escaped string (less the surrounding quotes).
+					if ( $1 ) {
+
+						return $1;
+
+					}
+
+					return translations[ $0 ]( date );
+
+				}
+
+			);
+
+		}
+
+		// Utility methods for applying mask parts to a given date.
+		var translations = {
+			yyyy: ( date ) => String( date.getFullYear() ),
+			yy: ( date )   => String( date.getYear() - 100 ), // Deprecated, never use short year.
+			mmmm: ( date ) => String( monthNames[ date.getMonth() ].long ),
+			mmm: ( date )  => String( monthNames[ date.getMonth() ].short ),
+			mm: ( date )   => String( date.getMonth() ).padStart( 2, "0" ),
+			m: ( date )    => String( date.getMonth() ),
+			dddd: ( date ) => String( dayNames[ date.getDate() ].long ),
+			ddd: ( date )  => String( dayNames[ date.getDate() ].short ),
+			dd: ( date )   => String( date.getDate() ).padStart( 2, "0" ),
+			d: ( date )    => String( date.getDate() ),
+			HH: ( date )   => String( date.getHours() ).padStart( 2, "0" ),
+			H: ( date )    => String( date.getHours() ),
+			hh: ( date )   => String( 12 % date.getHours() ).padStart( 2, "0" ),
+			mm: ( date )   => String( date.getMinutes() ).padStart( 2, "0" ),
+			m: ( date )    => String( date.getMinutes() ),
+			ss: ( date )   => String( date.getSeconds() ).padStart( 2, "0" ),
+			s: ( date )    => String( date.getSeconds() ),
+			TT: ( date )   => String( date.getHours() >= 12 ? "PM" : "AM" ),
+			tt: ( date )   => String( date.getHours() >= 12 ? "pm" : "am" )
+		};
+		var monthNames = [
+			{ short: "Jan", long: "January" },
+			{ short: "Feb", long: "February" },
+			{ short: "Mar", long: "March" },
+			{ short: "Apr", long: "April" },
+			{ short: "May", long: "May" },
+			{ short: "Jun", long: "June" },
+			{ short: "Jul", long: "July" },
+			{ short: "Aug", long: "August" },
+			{ short: "Sep", long: "September" },
+			{ short: "Oct", long: "October" },
+			{ short: "Nov", long: "November" },
+			{ short: "Dec", long: "December" }
+		];
+		var dayNames = [
+			{ short: "Sun", long: "Sunday" },
+			{ short: "Mon", long: "Monday" },
+			{ short: "Tue", long: "Tuesday" },
+			{ short: "Wed", long: "Wednesday" },
+			{ short: "Thr", long: "Thursday" },
+			{ short: "Fri", long: "Friday" },
+			{ short: "Sat", long: "Saturday" }
+		];
+
+	</script>
+
+</body>
+</html>

@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Formatting Dates In The Local Timezone With Alpine.js](https://bennadel.github.io/JavaScript-Demos/demos/local-date-formatter-alpine3)
 * [CSV To CTE Transformer In Angular 18](https://bennadel.github.io/JavaScript-Demos/demos/csv-to-cte-angular18/dist)
 * [Route Changes With OnPush Change Detection In Angular 18](https://bennadel.github.io/JavaScript-Demos/demos/on-push-route-change-angular18/dist)
 * [Signals And Array Mutability In Angular 18](https://bennadel.github.io/JavaScript-Demos/demos/signal-array-angular18/dist)
