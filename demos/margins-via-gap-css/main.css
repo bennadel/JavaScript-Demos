@@ -1,0 +1,45 @@
+
+html {
+	font-family: Seravek, Gill Sans Nova, Ubuntu, Calibri, DejaVu Sans, source-sans-pro, sans-serif ;
+	font-size: 18px ;
+	line-height: 1.4 ;
+}
+
+body {
+	margin: 10px ;
+}
+
+h1 {
+	font-size: 2rem ;
+}
+
+h2 {
+	font-size: 1.7rem ;
+}
+
+h3 {
+	font-size: 1.3rem ;
+}
+
+p {
+	font-size: 1.2rem ;
+}
+
+form {
+	align-items: center ;
+	display: flex ;
+	justify-content: center ;
+	margin: 0 auto 20px ;
+	max-inline-size: 700px ;
+}
+
+input[ type="range" ] {
+	flex: 1 1 auto ;
+	margin: 0 10px ;
+	width: 300px ;
+}
+
+article {
+	margin: 0 auto ;
+	max-inline-size: 700px ;
+}

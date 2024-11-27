@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<title>
+		Using CSS Gap To Control Margins In Website Copy
+	</title>
+	<link rel="stylesheet" type="text/css" href="./main.css" />
+	<style type="text/css">
+
+		article {
+			display: flex ;
+			flex-direction: column ;
+			/*
+			* Using GAP in the COLUMN layout creates a sort of simulated margin collapsing
+			* that will provide space between all the block elements.
+			*/
+			gap: 0rem ;
+
+			/*
+			* Remove the default margins from block elements. These will be managed by
+			* the GAP on the host element.
+			*/
+			& h1, h2, h3, p {
+				margin: 0 ;
+			}
+
+			/* A little extra top-gap for sub-headings. These are ADDED to the gap. */
+			& h2 {
+				margin-top: 0.2rem ;
+			}
+			& h3 {
+				margin-top: 0.1rem ;
+			}
+		}
+
+	</style>
+	<script type="text/javascript" src="../../vendor/alpine/3.13.5/alpine.3.13.5.min.js" defer></script>
+</head>
+<body x-data="{ customGap: '0' }">
+
+	<form>
+		Gap:
+		<input type="range" x-model="customGap" min="0" max="4" step="0.1" />
+		<span x-text="customGap"></span>rem
+	</form>
+
+	<!-- Using Apline.js to bind the range input to the inline style. -->
+	<article :style="{ gap: `${ customGap }rem` }">
+
+		<h1>
+			Using CSS Gap To Control Margins In Website Copy
+		</h1>
+
+		<h2>
+			Oratio vel iudicium indico quamvis
+		</h2>
+
+		<p>
+			Lorem ipsum dolor sit amet aufero tu, quis inferus os. Meus credo post niger hiems. Proprius labor, quotiens inter divitiae, iuro sanctus dexter spatium. Aliquis quaero apud caecus aevum. Aureus frons, tandem post fama, traho candidus tuus auxilium. Bos curo foedus senex. Aliquis impleo quicumque negotium ve ille laus.
+		</p>
+
+		<h2>
+			Forum vel saeculum sto sicut
+		</h2>
+
+		<p>
+			Tu occurro tu lumen et qua murus. Ille scribo quisque, quidam honestus exercitus. Ille corrumpo quisque pondus licet quis frumentum. Meus eripio quidam causa. Ille procedo aliquis custos. Aliquis trado ecce vereor sine alter caput. Aliquis soleo quisquam, quis levis iudex.
+		</p>
+
+		<p>
+			Ipse orior quantus ferrum uterque quisquis cohors. Idem desidero postea habeo ob vetus disciplina. Hic iungo iste, ego niger cor. Nos vaco per aptus cohors. Candidus reus, quo de tribunus, morior ingens posterus necessitas. Medius sacerdos, hodie de virtus, tego brevis rectus custos. Sui ascendo hic, quicumque sacer damnum.
+		</p>
+
+		<h3>
+			Nomen ipse doleo desero exercitus
+		</h3>
+
+		<p>
+			Mollis familia, mox prope arbor, consto quattuor pulcher equus. Hic cingo quisquis timor. Meus desino haud irascor a longus domus. Iste fleo quisquam, quisquis castus fortuna. Pulcher via, aliquando propter vir, agito humanus miser cinis. Custos trado superus aes.
+		</p>
+
+		<p>
+			Is supero iste facies enim qui avis. Meus curro ob longus mos. Tu aperio idem res autem qui amnis. Tu debeo qua, qualis gravis genus. Ille creo idem, quidam ingens equus. Nos curo aliquis clamor ergo quantus testis. Noster sustineo quicumque fames vel ille nefas. Nos vivo quidam, idem singuli cor.
+		</p>
+
+		<p>
+			Meus confero ipse deus sed quisquis gladius. Ille intellego qualis femina sed sui pater. Sui respondeo hic gradus. Idem sentio saepe appello sub vanus onus. Noster patior aliquis, aliquis integer barbarus. Nos soleo quantus dux seu idem laus.
+		</p>
+
+		<p>
+			Hic constituo qua, sui aequus exemplum. Ego licet idem os. Hic intersum qui, sui potens dolus. Aliquis pertineo quantus rex. Copia descendo longus lingua.
+		</p>
+
+		<p>
+			Potestas decerno tristis honor. Idem video ille gens. Carmen tollo ferus vultus. Nemo spero quisque, meus audax plebs. Noster memini quisque res vel ego umbra. Is ingredior idem, ipse fidelis honor. Ille revoco pro aureus moenia. Nos nosco per candidus magnitudo.
+		</p>
+
+		<h3>
+			Furor nam consul incido quin
+		</h3>
+
+		<p>
+			Ego eripio nemo via licet tu miles. Nemo oportet noster telum. Ille nascor nos, quantus inimicus periculum. Nemo contemno aliquis praeceptum. Noster cogo meus culpa tamen quisquis urbs. Nos offero aegre nolo post superbus pars.
+		</p>
+
+		<p>
+			Meus lateo quantus, meus nobilis moenia. Prex sono durus negotium. Varius fabula, quare cum libertas, verto caecus facilis pax. Amplus hostis, vix sub error, nolo fortis albus coma. Is pario cur defendo ex integer civis. Is sequor aliquis fortuna. Noster moveo supra potens via. Ego venio sine adversus casus.
+		</p>
+
+		<p>
+			Nemo pugno sui miles. Noster exspecto noster, quantus posterus coma. Hic possum qualis sors utrum qui cor. Nos intersum sui, quidam caelestis via. Meus gaudeo sine vacuus domus.
+		</p>
+
+		<p>
+			Fessus cor, interim de libertas, eo fortis ceterus filia. Ille laedo quisque convivium. Hic tollo idem labor. Hic pario noster, sui aeternus sedes. Ille fateor ad praesens nox. Nemo cado non desero sine amicus fortuna. Sui advenio quisquis dignitas utrum nos officium. Hic traho statim procedo ob celer voluntas.
+		</p>
+
+		<p>
+			Ipse confero ex superus vita. Meus fundo ego urbs at meus magnitudo. Nos consto quisque votum. Nos audeo qui imperator quamquam hic spiritus. Decus appareo tres multitudo. Nemo supersum quidam, sui divus saeculum. Aeger stella, solum circa labor, surgo aptus communis casus. Nemo pertineo idem iudex.
+		</p>
+
+		<h2>
+			Sors quisquis corrumpo condo ara
+		</h2>
+
+		<p>
+			Negotium peto iustus vita. Is cognosco sine liber facinus. Ordo retineo mollis flumen. Aliquis caedo nos, quidam turpis acies. Aliquis eligo circa rarus cohors. Idem supero tu sidus. Nemo promitto ille pontus.
+		</p>
+
+		<p>
+			Nemo recedo is, tu altus gaudium. Extremus ius, quamvis contra arbor, cano medius duo virtus. Nemo reverto tamquam praesto a audax dolor. Ipse porto ob pauper insula. Ille cogo non sto circa socius frater. Ille perdo qui, is gravis copia.
+		</p>
+
+		<h2>
+			Opera deduco cura
+		</h2>
+
+		<p>
+			Frons divido gratus copia. Difficilis custos, quippe inter civitas, incido rectus privatus turba. Sui colligo hic, tu honestus pontus. Nemo differo quisquis ingenium at noster spes. Hic irascor quis dignitas neque qua carmen. Aura careo secundus acies. Carmen adverto tener locus.
+		</p>
+
+		<p>
+			Meus iudico quis gens. Noster relinquo qualis fax quoque noster natura. Ille puto apud alius victoria. Iste effundo quidam, is vanus mens. Amicus pes, velut sine civis, edico proprius amicus animal. Noster respicio quidam laus. Potens iugum, sic intra imago, advenio candidus fessus nox.
+		</p>
+
+		<p>
+			Hic verto quisque parens. Supplicium perdo ingens donum. Iste recipio quisque cinis. Ipse iuvo quidam facies tamen nos coma. Nemo convenio semper traho supra unus condicio. Tu rumpo ego, qualis novus terra. Idem offero quisque reus. Nobilis vultus, paulo circa domus, iaceo perpetuus malus facies.
+		</p>
+
+		<p>
+			Saevus familia, num post modus, pareo utilis posterus auctor. Clamor cognosco regius crimen. Is impleo protinus ardeo prope niger filia. Aura indico tardus tribunus. Saeculum abeo vetus ventus. Idem accido iste vulgus nisi ipse saxum. Spiritus fruor tardus litus.
+		</p>
+
+		<p>
+			Sui do quisquis, quisquis inferus culpa. Principium incipio proprius dux. Ipse careo quisquam, quidam proprius latus. Meus tego iste, idem aureus cornu. Nos rapio aliquis tectum. Meus studeo hic, qua secundus fides. Ipse vito supra falsus nomen. Maiores praecipio sapiens imperator.
+		</p>
+
+		<h2>
+			Tenebrae atque potestas adeo breviter
+		</h2>
+
+		<p>
+			Ille tego non conor circa singuli tempus. Nemo propono contra medius usus. Hic noceo ex ingens signum. Noster licet is ars utrum iste flumen. Ego posco nos voluptas. Tu moneo is, tu brevis annus.
+		</p>
+
+		<p>
+			Tristis luna, ceterum contra ingenium, pergo albus extremus arvum. Adversus vultus, quantum inter hostis, statuo solus suus comes. Nemo pergo noster, iste totus virtus. Nefas iudico miser nihil. Noster transeo ille fortuna. Hic colligo quis, iste proprius votum.
+		</p>
+
+		<p>
+			Noster vito quisque iudex aut quisquam error. Idem creo meus fortuna. Noster soleo quemadmodum cogito intra reliquus forum. Noster sino aliquis morbus postquam tu dies. Dulcis damnum, num de decus, colo vacuus potis vir. Noster fio ego memoria utrum ille dies.
+		</p>
+
+		<h2>
+			Parens aufero impetus
+		</h2>
+
+		<p>
+			Aliquis moneo is moenia. Iste paro aegre cano contra celer opera. Ipse dimitto quantus, is potens fortuna. Noster veho iam accedo post egregius invidia. Decus habeo similis vis. Sui effundo vulgo propono ante dives stella.
+		</p>
+
+		<p>
+			Noster arbitror tu gaudium si quicumque exsilium. Hic lateo quisquam pretium nisi ipse fabula. Castrum disco altus natus. Pretium certo cunctus patria. Nemo posco quo posco a aeger eques. Sui taceo ipse dolus sed quantus pars. Vanus dolor, quando sine pax, doceo volucer sapiens magister. Ipse premo saepe noceo in clarus barbarus.
+		</p>
+
+	</article>
+
+</body>
+</html>
