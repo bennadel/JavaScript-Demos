@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<style type="text/css">
+
+		fieldset {
+			display: flex ;
+			flex-direction: column ;
+			gap: 1rem ;
+
+			& input {
+				display: block ;
+				margin: 0 ;
+			}
+		}
+
+	</style>
+</head>
+<body>
+
+	<fieldset>
+		<legend>
+			This is not an inline element
+		</legend>
+
+				<template>
+					<!-- This is not a rendered element. -->
+				</template>
+				<template>
+					<!-- This is not a rendered element. -->
+				</template>
+
+		<input type="text" />
+
+				<template>
+					<!-- This is not a rendered element -->
+				</template>
+				<style>
+					/* This is not a rendered elemenet. */
+				</style>
+
+		<input type="text" />
+		<input type="text" />
+	</fieldset>
+
+</body>
+</html>
