@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<title>
+		Box Breathing Exercise With SpeechSynthesis And Alpine.js
+	</title>
+	<link rel="stylesheet" type="text/css" href="./main.css" />
+	<script type="text/javascript" src="../../vendor/alpine/3.13.5/alpine.3.13.5.min.js" defer></script>
+</head>
+<body>
+
+	<h1>
+		Box Breathing Exercise With SpeechSynthesis And Alpine.js
+	</h1>
+
+	<section x-data="Demo" :hidden="( ! voices.length )">
+
+		<div class="form">
+			<select x-model.number="selectedVoiceIndex">
+				<template x-for="( voice, index ) in voices" :key="index">
+					<option
+						:value="index"
+						x-text="voice.name">
+					</option>
+				</template>
+			</select>
+
+			<button @click="start()">
+				Start
+			</button>
+			<button @click="stop()">
+				Stop
+			</button>
+		</div>
+
+		<p class="text" :hidden="( ! text )">
+			[<span x-text="iteration"></span>]:
+			<span x-text="text"></span>
+		</p>
+
+	</section>
+
+	<script type="text/javascript">
+
+		function Demo() {
+
+			// Box breathing consists of four phases: in, hold, out, hold. Each phase
+			// lasts 4-seconds; and each term below will be spoken at a 1-second interval.
+			var phases = [
+				[ "In",   "two", "three", "four" ],
+				[ "Hold", "two", "three", "four" ],
+				[ "Out",  "two", "three", "four" ],
+				[ "Hold", "two", "three", "four" ]
+			];
+
+			// Flatten the phases into a single set of states. This will make it easier to
+			// process; and, allows us to materialize some state that otherwise would be
+			// more challenging to calculate on the fly (ex, the text to output).
+			var states = phases.flatMap(
+				( phase ) => {
+
+					return phase.map(
+						( term, i ) => {
+
+							// As we proceed across the terms in each phase, the text will
+							// be the aggregation of the previous text already rendered in
+							// the same phase.
+							var text = phase
+								.slice( 0, ( i + 1 ) )
+								.join( " ..." )
+							;
+
+							// Note: the voice for the utterance will be set just prior to
+							// each vocalization. This way it will always reflect what's
+							// currently in the select menu.
+							return {
+								term: term,
+								text: text,
+								utterance: new SpeechSynthesisUtterance( term ),
+								duration: 1000
+							};
+
+						}
+					);
+
+				}
+			);
+
+			// Once the timer is started, this queue will hold the states to be processed.
+			// And the timer will hold the delay between each utterance.
+			var queue = [];
+			var timer = null;
+
+			// Short-hand reference.
+			var synth = window.speechSynthesis;
+
+			// The tricky thing with Alpine.js is that the object returned from the
+			// component becomes the hook for reactivity. Alpine.js creates a Proxy that
+			// wraps the given data and updates the DOM when the values are mutated. This
+			// makes it a bit challenging to create a separation between public and
+			// private properties / methods. In this case, I have to include the private
+			// methods on the return value so that they can access the appropriate `this`
+			// reference for subsequent reactivity. To help enforce the "private" nature
+			// of the methods, I'm aliasing them with a "_" prefix.
+			return {
+				// Public reactive properties.
+				voices: synth.getVoices(),
+				selectedVoiceIndex: -1,
+				text: "",
+				iteration: 0,
+
+				// Public methods.
+				init: $init,
+				start: start,
+				stop: stop,
+
+				// Private methods.
+				_processQueue: processQueue,
+				_setVoices: setVoices
+			};
+
+			// ---
+			// PUBLIC METHODS.
+			// ---
+
+			/**
+			* I initialize the Alpine component.
+			*/
+			function $init() {
+
+				// Voices aren't available on page ready. Instead, we have to bind to the
+				// voiceschanged event and then setup the view-model once they become
+				// available on the SpeechSynthesis API.
+				synth.addEventListener(
+					"voiceschanged",
+					( event ) => {
+
+						this._setVoices();
+
+					}
+				);
+
+			}
+
+			/**
+			* I start the vocalization of the guided box breathing.
+			*/
+			function start() {
+
+				if ( ! this.voices.length ) {
+
+					console.warn( "No voices have been loaded yet." );
+					return;
+
+				}
+
+				queue = states.slice();
+				this.iteration = 1;
+				this.text = "";
+				this._processQueue();
+
+			}
+
+			/**
+			* I stop the vocalization of the guided box breathing.
+			*/
+			function stop() {
+
+				clearInterval( timer );
+				this.iteration = 0;
+				this.text = "";
+
+			}
+
+			// ---
+			// PRIVATE METHODS.
+			// ---
+
+			/**
+			* I process the queue, vocalizing the next state. This method will call itself
+			* recursively (via setTimeout).
+			*/
+			function processQueue() {
+
+				// Reset queue when a new iteration is being started.
+				if ( ! queue.length ) {
+
+					queue = states.slice();
+					this.iteration++;
+
+				}
+
+				var state = queue.shift();
+				// Update the utterance to always use the voice that's currently selected.
+				// This way, the user can change the voice during vocalization to find one
+				// that is the most comfortable.
+				state.utterance.voice = this.voices[ this.selectedVoiceIndex ];
+				state.utterance.pitch = 0;
+				state.utterance.rate = 0.7;
+
+				synth.speak( state.utterance );
+				this.text = state.text;
+
+				timer = setTimeout(
+					() => {
+
+						this._processQueue();
+
+					},
+					state.duration
+				);
+
+			}
+
+			/**
+			* I set the voices based on the current synth state.
+			*/
+			function setVoices() {
+
+				// There are TONS of voices, but only a handful of them seem to create a
+				// reasonable experience. This is probably very specific to each browser
+				// or computer; but, I'm going to filter-down to the ones I like.
+				this.voices = synth.getVoices().filter(
+					( voice ) => {
+
+						switch ( voice.name.toLowerCase() ) {
+							case "alex":
+							case "alva":
+							case "damayanti":
+							case "daniel":
+							case "fiona":
+							case "fred":
+							case "karen":
+							case "mei-jia":
+							case "melina":
+							case "moira":
+							case "rishi":
+							case "samantha":
+							case "tessa":
+							case "veena":
+							case "victoria":
+							case "yuri":
+								return true;
+							break;
+						}
+
+						return false;
+
+					}
+				);
+
+				// Default to the most pleasing if it exists.
+				this.selectedVoiceIndex = this.voices.findIndex(
+					( voice ) => {
+
+						return ( voice.name === "Tessa" );
+
+					}
+				);
+
+				// If the preferred voice doesn't exist, just use the first one.
+				if ( this.selectedVoiceIndex === -1 ) {
+
+					this.selectedVoiceIndex = 0;
+
+				}
+
+			}
+
+		}
+
+	</script>
+
+</body>
+</html>

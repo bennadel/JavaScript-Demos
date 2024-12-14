@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Box Breathing Exercise With SpeechSynthesis And Alpine.js](https://bennadel.github.io/JavaScript-Demos/demos/box-breathing-alpine)
 * [Using CSS Gap To Control Margins In Website Copy](https://bennadel.github.io/JavaScript-Demos/demos/margins-via-gap-css)
 * [Formatting Dates In The Local Timezone With Alpine.js](https://bennadel.github.io/JavaScript-Demos/demos/local-date-formatter-alpine3)
 * [CSV To CTE Transformer In Angular 18](https://bennadel.github.io/JavaScript-Demos/demos/csv-to-cte-angular18/dist)
