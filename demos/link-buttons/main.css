@@ -1,0 +1,59 @@
+
+body {
+	font-family: monospace ;
+	font-size: 18px ;
+	line-height: 1.5 ;
+}
+
+.link-button {
+	background-color: transparent ;
+	border-width: 0 ;
+	cursor: pointer ;
+	font-family: inherit ;
+	font-size: inherit ;
+	font-weight: inherit ;
+	line-height: inherit ;
+	margin: 0 ;
+	padding: 0 ;
+	text-decoration: underline ;
+}
+
+.nav {
+	display: flex ;
+	gap: 8px ;
+}
+.nav__item {
+	border: 1px solid red ;
+	border-radius: 3px ;
+	color: red ;
+	padding: 5px 10px ;
+	text-decoration: none ;
+}
+.nav__item:hover {
+	text-decoration: underline ;
+}
+
+.visually-hidden {
+	opacity: 0 ;
+	position: fixed ;
+	top: -100px ;
+}
+
+*:focus,
+*:focus-visible {
+	outline: 2px solid blue ;
+	outline-offset: 2px ;
+}
+
+table {
+	border-collapse: collapse ;
+}
+
+table th,
+table td {
+	padding: 5px 10px ;
+}
+
+table button {
+	
+}

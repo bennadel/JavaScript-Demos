@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>
+		Using The Button Form Attribute To Create Standalone Buttons In HTML
+	</title>
+	<link rel="stylesheet" type="text/css" href="./main.css">
+</head>
+<body>
+
+	<h1>
+		Using The Button Form Attribute To Create Standalone Buttons In HTML
+	</h1>
+
+	<nav class="nav">
+		<a href="index.htm?nav=home" class="nav__item">
+			Home
+		</a>
+		<a href="index.htm?nav=about" class="nav__item">
+			About
+		</a>
+		<a href="index.htm?nav=projects" class="nav__item">
+			Projects
+		</a>
+		<!--
+			But letting the button stand on its own, we can STYLE it in the same way that
+			we do the sibling link elements. Meaning, we don't have to worry about dealing
+			with an extra form wrapper, or use janky techniques like "display:contents".
+		-->
+		<button type="submit" form="logOutForm" class="nav__item link-button">
+			Log-Out
+		</button>
+	</nav>
+
+	<!--
+		This form has no inherent action, it's basically just a "data bag". It only gets
+		triggered when the button above is clicked. The button's [FORM] attribute makes
+		it the submit trigger for this form.
+
+		Note: normally, this would be a [POST] action; however, in order to make this demo
+		work on GitHub Pages, I'm using a [GET].
+	-->
+	<form id="logOutForm" method="get" action="index.htm">
+		<input type="hidden" name="action" value="logout" />
+		<input type="hidden" name="submitted" value="true" />
+		<input type="hidden" name="xsrfToken" value="abc123" />
+		<input type="hidden" name="userID" value="10011" />
+	</form>
+
+	<p>
+		<a href="./index2.htm">See Demo 2</a>
+	</p>
+
+</body>
+</html>

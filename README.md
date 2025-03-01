@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Using The Button Form Attribute To Create Standalone Buttons In HTML](https://bennadel.github.io/JavaScript-Demos/demos/link-buttons)
 * [Box Breathing Exercise With SpeechSynthesis And Alpine.js](https://bennadel.github.io/JavaScript-Demos/demos/box-breathing-alpine)
 * [Using CSS Gap To Control Margins In Website Copy](https://bennadel.github.io/JavaScript-Demos/demos/margins-via-gap-css)
 * [Formatting Dates In The Local Timezone With Alpine.js](https://bennadel.github.io/JavaScript-Demos/demos/local-date-formatter-alpine3)

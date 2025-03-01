@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>
+		Using The Button Form Attribute To Create Standalone Buttons In HTML
+	</title>
+	<link rel="stylesheet" type="text/css" href="./main.css">
+</head>
+<body>
+
+	<h1>
+		Using The Button Form Attribute To Create Standalone Buttons In HTML
+	</h1>
+
+	<table border="1">
+	<thead>
+		<tr>
+			<th>ID</th>
+			<th>Name</th>
+			<th>Action</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>1</td>
+			<td>Kim</td>
+			<td>
+				<button type="submit" form="deleteUser" name="userID" value="1" class="link-button">
+					Delete
+				</button>
+			</td>
+		</tr>
+		<tr>
+			<td>2</td>
+			<td>Jim</td>
+			<td>
+				<button type="submit" form="deleteUser" name="userID" value="2" class="link-button">
+					Delete
+				</button>
+			</td>
+		</tr>
+		<tr>
+			<td>3</td>
+			<td>Lynn</td>
+			<td>
+				<button type="submit" form="deleteUser" name="userID" value="3" class="link-button">
+					Delete
+				</button>
+			</td>
+		</tr>
+	</tbody>
+	</table>
+
+	<!--
+		This form has no inherent action (other than the confirm() call), it's basically
+		just a "data bag". It only gets triggered when one of the buttons above is
+		clicked. Each button's [FORM] attribute makes it the submit trigger for this form.
+		And, the [NAME/VALUE] attributes allow each button to submit a unique userID with
+		the form.
+
+		Note: normally, this would be a [POST] action; however, in order to make this demo
+		work on GitHub Pages, I'm using a [GET].
+	-->
+	<form
+		id="deleteUser"
+		method="get"
+		action="index2.htm"
+		onsubmit="return confirm( 'Are you sure?' );">
+
+		<input type="hidden" name="action" value="delete" />
+		<input type="hidden" name="submitted" value="true" />
+		<input type="hidden" name="xsrfToken" value="abc123" />
+	</form>
+
+	<p>
+		<a href="./index.htm">See Demo 1</a>
+	</p>
+
+</body>
+</html>
