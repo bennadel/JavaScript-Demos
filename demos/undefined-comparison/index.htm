@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>
+		Comparing Undefined Values In JavaScript
+	</title>
+</head>
+<body>
+
+	<h1>
+		Comparing Undefined Values In JavaScript
+	</h1>
+
+	<p>
+		See console for results.
+	</p>
+
+	<script type="text/javascript">
+
+		var comparisons = [
+			"undefined == false",
+			"undefined == true",
+			"undefined == 0",
+			"undefined > 0",
+			"undefined >= 0",
+			"undefined < 0",
+			"undefined <= 0",
+		];
+
+		for ( var test of comparisons ) {
+
+			console.group( `Testing: %c${ test }`, "color: red" );
+			console.log( `%c${ eval( test ) }`, "background: yellow" );
+			console.groupEnd();
+
+		}
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+		var inputs = {};
+
+		// The safe-navigation operator safely bypasses the indexOf() call on an undefined
+		// property, resulting in an overall "undefined" for the expression. Then, the
+		// comparison of "undefined" to a number is always false, skipping the if-block.
+		if ( inputs.value?.indexOf( "hello" ) >= 0 ) {
+
+			console.log( "Hello Found!" );
+
+		} else {
+
+			console.log( "Hello Not Found" );
+
+		}
+
+	</script>
+
+</body>
+</html>
