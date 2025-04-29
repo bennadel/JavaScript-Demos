@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<link rel="stylesheet" type="text/css" href="./main.css" />
+<body>
+
+	<h1>
+		Using :scope To Identify The Host Element In A CSS Selector
+	</h1>
+
+	<p onclick="selectOdds( event )">
+		<span> <em>1</em> </span>
+		<span> <em>2</em> </span>
+		<span> <em>3</em> </span>
+		<span> <em>4</em> </span>
+		<span> <em>5</em> </span>
+		<span> <em>6</em> </span>
+		<span> <em>7</em> </span>
+		<span> <em>8</em> </span>
+		<span> <em>9</em> </span>
+		<span> <em>10</em> </span>
+	</p>
+
+	<script type="text/javascript">
+
+		function selectOdds( event ) {
+
+			var targets = event
+				.currentTarget
+				// In the selector, ":scope" represents the current element on which the
+				// query is being called. This allows us to use the direct-descendant
+				// operator since it gives us a way to identify the parent of the direct
+				// descendants.
+				.querySelectorAll( ":scope > :nth-child( odd )" )
+			;
+
+			for ( var node of targets ) {
+
+				node.style = "background-color: hotpink ; color: white ;";
+
+			}
+
+		}
+
+	</script>
+
+</body>
+</html>

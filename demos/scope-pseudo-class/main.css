@@ -1,0 +1,29 @@
+
+html {
+	box-sizing: border-box ;
+}
+html *,
+html *:before,
+html *:after {
+	box-sizing: inherit ;
+}
+
+body {
+	font-family: monospace ;
+	font-size: 20px ;
+}
+
+p {
+	display: flex ;
+	font-size: 30px ;
+	gap: 10px ;
+}
+p span {
+	background-color: #f0f0f0 ;
+	border-radius: 5px ;
+	padding: 3px 15px ;
+}
+p:hover {
+	outline: 2px solid cyan ;
+	outline-offset: 3px ;
+}

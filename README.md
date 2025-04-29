@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Using :scope To Identify The Host Element In A CSS Selector](https://bennadel.github.io/JavaScript-Demos/demos/scope-pseudo-class)
 * [Comparing Undefined Values In JavaScript](https://bennadel.github.io/JavaScript-Demos/demos/undefined-comparison)
 * [Using The Button Form Attribute To Create Standalone Buttons In HTML](https://bennadel.github.io/JavaScript-Demos/demos/link-buttons)
 * [Box Breathing Exercise With SpeechSynthesis And Alpine.js](https://bennadel.github.io/JavaScript-Demos/demos/box-breathing-alpine)
