@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>
+		Movie Ranking With Sortable.js And Kendall Tau Distance
+	</title>
+	<link rel="stylesheet" type="text/css" href="./app.css">
+	<script type="text/javascript" src="./app.js" defer></script>
+	<script src="../../vendor/sortable/1.15.6/sortable-1.15.6.min.js" defer></script>
+	<script src="../../vendor/alpine/3.13.5/alpine.3.13.5.min.js" defer></script>
+</head>
+<body x-data="App" @popstate.window="handlePopstate()">
+
+	<h1>
+		Movie Ranking With Sortable.js And Kendall Tau Distance
+	</h1>
+
+	<p>
+		Check your movie preference compatibility with others:
+	</p>
+
+	<div class="panels">
+
+		<ul x-ref="listOneNode">
+			<template x-for="id in listOne" :key="randomKeyBecauseXForBug()">
+				<li :data-id="id" x-text="titles[ id ].name">
+					<!-- Populated via x-text. -->
+				</li>
+			</template>
+		</ul>
+
+		<mark x-text="similarity">
+			0%
+		</mark>
+
+		<ul x-ref="listTwoNode">
+			<template x-for="id in listTwo" :key="randomKeyBecauseXForBug()">
+				<li :data-id="id" x-text="titles[ id ].name">
+					<!-- Populated via x-text. -->
+				</li>
+			</template>
+		</ul>
+
+	</div>
+
+	<p class="resets">
+		<button @click="resetList( 'listOne' )">
+			Reset List One
+		</button>
+		<button @click="syncRight()">
+			Sync &rarr;
+		</button>
+		<button @click="resetList( 'listTwo' )">
+			Reset List Two
+		</button>
+	</p>
+
+</body>
+</html>

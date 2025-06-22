@@ -1,0 +1,69 @@
+
+html {
+	box-sizing: border-box ;
+	font-family: monospace ;
+	font-size: 18px ;
+
+	& *,
+	& *:before,
+	& *:after {
+		box-sizing: inherit ;
+	}
+}
+
+body {
+	text-align: center ;
+}
+
+.panels {
+	align-items: center ;
+	display: flex ;
+	gap: 30px ;
+	justify-content: center ;
+	margin: 40px 0 ;
+
+	& ul {
+		list-style-type: none ;
+		margin: 0 ;
+		padding: 0 ;
+	}
+
+	& li {
+		background-color: #fafafa ;
+		border: 1px solid #cccccc ;
+		padding: 10px 30px ;
+		margin: 3px ;
+		user-select: none ;
+	}
+
+	& mark {
+		border-radius: 20px ;
+		border: 1px solid #cccccc ;
+		font-size: 30px ;
+		line-height: 1 ;
+		padding: 30px 0 ;
+		width: 150px ;
+
+		&:after {
+			content: "%" ;
+		}
+	}
+
+	& .sortable-ghost {
+		background-color: hotpink ;
+		color: white ;
+	}
+}
+
+.resets {
+	display: flex ;
+	gap: 145px ;
+	justify-content: center ;
+
+	& button {
+		font-family: inherit ;
+		font-size: inherit ;
+		line-height: inherit ;
+		padding: 5px 12px ;
+	}
+}
