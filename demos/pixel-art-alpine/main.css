@@ -1,0 +1,171 @@
+*,
+*:before,
+*:after {
+	box-sizing: border-box ;
+	margin: 0 ;
+	padding: 0 ;
+}
+
+:root {
+	--grid-size: 25 ;
+	--pixel-size: 26px ;
+}
+
+body {
+	font-family: monospace ;
+	font-size: 16px ;
+	line-height: 1.4 ;
+}
+
+main {
+	align-items: center ;
+	display: flex ;
+	flex-direction: column ;
+	gap: 30px ;
+	padding: 30px ;
+
+	& h1 {
+		margin: 0 0 0px 0 ;
+
+		& a {
+			color: inherit ;
+			text-decoration: none ;
+
+			&:hover {
+				color: #ff1493 ;
+				text-decoration: underline ;
+			}
+		}
+	}
+}
+
+.grid {
+	background-color: #ffffff ;
+	box-shadow: 0 0 1px 0 #999999 ;
+	display: grid ;
+	grid-template-columns: repeat( var( --grid-size ), 1fr ) ;
+	height: calc( var( --grid-size ) * var( --pixel-size ) ) ;
+	user-select: none ;
+	width: calc( var( --grid-size ) * var( --pixel-size ) ) ;
+
+	& button {
+		border: none ;
+		box-shadow: inset 0 0 1px 0 #ffffff ;
+		height: var( --pixel-size ) ;
+		width: var( --pixel-size ) ;
+	}
+}
+
+.palette {
+	box-shadow: 0 0 1px 0 #999999 ;
+	display: flex ;
+	flex-wrap: wrap ;
+	min-height: 156px ;
+	user-select: none ;
+	width: calc( var( --grid-size ) * var( --pixel-size ) ) ;
+
+	& button {
+		border: none ;
+		box-shadow: inset 0 0 1px 0 #ffffff ;
+		flex: 0 0 auto ;
+		height: var( --pixel-size ) ;
+		width: var( --pixel-size ) ;
+
+		&:last-child {
+			flex-grow: 1 ;
+		}
+
+		&.isSelected {
+			box-shadow: 0 0 3px 5px #000000 ;
+			outline: 2px solid #ffffff ;
+			z-index: 2 ;
+		}
+	}
+}
+
+.selected {
+	display: flex ;
+	font-size: 20px ;
+	margin: 0 ;
+	gap: 30px ;
+
+	& div {
+		display: flex ;
+		gap: 10px ;
+	}
+
+	& dt {
+		font-weight: 700 ;
+		margin: 0 ;
+	}
+
+	& dd {
+		margin: 0 ;
+	}
+}
+
+.fillers {
+	display: flex ;
+	font-size: 20px ;
+	gap: 13px ;
+
+	& button {
+		align-items: center ;
+		background-color: #333333 ;
+		border: none ;
+		border-radius: 4px ;
+		color: #ffffff ;
+		display: flex ;
+		font: inherit ;
+		gap: 13px ;
+		padding: 10px 20px ;
+	}
+
+	& span {
+		box-shadow: 0 0 1px 1px #ffffff ;
+		border-radius: 16px ;
+		height: 16px ;
+		width: 16px ;
+	}
+}
+
+.tuggers {
+	display: flex ;
+	font-size: 20px ;
+	gap: 13px ;
+
+	& button {
+		background-color: #ffffff ;
+		border: 1px solid #333333 ;
+		border-radius: 4px ;
+		color: #333333 ;
+		font: inherit ;
+		padding: 10px 20px ;
+		min-width: 100px ;
+	}
+}
+
+.tips {
+	align-items: center ;
+	display: flex ;
+	flex-direction: column ;
+	gap: 15px ;
+
+	& kbd {
+		background-color: #232323 ;
+		border-radius: 2px ;
+		color: #ffffff ;
+		display: inline-block ;
+		padding: 0 3px ;
+	}
+}
+
+.examples {
+	display: flex ;
+	gap: 20px ;
+
+	& a {
+		color: #ff1493 ;
+	}
+}
+

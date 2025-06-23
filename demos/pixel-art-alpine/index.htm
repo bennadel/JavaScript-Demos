@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>
+		Pixel Art With Alpine.js
+	</title>
+	<link rel="stylesheet" type="text/css" href="./main.css">
+	<script type="text/javascript" src="./palette.js" defer></script>
+	<script type="text/javascript" src="./main.js" defer></script>
+	<script type="text/javascript" src="../../vendor/alpine/3.13.5/alpine.3.13.5.min.js" defer></script>
+</head>
+<body>
+
+	<main
+		x-data="Demo"
+		data-width="25"
+		data-height="25"
+		@mouseup.window="stopDrawing()"
+		@hashchange.window="handleHashchange()"
+		@keydown.meta.z.window="handleDo( event )"
+		@keydown.ctrl.z.window="handleDo( event )">
+
+		<h1>
+			<a href="./index.htm">Pixel Art With Alpine.js</a>
+		</h1>
+
+		<!-- Rendered canvas. -->
+		<div class="grid">
+			<template x-for="( pixel, i ) in pixels" :key="i">
+				<button
+					@mousedown="startDrawing( $event, i )"
+					@mouseenter="enterPixel( $event, i )"
+					:style="{ backgroundColor: pixel?.hex }">
+				</button>
+			</template>
+		</div>
+
+		<!-- Color palette. -->
+		<div class="palette">
+			<template x-for="option in palette.swatches">
+				<button
+					@mousedown="selectSwatch( option )"
+					:title="option.name"
+					:style="{ backgroundColor: option.hex }"
+					:class="{ 'isSelected': ( option === foregroundSwatch ) }">
+				</button>
+			</template>
+		</div>
+
+		<dl class="selected">
+			<div>
+				<dt>Name:</dt>
+				<dd x-text="foregroundSwatch.name"></dd>
+			</div>
+			<div>
+				<dt>Hex:</dt>
+				<dd x-text="foregroundSwatch.hex"></dd>
+			</div>
+		</dl>
+
+		<div class="fillers">
+			<button @click="clearCanvas()">
+				Clear Canvas
+				<span :style="{ backgroundColor: foregroundSwatch.hex }"></span>
+			</button>
+			<button @click="changeCanvasBackground()">
+				Set Background
+				<span :style="{ backgroundColor: foregroundSwatch.hex }"></span>
+			</button>
+		</div>
+
+		<div class="tuggers">
+			<button @click="pullCanvasCenter()">
+				Center
+			</button>
+			<button @click="pullCanvasUp()">
+				Up
+			</button>
+			<button @click="pullCanvasDown()">
+				Down
+			</button>
+			<button @click="pullCanvasLeft()">
+				Left
+			</button>
+			<button @click="pullCanvasRight()">
+				Right
+			</button>
+		</div>
+
+		<div class="tips">
+			<p>
+				Use <kbd>CMD</kbd>+Click to sample a pixel.
+			</p>
+			<p>
+				Use <kbd>ALT</kbd>+Click to erase a pixel.
+			</p>
+			<p>
+				Use <kbd>CMD+Z</kbd> to undo pixel and <kbd>Shift+CMD+Z</kbd> to redo pixel.
+			</p>
+		</div>
+
+		<div class="examples">
+			<a href="#a,a,a:30,14:3,a:3,14:3,a:f,14,15:4,b,15:4,14,a:d,14,15:b,14,a:c,14,15:b,17,a:c,14,15:b,17,a:c,b,15:a,17,b,a:d,b,15:8,17,b,a:f,b,15:6,17,b,a:h,b,15:4,17,b,a:j,b,15:2,17,b,a:l,b,17,b,a:n,b,a:2h,d,a,d,a:3,d:2,c,a,c,d,c,a,c,d:2,a,d,a,d,a:4,d,b,d,a:3,d,b,d,a,d,b,d,a,d,a:3,d:2,b,a:4,d,b,d,a:3,d:2,b,a,d,b,d,a,d,a:3,d,b,d,a:4,c,d,c,a:3,d,b,d,a,c,d,c,a,c,d:2,a,d,b,d,a:5,b:2,a:3,b,a,b,a,b:3,a:2,b:2,a,b,a,b,a:r">Heart</a>
+			<a href="#d,3j,3j:2y,c,3j:b,c,3j:b,c,3j:5,3i,3j,3i,3j:5,c,3j:a,c,3j:5,c,3i,c,3j:5,c,3j:a,c,3j:5,c,3i,c,3j:5,c,3j:a,c,3j:5,c,3i,c,3j:5,c,3j:a,c,3j,d,c,3j,3i,c,3h,c,3i,3j,c,d,3j,c,3j:a,c,3j,d:2,3j,2t,c,2t,c,2t,3j,d:2,3j,c,3j:a,3h,c,3i:3,c,2t,3j,2t,c,3i:3,c,3h,3j:b,3h,c:3,2t,3j:3,2t,c:3,3h,3j:d,3i:3,3j:5,3i:3,3j:32,d:2,c,3j,c,d,c,3j,c,d,c,3j,d:2,c,3j,c,d:2,3j:6,d,2t,d,3j,d,2t,d,3j,d,2t,d,3j,d,2t,d,3j,d,3i:2,3j:6,d:2,c,3j,d,2t,d,3j,d,2t,d,3j,d:2,c,3j,c,d,c,3j:6,d,2t,d,3j,d,2t,d,3j,d,2t,d,3j,d,2t,d,3j,3i:2,d,3j:6,d:2,c,3j,c,d,c,3j,c,d,c,3j,d:2,c,3j,d:2,c,3j:6,3i:3,3j,3i:3,3j,3i:3,3j,3i:7,3j:s">Boobs</a>
+			<a href="#12,d,d:2d,3z:5,d:j,3z,12:5,3z,d:h,3z,12:7,3z,d:f,3z,12:2,3z,12:3,3z,12:2,3z,d:e,3z,12:9,3z,d:e,3z,12:9,3z,d:e,3z,12:2,3z,12:3,3z,12:2,3z,d:e,e,3z,12:2,3z:3,12:2,3z,e,d:f,e,3z,12:5,3z,e,d:h,e,3z:5,e,d:j,e:5,d:35,3z,e,3z,d,3z:3,d,3z:3,d,3z:3,d,3z:3,d:6,3z,e,3z,d,3z,e,3z,d,3z,e:2,d,3z,e:2,d,3z,e:2,d:6,3z:3,d,3z:3,d,3z:3,d,3z:3,d,3z:3,d:7,3z,d:2,3z,e,3z,d,e:2,3z,d,e:2,3z,d,e:2,3z,d:7,3z,d:2,3z,e,3z,d,3z:3,d,3z:3,d,3z:3,d:1h">Smile</a>
+		</div>
+
+	</main>
+
+</body>
+</html>

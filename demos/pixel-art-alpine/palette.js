@@ -1,6 +1,8 @@
 var palette = (() => {
 
 	// Colors courtesy of : https://htmlcolorcodes.com/color-names/
+	// --
+	// IMPORTANT: the first swatch key will be "1" so that "0" can represent transparent.
 	var key = 0;
 	var swatches = [
 		{ name: "IndianRed",            hex: "#cd5c5c", key: ++key },
