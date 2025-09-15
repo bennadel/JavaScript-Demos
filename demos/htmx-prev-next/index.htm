@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<link rel="stylesheet" type="text/css" href="./main.css" />
+</head>
+<body>
+
+	<h1>
+		Exploring Prev/Next Mechanics In HTMX
+	</h1>
+
+	<table border="1" cellpadding="10" cellspacing="5">
+	<template data-repeat="5">
+		<tr>
+			<td class="prevTarget">
+				Prev
+			</td>
+			<td>
+				<button
+					onclick="selectNext( this, '.nextTarget' )"
+					class="selectNext">
+					Select Next
+				</button>
+			</td>
+			<td>
+				<button
+					onclick="selectPrev( this, '.prevTarget' )"
+					class="selectPrev">
+					Select Prev
+				</button>
+			</td>
+			<td class="nextTarget">
+				Next
+			</td>
+		</tr>
+	</template>
+	</table>
+
+	<script type="text/javascript">
+
+		cloneRows();
+
+		/**
+		* I add the "selected" class to the "closest next" element that matches the given
+		* selector.
+		*/
+		function selectNext( fromNode, cssSelector ) {
+
+			resetSelection();
+			// Find matching nodes using depth-first traversal of the DOM.
+			// --
+			// Note: I don't need Array.from() in this case, but I'm keeping it in order
+			// to maintain some mechanical symmetry with the selectPrev() method.
+			var matchingNodes = Array.from( document.querySelectorAll( cssSelector ) );
+
+			// The querySelectorAll() method returns the matching nodes in a depth-first
+			// order. Therefore, as we iterate FORWARDS over the collection, the first
+			// node that identifies as coming AFTER the fromNode is the "next" matching
+			// node in DOM-order.
+			for ( var node of matchingNodes ) {
+
+				if ( fromNode.compareDocumentPosition( node ) === Node.DOCUMENT_POSITION_FOLLOWING ) {
+
+					node.classList.add( "selected" );
+					break;
+
+				}
+
+			}
+
+		}
+
+		/**
+		* I add the "selected" class to the "closest previous" element that matches the
+		* given selector.
+		*/
+		function selectPrev( fromNode, cssSelector ) {
+
+			resetSelection();
+			// Find matching nodes using depth-first traversal of the DOM. Then, reverse
+			// them so that our subsequent for-of loop is iterating over the nodes from
+			// the end of the document's node list.
+			var matchingNodes = Array.from( document.querySelectorAll( cssSelector ) )
+				.reverse()
+			;
+
+			// The querySelectorAll() method returns the matching nodes in an depth-first
+			// order. Therefore, as we iterate BACKWARDS over the collection (thanks to
+			// the .reverse() call), the first node that identifies as coming BEFORE the
+			// fromNode is the "previous" matching node in DOM-order.
+			for ( var node of matchingNodes ) {
+
+				if ( fromNode.compareDocumentPosition( node ) === Node.DOCUMENT_POSITION_PRECEDING ) {
+
+					node.classList.add( "selected" );
+					break;
+
+				}
+
+			}
+
+		}
+
+		/**
+		* I remove the "selected" class from the currently-selected node.
+		*/
+		function resetSelection() {
+
+			document.querySelector( ".selected" )
+				?.classList
+					.remove( "selected" )
+			;
+
+		}
+
+		/**
+		* I flesh-out the table rows using the template.
+		*/
+		function cloneRows() {
+
+			var table = document.querySelector( "table" );
+			var template = document.querySelector( "template" );
+			var repeat = +( template.dataset.repeat ?? 5 );
+
+			for ( var i = 1 ; i <= repeat ; i++ ) {
+
+				var clone = template.content.cloneNode( true );
+
+				clone.firstElementChild.dataset.id = i;
+				table.append( clone );
+
+			}
+
+		}
+
+	</script>
+
+</body>
+</html>

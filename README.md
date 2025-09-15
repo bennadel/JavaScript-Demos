@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Exploring Prev/Next Mechanics In HTMX](https://bennadel.github.io/JavaScript-Demos/demos/htmx-prev-next)
 * [Pixel Art With Alpine.js](https://bennadel.github.io/JavaScript-Demos/demos/pixel-art-alpine)
 * [Movie Ranking With Sortable.js And Kendall Tau Distance](https://bennadel.github.io/JavaScript-Demos/demos/movie-rank)
 * [Using :scope To Identify The Host Element In A CSS Selector](https://bennadel.github.io/JavaScript-Demos/demos/scope-pseudo-class)
