@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>
+		Storing Metadata On Select Option Elements
+	</title>
+	<link rel="stylesheet" type="text/css" href="./main.css" />
+</head>
+<body>
+
+	<h1>
+		Storing Metadata On Select Option Elements
+	</h1>
+
+	<select name="friendID">
+		<option value="">
+			- Select -
+		</option>
+		<option value="1" data-bff="true" data-disposition="spicy">
+			Naomi
+		</option>
+		<option value="2" data-bff="false" data-disposition="calm">
+			Jon
+		</option>
+		<option value="3" data-bff="false" data-disposition="unpredictable">
+			Kim
+		</option>
+		<option value="4" data-bff="false" data-disposition="fun">
+			Lara
+		</option>
+	</select>
+
+	<script type="text/javascript">
+
+		var select = document.querySelector( "select" );
+
+		// Listen for changes in selection.
+		select.oninput = ( event ) => {
+
+			// Ignore re-selection of empty option.
+			if ( ! select.value ) {
+
+				return;
+
+			}
+
+			var option = select.selectedOptions[ 0 ];
+
+			console.group( "Friend Selection" );
+			console.log( `ID: ${ select.value }` );
+			console.log( `Name: ${ option.label }` );
+			// In addition to the core VALUE/LABEL properties, we can consume the OPTION
+			// just like any other HTML element, which means we can use the `data-*`
+			// attributes to relay additional information associated with the option.
+			console.log( `BFF: ${ option.dataset.bff }` );
+			console.log( `Disposition: ${ option.dataset.disposition }` );
+			console.groupEnd();
+
+		};
+
+	</script>
+
+</body>
+</html>
