@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Exploring The Dialog Element In HTML](https://bennadel.github.io/JavaScript-Demos/demos/dialog-element)
 * [Storing Metadata On Select Option Elements](https://bennadel.github.io/JavaScript-Demos/demos/select-option-dataset)
 * [Exploring Prev/Next Mechanics In HTMX](https://bennadel.github.io/JavaScript-Demos/demos/htmx-prev-next)
 * [Pixel Art With Alpine.js](https://bennadel.github.io/JavaScript-Demos/demos/pixel-art-alpine)

@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>
+		Exploring The Dialog Element In HTML
+	</title>
+	<link rel="stylesheet" type="text/css" href="./main.css" />
+</head>
+<body>
+
+	<h1>
+		Exploring The Dialog Element In HTML
+	</h1>
+
+	<p>
+		<button type="button" class="triggerModal">
+			Toggle Modal
+		</button>
+		<button type="button" class="triggerNonModal">
+			Toggle Non-Modal
+		</button>
+	</p>
+
+	<!--
+		Adding large spacer to see how dialogs affect document flow; and how we can
+		lock-down scrollbar while modal is open.
+	-->
+	<hr style="margin-bottom: 100rem;" >
+
+	<!-- [closedby=any] allows the click-outside (on backdrop) to close the modal. -->
+	<dialog closedby="any">
+		<!--
+			[method=dialog] on the form will close the modal and set returnValue to the
+			value of the submit button used to process the form. Note that form field
+			values are left in place unless explicitly reset.
+		-->
+		<form method="dialog">
+			<p>
+				Are you sure?
+			</p>
+			<p>
+				<button type="submit" value="Yes">
+					Yes
+				</button>
+				<button type="submit" value="No">
+					No
+				</button>
+			</p>
+		</form>
+	</dialog>
+
+	<style type="text/css">
+
+		/* When a modal window is open, remove scroll from body. */
+		:is( html, body ):has( :modal ) {
+			overflow: hidden ;
+		}
+
+		/* Note: backdrop only shows for MODAL experiences (not non-modal). */
+		dialog::backdrop {
+			backdrop-filter: blur( 1px ) ; /* Not widely available yet. */
+			background-color: #99999966;
+		}
+
+		dialog {
+			border: 2px solid #000000 ;
+			border-radius: 4px ;
+			scrollbar-gutter: stable ; /* Not widely available yet. */
+		}
+
+		/* We can use [open] DOM state to animate-in the modal using CSS keyframes. */
+		dialog[ open ] {
+			animation-duration: 200ms ;
+			animation-fill-mode: forwards ;
+			animation-iteration-count: 1 ;
+			animation-name: dialogEnter ;
+			animation-timing-function: ease-out ;
+		}
+		@keyframes dialogEnter {
+			from {
+				opacity: 0.7 ;
+				scale: 0.7 ;
+			}
+			to {
+				opacity: 1.0 ;
+				scale: 1.0 ;
+			}
+		}
+
+	</style>
+	<script type="text/javascript">
+
+		var dialog = document.querySelector( "dialog" );
+		var toggleModal = document.querySelector( ".triggerModal" );
+		var toggleNonModal = document.querySelector( ".triggerNonModal" );
+
+		// Listen for the close event.
+		dialog.onclose = ( event ) => {
+
+			console.log(
+				`Closed with return value: %c${ dialog.returnValue }`,
+				`font-weight: bold ; color: red ;`
+			);
+
+		};
+
+		// Listen for the cancel event (closed via ESC key or background click).
+		dialog.oncancel = ( event ) => {
+
+			console.log( "Modal canceled" );
+
+		};
+
+		// Wire up the MODAL toggle button.
+		toggleModal.onclick = ( event ) => {
+
+			// Trying to open an already-open modal throws an error. As such, let's make
+			// sure it's closed before we open the modal version. If it's already closed,
+			// closing it again is a safe no-op.
+			dialog.close();
+			dialog.showModal();
+
+		};
+
+		// Wire up the NON-MODAL toggle button.
+		toggleNonModal.onclick = ( event ) => {
+
+			if ( dialog.open ) {
+
+				dialog.close();
+
+			} else {
+
+				dialog.show();
+
+			}
+
+		};
+
+	</script>
+
+</body>
+</html>
