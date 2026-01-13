@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>
+		Opening The Dialog Element As A Fly-out Sidebar
+	</title>
+	<link rel="stylesheet" type="text/css" href="./main.css" />
+</head>
+<body id="top">
+
+	<h1>
+		Opening The Dialog Element As A Fly-out Sidebar
+	</h1>
+
+	<button type="button" class="triggerSidebar">
+		Open Sidebar
+	</button>
+
+	<dialog closedby="any">
+
+		<h2 id="sidebarTop">
+			Dialog As Sidebar
+		</h2>
+
+		<p>
+			Lorem ipsum dolor sit amet nuntius, inde cum cor, supero ferus difficilis
+			poena. Ipse intro longe incido ex pauci culpa. Tu moneo quidam, ego magnus
+			consul. Ego timeo quis virtus que quis numen. Idem patior forte augeo ultra
+			caecus poena.
+		</p>
+
+		<button type="button" class="close">
+			Close
+		</button>
+
+		<div style="margin-block-start: 150vh ;">
+			<a href="#sidebarTop">Back to Top</a>
+		</div>
+
+	</dialog>
+
+	<!-- Adding large spacer to force body scrollbar for a more comprehensive test. -->
+	<p style="margin-top: 150vh ;">
+		<a href="#top">Back to Top</a>
+	</p>
+
+	<style type="text/css">
+
+		/* When a modal window is open, remove scroll from body. */
+		:is( html, body ):has( :modal ) {
+			overflow: hidden ;
+		}
+
+		/* Note: backdrop only shows for MODAL experiences (not non-modal). */
+		dialog::backdrop {
+			backdrop-filter: blur( 0.5px ) ; /* Not widely available yet. */
+			background-color: #99999933;
+		}
+
+		dialog {
+			/*
+			 	The default user-agent styles for dialogs position the dialog in the
+			 	center of the screen and have it render to fit the content. In order to
+			 	get the dialog to render as a fly-out sidebar, we need to unset the CSS
+			 	properties that force it into the middle.
+			*/
+			height: auto ;
+			inset: 0 ;
+			left: auto ;
+			max-height: 100vh;
+			padding: 0 ;
+			/*
+				Once we unset the default user-agent style, we can add our own styles to
+				fine-tune the sidebar experience.
+			*/
+			border: 2px solid #999999 ;
+			border-width: 0 0 0 2px ;
+			box-shadow: 0 0 5px #00000022;
+			padding: 2rem ;
+			scrollbar-gutter: stable ; /* Not widely available yet. */
+			width: 450px ;
+		}
+
+		/* We can use [open] DOM state to animate-in the sidebar using CSS keyframes. */
+		dialog[ open ] {
+			animation-duration: 200ms ;
+			animation-fill-mode: forwards ;
+			animation-iteration-count: 1 ;
+			animation-name: dialogEnter ;
+			animation-timing-function: ease-out ;
+		}
+		@keyframes dialogEnter {
+			from {
+				translate: 100% ; /* Widely available (as independent of "transform"). */
+			}
+			to {
+				translate: 0% ;
+			}
+		}
+
+	</style>
+	<script type="text/javascript">
+
+		var triggerSidebar = document.querySelector( ".triggerSidebar" );
+		var dialog = document.querySelector( "dialog" );
+		var closeSidebar = document.querySelector( "dialog .close" );
+
+		// Open the sidebar.
+		triggerSidebar.onclick = ( event ) => {
+
+			dialog.showModal();
+
+		};
+
+		// Close the sidebark.
+		closeSidebar.onclick = ( event ) => {
+
+			dialog.close();
+
+		};
+
+	</script>
+
+</body>
+</html>

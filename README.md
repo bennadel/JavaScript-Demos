@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Opening The Dialog Element As A Fly-out Sidebar](https://bennadel.github.io/JavaScript-Demos/demos/dialog-element-sidebar)
 * [Exploring The Dialog Element In HTML](https://bennadel.github.io/JavaScript-Demos/demos/dialog-element)
 * [Storing Metadata On Select Option Elements](https://bennadel.github.io/JavaScript-Demos/demos/select-option-dataset)
 * [Exploring Prev/Next Mechanics In HTMX](https://bennadel.github.io/JavaScript-Demos/demos/htmx-prev-next)
@@ -707,5 +708,5 @@ with.
 
 Want more JavaScript goodness? Check out the [JavaScript blog entries][javascript-blog] on my website.
 
-[bennadel]: http://www.bennadel.com
-[javascript-blog]: http://www.bennadel.com/blog/tags/6-javascript-dhtml-blog-entries.htm
+[bennadel]: https://www.bennadel.com
+[javascript-blog]: https://www.bennadel.com/blog/tags/6-javascript-dhtml-blog-entries.htm
