@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Linking To A Disclosure (Details) Element](https://bennadel.github.io/JavaScript-Demos/demos/scroll-to-details)
 * [Opening The Dialog Element As A Fly-out Sidebar](https://bennadel.github.io/JavaScript-Demos/demos/dialog-element-sidebar)
 * [Exploring The Dialog Element In HTML](https://bennadel.github.io/JavaScript-Demos/demos/dialog-element)
 * [Storing Metadata On Select Option Elements](https://bennadel.github.io/JavaScript-Demos/demos/select-option-dataset)

@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>
+		Linking To A Disclosure (Details) Element
+	</title>
+	<link rel="stylesheet" type="text/css" href="./main.css" />
+</head>
+<body>
+
+	<h1>
+		Linking To A Disclosure (Details) Element
+	</h1>
+
+	<!--
+		Note: I'm linking to the SUMMARY element, not to the details element, since only
+		the summary element is actionable: it acts as the toggle for the details control
+		and can be triggered with Space key or Enter key. It also provides labeling and
+		context to accessibility software.
+	-->
+	<ul>
+		<li>
+			<a href="#summary1">Markdown Syntax</a>
+		</li>
+		<li>
+			<a href="#summary2">Keyboard Shortcuts</a>
+		</li>
+		<li>
+			<a href="#summary3">Privacy Policy</a>
+		</li>
+	</ul>
+
+	<details name="demo">
+		<summary id="summary1">
+			Markdown Syntax
+		</summary>
+		<section aria-labeledby="summary1">
+			You can use limited Markdown syntax in your content.
+		</section>
+	</details>
+
+	<details name="demo">
+		<summary id="summary2">
+			Keyboard Shortcuts
+		</summary>
+		<section aria-labeledby="summary2">
+			You can use the following keyboard shortcuts in the application.
+		</section>
+	</details>
+
+	<details name="demo">
+		<summary id="summary3">
+			Privacy Policy
+		</summary>
+		<section aria-labeledby="summary3">
+			All your data is belong to us!
+		</section>
+	</details>
+
+	<script type="text/javascript">
+
+		// When the page first loads, or whenever the location hash changes, check to see
+		// if the hash points to a disclosure summary. If so, ensure that the disclosure
+		// is open. The browser will handle the focus automatically (via the hash).
+		window.addEventListener( "load", applyHashEventToSummary );
+		window.addEventListener( "hashchange", applyHashEventToSummary );
+
+		// Expand details is the summary is the target of the hash.
+		function applyHashEventToSummary( event ) {
+
+			// The ":target" pseudo selector matches the element linked-to via the hash.
+			var summary = document.querySelector( ":target:is(summary)" );
+			var details = summary?.parentElement;
+
+			if ( details && ! details.open ) {
+
+				details.open = true;
+
+			}
+
+		}
+
+	</script>
+
+</body>
+</html>
