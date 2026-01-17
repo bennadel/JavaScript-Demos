@@ -35,8 +35,8 @@
 .textBlock * {
 	&:focus,
 	&:focus-visible {
-		animation-name: none !important ;
-		outline: none !important ;
+		animation-name: none ;
+		outline: none ;
 	}
 }
 
