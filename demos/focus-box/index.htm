@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>
+		Animating DOM Rectangles Over Focused Elements In JavaScript
+	</title>
+	<link rel="stylesheet" type="text/css" href="./main.css" />
+</head>
+<body>
+
+	<h1>
+		Animating DOM Rectangles Over Focused Elements In JavaScript
+	</h1>
+
+	<p>
+		Before demo <a href>text block</a> (to take focus from demo block and to contrast
+		the normal focus-outline behavior).
+	</p>
+
+	<p class="textBlock">
+		<mark hidden class="box">
+			<!--
+				I will scurry across the viewport and highlight focused areas within this
+				paragraph. Since focused text may wrap across line-breaks, I'm providing
+				several internal segments for compound highlighting rectangles.
+			-->
+			<span></span>
+			<span></span>
+			<span></span>
+		</mark>
+
+		<span data-repeat="10">
+			Lorem ipsum dolor <a href>sit amet</a> interrogo communis flumen.
+			<a href>Mille iuvenis</a>, umquam ante cohors, adhibeo citus fortis provincia.
+			Hic posco ego, quis frequens tenebrae. Aliquis turbo is epistula. <a href>Hic
+			experior quidam voluntas</a> nam aliquis vinculum. Noster puto paulo sum post
+			saevus natura. Diversus ventus, quasi cum for meus, scribo dexter prior
+			astrum. Idem condo qua ictus quoque nemo iter. Mortalis frater, denique in
+			puer, tollo nullus quattuor vestigium. <a href>Iste dico ipse voluntas an sui
+			vitium meus desino quisquis, qua gratus ira tu opto nemo praemium gens rideo
+			diversus error</a>.
+		</span>
+	</p>
+
+	<style type="text/css">
+		
+		mark.box span {
+			background-color: transparent ;
+			border-radius: 3px ;
+			border: 1px solid tomato ;
+			box-shadow: inset 0 0 0 3px #ffff04aa ;
+			opacity: 0 ;
+			pointer-events: none ;
+			position: absolute ;
+			transition: all 100ms ease-out ;
+			z-index: 9999 ;
+		}
+
+	</style>
+	<script type="text/javascript">
+
+		var box = document.querySelector( "mark.box" );
+		var boxSegments = Array.from( box.children );
+
+		// When a new element is focused within the document, we want zoom the marker
+		// box(es) over to the focused element to emphasize focus.
+		document.addEventListener( "focusin", ( event ) => {
+
+			var target = event.target;
+
+			// If an element OUTSIDE of the demo text block was focused, hide the marker -
+			// we only want that to show the crazy boxy inside the demo block.
+			if ( ! target.closest( ".textBlock" ) ) {
+
+				box.hidden = true;
+				return;
+
+			}
+
+			// We're about to animate the box segments into place, mark the box as active
+			// (and visible) in the DOM.
+			box.hidden = false;
+
+			// Instead of using the `.getBoundingClientRect()`, which will give us the box
+			// that encompasses ALL areas of the focused text, we're going to use the
+			// `.getClientRects()` to get individual DOMRect readings for each part of the
+			// text if it wraps across lines.
+			// --
+			// Note: if the text doesn't wrap, the two get-rect methods are equivalent.
+			var rects = Array.from( target.getClientRects() );
+			var offsetBlock = window.scrollY;
+			var offsetInline = window.scrollX;
+			var padBlock = 1;
+			var padInline = 6;
+
+			boxSegments.forEach(
+				( segment, i ) => {
+
+					var rect = rects[ i ];
+					// In order to make the animations smooth, we want to position every
+					// segment even if they aren't going to be rendered. This way, when
+					// they do get rendered, it looks like everything originates from the
+					// same location within the viewport. To that end, if we don't have a
+					// matching DOMRect for this segment, just use the first one and mark
+					// the segment as translucent.
+					if ( rect ) {
+
+						segment.style.opacity = 1; // Show.
+
+					} else {
+
+						segment.style.opacity = 0; // Hide.
+						rect = rects[ 0 ];
+
+					}
+
+					segment.style.left = `${ rect.left - padInline + offsetInline }px`;
+					segment.style.top = `${ rect.top - padBlock + offsetBlock }px`;
+					segment.style.width = `${ rect.width + ( padInline * 2 ) }px`;
+					segment.style.height = `${ rect.height + ( padBlock * 2 ) }px`;
+
+				}
+			);
+
+		});
+
+		// When the window loses focus, hide the marker box.
+		window.addEventListener( "blur", ( event ) => {
+
+			box.hidden = true;
+
+		});
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+		// Flesh-out lots of text for the demo so we can force window scrolling.
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+		var templateNode = document.querySelector( "[data-repeat]" );
+		var count = Number( templateNode.dataset.repeat );
+
+		for ( var i = 1 ; i <= count ; i++ ) {
+
+			templateNode.after( templateNode.cloneNode( true ) );
+
+		}
+
+		// Don't honor any anchor links. I want the `<a>` tags to have something to focus;
+		// but I don't want the clicks to actually navigate away from the page or offset.
+		document.addEventListener( "click", ( event ) => {
+
+			if ( event.target.closest( "a" ) ) {
+
+				event.preventDefault();
+
+			}
+
+		});
+
+	</script>
+
+</body>
+</html>

@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Animating DOM Rectangles Over Focused Elements In JavaScript](https://bennadel.github.io/JavaScript-Demos/demos/focus-box)
 * [Linking To A Disclosure (Details) Element](https://bennadel.github.io/JavaScript-Demos/demos/scroll-to-details)
 * [Opening The Dialog Element As A Fly-out Sidebar](https://bennadel.github.io/JavaScript-Demos/demos/dialog-element-sidebar)
 * [Exploring The Dialog Element In HTML](https://bennadel.github.io/JavaScript-Demos/demos/dialog-element)
