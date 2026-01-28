@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>
+		Broadcast Channel API Frame
+	</title>
+	<link rel="stylesheet" type="text/css" href="./main.css" />
+</head>
+<body class="frame-body">
+
+	<!--
+		I'll follow the mouse location within each frame. Or I'll move according to the
+		Broadcast API messages sent from frame-to-frame.
+	-->
+	<mark class="laser">
+		<!-- Pew pew pew! -->
+	</mark>
+
+	<script type="text/javascript">
+
+		var laser = document.querySelector( ".laser" );
+
+		// Create a named channel that all the frames can bind-to for sending and
+		// receiving messages.
+		var channel = new BroadcastChannel( "pewpew" );
+
+		// As the mouse moves, broadcast {x,y} coordinates to other frames for mirroring.
+		window.addEventListener( "mousemove", ( event ) => {
+
+			// Note: the message is automatically serialized using the structured clone
+			// algorithm. As such, we can pass complex messages (within reason) and not
+			// have to worry about serializing the data. Winning!
+			channel.postMessage({
+				type: "lasermove",
+				clientX: event.clientX,
+				clientY: event.clientY,
+			});
+
+			// Note: a broadcast context subscriber will NOT RECIEVE ITS OWN messages.
+			// As such, we don't have to worry about adding logic to ignore reflected
+			// messages. But it means that we also have to update the laser position
+			// locally to the broadcasting window.
+			moveLaser( event.clientX, event.clientY );
+
+		});
+
+		// Listen for broadcast message events.
+		channel.addEventListener( "message", ( event ) => {
+
+			// The broadcast message data is transparently deserialized using structured
+			// clone algorithm and is presented in its original format. That said, we
+			// might receive any number of messages (even on a named channel). As such,
+			// I'm including a differentiator (type) to focus on relevant messages. This
+			// is merely a convention, not a requirement.
+			if ( event.data.type === "lasermove" ) {
+
+				moveLaser( event.data.clientX, event.data.clientY );
+
+			}
+
+		});
+
+		// I move the laser point to the given location.
+		function moveLaser( left, top ) {
+
+			laser.style.left = `${ left }px`;
+			laser.style.top = `${ top }px`;
+
+		}
+
+	</script>
+
+</body>
+</html>

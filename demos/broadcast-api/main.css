@@ -1,0 +1,107 @@
+
+:where( html ) {
+	box-sizing: border-box ;
+
+	& *,
+	& *:before,
+	& *:after {
+		box-sizing: inherit ;
+	}
+}
+
+:where( * ) {
+	&:focus,
+	&:focus-visible {
+		animation-duration: 200ms ;
+		animation-fill-mode: forwards ;
+		animation-iteration-count: 1 ;
+		animation-name: outlineEnter ;
+		animation-timing-function: ease-out ;
+		outline-color: hotpink ;
+		outline-offset: 4px ;
+		outline-width: 2px ;
+	}
+}
+
+@keyframes outlineEnter {
+	from {
+		outline-offset: 8px ;
+	}
+	to {
+		outline-offset: 4px ;
+	}
+}
+
+.textBlock * {
+	&:focus,
+	&:focus-visible {
+		animation-name: none ;
+		outline: none ;
+	}
+}
+
+
+body {
+	font-family: Avenir, Montserrat, Corbel, URW Gothic, source-sans-pro, sans-serif ;
+	font-size: 18px ;
+	line-height: 1.4 ;
+}
+
+button,
+input:where([type="text"]),
+select,
+textarea {
+	color: inherit ;
+	font-family: inherit ;
+	font-size: 20px ;
+	line-height: inherit ;
+	padding: 5px 10px ;
+}
+
+button {
+	padding: 5px 15px ;
+}
+
+a {
+	color: red ;
+}
+
+.frame-list {
+	display: flex ;
+	gap: 10px ;
+	flex-wrap: wrap ;
+
+	& iframe {
+		border: 1px solid #333333 ;
+		flex: 0 0 auto ;
+		height: 200px ;
+		width: 220px ;
+	}
+}
+
+.frame-body {
+	margin: 0 ;
+	min-height: 100vh ;
+
+	&:hover .laser {
+		--color: 0, 155, 0 ;
+		--size: 20px ;
+	}
+}
+
+.laser {
+	--color: 255, 0, 0 ;
+	--size: 8px ;
+	position: fixed ;
+
+	&:before {
+		background: rgb( var( --color ) ) ;
+		border-radius: 100% ;
+		box-shadow: 0 0 8px 0 rgba( var( --color ), 0.8 ) ;
+		content: "" ;
+		height: var( --size ) ;
+		position: absolute ;
+		translate: -50% -50% ;
+		width: var( --size ) ;
+	}
+}
