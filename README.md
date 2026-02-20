@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Table Row Linker Directive In Alpine.js](https://bennadel.github.io/JavaScript-Demos/demos/row-linker)
 * [Sending Messages Across Documents With The Broadcast Channel API](https://bennadel.github.io/JavaScript-Demos/demos/broadcast-api)
 * [Animating DOM Rectangles Over Focused Elements In JavaScript](https://bennadel.github.io/JavaScript-Demos/demos/focus-box)
 * [Linking To A Disclosure (Details) Element](https://bennadel.github.io/JavaScript-Demos/demos/scroll-to-details)

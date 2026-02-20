@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>
+		Table Row Linker Directive In Alpine.js
+	</title>
+	<link rel="stylesheet" type="text/css" href="./main.css" />
+</head>
+<body x-data> <!-- Note: you need the x-data directive to "activate" the document. -->
+
+	<h1>
+		Table Row Linker Directive In Alpine.js
+	</h1>
+
+	<table x-table-row-linker>
+	<thead>
+		<tr>
+			<th>Name</th>
+			<th>Info</th>
+			<th>Category</th>
+			<th>Actions</th>
+		</tr>
+	</thead>
+	<tbody>
+		<template x-for="i in 10">
+			<tr>
+				<td>
+					<a :href="`#row-${i}-link-1`" class="isRowLinker">Row Link</a>
+				</td>
+				<td>
+					More row info here...
+				</td>
+				<td>
+					<a :href="`#row-${i}-link-2`">Another Anchor</a>
+				</td>
+				<td>
+					<a :href="`#row-${i}-action-1`">Action 1</a> -
+					<a :href="`#row-${i}-action-2`">Action 2</a>
+				</td>
+			</tr>
+		</template>
+	</tbody>
+	</table>
+
+	<script type="text/javascript" src="../../vendor/alpine/3.13.5/alpine.3.13.5.min.js" defer></script>
+	<script type="text/javascript">
+
+		/**
+		* I make the rows in the table clickable. The primary gesture is to make the
+		* `isRowLinker` anchor the one that is activated on row-click. But, a secondary
+		* gesture, a whole cell will be make clickable if it contains a single link and no
+		* other actionable elements (such as buttons).
+		*/
+		function TableRowLinkerDirective( element, metadata, framework ) {
+
+			var attribute = "x-table-row-linker";
+			var selector = ".isRowLinker";
+
+			init();
+
+			// ---
+			// LIFE-CYCLE METHODS.
+			// ---
+
+			/**
+			* I setup the directive.
+			*/
+			function init() {
+
+				framework.cleanup( destroy );
+				element.addEventListener( "click", handleMouseEvent );
+
+			}
+
+
+			/**
+			* I tear down the directive.
+			*/
+			function destroy() {
+
+				element.removeEventListener( "click", handleMouseEvent );
+
+			}
+
+			// ---
+			// PRIVATE METHODS.
+			// ---
+
+			/**
+			* I handle the mouse event on the table.
+			*/
+			function handleMouseEvent( event ) {
+
+				// If the event was fired programmatically, ignore it.
+				if ( ! event.isTrusted ) {
+
+					return;
+
+				}
+
+				// Only process the main mouse button (ie, not if right-clicking).
+				if ( event.button !== 0 ) {
+
+					return;
+
+				}
+
+				// Since we're using event delegation in this directive, it's possible
+				// that another directive or event binding will have already been applied
+				// (and should take precedence). If the event's default behavior has been
+				// canceled, we don't want to interfere with that control flow.
+				if ( event.defaultPrevented ) {
+
+					return;
+
+				}
+
+				var target = event.target;
+				var cell = target.closest( "td" );
+
+				// If the event didn't originate from within a table cell interaction,
+				// ignore. It must have come from a header or a caption.
+				if ( ! cell ) {
+
+					console.warn( "IGNORE: Click outside TD." );
+					return;
+
+				}
+
+				// If the event originated from an actionable element, ignore - the given
+				// element already has a native behavior associated with it.
+				if ( target.closest( "a, button" ) ) {
+
+					console.warn( "IGNORE: Target is an actionable element." );
+					return;
+
+				}
+
+				var selection = window.getSelection();
+
+				// If the user highlights text in the table, it will often trigger a click
+				// event. Let's ignore events in which a non-empty selection exists.
+				if ( selection && ! selection.isCollapsed ) {
+
+					console.warn( "IGNORE: Selection detected." );
+					return;
+
+				}
+
+				var linkNodes = cell.querySelectorAll( "a" );
+				var actionableNodes = cell.querySelectorAll( "a, button" );
+
+				// If there's only a SINGLE LINK in the cell and NO OTHER actionable
+				// elements, let's activate the link regardless of whether or not it's the
+				// row-linker. This allows for slight miss-clicks on an isolated link.
+				if (
+					( linkNodes.length === 1 ) &&
+					( actionableNodes.length === 1 )
+					) {
+
+					console.info( "EXECUTE: Auto-clicking isolated link." );
+					linkNodes[ 0 ].click();
+					return;
+
+				}
+
+				// If there are any actionable elements in the cell, don't do anything at
+				// this point since this event represents a miss-click in a non-isolated
+				// context. We don't want to activate the wrong link or button.
+				if ( actionableNodes.length ) {
+
+					console.warn( "IGNORE: Multiple miss-click targets available." );
+					return;
+
+				}
+
+				var row = cell.closest( "tr" );
+				var rowLinker = row.querySelector( selector );
+
+				// If there's no row linker, then no further action can be taken.
+				if ( ! rowLinker ) {
+
+					return;
+
+				}
+
+				// Translate row event into link event.
+				console.info( "EXECUTE: Auto-clicking row-linker." );
+				rowLinker.click();
+
+			}
+
+		}
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+		// Register Alpine.js directive.
+		document.addEventListener(
+			"alpine:init",
+			function setupAlpineBindings() {
+
+				Alpine.directive( "table-row-linker", TableRowLinkerDirective );
+
+			}
+		);
+
+		// For the UX of the demo, I want to highlight whichever link matches the hash.
+		// This way, as the user clicks around, it will be clear which link has been
+		// activated (either naturally or programmatically). 
+		window.addEventListener( "hashchange", ( event ) => {
+
+			for ( var node of document.querySelectorAll( "a[href]" ) ) {
+
+				if ( location.hash === node.getAttribute( "href" ) ) {
+
+					node.classList.add( "active" );
+
+				} else {
+
+					node.classList.remove( "active" );
+
+				}
+
+			}
+
+		});
+
+	</script>
+
+</body>
+</html>
