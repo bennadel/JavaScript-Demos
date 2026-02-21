@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>
+		Exploring Event.isTrusted In JavaScript
+	</title>
+	<link rel="stylesheet" type="text/css" href="./main.css" />
+</head>
+<body>
+
+	<h1>
+		Exploring Event.isTrusted In JavaScript
+	</h1>
+
+	<h2>
+		Form
+	</h2>
+
+	<form id="demo" method="get" action="#">
+		<button type="submit">
+			Submit
+		</button>
+		<a href="#">
+			Cancel
+		</a>
+	</form>
+
+	<h2>
+		Triggers on Form
+	</h2>
+
+	<p>
+		<button id="triggerSubmit" type="button">
+			Trigger Submit
+		</button>
+		<button id="triggerClick" type="button">
+			Trigger Click
+		</button>
+		<button id="triggerFocus" type="button">
+			Trigger Focus(in)
+		</button>
+	</p>
+
+	<script type="text/javascript">
+
+		var form = window.demo;
+		var button = form.querySelector( "button" );
+		var link = form.querySelector( "a" );
+
+		// Listen for events that BUBBLE UP on the form (hence focusin, not focus).
+		form.addEventListener( "focusin", handleFormEvent );
+		form.addEventListener( "click", handleFormEvent );
+		form.addEventListener( "submit", handleFormEvent );
+
+		// Listen for and inspect form events.
+		function handleFormEvent( event ) {
+
+			console.group( event.type );
+			console.log( `Target: ${ event.target.tagName }` );
+			console.log( `isTrusted: ${ event.isTrusted }` );
+			console.groupEnd();
+
+		}
+
+		// --------------------------------------------------------------------------- //
+		// --------------------------------------------------------------------------- //
+
+		// Programmatically trigger events on the form.
+		window.triggerSubmit.onclick = () => form.requestSubmit( button );
+		window.triggerClick.onclick = () => link.click();
+		window.triggerFocus.onclick = () => button.focus();
+
+	</script>
+
+</body>
+</html>
