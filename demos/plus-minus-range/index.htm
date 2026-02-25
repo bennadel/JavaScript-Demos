@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>
+		Parsing Plus-Minus Ranges In JavaScript
+	</title>
+	<link rel="stylesheet" type="text/css" href="./main.css" />
+</head>
+<body>
+
+	<h1>
+		Parsing Plus-Minus (&pm;) Ranges In JavaScript
+	</h1>
+
+	<form>
+		<input type="text" name="description" placeholder="Description..." />
+		<input type="text" name="rangeMin" placeholder="Lower..." />
+		<input type="text" name="rangeMax" placeholder="Upper..." />
+	</form>
+
+	<script type="text/javascript">
+
+		var form = document.querySelector( "form" );
+		var description = form.elements.description;
+		var rangeMin = form.elements.rangeMin;
+		var rangeMax = form.elements.rangeMax;
+
+		description.oninput = extractRange;
+
+		/**
+		* I parse the description and look for "BASE +- DELTA" expressions that can be
+		* used to automatically calculate upper/lower limits on the given measurement.
+		*/
+		function extractRange() {
+
+			// Allow for numbers like "30mm" or "3.5 in".
+			var numberPattern = /([\d.]+)( ?\w+)?/;
+			// Allow for plus/minus variations like "+-" or "+/-" or "+|-". Note that both
+			// the "+" and "-" have to be present if you're not using the special unicode
+			// Plus-Minus sign. This helps prevents false-positives.
+			var plusMinusPattern = /(\+[|\\\/ ]*-|±)/;
+
+			// For better readability, we're constructing the more robust pattern from the
+			// individual pattern sources (separated by optional spaces). This is easier
+			// than reading one large pattern.
+			var rangePattern = new RegExp(
+				`${ numberPattern.source } *${ plusMinusPattern.source } *${ numberPattern.source }`,
+				"i"
+			);
+
+			var matches = description.value.match( rangePattern );
+
+			// The pattern couldn't be found in the description - no maths to do.
+			if ( ! matches ) {
+
+				return;
+
+			}
+
+			var baseValue = parseFloat( matches[ 1 ] );
+			var deltaValue = parseFloat( matches[ 4 ] );
+
+			// Since this is a +/- calculation, we need both values to be non-zero in
+			// order for the maths to make sense.
+			if ( ! baseValue || ! deltaValue ) {
+
+				return;
+
+			}
+
+			rangeMin.value = ( baseValue - deltaValue ).toFixed( 2 );
+			rangeMax.value = ( baseValue + deltaValue ).toFixed( 2 );
+
+		}
+
+	</script>
+
+</body>
+</html>

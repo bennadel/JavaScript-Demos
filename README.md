@@ -10,6 +10,7 @@ with.
 
 ## My JavaScript Demos - I Love JavaScript!
 
+* [Parsing Plus-Minus Ranges In JavaScript](https://bennadel.github.io/JavaScript-Demos/demos/plus-minus-range)
 * [Exploring Event.isTrusted In JavaScript](https://bennadel.github.io/JavaScript-Demos/demos/event-is-trusted)
 * [Table Row Linker Directive In Alpine.js](https://bennadel.github.io/JavaScript-Demos/demos/row-linker)
 * [Sending Messages Across Documents With The Broadcast Channel API](https://bennadel.github.io/JavaScript-Demos/demos/broadcast-api)

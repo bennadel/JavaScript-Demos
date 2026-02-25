@@ -1,0 +1,95 @@
+
+:where( html ) {
+	box-sizing: border-box ;
+
+	& *,
+	& *:before,
+	& *:after {
+		box-sizing: inherit ;
+	}
+}
+
+:where( * ) {
+	&:focus,
+	&:focus-visible {
+		animation-duration: 200ms ;
+		animation-fill-mode: forwards ;
+		animation-iteration-count: 1 ;
+		animation-name: outlineEnter ;
+		animation-timing-function: ease-out ;
+		outline-color: hotpink ;
+		outline-offset: 4px ;
+		outline-width: 2px ;
+	}
+}
+
+@keyframes outlineEnter {
+	from {
+		outline-offset: 8px ;
+	}
+	to {
+		outline-offset: 4px ;
+	}
+}
+
+body {
+	font-family: Avenir, Montserrat, Corbel, URW Gothic, source-sans-pro, sans-serif ;
+	font-size: 18px ;
+	line-height: 1.4 ;
+}
+
+button,
+input:where([type="text"]),
+select,
+textarea {
+	color: inherit ;
+	font-family: inherit ;
+	font-size: 20px ;
+	line-height: inherit ;
+	padding: 5px 10px ;
+}
+
+button {
+	padding: 5px 15px ;
+}
+
+a {
+	color: red ;
+}
+
+table {
+	border: 1px solid #333333 ;
+	border-collapse: collapse ;
+	width: 100% ;
+
+	& :where(th, td) {
+		border: 1px solid #333333 ;
+		padding: 5px 10px ;
+
+		&:not([align]) {
+			text-align: left ;
+		}
+	}
+}
+
+tbody tr:hover {
+	background-color: #e7f9ff ;
+}
+
+
+form {
+	display: flex ;
+	gap: 13px ;
+	max-width: 670px ;
+}
+
+form {
+	& input:nth-child(1) {
+		flex: 1 0 auto ;
+		width: 250px ;
+	}
+	& input {
+		flex: 1 0 auto ;
+		width: 100px ;
+	}
+}
