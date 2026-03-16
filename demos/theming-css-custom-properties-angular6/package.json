@@ -10,7 +10,7 @@
 		"@angular/animations": "6.1.3",
 		"@angular/common": "6.1.3",
 		"@angular/compiler": "6.1.3",
-		"@angular/core": "6.1.3",
+		"@angular/core": "11.0.5",
 		"@angular/forms": "6.1.3",
 		"@angular/http": "6.1.3",
 		"@angular/platform-browser": "6.1.3",
