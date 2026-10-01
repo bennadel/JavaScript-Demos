@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<!-- Make sure we're not allowing any unsafe-eval work. -->
+	<meta
+		http-equiv="Content-Security-Policy"
+		content="
+			script-src 'nonce-abc123' 'strict-dynamic';
+			object-src 'none';
+			base-uri 'none';
+		"
+	/>
+	<link rel="stylesheet" type="text/css" href="./main.css" />
+</head>
+<body>
+
+	<h1>
+		Trying The CSP Build Of Alpine.js 3.5.41
+	</h1>
+
+	<section x-data="app">
+		<h2>
+			Add a Friend
+		</h2>
+
+		<p x-show="form.error">
+			<mark x-text="form.error"></mark>
+		</p>
+
+		<form @submit.prevent="processForm( $event )">
+			<input
+				type="text"
+				x-ref="name"
+				x-model.trim.fill="form.name"
+				value="Kimmie"
+				placeholder="Name..."
+			/>
+			<input
+				type="text"
+				x-model.trim.fill="form.age"
+				value="59"
+				size="8"
+				placeholder="Age..."
+			/>
+			<label>
+				<input
+					type="checkbox"
+					x-model.boolean="form.isFavorite"
+					value="1"
+				/>
+				Favorite
+			</label>
+			<button type="submit">
+				Add Friend
+			</button>
+		</form>
+
+		<div x-show="friends.length">
+			<h2>
+				Existing Friends (<span x-text="friends.length"></span>)
+			</h2>
+
+			<ul>
+				<template x-for="( friend, i ) in friends" :key="friend.id">
+					<li>
+						<button
+							@click="toggleFavorite( friend )"
+							class="star"
+							:class="{ isOn: friend.isFavorite }">
+						</button>
+						<span x-text="friend.name"></span>
+						<span x-show="friend.age">
+							(Age: <span x-text="friend.age"></span>)
+						</span>
+						&mdash;
+						<button @click="remove( i )" class="text">
+							Delete
+						</button>
+					</li>
+				</template>
+			</ul>
+		</div>
+	</section>
+
+	<!-- The CSP version of the Alpine build. -->
+	<script type="text/javascript" nonce="abc123" src="../../vendor/alpine/3.5.41/alpine-csp.3.5.41.js" defer></script>
+	<script type="text/javascript" nonce="abc123">
+
+		// In the CSP build, components cannot be implicitly registered on the global /
+		// window scope. As such, we have to explicitly register our component with Alpine
+		// during the initialization event.
+		document.addEventListener( "alpine:init", () => Alpine.data( "app", AppComponent ) );
+
+		/**
+		* Our demo component, instantiated via `x-data` and the above registration.
+		*/
+		function AppComponent() {
+
+			return {
+				// Properties.
+				form: {
+					name: "",
+					age: "",
+					isFavorite: false,
+					error: "",
+				},
+				friends: [],
+
+				// Methods.
+				init,
+				processForm,
+				remove,
+				toggleFavorite,
+			};
+
+			// ---
+			// LIFE-CYCLE METHODS.
+			// ---
+
+			/**
+			* I initialize the component.
+			*/
+			function init() {
+
+				this.friends.push(
+					{ id: 1, name: "Amy", age: 38, isFavorite: false, },
+					{ id: 2, name: "Tom", age: 57, isFavorite: false, }
+				);
+
+			}
+
+			// ---
+			// PUBLIC METHODS.
+			// ---
+
+			/**
+			* I process the form submission, adding a new friend if a name has been
+			* provided.
+			*/
+			function processForm( event ) {
+
+				if ( ! this.form.name ) {
+
+					this.form.error = "Please provide a friend name!";
+					return;
+
+				}
+
+				// Add the new friend.
+				this.friends.push({
+					id: Date.now(),
+					name: this.form.name,
+					age: parseInt( this.form.age, 10 ),
+					isFavorite: this.form.isFavorite,
+				});
+				// Sort the friends based on name.
+				this.friends.sort( ( a, b ) => a.name.localeCompare( b.name ) );
+
+				// Reset the form data.
+				this.form.name = "";
+				this.form.age = "";
+				this.form.isFavorite = false;
+				this.form.error = "";
+
+				// Refocus the initial form field.
+				this.$refs.name.focus();
+
+			}
+
+			/**
+			* I remove the friend at the given index.
+			*/
+			function remove( i ) {
+
+				this.friends.splice( i, 1 );
+
+			}
+
+			/**
+			* I toggle the state of the favorite flag for the given friend.
+			*/
+			function toggleFavorite( friend ) {
+
+				friend.isFavorite = ! friend.isFavorite;
+
+			}
+
+		}
+
+	</script>
+
+</body>
+</html>
